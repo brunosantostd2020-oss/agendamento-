@@ -1,162 +1,258 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
-  <meta name="theme-color" content="#0d9488"/>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>Criar conta — AgendaOK</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    :root{--teal:#0d9488;--teal-esc:#0a7c72;--teal-lt:#ccfbf1;--dark:#0f172a;--text:#334155;--muted:#64748b;--borda:#e2e8f0;--bg:#f8faff;--branco:#fff;--vermelho:#dc2626;--safe-bottom:env(safe-area-inset-bottom,0px)}
+    :root{
+      --preto:#0a0a0a;--branco:#fafaf9;--cinza:#f5f4f0;
+      --cinza2:#e8e6e1;--cinza3:#6b6860;--texto:#1c1b18;
+      --verde:#1a7a5e;--verde-lt:#e8f4f0;--radius:4px;
+      --vermelho:#dc2626;--safe-bottom:env(safe-area-inset-bottom,0px);
+    }
     html{-webkit-tap-highlight-color:transparent}
-    body{font-family:'Inter',sans-serif;background:var(--bg);min-height:100dvh;overflow-x:hidden}
+    body{font-family:'DM Sans',sans-serif;background:var(--branco);color:var(--texto);min-height:100dvh;display:flex;flex-direction:column}
 
-    .header{background:var(--branco);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--borda);position:sticky;top:0;z-index:50}
+    /* HEADER */
+    header{border-bottom:1px solid var(--cinza2);padding:0 48px;height:60px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
     .logo{display:flex;align-items:center;gap:10px;text-decoration:none}
-    .logo-box{width:36px;height:36px;border-radius:10px;background:var(--teal);color:white;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px}
-    .logo-txt{font-weight:800;font-size:17px;color:var(--dark)}
-    .header-link{font-size:14px;color:var(--teal);font-weight:700;text-decoration:none}
+    .logo-mark{width:28px;height:28px;background:var(--preto);border-radius:6px;display:flex;align-items:center;justify-content:center}
+    .logo-mark svg{width:14px;height:14px;fill:var(--branco)}
+    .logo-txt{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;color:var(--preto);letter-spacing:-0.3px}
+    .header-link{font-size:14px;color:var(--cinza3);text-decoration:none;font-weight:400;transition:color 0.15s}
+    .header-link:hover{color:var(--preto)}
 
-    .hero{background:linear-gradient(135deg,var(--teal),var(--teal-esc));padding:28px 20px;color:white;text-align:center}
-    .hero h1{font-size:22px;font-weight:800;margin-bottom:4px}
-    .hero p{font-size:14px;opacity:0.9}
+    /* PROGRESS */
+    .progress-bar{height:2px;background:var(--cinza2);position:relative;flex-shrink:0}
+    .progress-fill{height:100%;background:var(--preto);transition:width 0.4s ease;width:33.33%}
 
-    .steps-bar{background:var(--branco);padding:14px 20px;display:flex;align-items:center;justify-content:center;border-bottom:1px solid var(--borda);position:sticky;top:69px;z-index:40}
-    .si{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:56px}
-    .sc{width:32px;height:32px;border-radius:50%;border:2px solid var(--borda);background:var(--branco);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--muted);transition:all 0.3s}
-    .si.ativo .sc{border-color:var(--teal);background:var(--teal);color:white}
-    .si.feito .sc{border-color:#16a34a;background:#16a34a;color:white}
-    .sl{flex:1;height:2px;background:var(--borda);max-width:40px;transition:background 0.3s}
-    .sl.feita{background:#16a34a}
-    .slbl{font-size:10px;font-weight:700;color:var(--muted)}
-    .si.ativo .slbl{color:var(--teal)}
+    /* LAYOUT */
+    .layout{flex:1;display:grid;grid-template-columns:380px 1fr}
 
-    .content{padding:20px 16px 120px}
+    /* SIDEBAR */
+    .sidebar{
+      background:var(--cinza);border-right:1px solid var(--cinza2);
+      padding:48px 40px;display:flex;flex-direction:column;justify-content:space-between;
+      position:sticky;top:62px;height:calc(100vh - 62px);overflow:auto;
+    }
+    .sidebar-step{margin-bottom:32px}
+    .step-num{font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--cinza3);font-weight:500;margin-bottom:6px}
+    .step-titulo{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--cinza3);transition:color 0.2s}
+    .step-titulo.ativo{color:var(--preto)}
+    .step-linha{width:1px;height:24px;background:var(--cinza2);margin-left:0;margin:8px 0 8px 4px}
+    .sidebar-info{font-size:13px;color:var(--cinza3);font-weight:300;line-height:1.7;border-top:1px solid var(--cinza2);padding-top:24px}
+    .sidebar-info strong{color:var(--texto);font-weight:500}
+
+    /* FORM AREA */
+    .form-area{padding:56px 64px;display:flex;align-items:flex-start;justify-content:center}
+    .form-wrap{width:100%;max-width:420px}
+
+    .form-titulo{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:var(--preto);margin-bottom:6px;letter-spacing:-0.02em}
+    .form-sub{font-size:14px;color:var(--cinza3);font-weight:300;margin-bottom:32px;line-height:1.6}
+
     .secao{display:none}.secao.ativa{display:block}
 
     .campo{margin-bottom:16px}
-    .campo label{display:block;font-size:13px;font-weight:700;color:var(--dark);margin-bottom:8px}
-    .campo input{width:100%;border:2px solid var(--borda);border-radius:12px;font-family:'Inter',sans-serif;font-size:16px;padding:14px 16px;color:var(--dark);background:var(--branco);outline:none;transition:all 0.2s;-webkit-appearance:none}
-    .campo input:focus{border-color:var(--teal);box-shadow:0 0 0 4px var(--teal-lt)}
+    .campo label{display:block;font-size:12px;font-weight:500;color:var(--cinza3);letter-spacing:0.04em;text-transform:uppercase;margin-bottom:8px}
+    .campo input{
+      width:100%;border:1px solid var(--cinza2);border-radius:var(--radius);
+      font-family:'DM Sans',sans-serif;font-size:15px;font-weight:300;
+      padding:13px 14px;color:var(--texto);background:var(--branco);
+      outline:none;transition:border-color 0.15s;appearance:none;-webkit-appearance:none;
+    }
+    .campo input:focus{border-color:var(--preto)}
+    .campo input::placeholder{color:#bbb}
+    .linha2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 
     /* NICHOS */
-    .nichos-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-    .nicho-opt{border:2px solid var(--borda);border-radius:14px;padding:14px 8px;text-align:center;cursor:pointer;transition:all 0.2s;background:var(--branco);-webkit-tap-highlight-color:transparent}
-    .nicho-opt:active{transform:scale(0.95)}
-    .nicho-opt.sel{border-color:var(--teal);background:var(--teal-lt)}
-    .nicho-opt .ico{font-size:26px;margin-bottom:6px}
-    .nicho-opt .nm{font-size:11px;font-weight:700;color:var(--dark);line-height:1.3}
-    .nicho-opt.sel .nm{color:var(--teal)}
+    .nichos-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:4px}
+    .nicho-opt{
+      border:1px solid var(--cinza2);border-radius:var(--radius);
+      padding:14px 10px;text-align:center;cursor:pointer;
+      transition:all 0.15s;background:var(--branco);
+      -webkit-tap-highlight-color:transparent;
+    }
+    .nicho-opt:hover{border-color:var(--cinza3);background:var(--cinza)}
+    .nicho-opt.sel{border-color:var(--preto);background:var(--preto)}
+    .nicho-opt .ico{font-size:20px;margin-bottom:6px;display:block}
+    .nicho-opt .nm{font-size:11px;font-weight:500;color:var(--cinza3);line-height:1.3}
+    .nicho-opt.sel .nm{color:var(--branco)}
 
-    /* PLANOS */
-    .plano-opt{border:2px solid var(--borda);border-radius:16px;padding:18px;cursor:pointer;transition:all 0.2s;margin-bottom:12px;background:var(--branco);-webkit-tap-highlight-color:transparent}
-    .plano-opt:active{transform:scale(0.98)}
-    .plano-opt.sel{border-color:var(--teal);background:var(--teal-lt)}
-    .plano-opt.popular{border-color:var(--teal);position:relative}
-    .pop-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--teal);color:white;font-size:11px;font-weight:800;padding:3px 14px;border-radius:999px;white-space:nowrap}
-    .plano-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
-    .plano-nome{font-size:17px;font-weight:800;color:var(--dark)}
-    .plano-preco{font-size:22px;font-weight:900;color:var(--teal)}
-    .plano-preco span{font-size:13px;font-weight:500;color:var(--muted)}
-    .plano-desc{font-size:13px;color:var(--muted);font-weight:500}
+    /* PLANO */
+    .plano-card{
+      border:1px solid var(--cinza2);border-radius:var(--radius);padding:24px;
+      background:var(--cinza);margin-top:4px;
+    }
+    .plano-top{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:16px}
+    .plano-nome{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--preto)}
+    .plano-preco{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--preto)}
+    .plano-preco span{font-size:14px;font-weight:400;color:var(--cinza3)}
+    .plano-lista{list-style:none;border-top:1px solid var(--cinza2);padding-top:16px}
+    .plano-lista li{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--cinza3);font-weight:300;padding:7px 0;border-bottom:1px solid var(--cinza2)}
+    .plano-lista li:last-child{border-bottom:none}
+    .chk{width:16px;height:16px;border-radius:50%;background:var(--verde-lt);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:9px;color:var(--verde);font-weight:700}
+    .plano-trial{font-size:12px;color:var(--cinza3);font-weight:300;margin-top:14px;padding-top:14px;border-top:1px solid var(--cinza2)}
 
-    .erro{color:var(--vermelho);font-size:13px;font-weight:700;padding:10px 14px;background:#fef2f2;border:1.5px solid #fecaca;border-radius:10px;margin-bottom:12px;display:none}
+    /* BOTÕES */
+    .btn-prox{
+      width:100%;padding:14px;border-radius:var(--radius);
+      background:var(--preto);color:var(--branco);
+      font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;
+      border:none;cursor:pointer;transition:background 0.15s;margin-top:20px;
+      display:flex;align-items:center;justify-content:center;gap:8px;
+    }
+    .btn-prox:hover{background:#2a2a2a}
+    .btn-prox:disabled{opacity:0.5;cursor:not-allowed}
+    .btn-volt{
+      background:none;border:none;color:var(--cinza3);font-family:'DM Sans',sans-serif;
+      font-size:14px;font-weight:400;cursor:pointer;padding:0;margin-top:14px;
+      display:block;text-align:center;width:100%;transition:color 0.15s;
+    }
+    .btn-volt:hover{color:var(--preto)}
+
+    .erro{background:#fef2f2;border:1px solid #fecaca;border-radius:var(--radius);padding:12px 14px;font-size:13px;color:var(--vermelho);font-weight:400;margin-bottom:14px;display:none}
     .erro.show{display:block}
 
+    .link-login{text-align:center;font-size:14px;color:var(--cinza3);font-weight:300;margin-top:20px}
+    .link-login a{color:var(--preto);font-weight:500;text-decoration:none;border-bottom:1px solid var(--cinza2);transition:border-color 0.15s}
+    .link-login a:hover{border-color:var(--preto)}
+
     /* SUCESSO */
-    .suc-wrap{text-align:center;padding:40px 20px}
-    .suc-ico{font-size:72px;margin-bottom:20px;animation:pop 0.5s cubic-bezier(0.34,1.56,0.64,1)}
-    @keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}
-    .suc-titulo{font-size:24px;font-weight:800;color:var(--dark);margin-bottom:8px}
-    .suc-txt{font-size:15px;color:var(--muted);line-height:1.6;margin-bottom:28px}
+    .suc-wrap{text-align:center;padding:40px 0}
+    .suc-check{width:56px;height:56px;border-radius:50%;background:var(--preto);display:flex;align-items:center;justify-content:center;margin:0 auto 24px}
+    .suc-check svg{width:24px;height:24px}
+    .suc-titulo{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--preto);margin-bottom:10px;letter-spacing:-0.02em}
+    .suc-txt{font-size:15px;color:var(--cinza3);font-weight:300;line-height:1.7;margin-bottom:28px}
 
-    .bottom-bar{position:fixed;bottom:0;left:0;right:0;background:var(--branco);border-top:1px solid var(--borda);padding:12px 16px;padding-bottom:calc(12px + var(--safe-bottom));display:flex;gap:10px;z-index:100;box-shadow:0 -4px 20px rgba(0,0,0,0.08)}
-    .btn-prox{flex:1;padding:16px;border-radius:14px;background:var(--teal);color:white;font-family:'Inter',sans-serif;font-size:16px;font-weight:800;border:none;cursor:pointer;transition:all 0.2s;-webkit-tap-highlight-color:transparent}
-    .btn-prox:active{transform:scale(0.97);background:var(--teal-esc)}
-    .btn-prox:disabled{opacity:0.6}
-    .btn-volt{padding:16px 20px;border-radius:14px;background:none;border:2px solid var(--borda);color:var(--text);font-family:'Inter',sans-serif;font-size:15px;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent}
-
-    .link-login{text-align:center;font-size:14px;color:var(--muted);margin-top:16px}
-    .link-login a{color:var(--teal);font-weight:700;text-decoration:none}
+    @media(max-width:900px){
+      header{padding:0 20px}
+      .layout{grid-template-columns:1fr}
+      .sidebar{display:none}
+      .form-area{padding:40px 20px}
+    }
   </style>
 </head>
 <body>
-<div class="header">
-  <a class="logo" href="/"><div class="logo-box">OK</div><span class="logo-txt">AGENDA OK</span></a>
-  <a href="/login" class="header-link">Entrar</a>
-</div>
 
-<div class="hero">
-  <h1>🚀 Criar conta grátis</h1>
-  <p>14 dias grátis, sem cartão de crédito</p>
-</div>
-
-<div class="steps-bar">
-  <div class="si ativo" id="si1"><div class="sc">1</div><div class="slbl">Dados</div></div>
-  <div class="sl" id="sl1"></div>
-  <div class="si" id="si2"><div class="sc">2</div><div class="slbl">Negócio</div></div>
-  <div class="sl" id="sl2"></div>
-  <div class="si" id="si3"><div class="sc">3</div><div class="slbl">Plano</div></div>
-</div>
-
-<div class="content">
-  <!-- S1 -->
-  <div class="secao ativa" id="s1">
-    <div class="erro" id="e1"></div>
-    <div class="campo"><label>👤 Nome completo</label><input type="text" id="nome" placeholder="Seu nome completo" autocomplete="name"/></div>
-    <div class="campo"><label>✉️ E-mail</label><input type="email" id="email" placeholder="seu@email.com" autocomplete="email" inputmode="email"/></div>
-    <div class="campo"><label>🔒 Senha</label><input type="password" id="senha" placeholder="Mínimo 6 caracteres" autocomplete="new-password"/></div>
-    <div class="campo"><label>🔒 Confirmar senha</label><input type="password" id="senha2" placeholder="Repita a senha" autocomplete="new-password"/></div>
-    <div class="link-login">Já tem conta? <a href="/login">Entrar</a></div>
-  </div>
-
-  <!-- S2 -->
-  <div class="secao" id="s2">
-    <div class="erro" id="e2"></div>
-    <div class="campo"><label>🏢 Nome do seu negócio</label><input type="text" id="nome_negocio" placeholder="Ex: Barbearia do João"/></div>
-    <div class="campo">
-      <label>📌 Qual é o seu nicho?</label>
-      <div class="nichos-grid" id="nichos-grid"></div>
-      <input type="hidden" id="nicho"/>
+<header>
+  <a class="logo" href="/">
+    <div class="logo-mark">
+      <svg viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12" rx="2"/><line x1="5" y1="6" x2="11" y2="6" stroke="#fafaf9" stroke-width="1.5" stroke-linecap="round"/><line x1="5" y1="9" x2="9" y2="9" stroke="#fafaf9" stroke-width="1.5" stroke-linecap="round"/></svg>
     </div>
-  </div>
+    <span class="logo-txt">AgendaOK</span>
+  </a>
+  <a href="/login" class="header-link">Já tem conta? Entrar →</a>
+</header>
 
-  <!-- S3 -->
-  <div class="secao" id="s3">
-    <div class="erro" id="e3"></div>
-    <p style="font-size:14px;color:var(--muted);font-weight:600;margin-bottom:16px">Escolha o plano ideal para você:</p>
-    <input type="hidden" id="plano" value="profissional"/>
-    <div style="position:relative;margin-top:16px">
-      <div class="plano-opt sel" style="border-color:var(--teal);background:var(--teal-lt)">
-        
-        <div class="plano-top"><div class="plano-nome">Profissional</div><div class="plano-preco">R$99<span>/mês</span></div></div>
-        <div class="plano-desc">Até 10 profissionais • WhatsApp • Relatórios</div>
+<div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+
+<div class="layout">
+  <div class="sidebar">
+    <div>
+      <div class="sidebar-step">
+        <div class="step-num">Passo 01</div>
+        <div class="step-titulo ativo" id="st1">Seus dados</div>
+        <div class="step-linha"></div>
+        <div class="step-num">Passo 02</div>
+        <div class="step-titulo" id="st2">Seu negócio</div>
+        <div class="step-linha"></div>
+        <div class="step-num">Passo 03</div>
+        <div class="step-titulo" id="st3">Plano</div>
       </div>
     </div>
-    <div class="plano-opt" onclick="selPlano('basico',this)">
-      <div class="plano-top"><div class="plano-nome">Básico</div><div class="plano-preco">R$49<span>/mês</span></div></div>
-      <div class="plano-desc">Até 2 profissionais • Agendamentos ilimitados</div>
-    </div>
-    <div class="plano-opt" onclick="selPlano('premium',this)">
-      <div class="plano-top"><div class="plano-nome">Premium</div><div class="plano-preco">R$199<span>/mês</span></div></div>
-      <div class="plano-desc">Ilimitados • Múltiplas unidades • API</div>
+    <div class="sidebar-info">
+      <strong>14 dias grátis.</strong> Sem cartão de crédito. Cancele quando quiser. Suporte incluído desde o primeiro dia.
     </div>
   </div>
 
-  <!-- S4 SUCESSO -->
-  <div class="secao" id="s4">
-    <div class="suc-wrap">
-      <div class="suc-ico">🎉</div>
-      <div class="suc-titulo">Conta criada!</div>
-      <div class="suc-txt">Enviamos seus dados de acesso e instruções de pagamento para o seu e-mail. Acesse seu painel agora!</div>
-      <button class="btn-prox" style="max-width:280px;margin:0 auto" onclick="location.href='/painel'">Ir para meu painel →</button>
+  <div class="form-area">
+    <div class="form-wrap">
+
+      <!-- S1 -->
+      <div class="secao ativa" id="s1">
+        <div class="form-titulo">Crie sua conta</div>
+        <div class="form-sub">Comece com seus dados de acesso.</div>
+        <div class="erro" id="e1"></div>
+        <div class="campo"><label>Nome completo</label><input type="text" id="nome" placeholder="Seu nome" autocomplete="name"/></div>
+        <div class="campo"><label>E-mail</label><input type="email" id="email" placeholder="seu@email.com" autocomplete="email" inputmode="email"/></div>
+        <div class="linha2">
+          <div class="campo"><label>Senha</label><input type="password" id="senha" placeholder="Mínimo 6 caracteres" autocomplete="new-password"/></div>
+          <div class="campo"><label>Confirmar senha</label><input type="password" id="senha2" placeholder="Repita a senha" autocomplete="new-password"/></div>
+        </div>
+        <button class="btn-prox" onclick="ir(2)">
+          Continuar
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="link-login">Já tem conta? <a href="/login">Entrar</a></div>
+      </div>
+
+      <!-- S2 -->
+      <div class="secao" id="s2">
+        <div class="form-titulo">Seu negócio</div>
+        <div class="form-sub">Como se chama e o que você faz?</div>
+        <div class="erro" id="e2"></div>
+        <div class="campo"><label>Nome do negócio</label><input type="text" id="nome_negocio" placeholder="Ex: Silva Advocacia"/></div>
+        <div class="campo">
+          <label>Qual é o seu segmento?</label>
+          <div class="nichos-grid" id="nichos-grid"></div>
+          <input type="hidden" id="nicho"/>
+        </div>
+        <button class="btn-prox" onclick="ir(3)">
+          Continuar
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="btn-volt" onclick="ir(1)">← Voltar</button>
+      </div>
+
+      <!-- S3 -->
+      <div class="secao" id="s3">
+        <div class="form-titulo">Plano único</div>
+        <div class="form-sub">Tudo incluso. Sem surpresas.</div>
+        <div class="erro" id="e3"></div>
+        <input type="hidden" id="plano" value="completo"/>
+        <div class="plano-card">
+          <div class="plano-top">
+            <div class="plano-nome">AgendaOK</div>
+            <div class="plano-preco">R$149<span>/mês</span></div>
+          </div>
+          <ul class="plano-lista">
+            <li><span class="chk">✓</span>Página pública de agendamento</li>
+            <li><span class="chk">✓</span>Agendamentos ilimitados</li>
+            <li><span class="chk">✓</span>Serviços com preço e duração</li>
+            <li><span class="chk">✓</span>Lembrete via WhatsApp</li>
+            <li><span class="chk">✓</span>E-mail automático de confirmação</li>
+            <li><span class="chk">✓</span>Cancelamento pelo cliente</li>
+            <li><span class="chk">✓</span>Avaliações pós-atendimento</li>
+            <li><span class="chk">✓</span>Lista de espera automática</li>
+            <li><span class="chk">✓</span>Relatório mensal</li>
+            <li><span class="chk">✓</span>QR Code exclusivo</li>
+          </ul>
+          <div class="plano-trial">14 dias grátis para testar. Sem cartão de crédito.</div>
+        </div>
+        <button class="btn-prox" id="btn-criar" onclick="criar()">
+          Criar minha conta
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="btn-volt" onclick="ir(2)">← Voltar</button>
+      </div>
+
+      <!-- SUCESSO -->
+      <div class="secao" id="s4">
+        <div class="suc-wrap">
+          <div class="suc-check">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#fafaf9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="suc-titulo">Conta criada.</div>
+          <div class="suc-txt">Enviamos seus dados de acesso e as instruções de pagamento para o seu e-mail. Acesse seu painel para começar.</div>
+          <button class="btn-prox" onclick="location.href='/painel'">Ir para o painel</button>
+        </div>
+      </div>
+
     </div>
   </div>
-</div>
-
-<div class="bottom-bar" id="bottom-bar">
-  <button class="btn-volt" id="btn-volt" style="display:none" onclick="voltar()">‹</button>
-  <button class="btn-prox" id="btn-prox" onclick="avancar()">Próximo →</button>
 </div>
 
 <script>
@@ -172,12 +268,9 @@ let passo=1;
 
 document.getElementById('nichos-grid').innerHTML=NICHOS.map(n=>`
   <div class="nicho-opt" onclick="selNicho('${n.id}',this)">
-    <div class="ico">${n.ico}</div>
-    <div class="nm">${n.nm}</div>
+    <span class="ico">${n.ico}</span>
+    <span class="nm">${n.nm}</span>
   </div>`).join('');
-
-const urlPlano=new URLSearchParams(location.search).get('plano');
-if(urlPlano) selPlano(urlPlano,null);
 
 function selNicho(id,el){
   document.querySelectorAll('.nicho-opt').forEach(e=>e.classList.remove('sel'));
@@ -185,36 +278,19 @@ function selNicho(id,el){
   document.getElementById('nicho').value=id;
 }
 
-function selPlano(id,el){
-  document.querySelectorAll('.plano-opt').forEach(e=>e.classList.remove('sel'));
-  if(el) el.classList.add('sel');
-  document.getElementById('plano').value=id;
-}
-
-function avancar(){
-  if(passo===1&&!v1()) return;
-  if(passo===2&&!v2()) return;
-  if(passo===3){criar();return;}
-  ir(passo+1);
-}
-function voltar(){if(passo>1)ir(passo-1);}
-
 function ir(n){
+  if(n===2&&!v1()) return;
+  if(n===3&&!v2()) return;
   passo=n;
   document.querySelectorAll('.secao').forEach(s=>s.classList.remove('ativa'));
   document.getElementById('s'+n).classList.add('ativa');
-  [1,2,3].forEach(i=>{
-    const el=document.getElementById('si'+i);
-    el.classList.remove('ativo','feito');
-    if(i<n) el.classList.add('feito');
-    else if(i===n) el.classList.add('ativo');
-    if(i<=2) document.getElementById('sl'+i).classList.toggle('feita',i<n);
+  // Progress
+  const pct={1:33.33,2:66.66,3:100,4:100}[n]||33.33;
+  document.getElementById('progress').style.width=pct+'%';
+  // Sidebar
+  ['st1','st2','st3'].forEach((id,i)=>{
+    document.getElementById(id).classList.toggle('ativo',i+1===n);
   });
-  document.getElementById('btn-volt').style.display=n>1&&n<4?'block':'none';
-  const btn=document.getElementById('btn-prox');
-  if(n===3){btn.textContent='Criar minha conta ✓';}
-  else if(n===4){document.getElementById('bottom-bar').style.display='none';}
-  else{btn.textContent='Próximo →';}
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
@@ -226,22 +302,22 @@ function mostrarErro(id,msg){
 
 function v1(){
   const nome=g('nome'),email=g('email'),senha=g('senha'),senha2=g('senha2');
-  if(!nome){mostrarErro('e1','Informe seu nome');return false}
-  if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){mostrarErro('e1','E-mail inválido');return false}
-  if(senha.length<6){mostrarErro('e1','Senha deve ter pelo menos 6 caracteres');return false}
-  if(senha!==senha2){mostrarErro('e1','As senhas não conferem');return false}
+  if(!nome){mostrarErro('e1','Informe seu nome.');return false}
+  if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){mostrarErro('e1','E-mail inválido.');return false}
+  if(senha.length<6){mostrarErro('e1','Senha deve ter pelo menos 6 caracteres.');return false}
+  if(senha!==senha2){mostrarErro('e1','As senhas não conferem.');return false}
   return true;
 }
 function v2(){
-  if(!g('nome_negocio')){mostrarErro('e2','Informe o nome do negócio');return false}
-  if(!g('nicho')){mostrarErro('e2','Selecione o nicho do negócio');return false}
+  if(!g('nome_negocio')){mostrarErro('e2','Informe o nome do negócio.');return false}
+  if(!g('nicho')){mostrarErro('e2','Selecione o segmento do negócio.');return false}
   return true;
 }
 function g(id){return document.getElementById(id).value.trim()}
 
 async function criar(){
-  const btn=document.getElementById('btn-prox');
-  btn.disabled=true;btn.textContent='Criando conta...';
+  const btn=document.getElementById('btn-criar');
+  btn.disabled=true;btn.innerHTML='Criando conta...';
   document.getElementById('e3').classList.remove('show');
   try{
     const r=await fetch('/auth/cadastro',{
@@ -250,11 +326,13 @@ async function criar(){
       body:JSON.stringify({nome:g('nome'),email:g('email'),senha:g('senha'),nome_negocio:g('nome_negocio'),nicho:g('nicho'),plano:g('plano')}),
     });
     const d=await r.json();
-    if(!r.ok){mostrarErro('e3',d.erro);btn.disabled=false;btn.textContent='Criar minha conta ✓';return;}
-    ir(4);
+    if(!r.ok){mostrarErro('e3',d.erro);btn.disabled=false;btn.innerHTML='Criar minha conta →';return;}
+    document.getElementById('progress').style.width='100%';
+    document.querySelectorAll('.secao').forEach(s=>s.classList.remove('ativa'));
+    document.getElementById('s4').classList.add('ativa');
   }catch(e){
     mostrarErro('e3','Erro de conexão. Tente novamente.');
-    btn.disabled=false;btn.textContent='Criar minha conta ✓';
+    btn.disabled=false;btn.innerHTML='Criar minha conta →';
   }
 }
 </script>

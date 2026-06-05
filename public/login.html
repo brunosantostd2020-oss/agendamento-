@@ -1,101 +1,164 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
-  <meta name="theme-color" content="#0d9488"/>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>Entrar — AgendaOK</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    :root{--teal:#0d9488;--teal-esc:#0a7c72;--teal-lt:#ccfbf1;--dark:#0f172a;--text:#334155;--muted:#64748b;--borda:#e2e8f0;--bg:#f8faff;--branco:#fff;--vermelho:#dc2626;--safe-bottom:env(safe-area-inset-bottom,0px)}
-    html{-webkit-tap-highlight-color:transparent}
-    body{font-family:'Inter',sans-serif;background:var(--bg);min-height:100dvh;display:flex;flex-direction:column}
+    :root{
+      --preto:#0a0a0a;--branco:#fafaf9;--cinza:#f5f4f0;
+      --cinza2:#e8e6e1;--cinza3:#6b6860;--texto:#1c1b18;--radius:4px;
+    }
+    html{height:100%}
+    body{font-family:'DM Sans',sans-serif;background:var(--branco);color:var(--texto);min-height:100vh;display:flex;flex-direction:column}
 
-    .header{background:var(--branco);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--borda)}
+    /* HEADER */
+    header{border-bottom:1px solid var(--cinza2);padding:0 48px;height:60px;display:flex;align-items:center;justify-content:space-between}
     .logo{display:flex;align-items:center;gap:10px;text-decoration:none}
-    .logo-box{width:36px;height:36px;border-radius:10px;background:var(--teal);color:white;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px}
-    .logo-txt{font-weight:800;font-size:17px;color:var(--dark)}
+    .logo-mark{width:28px;height:28px;background:var(--preto);border-radius:6px;display:flex;align-items:center;justify-content:center}
+    .logo-mark svg{width:14px;height:14px;fill:var(--branco)}
+    .logo-txt{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;color:var(--preto);letter-spacing:-0.3px}
+    .header-link{font-size:14px;color:var(--cinza3);text-decoration:none;font-weight:400;transition:color 0.15s}
+    .header-link:hover{color:var(--preto)}
 
-    .hero{background:linear-gradient(135deg,var(--teal),var(--teal-esc));padding:40px 20px;text-align:center;color:white}
-    .hero-ico{font-size:56px;margin-bottom:16px}
-    .hero h1{font-size:24px;font-weight:800;margin-bottom:6px}
-    .hero p{font-size:14px;opacity:0.9}
+    /* LAYOUT */
+    .layout{flex:1;display:grid;grid-template-columns:1fr 1fr}
 
-    .form-wrap{flex:1;padding:28px 20px;padding-bottom:calc(28px + var(--safe-bottom));display:flex;flex-direction:column;gap:0;max-width:480px;width:100%;margin:0 auto}
+    /* LADO ESQUERDO */
+    .lado-esq{
+      background:var(--preto);padding:64px 56px;
+      display:flex;flex-direction:column;justify-content:space-between;
+    }
+    .esq-top{}
+    .esq-label{font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#555;font-weight:500;margin-bottom:48px}
+    .esq-titulo{font-family:'Syne',sans-serif;font-size:clamp(32px,3vw,44px);font-weight:800;color:var(--branco);line-height:1.1;letter-spacing:-0.03em;margin-bottom:20px}
+    .esq-sub{font-size:15px;color:#666;font-weight:300;line-height:1.7;max-width:340px}
+    .esq-bottom{}
+    .esq-quote{border-left:2px solid #222;padding-left:20px;margin-top:48px}
+    .esq-quote-txt{font-size:14px;color:#888;font-weight:300;line-height:1.7;font-style:italic;margin-bottom:12px}
+    .esq-quote-autor{font-size:12px;color:#555;font-weight:400}
+
+    /* LADO DIREITO */
+    .lado-dir{
+      padding:64px 56px;display:flex;align-items:center;justify-content:center;
+      background:var(--branco);
+    }
+    .form-wrap{width:100%;max-width:380px}
+    .form-titulo{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:var(--preto);margin-bottom:6px;letter-spacing:-0.02em}
+    .form-sub{font-size:14px;color:var(--cinza3);font-weight:300;margin-bottom:36px}
 
     .campo{margin-bottom:18px}
-    .campo label{display:block;font-size:14px;font-weight:700;color:var(--dark);margin-bottom:8px}
+    .campo label{display:block;font-size:12px;font-weight:500;color:var(--cinza3);letter-spacing:0.04em;text-transform:uppercase;margin-bottom:8px}
     .campo input{
-      width:100%;border:2px solid var(--borda);border-radius:14px;
-      font-family:'Inter',sans-serif;font-size:17px;padding:16px 18px;
-      color:var(--dark);background:var(--branco);outline:none;transition:all 0.2s;
-      -webkit-appearance:none;
+      width:100%;border:1px solid var(--cinza2);border-radius:var(--radius);
+      font-family:'DM Sans',sans-serif;font-size:15px;font-weight:300;
+      padding:13px 14px;color:var(--texto);background:var(--branco);
+      outline:none;transition:border-color 0.15s;
     }
-    .campo input:focus{border-color:var(--teal);box-shadow:0 0 0 4px var(--teal-lt)}
-
-    .erro{color:var(--vermelho);font-size:14px;font-weight:700;padding:12px 16px;background:#fef2f2;border:2px solid #fecaca;border-radius:12px;margin-bottom:16px;display:none;text-align:center}
-    .erro.show{display:block}
+    .campo input:focus{border-color:var(--preto)}
+    .campo input::placeholder{color:#bbb}
 
     .btn-entrar{
-      width:100%;padding:18px;border-radius:14px;
-      background:var(--teal);color:white;
-      font-family:'Inter',sans-serif;font-size:17px;font-weight:800;
-      border:none;cursor:pointer;transition:all 0.2s;
-      -webkit-tap-highlight-color:transparent;
-      margin-top:4px;
+      width:100%;padding:14px;border-radius:var(--radius);
+      background:var(--preto);color:var(--branco);
+      font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;
+      border:none;cursor:pointer;transition:background 0.15s;margin-top:4px;
     }
-    .btn-entrar:active{transform:scale(0.97);background:var(--teal-esc)}
-    .btn-entrar:disabled{opacity:0.6}
+    .btn-entrar:hover{background:#2a2a2a}
+    .btn-entrar:disabled{opacity:0.5;cursor:not-allowed}
 
-    .link-cad{text-align:center;margin-top:24px;font-size:15px;color:var(--muted)}
-    .link-cad a{color:var(--teal);font-weight:800;text-decoration:none}
+    .divisor{display:flex;align-items:center;gap:14px;margin:20px 0}
+    .divisor-linha{flex:1;height:1px;background:var(--cinza2)}
+    .divisor-txt{font-size:12px;color:var(--cinza3);font-weight:300}
 
-    .divider{display:flex;align-items:center;gap:12px;margin:20px 0;color:var(--muted);font-size:13px}
-    .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--borda)}
+    .link-cad{text-align:center;font-size:14px;color:var(--cinza3);font-weight:300}
+    .link-cad a{color:var(--preto);font-weight:500;text-decoration:none;border-bottom:1px solid var(--cinza2);transition:border-color 0.15s}
+    .link-cad a:hover{border-color:var(--preto)}
+
+    .erro{
+      background:#fef2f2;border:1px solid #fecaca;border-radius:var(--radius);
+      padding:12px 14px;font-size:13px;color:#dc2626;font-weight:400;
+      margin-bottom:16px;display:none;
+    }
+    .erro.show{display:block}
+
+    @media(max-width:768px){
+      header{padding:0 20px}
+      .layout{grid-template-columns:1fr}
+      .lado-esq{display:none}
+      .lado-dir{padding:48px 24px}
+    }
   </style>
 </head>
 <body>
-<div class="header">
-  <a class="logo" href="/"><div class="logo-box">OK</div><span class="logo-txt">AGENDA OK</span></a>
-</div>
 
-<div class="hero">
-  <div class="hero-ico">👋</div>
-  <h1>Bem-vindo de volta!</h1>
-  <p>Entre na sua conta para gerenciar seus agendamentos</p>
-</div>
+<header>
+  <a class="logo" href="/">
+    <div class="logo-mark">
+      <svg viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12" rx="2"/><line x1="5" y1="6" x2="11" y2="6" stroke="#fafaf9" stroke-width="1.5" stroke-linecap="round"/><line x1="5" y1="9" x2="9" y2="9" stroke="#fafaf9" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </div>
+    <span class="logo-txt">AgendaOK</span>
+  </a>
+  <a href="/cadastro" class="header-link">Não tem conta? Criar agora →</a>
+</header>
 
-<div class="form-wrap">
-  <div class="erro" id="erro"></div>
-  <div class="campo">
-    <label>✉️ E-mail</label>
-    <input type="email" id="email" placeholder="seu@email.com" autocomplete="email" inputmode="email" onkeydown="if(event.key==='Enter')document.getElementById('senha').focus()"/>
+<div class="layout">
+  <div class="lado-esq">
+    <div class="esq-top">
+      <div class="esq-label">Acesso ao painel</div>
+      <div class="esq-titulo">Bem-vindo de volta.</div>
+      <div class="esq-sub">Acesse seu painel e gerencie todos os agendamentos do seu negócio em um só lugar.</div>
+    </div>
+    <div class="esq-bottom">
+      <div class="esq-quote">
+        <div class="esq-quote-txt">"Antes eu controlava tudo no caderno. Hoje minha agenda está no celular e meus clientes agendam sozinhos."</div>
+        <div class="esq-quote-autor">Ana Carvalho — Studio de Estética, Rio de Janeiro</div>
+      </div>
+    </div>
   </div>
-  <div class="campo">
-    <label>🔒 Senha</label>
-    <input type="password" id="senha" placeholder="Sua senha" autocomplete="current-password" onkeydown="if(event.key==='Enter')entrar()"/>
+
+  <div class="lado-dir">
+    <div class="form-wrap">
+      <div class="form-titulo">Entrar</div>
+      <div class="form-sub">Informe suas credenciais para acessar o painel.</div>
+
+      <div class="erro" id="erro"></div>
+
+      <div class="campo">
+        <label>E-mail</label>
+        <input type="email" id="email" placeholder="seu@email.com" autocomplete="email" inputmode="email" onkeydown="if(event.key==='Enter')document.getElementById('senha').focus()"/>
+      </div>
+      <div class="campo">
+        <label>Senha</label>
+        <input type="password" id="senha" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')entrar()"/>
+      </div>
+
+      <button class="btn-entrar" id="btn" onclick="entrar()">Entrar</button>
+
+      <div class="divisor"><div class="divisor-linha"></div><span class="divisor-txt">ou</span><div class="divisor-linha"></div></div>
+
+      <div class="link-cad">Não tem conta? <a href="/cadastro">Criar conta grátis</a></div>
+    </div>
   </div>
-  <div class="erro" id="erro2"></div>
-  <button class="btn-entrar" id="btn" onclick="entrar()">Entrar na minha conta</button>
-  <div class="divider">ou</div>
-  <div class="link-cad">Não tem conta? <a href="/cadastro">Criar conta grátis →</a></div>
 </div>
 
 <script>
-async function entrar(){
-  const email=document.getElementById('email').value.trim();
-  const senha=document.getElementById('senha').value;
-  const erro=document.getElementById('erro');
-  const btn=document.getElementById('btn');
+async function entrar() {
+  const email = document.getElementById('email').value.trim();
+  const senha = document.getElementById('senha').value;
+  const erro  = document.getElementById('erro');
+  const btn   = document.getElementById('btn');
   erro.classList.remove('show');
-  if(!email||!senha){erro.textContent='Preencha e-mail e senha';erro.classList.add('show');return;}
-  btn.disabled=true;btn.textContent='Entrando...';
-  try{
-    const r=await fetch('/auth/login',{method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,senha})});
-    const d=await r.json();
-    if(!r.ok){erro.textContent=d.erro||'Erro ao entrar';erro.classList.add('show');btn.disabled=false;btn.textContent='Entrar na minha conta';return;}
+  if (!email || !senha) { erro.textContent='Preencha e-mail e senha.'; erro.classList.add('show'); return; }
+  btn.disabled=true; btn.textContent='Entrando...';
+  try {
+    const r = await fetch('/auth/login',{method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,senha})});
+    const d = await r.json();
+    if (!r.ok) { erro.textContent=d.erro||'Erro ao entrar.'; erro.classList.add('show'); btn.disabled=false; btn.textContent='Entrar'; return; }
     window.location.replace('/painel');
-  }catch(e){erro.textContent='Erro de conexão. Tente novamente.';erro.classList.add('show');btn.disabled=false;btn.textContent='Entrar na minha conta';}
+  } catch(e) { erro.textContent='Erro de conexão. Tente novamente.'; erro.classList.add('show'); btn.disabled=false; btn.textContent='Entrar'; }
 }
 </script>
 </body>
