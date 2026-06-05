@@ -229,7 +229,32 @@
         <div class="m-campo"><label class="m-label">Cor principal do seu site</label><input class="m-input" type="color" id="cfg-cor" style="padding:4px 8px;height:42px"/></div>
         <div class="m-campo cfg-full"><label class="m-label">Horários disponíveis (separados por vírgula)</label><input class="m-input" type="text" id="cfg-horarios" placeholder="08:00,09:00,10:00..."/></div>
       </div>
-      <button class="btn-copiar" style="margin-top:8px" onclick="salvarConfig()">Salvar configurações</button>
+
+      <!-- Seção de e-mail -->
+      <div style="border-top:2px solid var(--borda);margin-top:24px;padding-top:24px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+          <span style="font-size:18px">📧</span>
+          <div>
+            <div style="font-size:15px;font-weight:700;color:var(--dark)">E-mail para confirmações</div>
+            <div style="font-size:12px;color:var(--muted)">Seus clientes receberão confirmações de agendamento pelo seu e-mail</div>
+          </div>
+        </div>
+        <div style="background:#fff7ed;border:1.5px solid #fed7aa;border-radius:10px;padding:14px;margin:16px 0">
+          <p style="margin:0;font-size:13px;color:#92400e;font-weight:600">
+            ⚠️ Use um Gmail. Acesse <strong>myaccount.google.com/apppasswords</strong> para gerar a senha de app.
+          </p>
+        </div>
+        <div class="cfg-grid">
+          <div class="m-campo"><label class="m-label">Seu Gmail</label><input class="m-input" type="email" id="cfg-email-neg" placeholder="seuemail@gmail.com"/></div>
+          <div class="m-campo"><label class="m-label">Senha de app do Gmail</label><input class="m-input" type="password" id="cfg-email-senha" placeholder="xxxx xxxx xxxx xxxx"/></div>
+        </div>
+        <div id="email-status" style="display:none;padding:10px 14px;border-radius:8px;font-size:13px;font-weight:600;margin-bottom:12px"></div>
+        <button onclick="testarEmail()" style="background:none;border:1.5px solid var(--teal);color:var(--teal);border-radius:8px;padding:8px 18px;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:16px;transition:all 0.2s" onmouseover="this.style.background='var(--teal-lt)'" onmouseout="this.style.background='none'">
+          📤 Testar envio de e-mail
+        </button>
+      </div>
+
+      <button class="btn-copiar" style="margin-top:8px;width:100%;padding:14px" onclick="salvarConfig()">💾 Salvar todas as configurações</button>
     </div>
   </div>
 </main>
@@ -413,29 +438,67 @@ async function carregarConfig() {
   try {
     const r = await fetch('/negocio/config',{credentials:'include'});
     const d = await r.json();
-    document.getElementById('cfg-nome').value = usuario?.nome_negocio||'';
-    document.getElementById('cfg-desc').value = d.descricao||'';
-    document.getElementById('cfg-tel').value  = d.telefone||'';
-    document.getElementById('cfg-cor').value  = d.cor||'#0d9488';
+    document.getElementById('cfg-nome').value     = usuario?.nome_negocio||'';
+    document.getElementById('cfg-desc').value     = d.descricao||'';
+    document.getElementById('cfg-tel').value      = d.telefone||'';
+    document.getElementById('cfg-cor').value      = d.cor||'#0d9488';
     document.getElementById('cfg-horarios').value = d.horarios||'';
+    document.getElementById('cfg-email-neg').value   = d.email_negocio||'';
+    document.getElementById('cfg-email-senha').value = d.email_senha ? '••••••••••••' : '';
   } catch(e){}
 }
 
 async function salvarConfig() {
   try {
-    const r = await fetch('/negocio/config',{method:'PATCH',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({
-      nome_negocio: document.getElementById('cfg-nome').value,
-      descricao: document.getElementById('cfg-desc').value,
-      telefone: document.getElementById('cfg-tel').value,
-      cor: document.getElementById('cfg-cor').value,
-      horarios: document.getElementById('cfg-horarios').value,
-    })});
+    const emailSenha = document.getElementById('cfg-email-senha').value;
+    const payload = {
+      nome_negocio:  document.getElementById('cfg-nome').value,
+      descricao:     document.getElementById('cfg-desc').value,
+      telefone:      document.getElementById('cfg-tel').value,
+      cor:           document.getElementById('cfg-cor').value,
+      horarios:      document.getElementById('cfg-horarios').value,
+      email_negocio: document.getElementById('cfg-email-neg').value,
+    };
+    // Só envia a senha se foi alterada (não for os pontinhos)
+    if (emailSenha && !emailSenha.startsWith('•')) {
+      payload.email_senha = emailSenha;
+    }
+    const r = await fetch('/negocio/config',{method:'PATCH',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
     if (!r.ok) throw new Error();
     toast('Configurações salvas!','ok');
     const me = await fetch('/auth/me',{credentials:'include'});
     usuario = await me.json();
     document.getElementById('sb-nome').textContent = usuario.nome_negocio;
   } catch(e){ toast('Erro ao salvar','err'); }
+}
+
+async function testarEmail() {
+  const email = document.getElementById('cfg-email-neg').value;
+  const senha = document.getElementById('cfg-email-senha').value;
+  const status = document.getElementById('email-status');
+  if (!email || !senha || senha.startsWith('•')) {
+    status.style.display='block';
+    status.style.background='#fff7ed';status.style.border='1.5px solid #fed7aa';status.style.color='#92400e';
+    status.textContent='⚠️ Preencha o e-mail e a senha de app antes de testar.';
+    return;
+  }
+  status.style.display='block';
+  status.style.background='#eff6ff';status.style.border='1.5px solid #bfdbfe';status.style.color='#1d4ed8';
+  status.textContent='📤 Enviando e-mail de teste...';
+  try {
+    const r = await fetch('/negocio/testar-email',{method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,senha})});
+    const d = await r.json();
+    if (d.sucesso) {
+      status.style.background='#f0fdf4';status.style.border='1.5px solid #bbf7d0';status.style.color='#15803d';
+      status.textContent='✅ E-mail de teste enviado com sucesso! Verifique sua caixa de entrada.';
+    } else {
+      status.style.background='#fef2f2';status.style.border='1.5px solid #fecaca';status.style.color='#dc2626';
+      status.textContent='❌ Erro: ' + (d.erro || 'Verifique as credenciais e tente novamente.');
+    }
+  } catch(e) {
+    status.style.background='#fef2f2';status.style.border='1.5px solid #fecaca';status.style.color='#dc2626';
+    status.textContent='❌ Erro de conexão. Tente novamente.';
+  }
 }
 
 function abrirModal(id,nome,status,obs) {

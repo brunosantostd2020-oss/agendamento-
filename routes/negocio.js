@@ -83,15 +83,44 @@ router.patch('/config', requireAuth, (req, res) => {
   const idx = db.usuarios.findIndex(u => u.id === req.session.userId);
   if (idx === -1) return res.status(404).json({ erro: 'Usuário não encontrado.' });
 
-  const campos = ['horarios','dias_uteis','telefone','descricao','cor','nome_negocio'];
+  const campos = ['horarios','dias_uteis','telefone','descricao','cor','email_negocio','email_senha'];
   campos.forEach(c => {
-    if (req.body[c] !== undefined) {
-      if (c === 'nome_negocio') db.usuarios[idx].nome_negocio = req.body[c];
-      else db.usuarios[idx].config[c] = req.body[c];
-    }
+    if (req.body[c] !== undefined) db.usuarios[idx].config[c] = req.body[c];
   });
+  if (req.body['nome_negocio']) db.usuarios[idx].nome_negocio = req.body['nome_negocio'];
   salvarDb(db);
   res.json({ sucesso: true });
+});
+
+// POST /negocio/testar-email
+router.post('/testar-email', requireAuth, async (req, res) => {
+  const { email, senha } = req.body;
+  if (!email || !senha) return res.status(400).json({ erro: 'E-mail e senha obrigatórios.' });
+
+  const db = lerDb();
+  const u  = db.usuarios.find(u => u.id === req.session.userId);
+  if (!u) return res.status(404).json({ erro: 'Usuário não encontrado.' });
+
+  try {
+    const nodemailer = require('nodemailer');
+    const t = nodemailer.createTransport({
+      service: 'gmail',
+      auth: { user: email, pass: senha },
+    });
+    await t.sendMail({
+      from: `"${u.nome_negocio} via AgendaOK" <${email}>`,
+      to: email,
+      subject: '✅ Teste de e-mail — AgendaOK',
+      html: `<div style="font-family:Arial;padding:32px;max-width:500px;margin:0 auto;background:#f0fdf4;border-radius:12px;border:2px solid #bbf7d0">
+        <h2 style="color:#15803d">✅ E-mail configurado com sucesso!</h2>
+        <p style="color:#334155">Seu e-mail está funcionando corretamente. Seus clientes receberão as confirmações de agendamento por este endereço.</p>
+        <p style="color:#64748b;font-size:13px">— AgendaOK</p>
+      </div>`,
+    });
+    res.json({ sucesso: true });
+  } catch(e) {
+    res.status(400).json({ sucesso: false, erro: e.message });
+  }
 });
 
 // POST /negocio/bloquear

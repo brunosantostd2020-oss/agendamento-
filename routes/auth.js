@@ -3,6 +3,7 @@ const router  = express.Router();
 const bcrypt  = require('bcryptjs');
 const { v4: uuidv4 } = require('uuid');
 const { lerDb, salvarDb } = require('../middleware/database');
+const { enviarBoasVindas, enviarInstrucoesPagamento } = require('../middleware/email');
 
 // POST /auth/cadastro
 router.post('/cadastro', async (req, res) => {
@@ -21,12 +22,11 @@ router.post('/cadastro', async (req, res) => {
   if (db.usuarios.find(u => u.email === email.toLowerCase()))
     return res.status(409).json({ erro: 'Este e-mail já está cadastrado.' });
 
-  // Gera slug único para a página pública
+  // Gera slug único
   const slugBase = nome_negocio.toLowerCase()
     .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
     .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-  let slug = slugBase;
-  let i = 1;
+  let slug = slugBase, i = 1;
   while (db.usuarios.find(u => u.slug === slug)) { slug = slugBase + '-' + i; i++; }
 
   const hash = await bcrypt.hash(senha, 10);
@@ -38,29 +38,48 @@ router.post('/cadastro', async (req, res) => {
     email: email.toLowerCase().trim(),
     senha: hash,
     nome_negocio: nome_negocio.trim(),
-    nicho,
-    plano,
-    slug,
+    nicho, plano, slug,
     ativo: true,
     criado_em: agora,
-    // Configurações padrão do negócio
     config: {
       horarios: '08:00,09:00,10:00,11:00,14:00,15:00,16:00,17:00',
       dias_uteis: '1,2,3,4,5',
       telefone: '',
       descricao: '',
       cor: '#0d9488',
+      email_negocio: '',
+      email_senha: '',
     }
   };
 
   db.usuarios.push(usuario);
   salvarDb(db);
 
+  // Sessão
   req.session.userId    = usuario.id;
   req.session.userName  = usuario.nome;
   req.session.userSlug  = usuario.slug;
   req.session.userNicho = usuario.nicho;
   req.session.isAdmin   = false;
+
+  // Envia e-mails em background (não bloqueia resposta)
+  Promise.all([
+    enviarBoasVindas({
+      nome: usuario.nome,
+      email: usuario.email,
+      senha, // envia a senha original (antes do hash)
+      nomeNegocio: usuario.nome_negocio,
+      nicho: usuario.nicho,
+      plano: usuario.plano,
+      slug: usuario.slug,
+    }),
+    enviarInstrucoesPagamento({
+      nome: usuario.nome,
+      email: usuario.email,
+      plano: usuario.plano,
+      nomeNegocio: usuario.nome_negocio,
+    }),
+  ]).catch(e => console.error('Erro emails cadastro:', e.message));
 
   res.status(201).json({ sucesso: true, slug: usuario.slug, nicho: usuario.nicho });
 });

@@ -93,16 +93,17 @@ router.post('/:slug/agendar', async (req, res) => {
 
   salvarDb(db);
 
-  // Envia e-mail de confirmação (não bloqueia a resposta)
+  // Envia e-mail de confirmação usando o e-mail do negócio
   enviarConfirmacao({
-    nomeCliente:  nome.trim(),
-    emailCliente: email.trim().toLowerCase(),
-    nomeNegocio:  u.nome_negocio,
-    nicho:        u.nicho,
-    data,
-    horario,
-    servico:      servico || '',
-    corNegocio:   u.config.cor || '#0d9488',
+    nomeCliente:       nome.trim(),
+    emailCliente:      email.trim().toLowerCase(),
+    nomeNegocio:       u.nome_negocio,
+    nicho:             u.nicho,
+    data, horario,
+    servico:           servico || '',
+    corNegocio:        u.config.cor || '#0d9488',
+    emailNegocio:      u.config.email_negocio || '',
+    senhaEmailNegocio: u.config.email_senha || '',
   }).catch(e => console.error('Erro email:', e.message));
 
   res.status(201).json({ sucesso: true, mensagem: 'Agendamento realizado com sucesso!' });
