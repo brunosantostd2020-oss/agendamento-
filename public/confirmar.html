@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+  <meta name="theme-color" content="#0a0a0a" id="theme-color"/>
+  <title>Confirmar Agendamento</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --cor:#0a0a0a;--branco:#fff;--bg:#fafaf9;
+      --cinza:#f5f4f0;--cinza2:#e8e6e1;--muted:#6b6860;--texto:#1c1b18;
+      --verde:#16a34a;--vermelho:#dc2626;
+      --r:6px;--sb:env(safe-area-inset-bottom,0px);--st:env(safe-area-inset-top,0px);
+    }
+    html{-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
+    body{
+      font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+      background:var(--bg);color:var(--texto);
+      min-height:100dvh;display:flex;flex-direction:column;
+      -webkit-font-smoothing:antialiased;
+    }
+
+    /* HEADER */
+    .hdr{
+      background:var(--cor);
+      padding:12px 20px;
+      padding-top:calc(12px + var(--st));
+      min-height:calc(56px + var(--st));
+      display:flex;align-items:flex-end;justify-content:space-between;padding-bottom:12px;
+    }
+    .hdr-logo{display:flex;align-items:center;gap:8px}
+    .hdr-logo-m{width:26px;height:26px;background:rgba(255,255,255,0.15);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:14px}
+    .hdr-nome{font-size:15px;font-weight:700;color:#fff;letter-spacing:-0.2px}
+    .hdr-badge{font-size:10px;color:rgba(255,255,255,0.45);font-weight:500;letter-spacing:0.06em;text-transform:uppercase}
+
+    /* CONTENT */
+    .content{flex:1;padding:28px 20px calc(28px + var(--sb));max-width:480px;margin:0 auto;width:100%;display:flex;flex-direction:column;gap:16px}
+
+    /* CARD DE AGENDAMENTO */
+    .ag-card{background:var(--branco);border:1.5px solid var(--cinza2);border-radius:var(--r);overflow:hidden}
+    .ag-card-hdr{background:var(--cor);padding:16px 18px}
+    .ag-card-lbl{font-size:10px;font-weight:600;color:rgba(255,255,255,0.5);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:3px}
+    .ag-card-nome{font-size:20px;font-weight:800;color:#fff;letter-spacing:-0.3px}
+    .ag-card-body{padding:4px 0}
+    .ag-linha{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;border-bottom:1px solid var(--cinza);font-size:14px;gap:12px}
+    .ag-linha:last-child{border-bottom:none}
+    .ag-k{font-size:12px;font-weight:500;color:var(--muted);flex-shrink:0}
+    .ag-v{font-weight:700;color:var(--texto);text-align:right}
+    .ag-preco{font-size:20px;font-weight:900;color:var(--cor);letter-spacing:-0.5px}
+
+    /* STATUS BADGE */
+    .status-wrap{text-align:center;padding:20px}
+    .badge{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:999px;font-size:13px;font-weight:700;letter-spacing:0.02em}
+    .b-pendente{background:#fff7ed;color:#ea580c;border:1.5px solid #fed7aa}
+    .b-confirmado{background:#f0fdf4;color:var(--verde);border:1.5px solid #bbf7d0}
+    .b-cancelado{background:#fef2f2;color:var(--vermelho);border:1.5px solid #fecaca}
+
+    /* CONTATO CLIENTE */
+    .contato-card{background:var(--branco);border:1.5px solid var(--cinza2);border-radius:var(--r);padding:16px}
+    .contato-titulo{font-size:11px;font-weight:600;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:14px}
+    .contato-linha{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+    .contato-info{font-size:14px;font-weight:600;color:var(--texto)}
+    .btn-wpp-cliente{display:inline-flex;align-items:center;gap:8px;background:#16a34a;color:#fff;border:none;border-radius:var(--r);padding:10px 16px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;transition:opacity 0.15s;-webkit-tap-highlight-color:transparent}
+    .btn-wpp-cliente:active{opacity:0.8}
+
+    /* BOTÕES DE AÇÃO */
+    .acoes{display:flex;flex-direction:column;gap:10px}
+    .btn-confirmar{
+      width:100%;padding:18px;border-radius:var(--r);
+      background:var(--verde);color:#fff;
+      font-family:'Inter',sans-serif;font-size:17px;font-weight:700;
+      border:none;cursor:pointer;letter-spacing:-0.2px;
+      display:flex;align-items:center;justify-content:center;gap:10px;
+      transition:opacity 0.15s;-webkit-tap-highlight-color:transparent;
+    }
+    .btn-confirmar:active{opacity:0.8}
+    .btn-confirmar:disabled{opacity:0.4;cursor:not-allowed}
+    .btn-cancelar{
+      width:100%;padding:16px;border-radius:var(--r);
+      background:none;border:1.5px solid var(--cinza2);
+      color:var(--muted);font-family:'Inter',sans-serif;
+      font-size:15px;font-weight:500;cursor:pointer;
+      transition:all 0.15s;-webkit-tap-highlight-color:transparent;
+    }
+    .btn-cancelar:active{background:var(--cinza)}
+    .btn-cancelar:hover{border-color:var(--vermelho);color:var(--vermelho)}
+
+    /* RESULTADO */
+    .resultado{text-align:center;padding:32px 20px;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center}
+    .resultado-ico{width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;animation:pop 0.4s cubic-bezier(0.34,1.56,0.64,1)}
+    @keyframes pop{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+    .resultado-titulo{font-size:22px;font-weight:800;color:var(--texto);letter-spacing:-0.4px;margin-bottom:8px}
+    .resultado-sub{font-size:14px;color:var(--muted);font-weight:400;line-height:1.6;max-width:280px;margin:0 auto 24px}
+    .btn-painel{display:inline-flex;align-items:center;gap:8px;background:var(--cor);color:#fff;border:none;border-radius:var(--r);padding:14px 24px;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;cursor:pointer;text-decoration:none;-webkit-tap-highlight-color:transparent}
+
+    /* LOADING */
+    .loading{flex:1;display:flex;align-items:center;justify-content:center;padding:40px}
+    .loading-txt{font-size:14px;color:var(--muted);font-weight:400}
+  </style>
+</head>
+<body>
+
+<div class="hdr" id="hdr">
+  <div class="hdr-logo">
+    <div class="hdr-logo-m">📅</div>
+    <div>
+      <div class="hdr-nome" id="hdr-nome">AgendaOK</div>
+      <div class="hdr-badge">Confirmação de agendamento</div>
+    </div>
+  </div>
+</div>
+
+<div id="view-loading" class="loading">
+  <div class="loading-txt">Carregando...</div>
+</div>
+
+<div id="view-main" style="display:none;flex:1;flex-direction:column">
+  <div class="content">
+
+    <!-- STATUS ATUAL -->
+    <div class="status-wrap" id="status-wrap"></div>
+
+    <!-- CARD DO AGENDAMENTO -->
+    <div class="ag-card">
+      <div class="ag-card-hdr" id="ag-hdr">
+        <div class="ag-card-lbl">Novo agendamento</div>
+        <div class="ag-card-nome" id="ag-nome"></div>
+      </div>
+      <div class="ag-card-body" id="ag-body"></div>
+    </div>
+
+    <!-- CONTATO DO CLIENTE -->
+    <div class="contato-card" id="contato-card" style="display:none">
+      <div class="contato-titulo">Contato do cliente</div>
+      <div class="contato-linha">
+        <div class="contato-info" id="contato-tel"></div>
+        <a class="btn-wpp-cliente" id="btn-wpp-cliente" href="#" target="_blank">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.121.555 4.112 1.528 5.836L0 24l6.336-1.508A11.946 11.946 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.003-1.368l-.36-.213-3.76.895.952-3.655-.234-.374A9.786 9.786 0 012.182 12C2.182 6.592 6.592 2.182 12 2.182S21.818 6.592 21.818 12 17.408 21.818 12 21.818z"/></svg>
+          WhatsApp
+        </a>
+      </div>
+    </div>
+
+    <!-- AÇÕES -->
+    <div class="acoes" id="acoes">
+      <button class="btn-confirmar" id="btn-confirmar" onclick="confirmar()">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 9.5l4.5 4.5 7.5-9" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Confirmar agendamento
+      </button>
+      <button class="btn-cancelar" id="btn-cancelar" onclick="cancelar()">
+        Recusar / Cancelar agendamento
+      </button>
+    </div>
+
+    <!-- AVISO -->
+    <p style="font-size:11px;color:var(--muted);text-align:center;line-height:1.6;font-weight:400">
+      Ao confirmar, o cliente receberá uma notificação automática. Esta ação atualiza o status no sistema imediatamente.
+    </p>
+
+  </div>
+</div>
+
+<div id="view-resultado" style="display:none">
+  <div class="resultado">
+    <div class="resultado-ico" id="res-ico"></div>
+    <div class="resultado-titulo" id="res-titulo"></div>
+    <div class="resultado-sub" id="res-sub"></div>
+    <a href="/painel" class="btn-painel">Ir para o painel →</a>
+  </div>
+</div>
+
+<script>
+const token = location.pathname.split('/').pop();
+let agendamento = null;
+
+async function init() {
+  try {
+    const r = await fetch('/extras/confirmar/' + token);
+    const d = await r.json();
+
+    if (!r.ok) {
+      mostrarErro(d.erro || 'Link inválido.');
+      return;
+    }
+
+    agendamento = d;
+
+    // Aplica cor do negócio
+    const cor = d.cor || '#0a0a0a';
+    document.documentElement.style.setProperty('--cor', cor);
+    document.getElementById('theme-color').setAttribute('content', cor);
+    document.getElementById('hdr').style.background = cor;
+    document.getElementById('hdr-nome').textContent = d.negocio;
+    document.getElementById('ag-hdr').style.background = cor;
+
+    // Nome do cliente
+    document.getElementById('ag-nome').textContent = d.nome;
+
+    // Detalhes
+    const [ano, mes, dia] = d.data.split('-');
+    const dt = new Date(d.data + 'T12:00:00');
+    const dias = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+    let bodyHtml = `
+      <div class="ag-linha"><span class="ag-k">Data</span><span class="ag-v">${dias[dt.getDay()]}, ${dia}/${mes}/${ano}</span></div>
+      <div class="ag-linha"><span class="ag-k">Horário</span><span class="ag-v">${d.horario}</span></div>
+    `;
+    if (d.servico) bodyHtml += `<div class="ag-linha"><span class="ag-k">Serviço</span><span class="ag-v">${d.servico}</span></div>`;
+    if (d.preco)   bodyHtml += `<div class="ag-linha"><span class="ag-k">Valor</span><span class="ag-v ag-preco">R$${parseFloat(d.preco).toFixed(2).replace('.',',')}</span></div>`;
+    document.getElementById('ag-body').innerHTML = bodyHtml;
+
+    // Status atual
+    const statusMap = {
+      pendente:   '<span class="badge b-pendente">⏳ Pendente — aguarda sua confirmação</span>',
+      confirmado: '<span class="badge b-confirmado">✅ Já confirmado</span>',
+      cancelado:  '<span class="badge b-cancelado">❌ Cancelado</span>',
+    };
+    document.getElementById('status-wrap').innerHTML = statusMap[d.status] || '';
+
+    // Se já processado, esconde botões
+    if (d.status !== 'pendente') {
+      document.getElementById('acoes').style.display = 'none';
+    }
+
+    // Contato do cliente
+    if (d.telefone) {
+      let num = d.telefone.replace(/\D/g,'');
+      if (num.length <= 11) num = '55' + num;
+      const msg = encodeURIComponent(
+        `Olá ${d.nome}! Sua consulta em ${d.negocio} está ${d.status === 'confirmado' ? 'confirmada' : 'registrada'} para ${dia}/${mes}/${ano} às ${d.horario}. Até lá!`
+      );
+      document.getElementById('contato-card').style.display = 'block';
+      document.getElementById('contato-tel').textContent = d.telefone;
+      document.getElementById('btn-wpp-cliente').href = `https://wa.me/${num}?text=${msg}`;
+    }
+
+    document.getElementById('view-loading').style.display = 'none';
+    document.getElementById('view-main').style.display = 'flex';
+
+  } catch(e) {
+    mostrarErro('Erro ao carregar. Tente novamente.');
+  }
+}
+
+async function confirmar() {
+  const btn = document.getElementById('btn-confirmar');
+  const btnC = document.getElementById('btn-cancelar');
+  btn.disabled = true;
+  btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="white" stroke-width="2" opacity="0.3"/><path d="M12 6v6l4 2" stroke="white" stroke-width="2" stroke-linecap="round"/></svg> Confirmando...';
+  btnC.disabled = true;
+
+  try {
+    const r = await fetch('/extras/confirmar/' + token, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ acao: 'confirmado' }),
+    });
+    const d = await r.json();
+
+    if (!r.ok) throw new Error(d.erro || 'Erro');
+
+    mostrarResultado('confirmado', d.ja_processado);
+  } catch(e) {
+    btn.disabled = false;
+    btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 9.5l4.5 4.5 7.5-9" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Confirmar agendamento';
+    btnC.disabled = false;
+    alert('Erro ao confirmar. Tente novamente.');
+  }
+}
+
+async function cancelar() {
+  if (!confirm('Tem certeza que deseja cancelar este agendamento?')) return;
+
+  const btnC = document.getElementById('btn-cancelar');
+  const btnCF = document.getElementById('btn-confirmar');
+  btnC.disabled = true;
+  btnC.textContent = 'Cancelando...';
+  btnCF.disabled = true;
+
+  try {
+    const r = await fetch('/extras/confirmar/' + token, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ acao: 'cancelado' }),
+    });
+    const d = await r.json();
+
+    if (!r.ok) throw new Error(d.erro || 'Erro');
+
+    mostrarResultado('cancelado', d.ja_processado);
+  } catch(e) {
+    btnC.disabled = false;
+    btnC.textContent = 'Recusar / Cancelar agendamento';
+    btnCF.disabled = false;
+    alert('Erro. Tente novamente.');
+  }
+}
+
+function mostrarResultado(status, jaProcessado) {
+  document.getElementById('view-main').style.display = 'none';
+  document.getElementById('view-resultado').style.display = 'block';
+
+  const ico = document.getElementById('res-ico');
+  const titulo = document.getElementById('res-titulo');
+  const sub = document.getElementById('res-sub');
+
+  if (status === 'confirmado') {
+    ico.style.background = '#16a34a';
+    ico.innerHTML = '<svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M7 17l6 6 12-12" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    titulo.textContent = jaProcessado ? 'Já estava confirmado.' : 'Confirmado!';
+    sub.textContent = jaProcessado
+      ? 'Este agendamento já havia sido confirmado anteriormente.'
+      : `O agendamento de ${agendamento?.nome} está confirmado. O status foi atualizado automaticamente no sistema.`;
+  } else {
+    ico.style.background = '#dc2626';
+    ico.innerHTML = '<svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M10 10l12 12M22 10l-12 12" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg>';
+    titulo.textContent = 'Agendamento cancelado.';
+    sub.textContent = 'O agendamento foi cancelado e o horário foi liberado para outros clientes.';
+  }
+}
+
+function mostrarErro(msg) {
+  document.getElementById('view-loading').innerHTML = `
+    <div style="text-align:center;padding:32px 20px">
+      <div style="font-size:48px;margin-bottom:16px">⚠️</div>
+      <div style="font-size:18px;font-weight:700;color:var(--texto);margin-bottom:8px">Link inválido</div>
+      <div style="font-size:14px;color:var(--muted)">${msg}</div>
+      <a href="/painel" style="display:inline-block;margin-top:24px;padding:12px 24px;background:var(--cor);color:#fff;border-radius:var(--r);text-decoration:none;font-size:14px;font-weight:600">Ir para o painel</a>
+    </div>`;
+}
+
+init();
+</script>
+</body>
+</html>

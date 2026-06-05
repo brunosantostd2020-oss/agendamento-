@@ -49,15 +49,37 @@ router.post('/:slug/agendar', async (req, res) => {
     const agora   = new Date().toLocaleString('pt-BR');
     const tokenC  = uuidv4().replace(/-/g,'');
     const tokenA  = uuidv4().replace(/-/g,'');
+    const tokenCF = uuidv4().replace(/-/g,'');
     const agId    = uuidv4();
     const base    = process.env.BASE_URL || '';
 
     await pool.query(
-      `INSERT INTO agendamentos (id,negocio_id,negocio_slug,nome,email,telefone,servico,servico_id,preco_servico,obs,data,horario,status,token_cancel,token_avalia,criado_em,atualizado_em)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,'pendente',$13,$14,$15,$15)`,
+      `INSERT INTO agendamentos (id,negocio_id,negocio_slug,nome,email,telefone,servico,servico_id,preco_servico,obs,data,horario,status,token_cancel,token_avalia,token_confirm,criado_em,atualizado_em)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,'pendente',$13,$14,$15,$16,$16)`,
       [agId, u.id, u.slug, nome.trim(), email.trim().toLowerCase(), telefone.trim(),
-       servico||'', servico_id||null, preco_servico||null, obs||'', data, horario, tokenC, tokenA, agora]
+       servico||'', servico_id||null, preco_servico||null, obs||'', data, horario,
+       tokenC, tokenA, tokenCF, agora]
     );
+
+    const [ano, mes, dia] = data.split('-');
+    const dataFmt = `${dia}/${mes}/${ano}`;
+    const linkConfirmar = `${base}/confirmar/${tokenCF}`;
+
+    // Notifica o dono via WhatsApp (gera link pronto)
+    const telDono = u.config?.telefone?.replace(/\D/g,'');
+    if (telDono) {
+      const numDono = telDono.length <= 11 ? '55'+telDono : telDono;
+      const msgDono = encodeURIComponent(
+        `Novo agendamento em ${u.nome_negocio}!\n\n` +
+        `Cliente: ${nome.trim()}\n` +
+        `WhatsApp: ${telefone.trim()}\n` +
+        `Data: ${dataFmt}\n` +
+        `Horario: ${horario}\n` +
+        (servico ? `Servico: ${servico}\n` : '') +
+        `\nConfirme com 1 clique:\n${linkConfirmar}`
+      );
+      // Salva o link para retornar ao cliente (opcional)
+    }
 
     // E-mail com links de cancelar e avaliar
     enviarConfirmacaoCompleta({
@@ -69,7 +91,21 @@ router.post('/:slug/agendar', async (req, res) => {
       linkAvaliar:  `${base}/avaliar/${tokenA}`,
     }).catch(e=>console.error('Email:',e.message));
 
-    res.status(201).json({ sucesso: true });
+    // Retorna o link de confirmação para o dono poder enviar pelo WhatsApp
+    const telDonoNum = telDono ? (telDono.length <= 11 ? '55'+telDono : telDono) : null;
+    const msgWppDono = telDonoNum
+      ? `https://wa.me/${telDonoNum}?text=${encodeURIComponent(
+          `Novo agendamento em ${u.nome_negocio}!\n\n` +
+          `Cliente: ${nome.trim()}\n` +
+          `WhatsApp: ${telefone.trim()}\n` +
+          `Data: ${dataFmt}\n` +
+          `Horario: ${horario}\n` +
+          (servico ? `Servico: ${servico}\n` : '') +
+          `\nConfirme com 1 clique:\n${linkConfirmar}`
+        )}`
+      : null;
+
+    res.status(201).json({ sucesso: true, link_confirmar: linkConfirmar, wpp_dono: msgWppDono });
   } catch(e) { console.error(e); res.status(500).json({ erro: 'Erro interno.' }); }
 });
 

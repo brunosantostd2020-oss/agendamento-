@@ -171,3 +171,16 @@ async function initTrial() {
 }
 
 module.exports = { pool, initDb, initServicos, initColunas, initExtras, initTrial };
+
+async function initTokenConfirm() {
+  const client = await pool.connect();
+  try {
+    await client.query(`
+      ALTER TABLE agendamentos ADD COLUMN IF NOT EXISTS token_confirm TEXT DEFAULT '';
+    `);
+    console.log('✅ Token confirm OK!');
+  } catch(e) { console.error('Token confirm:', e.message); }
+  finally { client.release(); }
+}
+
+module.exports = { pool, initDb, initServicos, initColunas, initExtras, initTrial, initTokenConfirm };

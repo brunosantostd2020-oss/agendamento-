@@ -557,13 +557,21 @@ function badgeTxt(s){
   return{pendente:'Pendente',confirmado:'Confirmado',cancelado:'Cancelado',concluido:'Concluído',reagendado:'Reagendado'}[s]||s;
 }
 
-function wpp(tel,nome,data,horario,servico,preco){
+function wpp(tel,nome,data,horario,servico,preco,tokenConfirm){
   let num=tel.replace(/\D/g,'');
   if(num.length<=11) num='55'+num;
   const[ano,mes,dia]=data.split('-');
   let linhaServ='';
   if(servico) linhaServ='\nServico: '+servico+(preco?' - R$ '+parseFloat(preco).toFixed(2).replace('.',','):'');
-  const msg=encodeURIComponent('Prezado(a) '+nome+',\n\nEntramos em contato para confirmar o seu agendamento em '+usuario?.nome_negocio+'.\n\nData: '+dia+'/'+mes+'/'+ano+'\nHorario: '+horario+linhaServ+'\n\nPor favor, confirme sua presenca respondendo esta mensagem.\n\nAtenciosamente,\n'+usuario?.nome_negocio);
+  const linkConfirmar=tokenConfirm?'\n\nConfirme com 1 clique:\n'+location.origin+'/confirmar/'+tokenConfirm:'';
+  const msg=encodeURIComponent(
+    'Novo agendamento em '+usuario?.nome_negocio+'!\n\n'+
+    'Cliente: '+nome+'\n'+
+    'WhatsApp: '+tel+'\n'+
+    'Data: '+dia+'/'+mes+'/'+ano+'\n'+
+    'Horario: '+horario+linhaServ+
+    linkConfirmar
+  );
   window.open('https://wa.me/'+num+'?text='+msg,'_blank');
 }
 
@@ -591,7 +599,7 @@ async function carregarAg(status=filtroAtual){
         <div class="ag-bottom">
           <span class="badge b-${a.status}">${badgeTxt(a.status)}</span>
           <div class="ag-acts">
-            ${a.telefone?`<button class="ac-btn wpp" onclick="wpp('${esc(a.telefone)}','${esc(a.nome)}','${a.data}','${a.horario}','${esc(a.servico)}','${a.preco_servico||''}')">WhatsApp</button>`:''}
+            ${a.telefone?`<button class="ac-btn wpp" onclick="wpp('${esc(a.telefone)}','${esc(a.nome)}','${a.data}','${a.horario}','${esc(a.servico)}','${a.preco_servico||''}','${a.token_confirm||''}')">WhatsApp</button>`:''}
             <button class="ac-btn" onclick="abrirModalAg('${a.id}','${esc(a.nome)}','${a.data}','${a.horario}','${a.status}',\`${esc(a.obs)}\`)">Editar</button>
             <button class="ac-btn danger" onclick="excluirAg('${a.id}')">Excluir</button>
           </div>
@@ -625,7 +633,7 @@ async function carregarHoje(){
           <div class="hoje-sub">${a.telefone}${a.servico?' · '+a.servico:''}${preco}</div>
           <div class="hoje-acts">
             <span class="badge b-${a.status}">${badgeTxt(a.status)}</span>
-            ${a.telefone?`<button class="ac-btn wpp" onclick="wpp('${esc(a.telefone)}','${esc(a.nome)}','${a.data}','${a.horario}','${esc(a.servico)}','${a.preco_servico||''}')">WhatsApp</button>`:''}
+            ${a.telefone?`<button class="ac-btn wpp" onclick="wpp('${esc(a.telefone)}','${esc(a.nome)}','${a.data}','${a.horario}','${esc(a.servico)}','${a.preco_servico||''}','${a.token_confirm||''}')">WhatsApp</button>`:''}
             <button class="ac-btn" onclick="abrirModalAg('${a.id}','${esc(a.nome)}','${a.data}','${a.horario}','${a.status}',\`${esc(a.obs)}\`)">Editar</button>
             <button class="ac-btn danger" onclick="cancelarAg('${a.id}')">Cancelar</button>
           </div>

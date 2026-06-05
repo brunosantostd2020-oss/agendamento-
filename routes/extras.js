@@ -5,6 +5,51 @@ const { pool } = require('../middleware/database');
 const { requireAuth } = require('../middleware/auth');
 const nodemailer = require('nodemailer');
 
+// ── CONFIRMAÇÃO PELO DONO ─────────────────────────────────────
+
+// GET /extras/confirmar/:token
+router.get('/confirmar/:token', async (req, res) => {
+  try {
+    const r = await pool.query(
+      `SELECT a.*, u.nome_negocio, u.config FROM agendamentos a
+       JOIN usuarios u ON a.negocio_id = u.id
+       WHERE a.token_confirm = $1`,
+      [req.params.token]
+    );
+    if (!r.rows.length) return res.status(404).json({ erro: 'Link inválido ou expirado.' });
+    const a = r.rows[0];
+    res.json({
+      id: a.id, nome: a.nome, telefone: a.telefone,
+      data: a.data, horario: a.horario,
+      servico: a.servico || '', preco: a.preco_servico,
+      status: a.status, negocio: a.nome_negocio,
+      cor: a.config?.cor || '#0a0a0a',
+    });
+  } catch(e) { res.status(500).json({ erro: e.message }); }
+});
+
+// POST /extras/confirmar/:token
+router.post('/confirmar/:token', async (req, res) => {
+  const { acao } = req.body; // 'confirmado' ou 'cancelado'
+  const statusValidos = ['confirmado', 'cancelado'];
+  if (!statusValidos.includes(acao)) return res.status(400).json({ erro: 'Ação inválida.' });
+  try {
+    const r = await pool.query(
+      'SELECT * FROM agendamentos WHERE token_confirm = $1', [req.params.token]
+    );
+    if (!r.rows.length) return res.status(404).json({ erro: 'Link inválido.' });
+    const a = r.rows[0];
+    if (a.status !== 'pendente') {
+      return res.json({ sucesso: true, ja_processado: true, status: a.status });
+    }
+    await pool.query(
+      `UPDATE agendamentos SET status=$1, atualizado_em=$2 WHERE token_confirm=$3`,
+      [acao, new Date().toLocaleString('pt-BR'), req.params.token]
+    );
+    res.json({ sucesso: true, status: acao });
+  } catch(e) { res.status(500).json({ erro: e.message }); }
+});
+
 // ── CANCELAMENTO ─────────────────────────────────────────────
 
 // GET /extras/cancelar/:token — verifica token
