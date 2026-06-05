@@ -3,495 +3,1089 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <meta name="theme-color" content="#0d9488"/>
-  <title>AgendaOK — Agendamento online para o seu negócio</title>
-  <meta name="description" content="Plataforma de agendamento online para salões, clínicas, barbearias, consultórios e muito mais. Comece grátis por 14 dias."/>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <meta name="theme-color" content="#0a0a0a"/>
+  <title>AgendaOK — Agendamento que funciona de verdade</title>
+  <meta name="description" content="Plataforma de agendamento online para barbearias, clínicas, salões e qualquer negócio que trabalha com horários."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
   <style>
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    :root{
-      --teal:#0d9488;--teal-esc:#0a7c72;--teal-lt:#ccfbf1;--teal-md:#5eead4;
-      --dark:#0f172a;--text:#334155;--muted:#64748b;--borda:#e2e8f0;
-      --bg:#f8faff;--branco:#fff;--radius:16px;
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --preto: #0a0a0a;
+      --branco: #fafaf9;
+      --cinza: #f5f4f0;
+      --cinza2: #e8e6e1;
+      --cinza3: #6b6860;
+      --verde: #1a7a5e;
+      --verde-lt: #e8f4f0;
+      --texto: #1c1b18;
+      --radius: 4px;
     }
-    html{scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
-    body{font-family:'Inter',sans-serif;background:var(--branco);color:var(--dark);overflow-x:hidden}
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--branco);
+      color: var(--texto);
+      overflow-x: hidden;
+    }
 
     /* ── HEADER ── */
-    header{
-      background:rgba(255,255,255,0.95);backdrop-filter:blur(12px);
-      border-bottom:1px solid var(--borda);
-      padding:0 48px;height:68px;
-      display:flex;align-items:center;justify-content:space-between;
-      position:sticky;top:0;z-index:100;
+    header {
+      border-bottom: 1px solid var(--cinza2);
+      padding: 0 48px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--branco);
     }
-    .logo{display:flex;align-items:center;gap:10px;text-decoration:none}
-    .logo-box{width:38px;height:38px;border-radius:10px;background:var(--teal);color:white;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:15px;letter-spacing:-0.5px}
-    .logo-txt{font-weight:900;font-size:19px;color:var(--dark);letter-spacing:-0.5px}
-    nav{display:flex;align-items:center;gap:32px}
-    nav a{text-decoration:none;color:var(--text);font-size:15px;font-weight:500;transition:color 0.2s}
-    nav a:hover{color:var(--teal)}
-    .nav-btns{display:flex;align-items:center;gap:10px}
-    .btn-ghost{padding:9px 18px;border-radius:10px;border:none;background:none;color:var(--text);font-family:'Inter',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all 0.2s;text-decoration:none}
-    .btn-ghost:hover{background:var(--bg);color:var(--dark)}
-    .btn-teal{padding:10px 22px;border-radius:10px;border:none;background:var(--teal);color:white;font-family:'Inter',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.2s;text-decoration:none}
-    .btn-teal:hover{background:var(--teal-esc);transform:translateY(-1px);box-shadow:0 4px 16px rgba(13,148,136,0.3)}
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .logo-mark {
+      width: 28px;
+      height: 28px;
+      background: var(--preto);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-mark svg {
+      width: 14px;
+      height: 14px;
+      fill: var(--branco);
+    }
+
+    .logo-txt {
+      font-family: 'Syne', sans-serif;
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--preto);
+      letter-spacing: -0.3px;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+
+    nav a {
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--cinza3);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    nav a:hover { color: var(--preto); }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-link {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--cinza3);
+      text-decoration: none;
+      padding: 7px 14px;
+      transition: color 0.15s;
+    }
+
+    .btn-link:hover { color: var(--preto); }
+
+    .btn-cta {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--branco);
+      background: var(--preto);
+      border: none;
+      border-radius: var(--radius);
+      padding: 9px 20px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.15s;
+      font-family: 'DM Sans', sans-serif;
+      display: inline-block;
+    }
+
+    .btn-cta:hover { background: #2a2a2a; }
 
     /* ── HERO ── */
-    .hero{
-      padding:80px 48px 0;
-      text-align:center;
-      background:linear-gradient(180deg,#f0fdfa 0%,var(--branco) 100%);
-      position:relative;overflow:hidden;
+    .hero {
+      padding: 120px 48px 100px;
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
     }
-    .hero::before{
-      content:'';position:absolute;top:-200px;left:50%;transform:translateX(-50%);
-      width:800px;height:800px;border-radius:50%;
-      background:radial-gradient(circle,rgba(13,148,136,0.08) 0%,transparent 70%);
-      pointer-events:none;
-    }
-    .hero-badge{
-      display:inline-flex;align-items:center;gap:8px;
-      background:var(--teal-lt);border:1px solid var(--teal-md);
-      border-radius:999px;padding:7px 18px;
-      font-size:13px;font-weight:700;color:var(--teal);
-      margin-bottom:28px;
-    }
-    .hero-badge-dot{width:7px;height:7px;border-radius:50%;background:var(--teal);animation:pulse 2s infinite}
-    @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(1.3)}}
-    .hero h1{
-      font-size:clamp(38px,6vw,72px);font-weight:900;
-      line-height:1.08;letter-spacing:-0.03em;color:var(--dark);
-      margin-bottom:12px;
-    }
-    .hero h1 span{
-      color:var(--teal);
-      background:linear-gradient(135deg,#0d9488,#0891b2);
-      -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-    }
-    .hero-sub{
-      font-size:18px;color:var(--muted);font-weight:400;
-      max-width:560px;margin:16px auto 40px;line-height:1.7;
-    }
-    .hero-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:64px}
-    .btn-hero{
-      padding:16px 32px;border-radius:14px;
-      font-family:'Inter',sans-serif;font-size:16px;font-weight:700;
-      cursor:pointer;transition:all 0.25s;text-decoration:none;
-      display:inline-flex;align-items:center;gap:8px;border:none;
-    }
-    .btn-hero-teal{background:var(--teal);color:white;box-shadow:0 4px 20px rgba(13,148,136,0.35)}
-    .btn-hero-teal:hover{background:var(--teal-esc);transform:translateY(-3px);box-shadow:0 10px 32px rgba(13,148,136,0.4)}
-    .btn-hero-out{background:var(--branco);color:var(--dark);border:2px solid var(--borda)}
-    .btn-hero-out:hover{border-color:var(--teal);color:var(--teal);transform:translateY(-2px)}
 
-    /* HERO PREVIEW */
-    .hero-preview{
-      max-width:900px;margin:0 auto;
-      background:var(--branco);border:1.5px solid var(--borda);
-      border-radius:20px 20px 0 0;
-      box-shadow:0 -8px 60px rgba(0,0,0,0.1);
-      overflow:hidden;
-    }
-    .preview-bar{
-      background:#f1f5f9;padding:12px 16px;
-      display:flex;align-items:center;gap:8px;
-      border-bottom:1px solid var(--borda);
-    }
-    .preview-dots{display:flex;gap:6px}
-    .preview-dot{width:12px;height:12px;border-radius:50%}
-    .preview-url{flex:1;background:var(--branco);border-radius:6px;padding:6px 12px;font-size:12px;color:var(--muted);border:1px solid var(--borda);text-align:center}
-    .preview-body{padding:24px;display:grid;grid-template-columns:1fr 1fr;gap:16px;background:var(--bg)}
-    .preview-card{background:var(--branco);border-radius:12px;padding:16px;border:1.5px solid var(--borda)}
-    .preview-card-titulo{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:10px}
-    .preview-stat{font-size:28px;font-weight:900;color:var(--teal)}
+    .hero-left {}
 
-    /* ── SEÇÕES ── */
-    section{padding:80px 48px}
-    .sec-label{font-size:12px;font-weight:800;color:var(--teal);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px}
-    .sec-titulo{font-size:clamp(28px,3.5vw,46px);font-weight:900;color:var(--dark);line-height:1.1;letter-spacing:-0.02em;margin-bottom:14px}
-    .sec-sub{font-size:16px;color:var(--muted);max-width:520px;margin:0 auto;line-height:1.7}
-    .text-center{text-align:center}
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--cinza3);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 28px;
+    }
+
+    .hero-tag-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--verde);
+    }
+
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(40px, 4.5vw, 60px);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      color: var(--preto);
+      margin-bottom: 24px;
+    }
+
+    .hero-sub {
+      font-size: 17px;
+      font-weight: 300;
+      color: var(--cinza3);
+      line-height: 1.7;
+      max-width: 400px;
+      margin-bottom: 40px;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .btn-hero-primary {
+      background: var(--preto);
+      color: var(--branco);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      padding: 14px 28px;
+      border-radius: var(--radius);
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-hero-primary:hover {
+      background: #2a2a2a;
+      transform: translateY(-1px);
+    }
+
+    .btn-hero-sec {
+      font-size: 14px;
+      color: var(--cinza3);
+      text-decoration: none;
+      font-weight: 400;
+      transition: color 0.15s;
+    }
+
+    .btn-hero-sec:hover { color: var(--preto); }
+
+    .hero-nota {
+      font-size: 12px;
+      color: var(--cinza3);
+      margin-top: 16px;
+      font-weight: 300;
+    }
+
+    /* ── DASHBOARD PREVIEW ── */
+    .hero-right {
+      position: relative;
+    }
+
+    .dash-preview {
+      background: var(--preto);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 40px 80px rgba(0,0,0,0.18);
+    }
+
+    .dash-bar {
+      background: #161616;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid #222;
+    }
+
+    .dash-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .dash-url {
+      margin-left: 8px;
+      font-size: 11px;
+      color: #555;
+      font-family: monospace;
+    }
+
+    .dash-body {
+      padding: 20px;
+    }
+
+    .dash-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .dash-titulo {
+      font-family: 'Syne', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      color: #fafaf9;
+    }
+
+    .dash-badge {
+      background: #1a7a5e;
+      color: #e8f4f0;
+      font-size: 10px;
+      font-weight: 500;
+      padding: 3px 10px;
+      border-radius: 999px;
+    }
+
+    .dash-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .dash-stat {
+      background: #1a1a1a;
+      border-radius: 6px;
+      padding: 14px;
+      border: 1px solid #222;
+    }
+
+    .dash-stat-lbl {
+      font-size: 10px;
+      color: #555;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 8px;
+    }
+
+    .dash-stat-val {
+      font-family: 'Syne', sans-serif;
+      font-size: 26px;
+      font-weight: 700;
+      color: #fafaf9;
+    }
+
+    .dash-stat-val.verde { color: #4ade80; }
+    .dash-stat-val.amarelo { color: #fbbf24; }
+
+    .dash-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .dash-item {
+      background: #1a1a1a;
+      border-radius: 6px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border: 1px solid #222;
+    }
+
+    .dash-item-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .dash-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #2a2a2a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      color: #888;
+      font-weight: 700;
+    }
+
+    .dash-item-nome {
+      font-size: 12px;
+      color: #d4d4d4;
+      font-weight: 500;
+    }
+
+    .dash-item-hora {
+      font-size: 10px;
+      color: #555;
+    }
+
+    .dash-pill {
+      font-size: 10px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-weight: 500;
+    }
+
+    .dash-pill.ok { background: rgba(74,222,128,0.1); color: #4ade80; }
+    .dash-pill.pend { background: rgba(251,191,36,0.1); color: #fbbf24; }
+
+    .dash-wpp {
+      background: #1a2e1a;
+      border: 1px solid #2a4a2a;
+      border-radius: 999px;
+      padding: 3px 10px;
+      font-size: 10px;
+      color: #4ade80;
+      font-weight: 500;
+    }
+
+    /* ── FAIXA ── */
+    .faixa {
+      border-top: 1px solid var(--cinza2);
+      border-bottom: 1px solid var(--cinza2);
+      padding: 18px 48px;
+      display: flex;
+      align-items: center;
+      gap: 48px;
+      overflow: hidden;
+    }
+
+    .faixa-label {
+      font-size: 11px;
+      color: var(--cinza3);
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .faixa-items {
+      display: flex;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+
+    .faixa-item {
+      font-size: 14px;
+      color: var(--cinza3);
+      font-weight: 300;
+      white-space: nowrap;
+    }
 
     /* ── COMO FUNCIONA ── */
-    .como{background:var(--bg)}
-    .passos{
-      display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
-      gap:24px;margin-top:52px;max-width:900px;margin-left:auto;margin-right:auto;
+    .como {
+      padding: 100px 48px;
+      max-width: 1100px;
+      margin: 0 auto;
     }
-    .passo{
-      background:var(--branco);border:1.5px solid var(--borda);
-      border-radius:var(--radius);padding:28px;
-      position:relative;transition:all 0.25s;
+
+    .section-label {
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--cinza3);
+      font-weight: 500;
+      margin-bottom: 16px;
     }
-    .passo:hover{transform:translateY(-6px);box-shadow:0 20px 48px rgba(0,0,0,0.08);border-color:var(--teal-md)}
-    .passo-num{
-      width:48px;height:48px;border-radius:14px;
-      background:var(--teal-lt);color:var(--teal);
-      display:flex;align-items:center;justify-content:center;
-      font-size:20px;font-weight:900;margin-bottom:16px;
+
+    .section-titulo {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(28px, 3vw, 40px);
+      font-weight: 800;
+      color: var(--preto);
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin-bottom: 60px;
     }
-    .passo-titulo{font-size:17px;font-weight:800;color:var(--dark);margin-bottom:8px}
-    .passo-desc{font-size:14px;color:var(--muted);line-height:1.6}
+
+    .passos-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      border: 1px solid var(--cinza2);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .passo {
+      padding: 36px 28px;
+      border-right: 1px solid var(--cinza2);
+      transition: background 0.15s;
+    }
+
+    .passo:last-child { border-right: none; }
+    .passo:hover { background: var(--cinza); }
+
+    .passo-n {
+      font-family: 'Syne', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--cinza3);
+      letter-spacing: 0.1em;
+      margin-bottom: 20px;
+    }
+
+    .passo-titulo {
+      font-family: 'Syne', sans-serif;
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--preto);
+      margin-bottom: 12px;
+      line-height: 1.3;
+    }
+
+    .passo-desc {
+      font-size: 14px;
+      color: var(--cinza3);
+      line-height: 1.65;
+      font-weight: 300;
+    }
 
     /* ── RECURSOS ── */
-    .recursos-grid{
-      display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
-      gap:20px;margin-top:52px;max-width:1100px;margin-left:auto;margin-right:auto;
+    .recursos {
+      background: var(--cinza);
+      border-top: 1px solid var(--cinza2);
+      border-bottom: 1px solid var(--cinza2);
+      padding: 100px 48px;
     }
-    .rec-card{
-      background:var(--branco);border:1.5px solid var(--borda);
-      border-radius:var(--radius);padding:28px;transition:all 0.25s;
+
+    .recursos-inner {
+      max-width: 1100px;
+      margin: 0 auto;
     }
-    .rec-card:hover{border-color:var(--teal-md);box-shadow:0 12px 40px rgba(13,148,136,0.1);transform:translateY(-4px)}
-    .rec-icon{width:48px;height:48px;border-radius:14px;background:var(--teal-lt);display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:16px}
-    .rec-titulo{font-size:16px;font-weight:800;color:var(--dark);margin-bottom:8px}
-    .rec-desc{font-size:14px;color:var(--muted);line-height:1.6}
+
+    .recursos-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--cinza2);
+      border: 1px solid var(--cinza2);
+      border-radius: 6px;
+      overflow: hidden;
+      margin-top: 48px;
+    }
+
+    .rec {
+      background: var(--cinza);
+      padding: 32px 28px;
+      transition: background 0.15s;
+    }
+
+    .rec:hover { background: var(--branco); }
+
+    .rec-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 11px;
+      color: var(--cinza3);
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      margin-bottom: 16px;
+    }
+
+    .rec-titulo {
+      font-family: 'Syne', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--preto);
+      margin-bottom: 10px;
+    }
+
+    .rec-desc {
+      font-size: 14px;
+      color: var(--cinza3);
+      line-height: 1.65;
+      font-weight: 300;
+    }
 
     /* ── NICHOS ── */
-    .nichos-section{background:var(--dark)}
-    .nichos-section .sec-titulo{color:white}
-    .nichos-section .sec-sub{color:rgba(255,255,255,0.6)}
-    .nichos-section .sec-label{color:var(--teal-md)}
-    .nichos-grid{
-      display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
-      gap:16px;margin-top:52px;max-width:1100px;margin-left:auto;margin-right:auto;
+    .nichos {
+      padding: 100px 48px;
+      max-width: 1100px;
+      margin: 0 auto;
     }
-    .nicho-card{
-      background:rgba(255,255,255,0.05);
-      border:1.5px solid rgba(255,255,255,0.1);
-      border-radius:var(--radius);padding:24px 20px;
-      transition:all 0.25s;cursor:default;
-    }
-    .nicho-card:hover{background:rgba(13,148,136,0.15);border-color:var(--teal);transform:translateY(-4px)}
-    .nicho-ico{font-size:32px;margin-bottom:12px}
-    .nicho-nome{font-size:15px;font-weight:800;color:white;margin-bottom:6px}
-    .nicho-desc{font-size:12px;color:rgba(255,255,255,0.55);line-height:1.5}
 
-    /* ── PREÇO ── */
-    .preco-section{background:var(--bg)}
-    .preco-card{
-      max-width:540px;margin:52px auto 0;
-      background:var(--branco);border:2px solid var(--teal);
-      border-radius:24px;padding:48px 40px;text-align:center;
-      box-shadow:0 20px 60px rgba(13,148,136,0.15);
-      position:relative;overflow:hidden;
+    .nichos-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 1px;
+      background: var(--cinza2);
+      border: 1px solid var(--cinza2);
+      border-radius: 6px;
+      overflow: hidden;
+      margin-top: 48px;
     }
-    .preco-card::before{
-      content:'';position:absolute;top:-60px;right:-60px;
-      width:200px;height:200px;border-radius:50%;
-      background:radial-gradient(circle,rgba(13,148,136,0.08),transparent);
-    }
-    .preco-badge{
-      display:inline-block;background:var(--teal);color:white;
-      font-size:12px;font-weight:800;padding:6px 18px;border-radius:999px;
-      margin-bottom:24px;letter-spacing:0.05em;text-transform:uppercase;
-    }
-    .preco-valor{font-size:72px;font-weight:900;color:var(--dark);line-height:1;letter-spacing:-0.04em}
-    .preco-valor span{font-size:20px;font-weight:600;color:var(--muted)}
-    .preco-periodo{font-size:14px;color:var(--muted);margin-bottom:32px;font-weight:500}
-    .preco-lista{list-style:none;margin-bottom:36px;text-align:left}
-    .preco-lista li{display:flex;align-items:center;gap:12px;padding:10px 0;font-size:15px;color:var(--text);border-bottom:1px solid var(--borda);font-weight:500}
-    .preco-lista li:last-child{border-bottom:none}
-    .chk{color:var(--teal);font-size:18px;font-weight:900;flex-shrink:0}
-    .preco-trial{font-size:14px;color:var(--muted);margin-top:16px;font-weight:500}
-    .preco-trial strong{color:var(--teal)}
 
-    /* ── DEPOIMENTOS ── */
-    .deps-grid{
-      display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
-      gap:20px;margin-top:52px;max-width:1000px;margin-left:auto;margin-right:auto;
+    .nicho {
+      background: var(--branco);
+      padding: 28px 20px;
+      transition: background 0.15s;
+      cursor: default;
     }
-    .dep-card{
-      background:var(--branco);border:1.5px solid var(--borda);
-      border-radius:var(--radius);padding:28px;
+
+    .nicho:hover { background: var(--cinza); }
+
+    .nicho-ico {
+      font-size: 24px;
+      margin-bottom: 10px;
+      display: block;
     }
-    .dep-stars{font-size:18px;margin-bottom:12px}
-    .dep-txt{font-size:15px;color:var(--text);line-height:1.7;font-style:italic;margin-bottom:20px}
-    .dep-autor{display:flex;align-items:center;gap:12px}
-    .dep-avatar{width:44px;height:44px;border-radius:50%;background:var(--teal-lt);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:var(--teal);flex-shrink:0}
-    .dep-nome{font-size:14px;font-weight:800;color:var(--dark)}
-    .dep-cargo{font-size:12px;color:var(--muted)}
+
+    .nicho-nome {
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--preto);
+      margin-bottom: 6px;
+    }
+
+    .nicho-desc {
+      font-size: 12px;
+      color: var(--cinza3);
+      line-height: 1.5;
+      font-weight: 300;
+    }
+
+    /* ── PRECO ── */
+    .preco-section {
+      background: var(--preto);
+      padding: 100px 48px;
+    }
+
+    .preco-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+
+    .preco-left .section-label { color: #555; }
+
+    .preco-left .section-titulo { color: var(--branco); margin-bottom: 24px; }
+
+    .preco-sub {
+      font-size: 16px;
+      color: #888;
+      line-height: 1.7;
+      font-weight: 300;
+      margin-bottom: 32px;
+    }
+
+    .preco-card {
+      background: var(--branco);
+      border-radius: 8px;
+      padding: 36px;
+    }
+
+    .preco-valor {
+      font-family: 'Syne', sans-serif;
+      font-size: 52px;
+      font-weight: 800;
+      color: var(--preto);
+      line-height: 1;
+      margin-bottom: 4px;
+      letter-spacing: -0.03em;
+    }
+
+    .preco-valor span {
+      font-size: 18px;
+      font-weight: 400;
+      color: var(--cinza3);
+    }
+
+    .preco-periodo {
+      font-size: 13px;
+      color: var(--cinza3);
+      margin-bottom: 28px;
+      font-weight: 300;
+    }
+
+    .preco-divisor {
+      height: 1px;
+      background: var(--cinza2);
+      margin-bottom: 24px;
+    }
+
+    .preco-lista {
+      list-style: none;
+      margin-bottom: 28px;
+    }
+
+    .preco-lista li {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+      color: var(--cinza3);
+      padding: 9px 0;
+      border-bottom: 1px solid var(--cinza);
+      font-weight: 300;
+    }
+
+    .preco-lista li:last-child { border-bottom: none; }
+
+    .chk {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--verde-lt);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 10px;
+      color: var(--verde);
+      font-weight: 700;
+    }
+
+    .btn-preco {
+      width: 100%;
+      background: var(--preto);
+      color: var(--branco);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      padding: 14px;
+      border-radius: var(--radius);
+      border: none;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      display: block;
+      transition: background 0.15s;
+    }
+
+    .btn-preco:hover { background: #2a2a2a; }
+
+    .preco-trial {
+      font-size: 12px;
+      color: var(--cinza3);
+      text-align: center;
+      margin-top: 12px;
+    }
 
     /* ── CTA FINAL ── */
-    .cta-final{
-      background:linear-gradient(135deg,var(--teal) 0%,#0891b2 100%);
-      color:white;text-align:center;position:relative;overflow:hidden;
+    .cta {
+      padding: 120px 48px;
+      text-align: center;
+      max-width: 700px;
+      margin: 0 auto;
     }
-    .cta-final::before{content:'';position:absolute;top:-100px;left:-100px;width:400px;height:400px;border-radius:50%;background:rgba(255,255,255,0.05);pointer-events:none}
-    .cta-final::after{content:'';position:absolute;bottom:-150px;right:-100px;width:500px;height:500px;border-radius:50%;background:rgba(255,255,255,0.04);pointer-events:none}
-    .cta-final .sec-titulo{color:white;position:relative}
-    .cta-final .sec-sub{color:rgba(255,255,255,0.8);position:relative}
-    .cta-numeros{display:flex;gap:48px;justify-content:center;flex-wrap:wrap;margin:40px 0;position:relative}
-    .cta-num{text-align:center}
-    .cta-num-val{font-size:42px;font-weight:900;color:white;letter-spacing:-0.02em}
-    .cta-num-lbl{font-size:13px;color:rgba(255,255,255,0.7);font-weight:600}
-    .btn-cta{padding:18px 40px;border-radius:14px;background:white;color:var(--teal);font-family:'Inter',sans-serif;font-size:17px;font-weight:800;border:none;cursor:pointer;transition:all 0.25s;text-decoration:none;display:inline-block;position:relative}
-    .btn-cta:hover{transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,0,0,0.2)}
+
+    .cta h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(32px, 4vw, 52px);
+      font-weight: 800;
+      color: var(--preto);
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+      margin-bottom: 20px;
+    }
+
+    .cta-sub {
+      font-size: 16px;
+      color: var(--cinza3);
+      font-weight: 300;
+      margin-bottom: 40px;
+      line-height: 1.6;
+    }
+
+    .cta-btns {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+    }
 
     /* ── FOOTER ── */
-    footer{background:var(--dark);color:rgba(255,255,255,0.5);padding:48px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px}
-    .footer-logo{display:flex;align-items:center;gap:10px}
-    .footer-logo .logo-box{width:32px;height:32px;font-size:13px}
-    .footer-logo span{color:white;font-weight:800;font-size:16px}
-    footer a{color:rgba(255,255,255,0.5);text-decoration:none;font-size:14px;transition:color 0.2s}
-    footer a:hover{color:white}
-    .footer-links{display:flex;gap:24px;flex-wrap:wrap}
+    footer {
+      border-top: 1px solid var(--cinza2);
+      padding: 28px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+
+    .footer-copy {
+      font-size: 13px;
+      color: var(--cinza3);
+      font-weight: 300;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 24px;
+    }
+
+    .footer-links a {
+      font-size: 13px;
+      color: var(--cinza3);
+      text-decoration: none;
+      font-weight: 300;
+      transition: color 0.15s;
+    }
+
+    .footer-links a:hover { color: var(--preto); }
 
     /* ── MOBILE ── */
-    @media(max-width:768px){
-      header{padding:0 20px}nav{display:none}
-      .hero{padding:60px 20px 0}
-      section{padding:56px 20px}
-      .preco-card{padding:32px 24px}
-      footer{padding:32px 20px;flex-direction:column;text-align:center}
-      .footer-links{justify-content:center}
-      .cta-numeros{gap:28px}
-      .preview-body{grid-template-columns:1fr}
+    @media (max-width: 900px) {
+      header { padding: 0 20px; }
+      nav { display: none; }
+      .hero { grid-template-columns: 1fr; gap: 48px; padding: 72px 20px 60px; }
+      .hero-right { display: none; }
+      .faixa { padding: 16px 20px; }
+      .como { padding: 72px 20px; }
+      .passos-grid { grid-template-columns: 1fr 1fr; }
+      .passo { border-bottom: 1px solid var(--cinza2); }
+      .recursos { padding: 72px 20px; }
+      .recursos-grid { grid-template-columns: 1fr; }
+      .nichos { padding: 72px 20px; }
+      .nichos-grid { grid-template-columns: repeat(3, 1fr); }
+      .preco-section { padding: 72px 20px; }
+      .preco-inner { grid-template-columns: 1fr; gap: 40px; }
+      .cta { padding: 72px 20px; }
+      footer { padding: 24px 20px; flex-direction: column; align-items: flex-start; gap: 12px; }
+    }
+
+    @media (max-width: 500px) {
+      .nichos-grid { grid-template-columns: repeat(2, 1fr); }
+      .passos-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
 
+<!-- HEADER -->
 <header>
-  <a class="logo" href="/"><div class="logo-box">OK</div><span class="logo-txt">AGENDA OK</span></a>
+  <a class="logo" href="/">
+    <div class="logo-mark">
+      <svg viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12" rx="2"/><line x1="5" y1="6" x2="11" y2="6" stroke="#fafaf9" stroke-width="1.5" stroke-linecap="round"/><line x1="5" y1="9" x2="9" y2="9" stroke="#fafaf9" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </div>
+    <span class="logo-txt">AgendaOK</span>
+  </a>
   <nav>
     <a href="#como">Como funciona</a>
     <a href="#recursos">Recursos</a>
     <a href="#nichos">Para quem</a>
     <a href="#preco">Preço</a>
   </nav>
-  <div class="nav-btns">
-    <a href="/login" class="btn-ghost">Entrar</a>
-    <a href="/cadastro" class="btn-teal">Começar grátis</a>
+  <div class="nav-right">
+    <a href="/login" class="btn-link">Entrar</a>
+    <a href="/cadastro" class="btn-cta">Começar grátis</a>
   </div>
 </header>
 
 <!-- HERO -->
-<section class="hero">
-  <div class="hero-badge"><div class="hero-badge-dot"></div>14 dias grátis — sem cartão de crédito</div>
-  <h1>Seu negócio organizado,<br/><span>clientes sempre conectados.</span></h1>
-  <p class="hero-sub">A plataforma de agendamento online mais simples do Brasil. Crie sua página em minutos e comece a receber agendamentos hoje.</p>
-  <div class="hero-btns">
-    <a href="/cadastro" class="btn-hero btn-hero-teal">🚀 Começar grátis agora</a>
-    <a href="#como" class="btn-hero btn-hero-out">Como funciona →</a>
-  </div>
-  <div class="hero-preview">
-    <div class="preview-bar">
-      <div class="preview-dots">
-        <div class="preview-dot" style="background:#ff5f57"></div>
-        <div class="preview-dot" style="background:#febc2e"></div>
-        <div class="preview-dot" style="background:#28c840"></div>
+<section style="border-bottom: 1px solid var(--cinza2);">
+  <div class="hero">
+    <div class="hero-left">
+      <div class="hero-tag">
+        <div class="hero-tag-dot"></div>
+        14 dias grátis — sem cartão
       </div>
-      <div class="preview-url">agendaok.app/sua-barbearia</div>
+      <h1>Agendamento<br/>que funciona<br/>de verdade.</h1>
+      <p class="hero-sub">
+        Seus clientes agendam pelo celular em menos de dois minutos.
+        Você gerencia tudo pelo painel, sem planilha, sem caderno, sem confusão.
+      </p>
+      <div class="hero-actions">
+        <a href="/cadastro" class="btn-hero-primary">
+          Criar conta grátis
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a href="#como" class="btn-hero-sec">Ver como funciona →</a>
+      </div>
+      <p class="hero-nota">Funciona para barbearias, clínicas, salões, psicólogos e mais.</p>
     </div>
-    <div class="preview-body">
-      <div class="preview-card"><div class="preview-card-titulo">Agendamentos hoje</div><div class="preview-stat">12</div></div>
-      <div class="preview-card"><div class="preview-card-titulo">Pendentes</div><div class="preview-stat" style="color:#ea580c">3</div></div>
-      <div class="preview-card"><div class="preview-card-titulo">Confirmados</div><div class="preview-stat" style="color:#16a34a">8</div></div>
-      <div class="preview-card"><div class="preview-card-titulo">Este mês</div><div class="preview-stat">247</div></div>
+
+    <div class="hero-right">
+      <div class="dash-preview">
+        <div class="dash-bar">
+          <div class="dash-dot" style="background:#ff5f57"></div>
+          <div class="dash-dot" style="background:#febc2e"></div>
+          <div class="dash-dot" style="background:#28c840"></div>
+          <span class="dash-url">agendaok.app/barbearia-silva</span>
+        </div>
+        <div class="dash-body">
+          <div class="dash-header">
+            <span class="dash-titulo">Agenda de hoje</span>
+            <span class="dash-badge">● Online</span>
+          </div>
+          <div class="dash-stats">
+            <div class="dash-stat">
+              <div class="dash-stat-lbl">Agendamentos</div>
+              <div class="dash-stat-val">14</div>
+            </div>
+            <div class="dash-stat">
+              <div class="dash-stat-lbl">Confirmados</div>
+              <div class="dash-stat-val verde">11</div>
+            </div>
+            <div class="dash-stat">
+              <div class="dash-stat-lbl">Pendentes</div>
+              <div class="dash-stat-val amarelo">3</div>
+            </div>
+            <div class="dash-stat">
+              <div class="dash-stat-lbl">Este mês</div>
+              <div class="dash-stat-val">248</div>
+            </div>
+          </div>
+          <div class="dash-list">
+            <div class="dash-item">
+              <div class="dash-item-left">
+                <div class="dash-avatar">RS</div>
+                <div>
+                  <div class="dash-item-nome">Rafael Santos</div>
+                  <div class="dash-item-hora">14:00 — Corte + Barba</div>
+                </div>
+              </div>
+              <div style="display:flex;gap:6px;align-items:center">
+                <span class="dash-pill ok">Confirmado</span>
+                <span class="dash-wpp">WhatsApp</span>
+              </div>
+            </div>
+            <div class="dash-item">
+              <div class="dash-item-left">
+                <div class="dash-avatar">MO</div>
+                <div>
+                  <div class="dash-item-nome">Marcos Oliveira</div>
+                  <div class="dash-item-hora">15:00 — Corte</div>
+                </div>
+              </div>
+              <div style="display:flex;gap:6px;align-items:center">
+                <span class="dash-pill pend">Pendente</span>
+                <span class="dash-wpp">WhatsApp</span>
+              </div>
+            </div>
+            <div class="dash-item">
+              <div class="dash-item-left">
+                <div class="dash-avatar">JL</div>
+                <div>
+                  <div class="dash-item-nome">João Lima</div>
+                  <div class="dash-item-hora">16:00 — Barba</div>
+                </div>
+              </div>
+              <div style="display:flex;gap:6px;align-items:center">
+                <span class="dash-pill ok">Confirmado</span>
+                <span class="dash-wpp">WhatsApp</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
 
+<!-- FAIXA -->
+<div class="faixa">
+  <span class="faixa-label">Para quem usa</span>
+  <div class="faixa-items">
+    <span class="faixa-item">Barbearias</span>
+    <span class="faixa-item">Salões de beleza</span>
+    <span class="faixa-item">Clínicas médicas</span>
+    <span class="faixa-item">Psicólogos</span>
+    <span class="faixa-item">Advogados</span>
+    <span class="faixa-item">Nutricionistas</span>
+    <span class="faixa-item">Personal trainers</span>
+    <span class="faixa-item">Estética</span>
+    <span class="faixa-item">Tatuadores</span>
+    <span class="faixa-item">Fisioterapeutas</span>
+  </div>
+</div>
+
 <!-- COMO FUNCIONA -->
 <section class="como" id="como">
-  <div class="text-center">
-    <div class="sec-label">Como funciona</div>
-    <div class="sec-titulo">Pronto em menos de 5 minutos</div>
-    <div class="sec-sub">Sem complicação. Crie sua conta, configure seu negócio e compartilhe seu link.</div>
-  </div>
-  <div class="passos">
+  <div class="section-label">Como funciona</div>
+  <div class="section-titulo">Pronto em menos<br/>de cinco minutos.</div>
+  <div class="passos-grid">
     <div class="passo">
-      <div class="passo-num">1</div>
+      <div class="passo-n">01</div>
       <div class="passo-titulo">Crie sua conta</div>
-      <div class="passo-desc">Cadastre-se com seu e-mail, informe o nome do seu negócio e escolha seu nicho. Leva menos de 2 minutos.</div>
+      <div class="passo-desc">Informe o nome do negócio, escolha o nicho e configure seus horários disponíveis.</div>
     </div>
     <div class="passo">
-      <div class="passo-num">2</div>
-      <div class="passo-titulo">Configure seus horários</div>
-      <div class="passo-desc">Defina os dias e horários disponíveis, personalize as cores da sua página e adicione informações do negócio.</div>
+      <div class="passo-n">02</div>
+      <div class="passo-titulo">Cadastre seus serviços</div>
+      <div class="passo-desc">Adicione os serviços com nome, preço e duração. Seus clientes escolhem na hora de agendar.</div>
     </div>
     <div class="passo">
-      <div class="passo-num">3</div>
+      <div class="passo-n">03</div>
       <div class="passo-titulo">Compartilhe seu link</div>
-      <div class="passo-desc">Envie seu link pelo WhatsApp, cole na bio do Instagram ou imprima o QR Code para o seu estabelecimento.</div>
+      <div class="passo-desc">Envie pelo WhatsApp, cole na bio do Instagram ou imprima o QR Code para o estabelecimento.</div>
     </div>
     <div class="passo">
-      <div class="passo-num">4</div>
-      <div class="passo-titulo">Gerencie tudo no painel</div>
-      <div class="passo-desc">Confirme agendamentos, envie lembretes pelo WhatsApp e acompanhe tudo pelo celular em tempo real.</div>
+      <div class="passo-n">04</div>
+      <div class="passo-titulo">Gerencie pelo painel</div>
+      <div class="passo-desc">Confirme agendamentos, envie lembretes e acompanhe tudo pelo celular em tempo real.</div>
     </div>
   </div>
 </section>
 
 <!-- RECURSOS -->
-<section id="recursos">
-  <div class="text-center">
-    <div class="sec-label">Recursos</div>
-    <div class="sec-titulo">Tudo que você precisa,<br/>nada que você não precisa</div>
-  </div>
-  <div class="recursos-grid">
-    <div class="rec-card"><div class="rec-icon">📅</div><div class="rec-titulo">Agenda inteligente</div><div class="rec-desc">Calendário com disponibilidade em tempo real. Seus clientes só veem os horários livres.</div></div>
-    <div class="rec-card"><div class="rec-icon">📱</div><div class="rec-titulo">100% mobile</div><div class="rec-desc">Interface otimizada para celular. Seus clientes agendam em segundos pelo smartphone.</div></div>
-    <div class="rec-card"><div class="rec-icon">💬</div><div class="rec-titulo">Lembrete via WhatsApp</div><div class="rec-desc">Envie lembretes com um clique direto no WhatsApp do cliente. Reduza faltas e no-shows.</div></div>
-    <div class="rec-card"><div class="rec-icon">✉️</div><div class="rec-titulo">E-mail automático</div><div class="rec-desc">Confirmação de agendamento enviada automaticamente para o e-mail do cliente.</div></div>
-    <div class="rec-card"><div class="rec-icon">🎨</div><div class="rec-titulo">Página personalizada</div><div class="rec-desc">Cada negócio tem sua própria página com cores, nome e identidade visual exclusiva.</div></div>
-    <div class="rec-card"><div class="rec-icon">📊</div><div class="rec-titulo">Painel completo</div><div class="rec-desc">Dashboard com estatísticas, agenda do dia, gestão de status e muito mais.</div></div>
-    <div class="rec-card"><div class="rec-icon">🔒</div><div class="rec-titulo">Bloqueio de horários</div><div class="rec-desc">Bloqueie dias ou horários específicos quando não estiver disponível. Simples e rápido.</div></div>
-    <div class="rec-card"><div class="rec-icon">📲</div><div class="rec-titulo">QR Code exclusivo</div><div class="rec-desc">Gere seu QR Code e cole no balcão, na vitrine ou nos materiais do seu negócio.</div></div>
+<section class="recursos" id="recursos">
+  <div class="recursos-inner">
+    <div class="section-label">Recursos</div>
+    <div class="section-titulo">Tudo que você precisa.<br/>Nada que atrapalha.</div>
+    <div class="recursos-grid">
+      <div class="rec"><div class="rec-num">01</div><div class="rec-titulo">Página pública por negócio</div><div class="rec-desc">Cada cliente tem sua própria página com cores, identidade e link exclusivo para compartilhar.</div></div>
+      <div class="rec"><div class="rec-num">02</div><div class="rec-titulo">Lembrete via WhatsApp</div><div class="rec-desc">Envie a mensagem de confirmação com um clique direto no WhatsApp do cliente, com os dados completos.</div></div>
+      <div class="rec"><div class="rec-num">03</div><div class="rec-titulo">E-mail automático</div><div class="rec-desc">Confirmação enviada automaticamente ao cliente com link para cancelar se precisar.</div></div>
+      <div class="rec"><div class="rec-num">04</div><div class="rec-titulo">Avaliação pós-atendimento</div><div class="rec-desc">Após o atendimento, o cliente recebe um link para avaliar. Você vê as notas e comentários no painel.</div></div>
+      <div class="rec"><div class="rec-num">05</div><div class="rec-titulo">Lista de espera</div><div class="rec-desc">Horário lotado? O cliente entra na lista e recebe aviso automático quando uma vaga abre.</div></div>
+      <div class="rec"><div class="rec-num">06</div><div class="rec-titulo">Relatório mensal</div><div class="rec-desc">Todo mês você recebe por e-mail: total de atendimentos, faturamento, serviços mais pedidos e avaliação média.</div></div>
+      <div class="rec"><div class="rec-num">07</div><div class="rec-titulo">QR Code exclusivo</div><div class="rec-desc">Gere o QR Code e cole no balcão, na vitrine ou nos materiais do negócio para facilitar os agendamentos.</div></div>
+      <div class="rec"><div class="rec-num">08</div><div class="rec-titulo">Cancelamento pelo cliente</div><div class="rec-desc">O cliente cancela pelo link sem precisar ligar. A vaga abre automaticamente para novos agendamentos.</div></div>
+      <div class="rec"><div class="rec-num">09</div><div class="rec-titulo">Histórico de atendimentos</div><div class="rec-desc">O cliente consulta todos os agendamentos anteriores pelo e-mail, sem precisar de login.</div></div>
+    </div>
   </div>
 </section>
 
-<!-- PARA QUEM -->
-<section class="nichos-section" id="nichos">
-  <div class="text-center">
-    <div class="sec-label">Para quem é</div>
-    <div class="sec-titulo">Feito para quem trabalha<br/>com horários marcados</div>
-    <div class="sec-sub">Qualquer negócio que precisa organizar atendimentos pode usar o AgendaOK.</div>
-  </div>
+<!-- NICHOS -->
+<section class="nichos" id="nichos">
+  <div class="section-label">Para quem é</div>
+  <div class="section-titulo">Feito para quem trabalha<br/>com horários marcados.</div>
   <div class="nichos-grid">
-    <div class="nicho-card">
-      <div class="nicho-ico">✂️</div>
-      <div class="nicho-nome">Barbearias</div>
-      <div class="nicho-desc">Cortes, barba e serviços de barbearia. Clientes agendam pelo celular sem ligar.</div>
-    </div>
-    <div class="nicho-card">
-      <div class="nicho-ico">💇</div>
-      <div class="nicho-nome">Salões de beleza</div>
-      <div class="nicho-desc">Cabelo, unhas, sobrancelha. Gerencie vários profissionais em um só painel.</div>
-    </div>
-    <div class="nicho-card">
-      <div class="nicho-ico">🏥</div>
-      <div class="nicho-nome">Clínicas médicas</div>
-      <div class="nicho-desc">Consultas e retornos organizados. Reduza faltas com lembretes automáticos.</div>
-    </div>
-    <div class="nicho-card">
-      <div class="nicho-ico">🦷</div>
-      <div class="nicho-nome">Odontologia</div>
-      <div class="nicho-desc">Consultas e procedimentos com confirmação automática por e-mail.</div>
-    </div>
-    <div class="nicho-card">
-      <div class="nicho-ico">⚖️</div>
-      <div class="nicho-nome">Advocacia</div>
-      <div class="nicho-desc">Consultas jurídicas agendadas com confidencialidade e profissionalismo.</div>
-    </div>
-    <div class="nicho-card">
-      <div class="nicho-ico">🧠</div>
-      <div class="nicho-nome">Psicologia</div>
-      <div class="nicho-desc">Sessões de terapia com agenda organizada e privacidade dos pacientes.</div>
-    </div>
-    <div class="nicho-card">
-      <div class="nicho-ico">💅</div>
-      <div class="nicho-nome">Estética</div>
-      <div class="nicho-desc">Limpeza de pele, depilação, massagem. Agenda cheia sem esforço.</div>
-    </div>
-    <div class="nicho-card">
-      <div class="nicho-ico">💪</div>
-      <div class="nicho-nome">Personal trainer</div>
-      <div class="nicho-desc">Treinos e avaliações físicas. Organize sua agenda e atenda mais clientes.</div>
-    </div>
-    <div class="nicho-card">
-      <div class="nicho-ico">🥗</div>
-      <div class="nicho-nome">Nutrição</div>
-      <div class="nicho-desc">Consultas e acompanhamentos nutricionais com retornos agendados.</div>
-    </div>
-    <div class="nicho-card">
-      <div class="nicho-ico">🦴</div>
-      <div class="nicho-nome">Fisioterapia</div>
-      <div class="nicho-desc">Sessões de reabilitação organizadas com histórico de cada paciente.</div>
-    </div>
-    <div class="nicho-card">
-      <div class="nicho-ico">🎨</div>
-      <div class="nicho-nome">Tatuagem</div>
-      <div class="nicho-desc">Sessões de tatuagem com coleta de informações antes do agendamento.</div>
-    </div>
-    <div class="nicho-card">
-      <div class="nicho-ico">🏢</div>
-      <div class="nicho-nome">Outros negócios</div>
-      <div class="nicho-desc">Qualquer profissional autônomo que trabalhe com horários pode usar.</div>
-    </div>
-  </div>
-</section>
-
-<!-- DEPOIMENTOS -->
-<section>
-  <div class="text-center">
-    <div class="sec-label">Depoimentos</div>
-    <div class="sec-titulo">Quem já usa, aprova</div>
-  </div>
-  <div class="deps-grid">
-    <div class="dep-card">
-      <div class="dep-stars">⭐⭐⭐⭐⭐</div>
-      <div class="dep-txt">"Minha barbearia tinha problema com clientes que não avisavam que não viriam. Agora com o lembrete pelo WhatsApp reduzi as faltas em quase 80%."</div>
-      <div class="dep-autor"><div class="dep-avatar">R</div><div><div class="dep-nome">Rafael Mendes</div><div class="dep-cargo">Barbearia RM • São Paulo, SP</div></div></div>
-    </div>
-    <div class="dep-card">
-      <div class="dep-stars">⭐⭐⭐⭐⭐</div>
-      <div class="dep-txt">"Antes eu controlava tudo no caderno. Hoje minha agenda está no celular, meus clientes agendam sozinhos e eu só confirmo. Simples demais!"</div>
-      <div class="dep-autor"><div class="dep-avatar">A</div><div><div class="dep-nome">Ana Carvalho</div><div class="dep-cargo">Studio de Estética • Rio de Janeiro, RJ</div></div></div>
-    </div>
-    <div class="dep-card">
-      <div class="dep-stars">⭐⭐⭐⭐⭐</div>
-      <div class="dep-txt">"Como psicóloga, precisava de algo discreto e profissional. O AgendaOK tem exatamente isso. Minha página ficou linda e meus pacientes adoraram."</div>
-      <div class="dep-autor"><div class="dep-avatar">M</div><div><div class="dep-nome">Dra. Marina Costa</div><div class="dep-cargo">Psicóloga • Belo Horizonte, MG</div></div></div>
-    </div>
+    <div class="nicho"><span class="nicho-ico">✂️</span><div class="nicho-nome">Barbearias</div><div class="nicho-desc">Cortes, barba e acabamentos sem ligar para confirmar.</div></div>
+    <div class="nicho"><span class="nicho-ico">💇</span><div class="nicho-nome">Salões</div><div class="nicho-desc">Cabelo, unhas, sobrancelha. Vários profissionais em um painel.</div></div>
+    <div class="nicho"><span class="nicho-ico">🏥</span><div class="nicho-nome">Clínicas</div><div class="nicho-desc">Consultas organizadas com confirmação automática.</div></div>
+    <div class="nicho"><span class="nicho-ico">🦷</span><div class="nicho-nome">Odontologia</div><div class="nicho-desc">Reduz faltas com lembretes antes do horário.</div></div>
+    <div class="nicho"><span class="nicho-ico">⚖️</span><div class="nicho-nome">Advocacia</div><div class="nicho-desc">Consultas jurídicas com seriedade e sigilo.</div></div>
+    <div class="nicho"><span class="nicho-ico">🧠</span><div class="nicho-nome">Psicologia</div><div class="nicho-desc">Sessões agendadas com privacidade e discrição.</div></div>
+    <div class="nicho"><span class="nicho-ico">💅</span><div class="nicho-nome">Estética</div><div class="nicho-desc">Limpeza, depilação, massagem. Agenda cheia.</div></div>
+    <div class="nicho"><span class="nicho-ico">💪</span><div class="nicho-nome">Personal</div><div class="nicho-desc">Treinos e avaliações com agenda organizada.</div></div>
+    <div class="nicho"><span class="nicho-ico">🥗</span><div class="nicho-nome">Nutrição</div><div class="nicho-desc">Consultas e retornos com histórico do cliente.</div></div>
+    <div class="nicho"><span class="nicho-ico">🦴</span><div class="nicho-nome">Fisioterapia</div><div class="nicho-desc">Sessões de reabilitação com controle de presença.</div></div>
+    <div class="nicho"><span class="nicho-ico">🎨</span><div class="nicho-nome">Tatuagem</div><div class="nicho-desc">Sessões com coleta de informações no agendamento.</div></div>
+    <div class="nicho"><span class="nicho-ico">🏢</span><div class="nicho-nome">Outros</div><div class="nicho-desc">Qualquer profissional que trabalha com horários.</div></div>
   </div>
 </section>
 
 <!-- PREÇO -->
 <section class="preco-section" id="preco">
-  <div class="text-center">
-    <div class="sec-label">Preço</div>
-    <div class="sec-titulo">Um preço.<br/>Tudo incluso.</div>
-    <div class="sec-sub">Sem taxas escondidas, sem planos confusos. Um valor fixo com tudo que seu negócio precisa.</div>
-  </div>
-  <div class="preco-card">
-    <div class="preco-badge">✨ Plano único completo</div>
-    <div class="preco-valor">R$149<span>/mês</span></div>
-    <div class="preco-periodo">Tudo incluso. Cancele quando quiser.</div>
-    <ul class="preco-lista">
-      <li><span class="chk">✓</span> Página pública de agendamento personalizada</li>
-      <li><span class="chk">✓</span> Agendamentos ilimitados</li>
-      <li><span class="chk">✓</span> Painel completo de gestão</li>
-      <li><span class="chk">✓</span> Lembrete via WhatsApp com 1 clique</li>
-      <li><span class="chk">✓</span> Confirmação automática por e-mail</li>
-      <li><span class="chk">✓</span> QR Code exclusivo do seu negócio</li>
-      <li><span class="chk">✓</span> Bloqueio de horários e dias</li>
-      <li><span class="chk">✓</span> Cores e identidade visual personalizadas</li>
-      <li><span class="chk">✓</span> Suporte por WhatsApp</li>
-    </ul>
-    <a href="/cadastro" class="btn-hero btn-hero-teal" style="width:100%;justify-content:center;font-size:17px">🚀 Começar 14 dias grátis</a>
-    <div class="preco-trial">Sem cartão de crédito. <strong>14 dias grátis</strong> para testar tudo.</div>
+  <div class="preco-inner">
+    <div class="preco-left">
+      <div class="section-label">Preço</div>
+      <div class="section-titulo">Um valor.<br/>Tudo incluso.</div>
+      <p class="preco-sub">
+        Sem planos confusos, sem taxas escondidas, sem surpresa no boleto. 
+        Um valor fixo mensal com acesso a todos os recursos.
+      </p>
+      <div style="font-size:14px;color:#555;font-weight:300;line-height:1.7">
+        "Antes eu controlava tudo no caderno. Hoje minha agenda está no celular e meus clientes agendam sozinhos." <br/>
+        <span style="color:#888;font-size:13px;margin-top:8px;display:block">— Ana Carvalho, Studio de Estética</span>
+      </div>
+    </div>
+    <div>
+      <div class="preco-card">
+        <div class="preco-valor">R$149<span>/mês</span></div>
+        <div class="preco-periodo">Plano único · Cancele quando quiser</div>
+        <div class="preco-divisor"></div>
+        <ul class="preco-lista">
+          <li><span class="chk">✓</span>Página pública de agendamento</li>
+          <li><span class="chk">✓</span>Agendamentos ilimitados</li>
+          <li><span class="chk">✓</span>Serviços com preço e duração</li>
+          <li><span class="chk">✓</span>Lembrete via WhatsApp</li>
+          <li><span class="chk">✓</span>E-mail automático de confirmação</li>
+          <li><span class="chk">✓</span>Cancelamento pelo cliente</li>
+          <li><span class="chk">✓</span>Avaliações pós-atendimento</li>
+          <li><span class="chk">✓</span>Lista de espera automática</li>
+          <li><span class="chk">✓</span>Relatório mensal por e-mail</li>
+          <li><span class="chk">✓</span>QR Code exclusivo</li>
+          <li><span class="chk">✓</span>Suporte incluído</li>
+        </ul>
+        <a href="/cadastro" class="btn-preco">Começar 14 dias grátis</a>
+        <p class="preco-trial">Sem cartão de crédito necessário.</p>
+      </div>
+    </div>
   </div>
 </section>
 
 <!-- CTA FINAL -->
-<section class="cta-final">
-  <div style="position:relative">
-    <div class="sec-label" style="color:rgba(255,255,255,0.6)">Comece hoje</div>
-    <div class="sec-titulo">Sua agenda organizada<br/>a partir de agora</div>
-    <div class="sec-sub">Crie sua conta em menos de 2 minutos e comece a receber agendamentos ainda hoje.</div>
-    <div class="cta-numeros">
-      <div class="cta-num"><div class="cta-num-val">2min</div><div class="cta-num-lbl">para criar sua conta</div></div>
-      <div class="cta-num"><div class="cta-num-val">14</div><div class="cta-num-lbl">dias grátis</div></div>
-      <div class="cta-num"><div class="cta-num-val">0</div><div class="cta-num-lbl">cartão necessário</div></div>
+<section>
+  <div class="cta">
+    <h2>Sua agenda organizada<br/>a partir de hoje.</h2>
+    <p class="cta-sub">Crie sua conta em dois minutos e comece a receber agendamentos ainda hoje. Sem burocracia.</p>
+    <div class="cta-btns">
+      <a href="/cadastro" class="btn-hero-primary">
+        Criar conta grátis
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <a href="/login" class="btn-hero-sec">Já tenho conta</a>
     </div>
-    <a href="/cadastro" class="btn-cta">🚀 Criar minha conta grátis</a>
   </div>
 </section>
 
+<!-- FOOTER -->
 <footer>
-  <div class="footer-logo"><div class="logo-box">OK</div><span>AGENDA OK</span></div>
+  <a class="footer-logo" href="/">
+    <div class="logo-mark">
+      <svg viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12" rx="2"/><line x1="5" y1="6" x2="11" y2="6" stroke="#fafaf9" stroke-width="1.5" stroke-linecap="round"/><line x1="5" y1="9" x2="9" y2="9" stroke="#fafaf9" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </div>
+    <span class="logo-txt">AgendaOK</span>
+  </a>
+  <span class="footer-copy">© 2025 AgendaOK</span>
   <div class="footer-links">
     <a href="#como">Como funciona</a>
     <a href="#recursos">Recursos</a>
-    <a href="#nichos">Para quem</a>
     <a href="#preco">Preço</a>
     <a href="/login">Entrar</a>
     <a href="/cadastro">Criar conta</a>
   </div>
-  <div style="font-size:13px">© 2025 AgendaOK. Todos os direitos reservados.</div>
 </footer>
 
 </body>
