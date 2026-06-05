@@ -4,7 +4,7 @@ const session   = require('express-session');
 const pgSession = require('connect-pg-simple')(session);
 const cors      = require('cors');
 const path      = require('path');
-const { pool, initDb, initServicos, initColunas, initExtras } = require('./middleware/database');
+const { pool, initDb, initServicos, initColunas, initExtras, initTrial } = require('./middleware/database');
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
@@ -20,11 +20,11 @@ app.use(session({
   secret: process.env.SESSION_SECRET || 'agendaok-secret-2024',
   resave: false,
   saveUninitialized: false,
-  rolling: true, // renova a sessão a cada requisição
+  rolling: true,
   cookie: {
     secure: process.env.NODE_ENV === 'production',
     httpOnly: true,
-    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 dias
+    maxAge: 30 * 24 * 60 * 60 * 1000,
     sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
   },
 }));
@@ -34,6 +34,7 @@ app.use('/negocio',  require('./routes/negocio'));
 app.use('/servicos', require('./routes/servicos'));
 app.use('/p',        require('./routes/publico'));
 app.use('/extras',   require('./routes/extras'));
+app.use('/admin',    require('./routes/admin'));
 
 app.get('/cadastro',         (req, res) => res.sendFile(path.join(__dirname, 'public', 'cadastro.html')));
 app.get('/login',            (req, res) => res.sendFile(path.join(__dirname, 'public', 'login.html')));
@@ -42,26 +43,14 @@ app.get('/agendar/:slug',    (req, res) => res.sendFile(path.join(__dirname, 'pu
 app.get('/cancelar/:token',  (req, res) => res.sendFile(path.join(__dirname, 'public', 'cancelar.html')));
 app.get('/avaliar/:token',   (req, res) => res.sendFile(path.join(__dirname, 'public', 'avaliar.html')));
 app.get('/historico/:slug',  (req, res) => res.sendFile(path.join(__dirname, 'public', 'historico.html')));
+app.get('/master',           (req, res) => res.sendFile(path.join(__dirname, 'public', 'master.html')));
 app.get('*',                 (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
 
 initDb()
-  .then(()=>initServicos())
-  .then(()=>initColunas())
-  .then(()=>initExtras())
-  .then(()=>{
-    app.listen(PORT, ()=>console.log(`✅ AgendaOK rodando na porta ${PORT}`));
-    // Relatório mensal — roda todo dia 1º às 8h
-    agendarRelatorio();
+  .then(() => initServicos())
+  .then(() => initColunas())
+  .then(() => initExtras())
+  .then(() => initTrial())
+  .then(() => {
+    app.listen(PORT, () => console.log(`✅ AgendaOK rodando na porta ${PORT}`));
   });
-
-function agendarRelatorio() {
-  const agora = new Date();
-  const proximo = new Date(agora.getFullYear(), agora.getMonth()+1, 1, 8, 0, 0);
-  const ms = proximo - agora;
-  setTimeout(async () => {
-    await require('./routes/extras').enviarRelatorioMensal();
-    setInterval(async () => {
-      await require('./routes/extras').enviarRelatorioMensal();
-    }, 30*24*60*60*1000);
-  }, ms);
-}

@@ -118,10 +118,25 @@ router.get('/me', async (req, res) => {
     const r = await pool.query('SELECT * FROM usuarios WHERE id = $1', [req.session.userId]);
     if (r.rows.length === 0) return res.status(401).json({ logado: false });
     const u = r.rows[0];
+
+    const hoje = new Date().toISOString().split('T')[0];
+    let acesso_ok = true;
+    let motivo_bloqueio = '';
+
+    if (!u.acesso_ativo) {
+      acesso_ok = false; motivo_bloqueio = 'bloqueado';
+    } else if (u.plano_pago) {
+      if (u.acesso_expira && u.acesso_expira < hoje) { acesso_ok = false; motivo_bloqueio = 'expirado'; }
+    } else {
+      if (!u.trial_expira || u.trial_expira < hoje) { acesso_ok = false; motivo_bloqueio = 'trial_expirado'; }
+    }
+
     res.json({
       logado: true, id: u.id, nome: u.nome, email: u.email,
       nome_negocio: u.nome_negocio, nicho: u.nicho,
       plano: u.plano, slug: u.slug, config: u.config,
+      acesso_ok, motivo_bloqueio,
+      trial_expira: u.trial_expira, acesso_expira: u.acesso_expira, plano_pago: u.plano_pago,
     });
   } catch(e) {
     res.status(500).json({ logado: false });

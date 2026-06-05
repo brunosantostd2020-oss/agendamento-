@@ -146,3 +146,28 @@ async function initExtras() {
 }
 
 module.exports = { pool, initDb, initServicos, initColunas, initExtras };
+
+async function initTrial() {
+  const client = await pool.connect();
+  try {
+    await client.query(`
+      ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS trial_expira TEXT DEFAULT '';
+      ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS acesso_ativo BOOLEAN DEFAULT true;
+      ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS plano_pago BOOLEAN DEFAULT false;
+      ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS acesso_expira TEXT DEFAULT '';
+    `);
+    // Preenche trial_expira para quem não tem
+    await client.query(`
+      UPDATE usuarios
+      SET trial_expira = to_char(NOW() + INTERVAL '7 days', 'YYYY-MM-DD')
+      WHERE trial_expira = '' OR trial_expira IS NULL
+    `);
+    console.log('✅ Colunas trial OK!');
+  } catch(e) {
+    console.error('Trial:', e.message);
+  } finally {
+    client.release();
+  }
+}
+
+module.exports = { pool, initDb, initServicos, initColunas, initExtras, initTrial };
