@@ -98,3 +98,51 @@ async function initColunas() {
 }
 
 module.exports = { pool, initDb, initServicos, initColunas };
+
+async function initExtras() {
+  const client = await pool.connect();
+  try {
+    await client.query(`
+      -- Avaliações
+      CREATE TABLE IF NOT EXISTS avaliacoes (
+        id UUID PRIMARY KEY,
+        negocio_id UUID REFERENCES usuarios(id) ON DELETE CASCADE,
+        agendamento_id UUID,
+        nome_cliente TEXT,
+        nota INTEGER CHECK (nota BETWEEN 1 AND 5),
+        comentario TEXT DEFAULT '',
+        criado_em TEXT
+      );
+
+      -- Lista de espera
+      CREATE TABLE IF NOT EXISTS lista_espera (
+        id UUID PRIMARY KEY,
+        negocio_id UUID REFERENCES usuarios(id) ON DELETE CASCADE,
+        nome TEXT NOT NULL,
+        email TEXT NOT NULL,
+        telefone TEXT NOT NULL,
+        data TEXT NOT NULL,
+        horario TEXT,
+        notificado BOOLEAN DEFAULT false,
+        criado_em TEXT
+      );
+
+      -- Fotos do negócio (URL)
+      ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS foto_url TEXT DEFAULT '';
+      
+      -- Token de cancelamento nos agendamentos
+      ALTER TABLE agendamentos ADD COLUMN IF NOT EXISTS token_cancel TEXT DEFAULT '';
+      
+      -- Token de avaliação
+      ALTER TABLE agendamentos ADD COLUMN IF NOT EXISTS token_avalia TEXT DEFAULT '';
+      ALTER TABLE agendamentos ADD COLUMN IF NOT EXISTS avaliado BOOLEAN DEFAULT false;
+    `);
+    console.log('✅ Tabelas extras OK!');
+  } catch(e) {
+    console.error('Extras:', e.message);
+  } finally {
+    client.release();
+  }
+}
+
+module.exports = { pool, initDb, initServicos, initColunas, initExtras };

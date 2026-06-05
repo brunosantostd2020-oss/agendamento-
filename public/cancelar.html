@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Cancelar Agendamento — AgendaOK</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',sans-serif;background:#f8faff;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px}
+    .card{background:white;border-radius:20px;padding:36px 28px;max-width:440px;width:100%;box-shadow:0 4px 32px rgba(0,0,0,0.08);text-align:center}
+    .ico{font-size:56px;margin-bottom:20px}
+    h1{font-size:22px;font-weight:800;color:#0f172a;margin-bottom:8px}
+    p{font-size:15px;color:#64748b;line-height:1.6;margin-bottom:20px}
+    .info{background:#f0f9ff;border:2px solid #bae6fd;border-radius:12px;padding:16px;margin-bottom:24px;text-align:left}
+    .info-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #e0f2fe;font-size:14px}
+    .info-row:last-child{border-bottom:none}
+    .info-k{color:#64748b;font-weight:600}.info-v{font-weight:700;color:#0f172a}
+    .btn-red{width:100%;padding:15px;border-radius:12px;background:#dc2626;color:white;font-family:'Inter',sans-serif;font-size:16px;font-weight:800;border:none;cursor:pointer;margin-bottom:12px;transition:all 0.2s}
+    .btn-red:hover{background:#b91c1c}
+    .btn-out{width:100%;padding:13px;border-radius:12px;background:none;border:2px solid #e2e8f0;color:#334155;font-family:'Inter',sans-serif;font-size:15px;font-weight:700;cursor:pointer;text-decoration:none;display:block}
+    .aviso{background:#fff7ed;border:2px solid #fed7aa;border-radius:10px;padding:14px;font-size:13px;color:#92400e;font-weight:600;margin-bottom:20px;line-height:1.5}
+  </style>
+</head>
+<body>
+<div class="card" id="card">
+  <div class="ico">⏳</div>
+  <h1>Carregando...</h1>
+</div>
+<script>
+const token = location.pathname.split('/').pop();
+async function init() {
+  const card = document.getElementById('card');
+  try {
+    const r = await fetch('/extras/cancelar/'+token);
+    const d = await r.json();
+    if (!r.ok) {
+      card.innerHTML = `<div class="ico">❌</div><h1>Link inválido</h1><p>Este link de cancelamento não é válido ou já foi utilizado.</p>`;
+      return;
+    }
+    if (d.ja_cancelado) {
+      card.innerHTML = `<div class="ico">✅</div><h1>Já cancelado</h1><p>Este agendamento já foi cancelado anteriormente.</p><a href="/" class="btn-out" style="margin-top:12px">Voltar ao início</a>`;
+      return;
+    }
+    const [ano,mes,dia] = d.data.split('-');
+    card.innerHTML = `
+      <div class="ico">📅</div>
+      <h1>Cancelar agendamento</h1>
+      <p>Tem certeza que deseja cancelar o agendamento abaixo?</p>
+      <div class="info">
+        <div class="info-row"><span class="info-k">Local</span><span class="info-v">${d.negocio}</span></div>
+        <div class="info-row"><span class="info-k">Data</span><span class="info-v">${dia}/${mes}/${ano}</span></div>
+        <div class="info-row"><span class="info-k">Horário</span><span class="info-v">${d.horario}</span></div>
+        ${d.servico?`<div class="info-row"><span class="info-k">Serviço</span><span class="info-v">${d.servico}</span></div>`:''}
+      </div>
+      <div class="aviso">⚠️ Esta ação não pode ser desfeita. Após cancelar, a vaga ficará disponível para outros clientes.</div>
+      <button class="btn-red" onclick="cancelar()">Confirmar cancelamento</button>
+      <a href="/" class="btn-out">Não cancelar</a>
+    `;
+  } catch(e) {
+    card.innerHTML = `<div class="ico">❌</div><h1>Erro</h1><p>Não foi possível carregar. Tente novamente.</p>`;
+  }
+}
+
+async function cancelar() {
+  const card = document.getElementById('card');
+  try {
+    const r = await fetch('/extras/cancelar/'+token, { method: 'POST' });
+    const d = await r.json();
+    if (d.sucesso) {
+      card.innerHTML = `
+        <div class="ico">✅</div>
+        <h1>Cancelamento realizado</h1>
+        <p>Seu agendamento foi cancelado com sucesso. Se precisar, agende um novo horário.</p>
+        <a href="/" class="btn-out" style="margin-top:12px">Voltar ao início</a>
+      `;
+    }
+  } catch(e) {
+    alert('Erro ao cancelar. Tente novamente.');
+  }
+}
+init();
+</script>
+</body>
+</html>

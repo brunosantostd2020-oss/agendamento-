@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Meu Histórico — AgendaOK</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',sans-serif;background:#f8faff;min-height:100vh;padding:0 0 40px}
+    .header{background:#0d9488;padding:20px;color:white;text-align:center}
+    .header h1{font-size:20px;font-weight:800;margin-bottom:4px}
+    .header p{font-size:13px;opacity:0.85}
+    .content{max-width:500px;margin:0 auto;padding:20px 16px}
+    .busca-card{background:white;border-radius:16px;padding:24px;margin-bottom:20px;box-shadow:0 2px 16px rgba(0,0,0,0.06)}
+    .busca-titulo{font-size:16px;font-weight:800;color:#0f172a;margin-bottom:16px}
+    input{width:100%;border:2px solid #e2e8f0;border-radius:12px;font-family:'Inter',sans-serif;font-size:16px;padding:14px;color:#0f172a;outline:none;transition:all 0.2s;margin-bottom:12px}
+    input:focus{border-color:#0d9488;box-shadow:0 0 0 3px #ccfbf1}
+    .btn{width:100%;padding:14px;border-radius:12px;background:#0d9488;color:white;font-family:'Inter',sans-serif;font-size:15px;font-weight:800;border:none;cursor:pointer}
+    .ag-card{background:white;border-radius:14px;padding:16px;margin-bottom:10px;border:1.5px solid #e2e8f0}
+    .ag-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+    .ag-data{font-weight:800;font-size:15px;color:#0d9488}
+    .ag-hora{font-size:13px;color:#64748b;margin-top:2px}
+    .badge{display:inline-flex;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700}
+    .b-pendente{background:rgba(234,88,12,0.1);color:#ea580c}
+    .b-confirmado{background:rgba(22,163,74,0.1);color:#16a34a}
+    .b-cancelado{background:rgba(220,38,38,0.1);color:#dc2626}
+    .b-concluido{background:rgba(37,99,235,0.1);color:#2563eb}
+    .ag-servico{font-size:13px;color:#334155;font-weight:600;margin-top:6px}
+    .ag-preco{font-size:14px;font-weight:800;color:#0d9488;margin-top:4px}
+    .empty{text-align:center;padding:40px;color:#64748b;font-size:15px;font-weight:600}
+    .empty-ico{font-size:48px;margin-bottom:12px}
+    .powered{text-align:center;font-size:12px;color:#94a3b8;margin-top:20px}
+    .powered a{color:#0d9488;text-decoration:none;font-weight:700}
+  </style>
+</head>
+<body>
+<div class="header">
+  <h1 id="negocio-nome">Meu Histórico</h1>
+  <p>Consulte seus agendamentos anteriores</p>
+</div>
+<div class="content">
+  <div class="busca-card">
+    <div class="busca-titulo">🔍 Buscar pelo e-mail</div>
+    <input type="email" id="email" placeholder="seu@email.com" inputmode="email" onkeydown="if(event.key==='Enter')buscar()"/>
+    <button class="btn" onclick="buscar()">Buscar meus agendamentos</button>
+  </div>
+  <div id="resultado"></div>
+  <div class="powered">Powered by <a href="/">AgendaOK</a></div>
+</div>
+<script>
+const slug = location.pathname.split('/').pop();
+const MESES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+
+async function buscar() {
+  const email = document.getElementById('email').value.trim();
+  if (!email) { alert('Informe seu e-mail'); return; }
+  const el = document.getElementById('resultado');
+  el.innerHTML = '<div class="empty"><div class="empty-ico">⏳</div>Buscando...</div>';
+  try {
+    const r = await fetch(`/extras/historico/${slug}?email=${encodeURIComponent(email)}`);
+    const d = await r.json();
+    document.getElementById('negocio-nome').textContent = d.negocio || 'Meu Histórico';
+    if (!r.ok || !d.agendamentos.length) {
+      el.innerHTML = '<div class="empty"><div class="empty-ico">📭</div>Nenhum agendamento encontrado para este e-mail.</div>';
+      return;
+    }
+    el.innerHTML = `<div style="font-size:14px;font-weight:700;color:#64748b;margin-bottom:12px">${d.agendamentos.length} agendamento(s) encontrado(s)</div>` +
+      d.agendamentos.map(a => {
+        const [ano,mes,dia] = a.data.split('-');
+        const precoTxt = a.preco_servico ? `R$ ${parseFloat(a.preco_servico).toFixed(2).replace('.',',')}` : '';
+        const badgeTxt = {pendente:'⏳ Pendente',confirmado:'✅ Confirmado',cancelado:'❌ Cancelado',concluido:'🔵 Concluído'}[a.status]||a.status;
+        return `<div class="ag-card">
+          <div class="ag-top">
+            <div>
+              <div class="ag-data">${dia}/${mes}/${ano}</div>
+              <div class="ag-hora">às ${a.horario}</div>
+            </div>
+            <span class="badge b-${a.status}">${badgeTxt}</span>
+          </div>
+          ${a.servico?`<div class="ag-servico">✂️ ${a.servico}</div>`:''}
+          ${precoTxt?`<div class="ag-preco">${precoTxt}</div>`:''}
+        </div>`;
+      }).join('');
+  } catch(e) {
+    el.innerHTML = '<div class="empty"><div class="empty-ico">❌</div>Erro ao buscar. Tente novamente.</div>';
+  }
+}
+</script>
+</body>
+</html>

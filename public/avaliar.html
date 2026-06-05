@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Avaliar Atendimento — AgendaOK</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',sans-serif;background:#f8faff;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px}
+    .card{background:white;border-radius:20px;padding:36px 28px;max-width:440px;width:100%;box-shadow:0 4px 32px rgba(0,0,0,0.08);text-align:center}
+    .ico{font-size:56px;margin-bottom:20px}
+    h1{font-size:22px;font-weight:800;color:#0f172a;margin-bottom:8px}
+    p{font-size:15px;color:#64748b;line-height:1.6;margin-bottom:24px}
+    .estrelas{display:flex;gap:10px;justify-content:center;margin-bottom:24px}
+    .estrela{font-size:44px;cursor:pointer;transition:transform 0.15s;filter:grayscale(1);opacity:0.4;-webkit-tap-highlight-color:transparent}
+    .estrela.ativa{filter:none;opacity:1;transform:scale(1.1)}
+    .estrela:hover{transform:scale(1.15)}
+    .label-nota{font-size:16px;font-weight:700;color:#0d9488;margin-bottom:16px;min-height:24px}
+    textarea{width:100%;border:2px solid #e2e8f0;border-radius:12px;font-family:'Inter',sans-serif;font-size:15px;padding:14px;color:#0f172a;outline:none;resize:none;min-height:100px;margin-bottom:20px;transition:border-color 0.2s}
+    textarea:focus{border-color:#0d9488;box-shadow:0 0 0 3px #ccfbf1}
+    .btn-teal{width:100%;padding:15px;border-radius:12px;background:#0d9488;color:white;font-family:'Inter',sans-serif;font-size:16px;font-weight:800;border:none;cursor:pointer;transition:all 0.2s}
+    .btn-teal:hover{background:#0a7c72}
+    .btn-teal:disabled{opacity:0.6}
+  </style>
+</head>
+<body>
+<div class="card" id="card">
+  <div class="ico">⏳</div>
+  <h1>Carregando...</h1>
+</div>
+<script>
+const NOTAS = ['','Muito ruim','Ruim','Regular','Bom','Excelente!'];
+const token = location.pathname.split('/').pop();
+let notaSel = 0;
+
+async function init() {
+  const card = document.getElementById('card');
+  try {
+    const r = await fetch('/extras/avaliar/'+token);
+    const d = await r.json();
+    if (!r.ok) { card.innerHTML=`<div class="ico">❌</div><h1>Link inválido</h1><p>Este link não é válido ou já foi utilizado.</p>`; return; }
+    if (d.ja_avaliado) { card.innerHTML=`<div class="ico">🌟</div><h1>Obrigado!</h1><p>Você já avaliou este atendimento. Agradecemos sua opinião!</p>`; return; }
+    card.innerHTML = `
+      <div class="ico">⭐</div>
+      <h1>Como foi seu atendimento?</h1>
+      <p>Avalie seu atendimento em <strong>${d.negocio}</strong>${d.servico?' — '+d.servico:''}.</p>
+      <div class="estrelas" id="estrelas">
+        <span class="estrela" onclick="selecionarNota(1)" data-n="1">⭐</span>
+        <span class="estrela" onclick="selecionarNota(2)" data-n="2">⭐</span>
+        <span class="estrela" onclick="selecionarNota(3)" data-n="3">⭐</span>
+        <span class="estrela" onclick="selecionarNota(4)" data-n="4">⭐</span>
+        <span class="estrela" onclick="selecionarNota(5)" data-n="5">⭐</span>
+      </div>
+      <div class="label-nota" id="label-nota"></div>
+      <textarea id="comentario" placeholder="Deixe um comentário (opcional)..."></textarea>
+      <button class="btn-teal" id="btn-enviar" onclick="enviar()" disabled>Enviar avaliação</button>
+    `;
+  } catch(e) { card.innerHTML=`<div class="ico">❌</div><h1>Erro</h1><p>Tente novamente.</p>`; }
+}
+
+function selecionarNota(n) {
+  notaSel = n;
+  document.querySelectorAll('.estrela').forEach((e, i) => {
+    e.classList.toggle('ativa', i < n);
+  });
+  document.getElementById('label-nota').textContent = NOTAS[n];
+  document.getElementById('btn-enviar').disabled = false;
+}
+
+async function enviar() {
+  if (!notaSel) return;
+  const btn = document.getElementById('btn-enviar');
+  const comentario = document.getElementById('comentario').value;
+  btn.disabled = true; btn.textContent = 'Enviando...';
+  try {
+    const r = await fetch('/extras/avaliar/'+token, {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ nota: notaSel, comentario }),
+    });
+    const d = await r.json();
+    if (d.sucesso) {
+      document.getElementById('card').innerHTML = `
+        <div class="ico">🎉</div>
+        <h1>Obrigado pela avaliação!</h1>
+        <p>Sua opinião é muito importante para melhorarmos nosso atendimento.</p>
+        <div style="font-size:40px;margin:16px 0">${'⭐'.repeat(notaSel)}</div>
+      `;
+    }
+  } catch(e) { btn.disabled=false; btn.textContent='Enviar avaliação'; alert('Erro. Tente novamente.'); }
+}
+init();
+</script>
+</body>
+</html>
