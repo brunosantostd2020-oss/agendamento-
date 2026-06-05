@@ -59,7 +59,7 @@ router.get('/agendamentos/hoje', requireAuth, async (req, res) => {
 // PATCH /negocio/agendamentos/:id/status
 router.patch('/agendamentos/:id/status', requireAuth, async (req, res) => {
   const { status, obs } = req.body;
-  const statusValidos = ['pendente','confirmado','cancelado','concluido'];
+  const statusValidos = ['pendente','confirmado','cancelado','concluido','reagendado'];
   if (!statusValidos.includes(status)) return res.status(400).json({ erro: 'Status inválido.' });
   try {
     const agora = new Date().toLocaleString('pt-BR');

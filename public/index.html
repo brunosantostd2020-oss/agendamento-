@@ -361,5 +361,92 @@
     <a href="/cadastro">Criar conta</a>
   </div>
 </footer>
+
+<!-- ACESSO MASTER OCULTO -->
+<div style="text-align:center;padding:10px;background:var(--branco)">
+  <span id="master-trigger" onclick="toggleMasterPanel()"
+    style="font-size:10px;color:transparent;user-select:none;cursor:default;padding:8px 16px;display:inline-block">
+    ·
+  </span>
+</div>
+
+<!-- PAINEL MASTER INLINE -->
+<div id="master-panel" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.85);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;padding:20px">
+  <div style="background:#111;border:1px solid #222;border-radius:10px;padding:32px 28px;width:100%;max-width:340px;text-align:center;position:relative">
+    <button onclick="fecharMaster()" style="position:absolute;top:14px;right:14px;background:none;border:none;color:#555;font-size:20px;cursor:pointer;font-family:inherit;line-height:1">×</button>
+    <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:20px">
+      <div style="width:28px;height:28px;background:#fafaf9;border-radius:5px;display:flex;align-items:center;justify-content:center">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="#0a0a0a"><rect x="2" y="2" width="12" height="12" rx="2"/><line x1="5" y1="6" x2="11" y2="6" stroke="#fafaf9" stroke-width="1.5" stroke-linecap="round"/><line x1="5" y1="9" x2="9" y2="9" stroke="#fafaf9" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <span style="font-size:16px;font-weight:800;color:#fafaf9;letter-spacing:-0.2px">AgendaOK</span>
+    </div>
+    <div style="font-size:10px;font-weight:700;color:#444;letter-spacing:0.1em;text-transform:uppercase;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:999px;padding:3px 12px;display:inline-block;margin-bottom:24px">Acesso Restrito</div>
+    <input id="mp-user" type="text" placeholder="Usuário" autocomplete="off" autocorrect="off" autocapitalize="none"
+      style="width:100%;border:1px solid #222;border-radius:5px;font-family:'Inter',sans-serif;font-size:16px;padding:13px 14px;color:#fafaf9;background:#1a1a1a;outline:none;margin-bottom:10px;-webkit-appearance:none"
+      onkeydown="if(event.key==='Enter')document.getElementById('mp-pass').focus()"/>
+    <input id="mp-pass" type="password" placeholder="Senha" autocomplete="current-password"
+      style="width:100%;border:1px solid #222;border-radius:5px;font-family:'Inter',sans-serif;font-size:16px;padding:13px 14px;color:#fafaf9;background:#1a1a1a;outline:none;margin-bottom:12px;-webkit-appearance:none"
+      onkeydown="if(event.key==='Enter')masterLogin()"/>
+    <div id="mp-erro" style="font-size:12px;color:#dc2626;min-height:16px;margin-bottom:10px;font-weight:500"></div>
+    <button id="mp-btn" onclick="masterLogin()"
+      style="width:100%;padding:14px;border-radius:5px;background:#fafaf9;color:#0a0a0a;font-family:'Inter',sans-serif;font-size:15px;font-weight:700;border:none;cursor:pointer;transition:opacity .15s">
+      Entrar
+    </button>
+  </div>
+</div>
+
+<script>
+let masterClicks = 0, masterTimer = null;
+
+function toggleMasterPanel() {
+  masterClicks++;
+  clearTimeout(masterTimer);
+  masterTimer = setTimeout(() => { masterClicks = 0; }, 2000);
+  if (masterClicks >= 5) {
+    masterClicks = 0;
+    const p = document.getElementById('master-panel');
+    p.style.display = p.style.display === 'none' ? 'flex' : 'none';
+    if (p.style.display === 'flex') document.getElementById('mp-user').focus();
+  }
+}
+
+function fecharMaster() {
+  document.getElementById('master-panel').style.display = 'none';
+  document.getElementById('mp-erro').textContent = '';
+  document.getElementById('mp-user').value = '';
+  document.getElementById('mp-pass').value = '';
+}
+
+async function masterLogin() {
+  const usuario = document.getElementById('mp-user').value.trim();
+  const senha   = document.getElementById('mp-pass').value;
+  const erro    = document.getElementById('mp-erro');
+  const btn     = document.getElementById('mp-btn');
+  erro.textContent = '';
+  if (!usuario || !senha) { erro.textContent = 'Preencha usuário e senha.'; return; }
+  btn.disabled = true; btn.textContent = 'Verificando...';
+  try {
+    const r = await fetch('/admin/login', {
+      method: 'POST', credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ usuario, senha }),
+    });
+    const d = await r.json();
+    if (!r.ok) {
+      erro.textContent = d.erro || 'Credenciais inválidas.';
+      btn.disabled = false; btn.textContent = 'Entrar';
+      return;
+    }
+    window.location.href = '/master';
+  } catch(e) {
+    erro.textContent = 'Erro de conexão.';
+    btn.disabled = false; btn.textContent = 'Entrar';
+  }
+}
+
+document.getElementById('master-panel').addEventListener('click', function(e) {
+  if (e.target === this) fecharMaster();
+});
+</script>
 </body>
 </html>

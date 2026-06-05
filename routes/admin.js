@@ -10,9 +10,12 @@ function requireMaster(req, res, next) {
 
 // POST /admin/login
 router.post('/login', (req, res) => {
-  const { senha } = req.body;
-  const masterSenha = process.env.MASTER_PASSWORD || 'master@agendaok2024';
-  if (senha !== masterSenha) return res.status(401).json({ erro: 'Senha incorreta.' });
+  const { usuario, senha } = req.body;
+  const MASTER_USER  = process.env.MASTER_USER  || 'brunosdo1';
+  const MASTER_SENHA = process.env.MASTER_SENHA || 'Helena2020@';
+  if (usuario !== MASTER_USER || senha !== MASTER_SENHA) {
+    return res.status(401).json({ erro: 'Usuário ou senha incorretos.' });
+  }
   req.session.isMaster = true;
   res.json({ sucesso: true });
 });

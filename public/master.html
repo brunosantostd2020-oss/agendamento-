@@ -10,111 +10,123 @@
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     :root{
-      --preto:#0a0a0a;--branco:#fff;--bg:#fafaf9;
-      --cinza:#f5f4f0;--cinza2:#e8e6e1;--muted:#6b6860;--texto:#1c1b18;
-      --verde:#16a34a;--vermelho:#dc2626;--laranja:#ea580c;--azul:#2563eb;--roxo:#7c3aed;
-      --r:4px;--sb:env(safe-area-inset-bottom,0px);--st:env(safe-area-inset-top,0px);
+      --bg:#0a0a0a;--card:#111;--card2:#161616;
+      --borda:#222;--borda2:#2a2a2a;
+      --preto:#fafaf9;--texto:#d4d4d4;--muted:#666;
+      --verde:#16a34a;--vermelho:#dc2626;--laranja:#ea580c;
+      --azul:#3b82f6;--roxo:#7c3aed;--amarelo:#ca8a04;
+      --r:5px;--sb:env(safe-area-inset-bottom,0px);--st:env(safe-area-inset-top,0px);
     }
     html{-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
     body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--texto);min-height:100dvh;-webkit-font-smoothing:antialiased}
 
     /* LOGIN */
-    .login-wrap{min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:20px;background:var(--preto)}
-    .login-card{background:#111;border:1px solid #222;border-radius:8px;padding:36px 28px;width:100%;max-width:360px;text-align:center}
-    .login-logo{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:28px}
-    .login-logo-m{width:32px;height:32px;background:var(--branco);border-radius:6px;display:flex;align-items:center;justify-content:center}
-    .login-logo-m svg{width:16px;height:16px;fill:var(--preto)}
-    .login-logo-t{font-size:18px;font-weight:800;color:var(--branco);letter-spacing:-0.3px}
-    .login-badge{font-size:10px;font-weight:700;color:#555;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:24px}
-    .login-input{width:100%;border:1px solid #222;border-radius:var(--r);font-family:'Inter',sans-serif;font-size:16px;font-weight:400;padding:14px 16px;color:var(--branco);background:#1a1a1a;outline:none;margin-bottom:12px;-webkit-appearance:none}
+    #login{display:flex;min-height:100dvh;align-items:center;justify-content:center;padding:20px;background:var(--bg)}
+    .login-box{width:100%;max-width:360px;text-align:center}
+    .login-logo{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:8px}
+    .login-logo-m{width:32px;height:32px;background:var(--preto);border-radius:6px;display:flex;align-items:center;justify-content:center}
+    .login-logo-m svg{width:15px;height:15px;fill:#0a0a0a}
+    .login-logo-t{font-size:18px;font-weight:800;color:var(--preto);letter-spacing:-0.3px}
+    .login-badge{display:inline-block;background:#1a1a1a;border:1px solid #333;border-radius:999px;padding:3px 12px;font-size:10px;font-weight:700;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:32px}
+    .login-input{width:100%;border:1px solid var(--borda);border-radius:var(--r);font-family:'Inter',sans-serif;font-size:17px;padding:15px 16px;color:var(--preto);background:var(--card);outline:none;margin-bottom:12px;-webkit-appearance:none;transition:border-color .15s}
     .login-input:focus{border-color:#444}
-    .login-btn{width:100%;padding:14px;border-radius:var(--r);background:var(--branco);color:var(--preto);font-family:'Inter',sans-serif;font-size:15px;font-weight:700;border:none;cursor:pointer;transition:opacity 0.15s}
-    .login-btn:active{opacity:0.8}
-    .login-btn:disabled{opacity:0.4}
-    .login-erro{font-size:13px;color:var(--vermelho);margin-top:10px;min-height:18px}
+    .login-btn{width:100%;padding:15px;border-radius:var(--r);background:var(--preto);color:#0a0a0a;font-family:'Inter',sans-serif;font-size:15px;font-weight:700;border:none;cursor:pointer;transition:opacity .15s}
+    .login-btn:active{opacity:.75}
+    .login-btn:disabled{opacity:.4}
+    .login-erro{font-size:13px;color:var(--vermelho);margin-top:10px;min-height:18px;font-weight:500}
 
     /* APP */
     #app{display:none}
-    .header{background:var(--preto);padding:0 20px;padding-top:var(--st);height:calc(58px + var(--st));display:flex;align-items:flex-end;justify-content:space-between;padding-bottom:11px;position:sticky;top:0;z-index:50}
-    .h-left{display:flex;align-items:center;gap:10px}
-    .h-logo{display:flex;align-items:center;gap:8px}
-    .h-logo-m{width:26px;height:26px;background:var(--branco);border-radius:4px;display:flex;align-items:center;justify-content:center}
-    .h-logo-m svg{width:13px;height:13px;fill:var(--preto)}
-    .h-logo-t{font-size:15px;font-weight:800;color:var(--branco);letter-spacing:-0.2px}
-    .h-badge{font-size:9px;font-weight:700;color:#555;letter-spacing:0.1em;text-transform:uppercase;background:#1a1a1a;border:1px solid #333;border-radius:999px;padding:3px 8px}
-    .btn-sair{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:var(--r);color:rgba(255,255,255,0.6);font-family:'Inter',sans-serif;font-size:12px;font-weight:500;padding:7px 13px;cursor:pointer}
 
-    .content{padding:20px 16px calc(40px + var(--sb));max-width:800px;margin:0 auto}
+    /* HEADER */
+    .hdr{background:#111;border-bottom:1px solid var(--borda);padding:0 20px;padding-top:var(--st);height:calc(56px + var(--st));display:flex;align-items:flex-end;justify-content:space-between;padding-bottom:10px;position:sticky;top:0;z-index:50}
+    .hdr-logo{display:flex;align-items:center;gap:10px}
+    .hdr-logo-m{width:26px;height:26px;background:var(--preto);border-radius:4px;display:flex;align-items:center;justify-content:center}
+    .hdr-logo-m svg{width:13px;height:13px;fill:#0a0a0a}
+    .hdr-logo-t{font-size:15px;font-weight:800;color:var(--preto);letter-spacing:-0.2px}
+    .hdr-badge{font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;background:#1a1a1a;border:1px solid #333;color:var(--muted);padding:3px 8px;border-radius:999px}
+    .btn-sair{background:#1a1a1a;border:1px solid var(--borda);border-radius:var(--r);color:var(--muted);font-family:'Inter',sans-serif;font-size:12px;font-weight:500;padding:7px 13px;cursor:pointer}
+    .btn-sair:active{opacity:.7}
+
+    /* CONTENT */
+    .content{padding:16px 16px calc(20px + var(--sb));max-width:720px;margin:0 auto}
 
     /* STATS */
-    .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px}
-    .stat{background:var(--branco);border:1px solid var(--cinza2);border-radius:var(--r);padding:14px}
-    .stat-l{font-size:9px;font-weight:700;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px}
-    .stat-v{font-size:28px;font-weight:900;color:var(--preto);letter-spacing:-0.5px;line-height:1}
-    .stat-v.g{color:var(--verde)}.stat-v.y{color:var(--laranja)}.stat-v.r{color:var(--vermelho)}.stat-v.b{color:var(--azul)}.stat-v.p{color:var(--roxo)}
+    .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+    .stat{background:var(--card);border:1px solid var(--borda);border-radius:var(--r);padding:14px}
+    .stat-l{font-size:9px;font-weight:700;color:var(--muted);letter-spacing:.09em;text-transform:uppercase;margin-bottom:6px}
+    .stat-v{font-size:26px;font-weight:900;color:var(--preto);letter-spacing:-.5px;line-height:1}
+    .stat-v.g{color:var(--verde)}.stat-v.y{color:var(--amarelo)}.stat-v.r{color:var(--vermelho)}.stat-v.b{color:var(--azul)}.stat-v.p{color:var(--roxo)}
 
-    /* FILTROS */
-    .filtros{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:14px;scrollbar-width:none}
+    /* BUSCA + FILTROS */
+    .busca{width:100%;border:1px solid var(--borda);border-radius:var(--r);font-family:'Inter',sans-serif;font-size:16px;padding:13px 14px;color:var(--preto);background:var(--card);outline:none;margin-bottom:10px;-webkit-appearance:none;transition:border-color .15s}
+    .busca:focus{border-color:#444}
+    .busca::placeholder{color:var(--muted)}
+    .filtros{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;margin-bottom:12px;scrollbar-width:none}
     .filtros::-webkit-scrollbar{display:none}
-    .filtro-btn{padding:7px 14px;border-radius:999px;border:1px solid var(--cinza2);background:var(--branco);color:var(--muted);font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:'Inter',sans-serif;flex-shrink:0;transition:all 0.15s}
-    .filtro-btn.ativo{border-color:var(--preto);background:var(--preto);color:var(--branco)}
+    .f-btn{padding:7px 13px;border-radius:999px;border:1px solid var(--borda);background:var(--card);color:var(--muted);font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:'Inter',sans-serif;flex-shrink:0;transition:all .15s;-webkit-tap-highlight-color:transparent}
+    .f-btn.ativo{border-color:var(--preto);background:var(--preto);color:#0a0a0a}
+    .res-info{font-size:11px;color:var(--muted);margin-bottom:10px;font-weight:500}
 
     /* CLIENTE CARD */
-    .cli-card{background:var(--branco);border:1px solid var(--cinza2);border-radius:var(--r);padding:16px;margin-bottom:10px;transition:border-color 0.15s}
-    .cli-card:hover{border-color:var(--muted)}
-    .cli-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;gap:10px}
-    .cli-nome{font-size:15px;font-weight:700;color:var(--preto);letter-spacing:-0.1px;margin-bottom:2px}
+    .cli{background:var(--card);border:1px solid var(--borda);border-radius:var(--r);padding:16px;margin-bottom:8px;transition:border-color .15s}
+    .cli:hover{border-color:var(--borda2)}
+    .cli-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px}
+    .cli-nome{font-size:15px;font-weight:700;color:var(--preto);letter-spacing:-.1px;margin-bottom:2px}
     .cli-email{font-size:12px;color:var(--muted);font-weight:400}
-    .cli-info{font-size:12px;color:var(--muted);font-weight:400;margin-bottom:10px;display:flex;gap:12px;flex-wrap:wrap}
-    .cli-info span{display:flex;align-items:center;gap:4px}
-    .cli-bottom{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+    .cli-meta{font-size:12px;color:var(--muted);font-weight:400;margin-bottom:10px;display:flex;gap:12px;flex-wrap:wrap}
+    .cli-bot{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;padding-top:10px;border-top:1px solid var(--borda)}
+    .cli-slug{font-size:11px;color:var(--muted);font-weight:400}
     .cli-acts{display:flex;gap:6px;flex-wrap:wrap}
 
     /* BADGE */
-    .badge{display:inline-flex;padding:3px 9px;border-radius:999px;font-size:10px;font-weight:700;letter-spacing:0.03em}
-    .b-trial{background:#eff6ff;color:var(--azul);border:1px solid #bfdbfe}
-    .b-pago{background:#f0fdf4;color:var(--verde);border:1px solid #bbf7d0}
-    .b-expirado{background:#fef2f2;color:var(--vermelho);border:1px solid #fecaca}
-    .b-bloqueado{background:#f5f3ff;color:var(--roxo);border:1px solid #ddd6fe}
+    .badge{display:inline-flex;padding:4px 10px;border-radius:999px;font-size:10px;font-weight:700;letter-spacing:.02em}
+    .b-trial{background:rgba(59,130,246,.12);color:var(--azul);border:1px solid rgba(59,130,246,.25)}
+    .b-pago{background:rgba(22,163,74,.12);color:var(--verde);border:1px solid rgba(22,163,74,.25)}
+    .b-expirado{background:rgba(234,88,12,.12);color:var(--laranja);border:1px solid rgba(234,88,12,.25)}
+    .b-bloqueado{background:rgba(220,38,38,.12);color:var(--vermelho);border:1px solid rgba(220,38,38,.25)}
 
-    /* BOTÕES */
-    .ac-btn{padding:7px 13px;border-radius:var(--r);border:1px solid var(--cinza2);background:var(--branco);color:var(--muted);font-size:11px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.15s;white-space:nowrap}
-    .ac-btn:hover{border-color:var(--muted);color:var(--preto)}
-    .ac-btn.verde{border-color:#bbf7d0;background:#f0fdf4;color:var(--verde)}
-    .ac-btn.verde:hover{background:#dcfce7}
-    .ac-btn.danger{border-color:#fecaca;background:#fef2f2;color:var(--vermelho)}
-    .ac-btn.danger:hover{background:#fee2e2}
+    /* ACAO BTN */
+    .ab{padding:7px 12px;border-radius:var(--r);border:1px solid var(--borda);background:var(--card2);color:var(--muted);font-size:11px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s;white-space:nowrap;-webkit-tap-highlight-color:transparent}
+    .ab:active{opacity:.7}
+    .ab.g{border-color:rgba(22,163,74,.3);background:rgba(22,163,74,.08);color:var(--verde)}
+    .ab.r{border-color:rgba(220,38,38,.3);background:rgba(220,38,38,.08);color:var(--vermelho)}
 
     /* MODAL */
-    .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:100;align-items:flex-end;justify-content:center;backdrop-filter:blur(2px)}
-    .overlay.aberto{display:flex}
-    .modal{background:var(--branco);border-radius:8px 8px 0 0;padding:24px 20px;width:100%;max-width:480px;padding-bottom:calc(24px + var(--sb));animation:up 0.25s ease;max-height:85vh;overflow-y:auto}
+    .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;align-items:flex-end;justify-content:center;backdrop-filter:blur(2px)}
+    .overlay.open{display:flex}
+    .modal{background:var(--card);border:1px solid var(--borda);border-radius:12px 12px 0 0;padding:0;width:100%;max-width:520px;padding-bottom:var(--sb);animation:up .25s ease;max-height:90dvh;overflow-y:auto}
     @keyframes up{from{transform:translateY(100%)}to{transform:translateY(0)}}
-    .modal-h{width:32px;height:3px;background:var(--cinza2);border-radius:999px;margin:0 auto 18px}
-    .modal-titulo{font-size:17px;font-weight:800;color:var(--preto);margin-bottom:6px;letter-spacing:-0.2px}
-    .modal-sub{font-size:13px;color:var(--muted);font-weight:400;margin-bottom:20px;line-height:1.5}
-    .m-label{font-size:10px;font-weight:600;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:7px;display:block}
-    .m-input,.m-select{width:100%;border:1.5px solid var(--cinza2);border-radius:var(--r);font-family:'Inter',sans-serif;font-size:15px;font-weight:400;padding:13px 14px;color:var(--texto);background:var(--branco);outline:none;appearance:none;margin-bottom:14px;transition:border-color 0.15s}
-    .m-input:focus,.m-select:focus{border-color:var(--preto)}
-    .dias-rapidos{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
-    .dias-btn{padding:8px 14px;border-radius:999px;border:1px solid var(--cinza2);background:var(--branco);color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;transition:all 0.15s;font-family:'Inter',sans-serif}
-    .dias-btn:hover{border-color:var(--preto);color:var(--preto)}
-    .modal-footer{display:flex;gap:8px;margin-top:6px}
-    .m-btn{flex:1;padding:14px;border-radius:var(--r);font-family:'Inter',sans-serif;font-size:14px;font-weight:600;cursor:pointer;border:none;transition:opacity 0.15s;letter-spacing:-0.1px}
-    .m-btn-dark{background:var(--preto);color:var(--branco)}.m-btn-dark:hover{opacity:0.85}
-    .m-btn-out{background:none;border:1px solid var(--cinza2);color:var(--muted)}.m-btn-out:hover{border-color:var(--cinza3);color:var(--preto)}
+    .mh{width:36px;height:3px;background:var(--borda);border-radius:999px;margin:14px auto 0}
+    .mb{padding:20px 20px 24px}
+    .mt{font-size:18px;font-weight:800;color:var(--preto);letter-spacing:-.2px;margin-bottom:4px}
+    .ms{font-size:12px;color:var(--muted);font-weight:400;margin-bottom:20px;line-height:1.5}
+    .ml{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:7px;display:block;margin-top:14px}
+    .ml:first-of-type{margin-top:0}
+    .mi,.msel{width:100%;border:1.5px solid var(--borda);border-radius:var(--r);font-family:'Inter',sans-serif;font-size:16px;padding:13px 14px;color:var(--preto);background:var(--card);outline:none;appearance:none;transition:border-color .15s}
+    .mi:focus,.msel:focus{border-color:#555}
+    .mi::placeholder{color:var(--muted)}
+    .dias-rapidos{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+    .dr-btn{padding:8px 14px;border-radius:999px;border:1px solid var(--borda);background:var(--card2);color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;font-family:'Inter',sans-serif;-webkit-tap-highlight-color:transparent}
+    .dr-btn:active{opacity:.7}
+    .dr-btn:hover{border-color:#555;color:var(--preto)}
+    .mf{display:flex;gap:8px;margin-top:18px;padding-top:16px;border-top:1px solid var(--borda)}
+    .mbtn{flex:1;padding:14px;border-radius:var(--r);font-family:'Inter',sans-serif;font-size:14px;font-weight:700;cursor:pointer;border:none;letter-spacing:-.1px;-webkit-tap-highlight-color:transparent}
+    .mbtn-dark{background:var(--preto);color:#0a0a0a}.mbtn-dark:active{opacity:.75}
+    .mbtn-out{background:none;border:1px solid var(--borda);color:var(--muted)}.mbtn-out:active{opacity:.7}
+
+    /* DETALHE CLIENTE */
+    .det-box{background:var(--card2);border:1px solid var(--borda);border-radius:var(--r);padding:14px;margin-bottom:16px}
+    .det-linha{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--borda);font-size:13px}
+    .det-linha:last-child{border-bottom:none}
+    .det-k{color:var(--muted);font-weight:400}
+    .det-v{color:var(--preto);font-weight:600;text-align:right}
 
     /* TOAST */
-    .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--preto);color:var(--branco);border-radius:var(--r);padding:11px 18px;font-size:12px;font-weight:600;z-index:999;animation:tUp 0.2s ease;white-space:nowrap}
-    .toast.ok{background:var(--verde)}.toast.err{background:var(--vermelho)}
+    .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--preto);color:#0a0a0a;border-radius:var(--r);padding:11px 18px;font-size:12px;font-weight:700;z-index:999;animation:tUp .2s ease;white-space:nowrap}
+    .toast.ok{background:var(--verde);color:#fff}.toast.err{background:var(--vermelho);color:#fff}
     @keyframes tUp{from{opacity:0;transform:translateX(-50%) translateY(8px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
-
-    .empty{text-align:center;padding:48px 20px;color:var(--muted)}
-    .empty-l{font-size:20px;color:var(--cinza2);margin-bottom:8px;font-weight:900}
-    .empty-t{font-size:13px;font-weight:400}
-    .busca{width:100%;border:1.5px solid var(--cinza2);border-radius:var(--r);font-family:'Inter',sans-serif;font-size:15px;padding:13px 14px;color:var(--texto);background:var(--branco);outline:none;margin-bottom:14px;-webkit-appearance:none}
-    .busca:focus{border-color:var(--preto)}
-    .result-info{font-size:11px;color:var(--muted);font-weight:500;margin-bottom:12px}
+    .empty{text-align:center;padding:40px 20px;color:var(--muted)}
 
     @media(max-width:400px){.stats{grid-template-columns:repeat(2,1fr)}}
   </style>
@@ -122,35 +134,33 @@
 <body>
 
 <!-- LOGIN -->
-<div class="login-wrap" id="login-screen">
-  <div class="login-card">
+<div id="login">
+  <div class="login-box">
     <div class="login-logo">
-      <div class="login-logo-m"><svg viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12" rx="2"/><line x1="5" y1="6" x2="11" y2="6" stroke="#0a0a0a" stroke-width="1.5" stroke-linecap="round"/><line x1="5" y1="9" x2="9" y2="9" stroke="#0a0a0a" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+      <div class="login-logo-m"><svg viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12" rx="2"/><line x1="5" y1="6" x2="11" y2="6" stroke="#fafaf9" stroke-width="1.5" stroke-linecap="round"/><line x1="5" y1="9" x2="9" y2="9" stroke="#fafaf9" stroke-width="1.5" stroke-linecap="round"/></svg></div>
       <span class="login-logo-t">AgendaOK</span>
     </div>
-    <div class="login-badge">Painel Master</div>
-    <input class="login-input" type="password" id="master-senha" placeholder="Senha master" onkeydown="if(event.key==='Enter')fazerLogin()"/>
-    <button class="login-btn" id="login-btn" onclick="fazerLogin()">Acessar</button>
+    <div class="login-badge">Acesso Master</div>
+    <input class="login-input" type="text" id="user-input" placeholder="Usuário" autocomplete="off" autocorrect="off" autocapitalize="none" style="margin-bottom:10px" onkeydown="if(event.key==='Enter')document.getElementById('senha-input').focus()"/>
+    <input class="login-input" type="password" id="senha-input" placeholder="Senha" autocomplete="current-password" onkeydown="if(event.key==='Enter')fazerLogin()"/>
+    <button class="login-btn" id="login-btn" onclick="fazerLogin()">Acessar painel</button>
     <div class="login-erro" id="login-erro"></div>
   </div>
 </div>
 
 <!-- APP -->
 <div id="app">
-  <div class="header">
-    <div class="h-left">
-      <div class="h-logo">
-        <div class="h-logo-m"><svg viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12" rx="2"/><line x1="5" y1="6" x2="11" y2="6" stroke="#0a0a0a" stroke-width="1.5" stroke-linecap="round"/><line x1="5" y1="9" x2="9" y2="9" stroke="#0a0a0a" stroke-width="1.5" stroke-linecap="round"/></svg></div>
-        <span class="h-logo-t">AgendaOK</span>
-      </div>
-      <span class="h-badge">Master</span>
+  <div class="hdr">
+    <div class="hdr-logo">
+      <div class="hdr-logo-m"><svg viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12" rx="2"/><line x1="5" y1="6" x2="11" y2="6" stroke="#0a0a0a" stroke-width="1.5" stroke-linecap="round"/><line x1="5" y1="9" x2="9" y2="9" stroke="#0a0a0a" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+      <span class="hdr-logo-t">AgendaOK</span>
+      <span class="hdr-badge">Master</span>
     </div>
     <button class="btn-sair" onclick="sair()">Sair</button>
   </div>
 
   <div class="content">
-    <!-- STATS -->
-    <div class="stats">
+    <div class="stats" id="stats-wrap">
       <div class="stat"><div class="stat-l">Clientes</div><div class="stat-v" id="s-total">—</div></div>
       <div class="stat"><div class="stat-l">Em trial</div><div class="stat-v b" id="s-trial">—</div></div>
       <div class="stat"><div class="stat-l">Pagos</div><div class="stat-v g" id="s-pagos">—</div></div>
@@ -159,241 +169,302 @@
       <div class="stat"><div class="stat-l">Agendamentos</div><div class="stat-v p" id="s-ag">—</div></div>
     </div>
 
-    <!-- BUSCA E FILTROS -->
-    <input class="busca" type="search" id="busca" placeholder="Buscar por nome, e-mail ou negócio..." oninput="filtrarLista()"/>
+    <input class="busca" type="search" id="busca" placeholder="Buscar nome, e-mail ou negócio..." oninput="filtrarLista()"/>
+
     <div class="filtros">
-      <button class="filtro-btn ativo" onclick="setFiltro('todos',this)">Todos</button>
-      <button class="filtro-btn" onclick="setFiltro('trial',this)">Em trial</button>
-      <button class="filtro-btn" onclick="setFiltro('pago',this)">Pagos</button>
-      <button class="filtro-btn" onclick="setFiltro('expirado',this)">Expirados</button>
-      <button class="filtro-btn" onclick="setFiltro('bloqueado',this)">Bloqueados</button>
+      <button class="f-btn ativo" onclick="setFiltro('todos',this)">Todos</button>
+      <button class="f-btn" onclick="setFiltro('trial',this)">Em trial</button>
+      <button class="f-btn" onclick="setFiltro('pago',this)">Pagos</button>
+      <button class="f-btn" onclick="setFiltro('expirado',this)">Expirados</button>
+      <button class="f-btn" onclick="setFiltro('bloqueado',this)">Bloqueados</button>
     </div>
-    <div class="result-info" id="result-info"></div>
-    <div id="lista-clientes"></div>
+
+    <div class="res-info" id="res-info"></div>
+    <div id="lista"></div>
   </div>
 </div>
 
-<!-- MODAL ACESSO -->
-<div class="overlay" id="modal-acesso">
+<!-- MODAL LIBERAR ACESSO -->
+<div class="overlay" id="m-acesso" onclick="if(event.target===this)fechar('m-acesso')">
   <div class="modal">
-    <div class="modal-h"></div>
-    <div class="modal-titulo" id="modal-titulo">Gerenciar acesso</div>
-    <div class="modal-sub" id="modal-sub"></div>
-    <input type="hidden" id="modal-cli-id"/>
+    <div class="mh"></div>
+    <div class="mb">
+      <div class="mt" id="m-nome">Cliente</div>
+      <div class="ms" id="m-info">—</div>
+      <input type="hidden" id="m-id"/>
 
-    <label class="m-label">Adicionar dias de acesso</label>
-    <div class="dias-rapidos">
-      <button class="dias-btn" onclick="setDias(7)">7 dias</button>
-      <button class="dias-btn" onclick="setDias(15)">15 dias</button>
-      <button class="dias-btn" onclick="setDias(30)">30 dias</button>
-      <button class="dias-btn" onclick="setDias(60)">60 dias</button>
-      <button class="dias-btn" onclick="setDias(90)">90 dias</button>
-      <button class="dias-btn" onclick="setDias(365)">1 ano</button>
-    </div>
-    <input class="m-input" type="number" id="modal-dias" placeholder="Ou informe os dias" min="1"/>
+      <!-- Detalhes atuais -->
+      <div class="det-box" id="m-detalhes"></div>
 
-    <label class="m-label">Marcar como pago?</label>
-    <select class="m-select" id="modal-pago">
-      <option value="false">Não — continua como trial/gratuito</option>
-      <option value="true">Sim — marcar como cliente pago</option>
-    </select>
+      <label class="ml">Liberar acesso por quantos dias?</label>
+      <div class="dias-rapidos">
+        <button class="dr-btn" onclick="setDias(7)">7 dias</button>
+        <button class="dr-btn" onclick="setDias(15)">15 dias</button>
+        <button class="dr-btn" onclick="setDias(30)">30 dias</button>
+        <button class="dr-btn" onclick="setDias(60)">60 dias</button>
+        <button class="dr-btn" onclick="setDias(90)">90 dias</button>
+        <button class="dr-btn" onclick="setDias(365)">1 ano</button>
+      </div>
+      <input class="mi" type="number" id="m-dias" placeholder="Ou informe outro número de dias" min="1"/>
 
-    <div class="modal-footer">
-      <button class="m-btn m-btn-out" onclick="fecharModal()">Cancelar</button>
-      <button class="m-btn m-btn-dark" onclick="liberarAcesso()">Liberar acesso</button>
+      <label class="ml">Status do cliente</label>
+      <select class="msel" id="m-pago">
+        <option value="false">Trial / Cortesia — acesso gratuito</option>
+        <option value="true">Pago — cliente pagou o plano</option>
+      </select>
+
+      <div class="mf">
+        <button class="mbtn mbtn-out" onclick="fechar('m-acesso')">Cancelar</button>
+        <button class="mbtn mbtn-dark" onclick="liberarAcesso()">Liberar acesso</button>
+      </div>
     </div>
   </div>
 </div>
 
 <script>
-let todosClientes = [];
-let filtroAtual = 'todos';
-let buscaAtual = '';
+let todos = [], filtroAtual = 'todos', buscaAtual = '';
 
-async function fazerLogin(){
-  const senha = document.getElementById('master-senha').value;
-  const erro  = document.getElementById('login-erro');
-  const btn   = document.getElementById('login-btn');
+// ── LOGIN ──
+async function fazerLogin() {
+  const usuario = document.getElementById('user-input').value.trim();
+  const senha   = document.getElementById('senha-input').value;
+  const erro    = document.getElementById('login-erro');
+  const btn     = document.getElementById('login-btn');
   erro.textContent = '';
-  if(!senha){erro.textContent='Informe a senha.';return;}
-  btn.disabled=true;btn.textContent='Verificando...';
-  try{
-    const r=await fetch('/admin/login',{method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({senha})});
-    const d=await r.json();
-    if(!r.ok){erro.textContent=d.erro||'Senha incorreta.';btn.disabled=false;btn.textContent='Acessar';return;}
-    document.getElementById('login-screen').style.display='none';
-    document.getElementById('app').style.display='block';
-    iniciarApp();
-  }catch(e){erro.textContent='Erro de conexão.';btn.disabled=false;btn.textContent='Acessar';}
+  if (!usuario || !senha) { erro.textContent = 'Preencha usuário e senha.'; return; }
+  btn.disabled = true; btn.textContent = 'Verificando...';
+  try {
+    const r = await fetch('/admin/login', {
+      method: 'POST', credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ usuario, senha }),
+    });
+    const d = await r.json();
+    if (!r.ok) { erro.textContent = d.erro || 'Senha incorreta.'; btn.disabled = false; btn.textContent = 'Acessar painel'; return; }
+    entrarNoApp();
+  } catch(e) { erro.textContent = 'Erro de conexão.'; btn.disabled = false; btn.textContent = 'Acessar painel'; }
 }
 
-async function verificarSessao(){
-  try{
-    const r=await fetch('/admin/status',{credentials:'include'});
-    const d=await r.json();
-    if(d.logado){
-      document.getElementById('login-screen').style.display='none';
-      document.getElementById('app').style.display='block';
-      iniciarApp();
-    }
-  }catch(e){}
+async function verificarSessao() {
+  try {
+    const r = await fetch('/admin/status', { credentials: 'include' });
+    const d = await r.json();
+    if (d.logado) entrarNoApp();
+  } catch(e) {}
 }
 
-async function iniciarApp(){
+function entrarNoApp() {
+  document.getElementById('login').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  carregarTudo();
+}
+
+// ── DADOS ──
+async function carregarTudo() {
   await Promise.all([carregarStats(), carregarClientes()]);
 }
 
-async function carregarStats(){
-  try{
-    const r=await fetch('/admin/stats',{credentials:'include'});
-    const d=await r.json();
-    document.getElementById('s-total').textContent=d.total;
-    document.getElementById('s-trial').textContent=d.trial;
-    document.getElementById('s-pagos').textContent=d.pagos;
-    document.getElementById('s-exp').textContent=d.expirados;
-    document.getElementById('s-bloq').textContent=d.bloqueados;
-    document.getElementById('s-ag').textContent=d.agendamentos;
-  }catch(e){}
+async function carregarStats() {
+  try {
+    const r = await fetch('/admin/stats', { credentials: 'include' });
+    const d = await r.json();
+    document.getElementById('s-total').textContent = d.total;
+    document.getElementById('s-trial').textContent = d.trial;
+    document.getElementById('s-pagos').textContent = d.pagos;
+    document.getElementById('s-exp').textContent   = d.expirados;
+    document.getElementById('s-bloq').textContent  = d.bloqueados;
+    document.getElementById('s-ag').textContent    = d.agendamentos;
+  } catch(e) {}
 }
 
-async function carregarClientes(){
-  try{
-    const r=await fetch('/admin/clientes',{credentials:'include'});
-    const d=await r.json();
-    todosClientes=d.clientes||[];
+async function carregarClientes() {
+  try {
+    const r = await fetch('/admin/clientes', { credentials: 'include' });
+    const d = await r.json();
+    todos = d.clientes || [];
     renderLista();
-  }catch(e){}
+  } catch(e) {}
 }
 
-function setFiltro(f,el){
-  filtroAtual=f;
-  document.querySelectorAll('.filtro-btn').forEach(b=>b.classList.remove('ativo'));
-  if(el)el.classList.add('ativo');
+// ── FILTROS ──
+function setFiltro(f, el) {
+  filtroAtual = f;
+  document.querySelectorAll('.f-btn').forEach(b => b.classList.remove('ativo'));
+  if (el) el.classList.add('ativo');
   renderLista();
 }
 
-function filtrarLista(){
-  buscaAtual=document.getElementById('busca').value.toLowerCase().trim();
+function filtrarLista() {
+  buscaAtual = document.getElementById('busca').value.toLowerCase().trim();
   renderLista();
 }
 
-function renderLista(){
-  let lista=todosClientes;
-  if(filtroAtual!=='todos') lista=lista.filter(c=>c.status_acesso===filtroAtual);
-  if(buscaAtual) lista=lista.filter(c=>
-    (c.nome||'').toLowerCase().includes(buscaAtual)||
-    (c.email||'').toLowerCase().includes(buscaAtual)||
-    (c.nome_negocio||'').toLowerCase().includes(buscaAtual)
+function renderLista() {
+  let lista = todos;
+  if (filtroAtual !== 'todos') lista = lista.filter(c => c.status_acesso === filtroAtual);
+  if (buscaAtual) lista = lista.filter(c =>
+    (c.nome || '').toLowerCase().includes(buscaAtual) ||
+    (c.email || '').toLowerCase().includes(buscaAtual) ||
+    (c.nome_negocio || '').toLowerCase().includes(buscaAtual)
   );
 
-  document.getElementById('result-info').textContent=lista.length+' cliente(s) encontrado(s)';
-  const el=document.getElementById('lista-clientes');
+  document.getElementById('res-info').textContent = lista.length + ' cliente(s)';
+  const el = document.getElementById('lista');
 
-  if(!lista.length){
-    el.innerHTML='<div class="empty"><div class="empty-l">—</div><div class="empty-t">Nenhum cliente encontrado</div></div>';
+  if (!lista.length) {
+    el.innerHTML = '<div class="empty">Nenhum cliente encontrado.</div>';
     return;
   }
 
-  const statusBadge={
-    trial:'<span class="badge b-trial">Trial</span>',
-    pago:'<span class="badge b-pago">Pago</span>',
-    expirado:'<span class="badge b-expirado">Expirado</span>',
+  const badges = {
+    trial:    '<span class="badge b-trial">Trial</span>',
+    pago:     '<span class="badge b-pago">Pago</span>',
+    expirado: '<span class="badge b-expirado">Expirado</span>',
     bloqueado:'<span class="badge b-bloqueado">Bloqueado</span>',
   };
 
-  el.innerHTML=lista.map(c=>{
-    const expiraInfo=c.plano_pago&&c.acesso_expira?` · Acesso até ${fmtData(c.acesso_expira)}`:(!c.plano_pago&&c.trial_expira?` · Trial até ${fmtData(c.trial_expira)}`:'');
-    return`<div class="cli-card">
+  el.innerHTML = lista.map(c => {
+    const expInfo = c.plano_pago && c.acesso_expira
+      ? `Acesso até ${fmt(c.acesso_expira)}`
+      : c.trial_expira ? `Trial até ${fmt(c.trial_expira)}` : '—';
+
+    return `<div class="cli">
       <div class="cli-top">
         <div>
           <div class="cli-nome">${c.nome_negocio}</div>
           <div class="cli-email">${c.nome} · ${c.email}</div>
         </div>
-        ${statusBadge[c.status_acesso]||''}
+        ${badges[c.status_acesso] || ''}
       </div>
-      <div class="cli-info">
+      <div class="cli-meta">
         <span>📌 ${c.nicho}</span>
         <span>📅 ${c.total_agendamentos} agendamento(s)</span>
-        <span>🗓 Desde ${fmtData(c.criado_em?.split(' ')[0])}</span>
-        ${expiraInfo?`<span>⏱ ${expiraInfo.replace(' · ','')}</span>`:''}
+        <span>⏱ ${expInfo}</span>
+        <span>📆 Desde ${fmt(c.criado_em?.split(' ')[0] || c.criado_em)}</span>
       </div>
-      <div class="cli-bottom">
-        <div style="font-size:11px;color:var(--muted)">/${c.slug}</div>
+      <div class="cli-bot">
+        <span class="cli-slug">/${c.slug}</span>
         <div class="cli-acts">
-          <button class="ac-btn verde" onclick="abrirModalAcesso('${c.id}','${esc(c.nome_negocio)}','${esc(c.email)}','${c.status_acesso}','${c.trial_expira||''}','${c.acesso_expira||''}')">Liberar acesso</button>
-          ${c.acesso_ativo?`<button class="ac-btn danger" onclick="bloquearCliente('${c.id}','${esc(c.nome_negocio)}')">Bloquear</button>`:`<button class="ac-btn verde" onclick="liberarRapido('${c.id}')">Desbloquear</button>`}
+          <button class="ab g" onclick="abrirModal('${c.id}','${esc(c.nome_negocio)}','${esc(c.email)}','${c.status_acesso}','${c.trial_expira||''}','${c.acesso_expira||''}','${c.plano_pago}','${esc(c.nome)}','${c.nicho}','${c.total_agendamentos}','${fmt(c.criado_em?.split(' ')[0]||c.criado_em)}')">
+            Liberar acesso
+          </button>
+          ${c.acesso_ativo
+            ? `<button class="ab r" onclick="bloquear('${c.id}','${esc(c.nome_negocio)}')">Bloquear</button>`
+            : `<button class="ab g" onclick="desbloquearRapido('${c.id}')">Desbloquear</button>`
+          }
         </div>
       </div>
     </div>`;
   }).join('');
 }
 
-function fmtData(iso){
-  if(!iso||iso===''||iso==='undefined') return '—';
-  try{const[a,m,d]=(iso.split('T')[0]).split('-');return d+'/'+m+'/'+a;}catch{return iso;}
-}
-function esc(s){return(s||'').replace(/'/g,"\\'");}
+// ── MODAL ──
+function abrirModal(id, nome, email, status, trialExp, acessoExp, pago, nomeReal, nicho, ags, desde) {
+  document.getElementById('m-id').value = id;
+  document.getElementById('m-nome').textContent = nome;
+  document.getElementById('m-info').textContent = email;
+  document.getElementById('m-dias').value = '30';
+  document.getElementById('m-pago').value = pago === 'true' ? 'true' : 'false';
 
-function abrirModalAcesso(id,nome,email,status,trialExp,acessoExp){
-  document.getElementById('modal-cli-id').value=id;
-  document.getElementById('modal-titulo').textContent=nome;
-  const expiraInfo=status==='pago'&&acessoExp?`Acesso até ${fmtData(acessoExp)}`:(!acessoExp||acessoExp==='')?`Trial até ${fmtData(trialExp)}`:`Acesso até ${fmtData(acessoExp)}`;
-  document.getElementById('modal-sub').textContent=email+' · '+expiraInfo;
-  document.getElementById('modal-dias').value='30';
-  document.getElementById('modal-pago').value='true';
-  document.getElementById('modal-acesso').classList.add('aberto');
-}
+  const hoje = new Date().toISOString().split('T')[0];
+  const trialOk = trialExp && trialExp >= hoje;
+  const acessoOk = acessoExp && acessoExp >= hoje;
 
-function setDias(n){document.getElementById('modal-dias').value=n;}
+  const statusLabel = {
+    trial: '🔵 Em período de teste',
+    pago: '🟢 Cliente pago',
+    expirado: '🟡 Acesso expirado',
+    bloqueado: '🔴 Acesso bloqueado',
+  }[status] || status;
 
-async function liberarAcesso(){
-  const id=document.getElementById('modal-cli-id').value;
-  const dias=parseInt(document.getElementById('modal-dias').value)||30;
-  const pago=document.getElementById('modal-pago').value==='true';
-  try{
-    const r=await fetch('/admin/clientes/'+id+'/acesso',{method:'PATCH',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({dias,pago})});
-    const d=await r.json();
-    if(!r.ok)throw new Error(d.erro);
-    fecharModal();
-    toast(d.msg||'Acesso liberado!','ok');
-    await Promise.all([carregarClientes(),carregarStats()]);
-  }catch(e){toast(e.message,'err');}
-}
+  document.getElementById('m-detalhes').innerHTML = `
+    <div class="det-linha"><span class="det-k">Negócio</span><span class="det-v">${nome}</span></div>
+    <div class="det-linha"><span class="det-k">Responsável</span><span class="det-v">${nomeReal}</span></div>
+    <div class="det-linha"><span class="det-k">E-mail</span><span class="det-v">${email}</span></div>
+    <div class="det-linha"><span class="det-k">Segmento</span><span class="det-v">${nicho}</span></div>
+    <div class="det-linha"><span class="det-k">Status atual</span><span class="det-v">${statusLabel}</span></div>
+    <div class="det-linha"><span class="det-k">Trial expira</span><span class="det-v">${trialExp ? fmt(trialExp) : '—'}</span></div>
+    <div class="det-linha"><span class="det-k">Acesso até</span><span class="det-v">${acessoExp && acessoExp !== '' ? fmt(acessoExp) : '—'}</span></div>
+    <div class="det-linha"><span class="det-k">Agendamentos</span><span class="det-v">${ags}</span></div>
+    <div class="det-linha"><span class="det-k">Cadastrado em</span><span class="det-v">${desde}</span></div>
+  `;
 
-async function bloquearCliente(id,nome){
-  if(!confirm(`Bloquear o acesso de "${nome}"?`))return;
-  try{
-    await fetch('/admin/clientes/'+id+'/acesso',{method:'PATCH',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({bloquear:true})});
-    toast('Acesso bloqueado','ok');
-    await Promise.all([carregarClientes(),carregarStats()]);
-  }catch(e){toast('Erro','err');}
+  document.getElementById('m-acesso').classList.add('open');
 }
 
-async function liberarRapido(id){
-  try{
-    await fetch('/admin/clientes/'+id+'/acesso',{method:'PATCH',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({dias:30,pago:false})});
-    toast('Desbloqueado por 30 dias','ok');
-    await Promise.all([carregarClientes(),carregarStats()]);
-  }catch(e){toast('Erro','err');}
+function fechar(id) { document.getElementById(id).classList.remove('open'); }
+function setDias(n) { document.getElementById('m-dias').value = n; }
+
+async function liberarAcesso() {
+  const id   = document.getElementById('m-id').value;
+  const dias = parseInt(document.getElementById('m-dias').value) || 30;
+  const pago = document.getElementById('m-pago').value === 'true';
+  try {
+    const r = await fetch('/admin/clientes/' + id + '/acesso', {
+      method: 'PATCH', credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ dias, pago }),
+    });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.erro);
+    fechar('m-acesso');
+    toast('✅ ' + (d.msg || 'Acesso liberado!'), 'ok');
+    await carregarTudo();
+  } catch(e) { toast(e.message, 'err'); }
 }
 
-function fecharModal(){document.getElementById('modal-acesso').classList.remove('aberto');}
-document.getElementById('modal-acesso').addEventListener('click',function(e){if(e.target===this)fecharModal();});
-
-async function sair(){
-  await fetch('/admin/logout',{method:'POST',credentials:'include'});
-  document.getElementById('app').style.display='none';
-  document.getElementById('login-screen').style.display='flex';
-  document.getElementById('master-senha').value='';
+async function bloquear(id, nome) {
+  if (!confirm(`Bloquear acesso de "${nome}"?`)) return;
+  try {
+    await fetch('/admin/clientes/' + id + '/acesso', {
+      method: 'PATCH', credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ bloquear: true }),
+    });
+    toast('Acesso bloqueado', 'ok');
+    await carregarTudo();
+  } catch(e) { toast('Erro', 'err'); }
 }
 
-function toast(msg,tipo='ok'){
-  document.querySelectorAll('.toast').forEach(t=>t.remove());
-  const t=document.createElement('div');t.className='toast '+tipo;t.textContent=msg;
-  document.body.appendChild(t);setTimeout(()=>t.remove(),3000);
+async function desbloquearRapido(id) {
+  try {
+    await fetch('/admin/clientes/' + id + '/acesso', {
+      method: 'PATCH', credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ dias: 30, pago: false }),
+    });
+    toast('Desbloqueado por 30 dias', 'ok');
+    await carregarTudo();
+  } catch(e) { toast('Erro', 'err'); }
 }
 
-document.getElementById('master-senha').addEventListener('keydown',e=>{if(e.key==='Enter')fazerLogin();});
+// ── UTILS ──
+function fmt(iso) {
+  if (!iso || iso === '' || iso === 'undefined') return '—';
+  try { const [a,m,d] = iso.split('T')[0].split('-'); return `${d}/${m}/${a}`; }
+  catch { return iso; }
+}
+function esc(s) { return (s || '').replace(/'/g, "\\'"); }
+
+async function sair() {
+  await fetch('/admin/logout', { method: 'POST', credentials: 'include' });
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('login').style.display = 'flex';
+  document.getElementById('senha-input').value = '';
+  document.getElementById('user-input').value = '';
+  document.getElementById('login-btn').disabled = false;
+  document.getElementById('login-btn').textContent = 'Acessar painel';
+}
+
+function toast(msg, tipo = 'ok') {
+  document.querySelectorAll('.toast').forEach(t => t.remove());
+  const t = document.createElement('div');
+  t.className = 'toast ' + tipo;
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3000);
+}
+
 verificarSessao();
 </script>
 </body>
