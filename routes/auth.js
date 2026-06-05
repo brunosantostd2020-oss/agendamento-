@@ -40,7 +40,7 @@ router.post('/cadastro', async (req, res) => {
     const id    = uuidv4();
     const config = {
       horarios: '08:00,09:00,10:00,11:00,14:00,15:00,16:00,17:00',
-      dias_uteis: '1,2,3,4,5',
+      dias_uteis: '',
       telefone: '', descricao: '', cor: '#0d9488',
       email_negocio: '', email_senha: '',
     };

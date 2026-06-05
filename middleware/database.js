@@ -191,4 +191,21 @@ async function initTokenConfirm() {
   finally { client.release(); }
 }
 
-module.exports = { pool, initDb, initServicos, initColunas, initExtras, initTrial, initTokenConfirm };
+async function initLiberarDias() {
+  const client = await pool.connect();
+  try {
+    // Libera todos os dias para usuários que tinham apenas seg-sex bloqueado
+    await client.query(`
+      UPDATE usuarios
+      SET config = jsonb_set(config, '{dias_uteis}', '""'::jsonb)
+      WHERE config->>'dias_uteis' = '1,2,3,4,5'
+    `);
+    console.log('✅ Dias da semana liberados para todos os usuários!');
+  } catch(e) {
+    console.error('liberarDias:', e.message);
+  } finally {
+    client.release();
+  }
+}
+
+module.exports = { pool, initDb, initServicos, initColunas, initExtras, initTrial, initTokenConfirm, initLiberarDias };
