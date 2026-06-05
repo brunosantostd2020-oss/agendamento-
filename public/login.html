@@ -13,18 +13,11 @@
     .logo-box{width:34px;height:34px;border-radius:8px;background:var(--teal);color:white;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px}
     .logo-txt{font-weight:800;font-size:17px;color:var(--dark)}
     .wrap{flex:1;display:flex}
-    .lado-img{
-      flex:1;background:linear-gradient(135deg,var(--teal) 0%,#0a7c72 100%);
-      display:flex;flex-direction:column;align-items:center;justify-content:center;
-      padding:48px;color:white;
-    }
+    .lado-img{flex:1;background:linear-gradient(135deg,var(--teal) 0%,#0a7c72 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px;color:white}
     .lado-img h2{font-size:32px;font-weight:800;margin-bottom:12px;line-height:1.2}
     .lado-img p{font-size:16px;opacity:0.85;line-height:1.6;max-width:340px;text-align:center}
     .lado-img .ilus{font-size:80px;margin-bottom:28px}
-    .lado-form{
-      flex:1;display:flex;align-items:center;justify-content:center;
-      padding:48px 32px;
-    }
+    .lado-form{flex:1;display:flex;align-items:center;justify-content:center;padding:48px 32px}
     .card{width:100%;max-width:400px}
     .card-titulo{font-size:28px;font-weight:800;color:var(--dark);margin-bottom:4px}
     .card-sub{font-size:14px;color:var(--muted);margin-bottom:32px}
@@ -34,6 +27,7 @@
     .campo input:focus{border-color:var(--teal);box-shadow:0 0 0 3px var(--teal-lt)}
     .btn-entrar{width:100%;padding:14px;border-radius:12px;background:var(--teal);color:white;font-family:'Inter',sans-serif;font-size:15px;font-weight:700;border:none;cursor:pointer;transition:all 0.2s;margin-top:4px}
     .btn-entrar:hover{background:var(--teal-esc)}
+    .btn-entrar:disabled{opacity:0.6;cursor:not-allowed}
     .erro{color:var(--vermelho);font-size:13px;font-weight:600;margin-top:8px;min-height:18px;text-align:center}
     .link-cad{text-align:center;margin-top:20px;font-size:14px;color:var(--muted)}
     .link-cad a{color:var(--teal);font-weight:600;text-decoration:none}
@@ -54,10 +48,16 @@
     <div class="card">
       <div class="card-titulo">Conecte-se</div>
       <div class="card-sub">Entre na sua conta para continuar</div>
-      <div class="campo"><label>E-mail</label><input type="email" id="email" placeholder="seu@email.com" onkeydown="if(event.key==='Enter')entrar()"/></div>
-      <div class="campo"><label>Senha</label><input type="password" id="senha" placeholder="Sua senha" onkeydown="if(event.key==='Enter')entrar()"/></div>
+      <div class="campo">
+        <label>E-mail</label>
+        <input type="email" id="email" placeholder="seu@email.com" onkeydown="if(event.key==='Enter')entrar()"/>
+      </div>
+      <div class="campo">
+        <label>Senha</label>
+        <input type="password" id="senha" placeholder="Sua senha" onkeydown="if(event.key==='Enter')entrar()"/>
+      </div>
       <div class="erro" id="erro"></div>
-      <button class="btn-entrar" onclick="entrar()">Entrar</button>
+      <button class="btn-entrar" id="btn" onclick="entrar()">Entrar</button>
       <div class="link-cad">Não tem conta? <a href="/cadastro">Criar conta grátis</a></div>
     </div>
   </div>
@@ -67,18 +67,39 @@ async function entrar() {
   const email = document.getElementById('email').value.trim();
   const senha = document.getElementById('senha').value;
   const erro  = document.getElementById('erro');
+  const btn   = document.getElementById('btn');
+
   erro.textContent = '';
   if (!email || !senha) { erro.textContent = 'Preencha e-mail e senha'; return; }
+
+  btn.disabled = true;
+  btn.textContent = 'Entrando...';
+
   try {
     const r = await fetch('/auth/login', {
-      method:'POST', credentials:'include',
-      headers:{'Content-Type':'application/json'},
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, senha }),
     });
+
     const d = await r.json();
-    if (!r.ok) { erro.textContent = d.erro; return; }
-    location.href = '/painel';
-  } catch(e) { erro.textContent = 'Erro de conexão. Tente novamente.'; }
+
+    if (!r.ok) {
+      erro.textContent = d.erro || 'Erro ao entrar';
+      btn.disabled = false;
+      btn.textContent = 'Entrar';
+      return;
+    }
+
+    // Redireciona após login bem-sucedido
+    window.location.replace('/painel');
+
+  } catch(e) {
+    erro.textContent = 'Erro de conexão. Tente novamente.';
+    btn.disabled = false;
+    btn.textContent = 'Entrar';
+  }
 }
 </script>
 </body>
