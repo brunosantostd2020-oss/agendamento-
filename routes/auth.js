@@ -2,7 +2,7 @@ const express = require('express');
 const router  = express.Router();
 const bcrypt  = require('bcryptjs');
 const { v4: uuidv4 } = require('uuid');
-const { lerDb, salvarDb } = require('../middleware/database');
+const { pool } = require('../middleware/database');
 const { enviarBoasVindas, enviarInstrucoesPagamento } = require('../middleware/email');
 
 // POST /auth/cadastro
@@ -18,70 +18,56 @@ router.post('/cadastro', async (req, res) => {
   if (senha.length < 6)
     return res.status(400).json({ erro: 'A senha deve ter pelo menos 6 caracteres.' });
 
-  const db = lerDb();
-  if (db.usuarios.find(u => u.email === email.toLowerCase()))
-    return res.status(409).json({ erro: 'Este e-mail já está cadastrado.' });
+  try {
+    // Verifica se e-mail já existe
+    const existe = await pool.query('SELECT id FROM usuarios WHERE email = $1', [email.toLowerCase()]);
+    if (existe.rows.length > 0)
+      return res.status(409).json({ erro: 'Este e-mail já está cadastrado.' });
 
-  // Gera slug único
-  const slugBase = nome_negocio.toLowerCase()
-    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-  let slug = slugBase, i = 1;
-  while (db.usuarios.find(u => u.slug === slug)) { slug = slugBase + '-' + i; i++; }
+    // Gera slug único
+    const slugBase = nome_negocio.toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    let slug = slugBase, i = 1;
+    while (true) {
+      const s = await pool.query('SELECT id FROM usuarios WHERE slug = $1', [slug]);
+      if (s.rows.length === 0) break;
+      slug = slugBase + '-' + i; i++;
+    }
 
-  const hash = await bcrypt.hash(senha, 10);
-  const agora = new Date().toLocaleString('pt-BR');
-
-  const usuario = {
-    id: uuidv4(),
-    nome: nome.trim(),
-    email: email.toLowerCase().trim(),
-    senha: hash,
-    nome_negocio: nome_negocio.trim(),
-    nicho, plano, slug,
-    ativo: true,
-    criado_em: agora,
-    config: {
+    const hash  = await bcrypt.hash(senha, 10);
+    const agora = new Date().toLocaleString('pt-BR');
+    const id    = uuidv4();
+    const config = {
       horarios: '08:00,09:00,10:00,11:00,14:00,15:00,16:00,17:00',
       dias_uteis: '1,2,3,4,5',
-      telefone: '',
-      descricao: '',
-      cor: '#0d9488',
-      email_negocio: '',
-      email_senha: '',
-    }
-  };
+      telefone: '', descricao: '', cor: '#0d9488',
+      email_negocio: '', email_senha: '',
+    };
 
-  db.usuarios.push(usuario);
-  salvarDb(db);
+    await pool.query(
+      `INSERT INTO usuarios (id, nome, email, senha, nome_negocio, nicho, plano, slug, ativo, criado_em, config)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,true,$9,$10)`,
+      [id, nome.trim(), email.toLowerCase().trim(), hash, nome_negocio.trim(), nicho, plano, slug, agora, JSON.stringify(config)]
+    );
 
-  // Sessão
-  req.session.userId    = usuario.id;
-  req.session.userName  = usuario.nome;
-  req.session.userSlug  = usuario.slug;
-  req.session.userNicho = usuario.nicho;
-  req.session.isAdmin   = false;
+    req.session.userId    = id;
+    req.session.userName  = nome.trim();
+    req.session.userSlug  = slug;
+    req.session.userNicho = nicho;
+    req.session.isAdmin   = false;
 
-  // Envia e-mails em background (não bloqueia resposta)
-  Promise.all([
-    enviarBoasVindas({
-      nome: usuario.nome,
-      email: usuario.email,
-      senha, // envia a senha original (antes do hash)
-      nomeNegocio: usuario.nome_negocio,
-      nicho: usuario.nicho,
-      plano: usuario.plano,
-      slug: usuario.slug,
-    }),
-    enviarInstrucoesPagamento({
-      nome: usuario.nome,
-      email: usuario.email,
-      plano: usuario.plano,
-      nomeNegocio: usuario.nome_negocio,
-    }),
-  ]).catch(e => console.error('Erro emails cadastro:', e.message));
+    // E-mails em background
+    Promise.all([
+      enviarBoasVindas({ nome: nome.trim(), email: email.toLowerCase(), senha, nomeNegocio: nome_negocio.trim(), nicho, plano, slug }),
+      enviarInstrucoesPagamento({ nome: nome.trim(), email: email.toLowerCase(), plano, nomeNegocio: nome_negocio.trim() }),
+    ]).catch(e => console.error('Erro emails:', e.message));
 
-  res.status(201).json({ sucesso: true, slug: usuario.slug, nicho: usuario.nicho });
+    res.status(201).json({ sucesso: true, slug, nicho });
+  } catch(e) {
+    console.error('Erro cadastro:', e.message);
+    res.status(500).json({ erro: 'Erro interno. Tente novamente.' });
+  }
 });
 
 // POST /auth/login
@@ -97,20 +83,26 @@ router.post('/login', async (req, res) => {
     return res.json({ sucesso: true, isAdmin: true });
   }
 
-  const db = lerDb();
-  const usuario = db.usuarios.find(u => u.email === email.toLowerCase().trim());
-  if (!usuario) return res.status(401).json({ erro: 'E-mail ou senha incorretos.' });
+  try {
+    const result = await pool.query('SELECT * FROM usuarios WHERE email = $1', [email.toLowerCase().trim()]);
+    if (result.rows.length === 0)
+      return res.status(401).json({ erro: 'E-mail ou senha incorretos.' });
 
-  const ok = await bcrypt.compare(senha, usuario.senha);
-  if (!ok) return res.status(401).json({ erro: 'E-mail ou senha incorretos.' });
+    const u  = result.rows[0];
+    const ok = await bcrypt.compare(senha, u.senha);
+    if (!ok) return res.status(401).json({ erro: 'E-mail ou senha incorretos.' });
 
-  req.session.userId    = usuario.id;
-  req.session.userName  = usuario.nome;
-  req.session.userSlug  = usuario.slug;
-  req.session.userNicho = usuario.nicho;
-  req.session.isAdmin   = false;
+    req.session.userId    = u.id;
+    req.session.userName  = u.nome;
+    req.session.userSlug  = u.slug;
+    req.session.userNicho = u.nicho;
+    req.session.isAdmin   = false;
 
-  res.json({ sucesso: true, slug: usuario.slug, nicho: usuario.nicho });
+    res.json({ sucesso: true, slug: u.slug, nicho: u.nicho });
+  } catch(e) {
+    console.error('Erro login:', e.message);
+    res.status(500).json({ erro: 'Erro interno. Tente novamente.' });
+  }
 });
 
 // POST /auth/logout
@@ -120,17 +112,20 @@ router.post('/logout', (req, res) => {
 });
 
 // GET /auth/me
-router.get('/me', (req, res) => {
+router.get('/me', async (req, res) => {
   if (!req.session.userId) return res.status(401).json({ logado: false });
-  const db = lerDb();
-  const u  = db.usuarios.find(u => u.id === req.session.userId);
-  if (!u) return res.status(401).json({ logado: false });
-  res.json({
-    logado: true,
-    id: u.id, nome: u.nome, email: u.email,
-    nome_negocio: u.nome_negocio, nicho: u.nicho,
-    plano: u.plano, slug: u.slug, config: u.config,
-  });
+  try {
+    const r = await pool.query('SELECT * FROM usuarios WHERE id = $1', [req.session.userId]);
+    if (r.rows.length === 0) return res.status(401).json({ logado: false });
+    const u = r.rows[0];
+    res.json({
+      logado: true, id: u.id, nome: u.nome, email: u.email,
+      nome_negocio: u.nome_negocio, nicho: u.nicho,
+      plano: u.plano, slug: u.slug, config: u.config,
+    });
+  } catch(e) {
+    res.status(500).json({ logado: false });
+  }
 });
 
 module.exports = router;

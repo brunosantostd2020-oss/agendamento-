@@ -1,29 +1,59 @@
-const fs = require('fs');
-const path = require('path');
+const { Pool } = require('pg');
 
-const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, '..', 'data');
-const DB_FILE  = path.join(DATA_DIR, 'db.json');
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+});
 
-function ensureDir() {
-  if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
+async function initDb() {
+  const client = await pool.connect();
+  try {
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS usuarios (
+        id UUID PRIMARY KEY,
+        nome TEXT NOT NULL,
+        email TEXT UNIQUE NOT NULL,
+        senha TEXT NOT NULL,
+        nome_negocio TEXT NOT NULL,
+        nicho TEXT NOT NULL,
+        plano TEXT NOT NULL,
+        slug TEXT UNIQUE NOT NULL,
+        ativo BOOLEAN DEFAULT true,
+        criado_em TEXT,
+        config JSONB DEFAULT '{}'::jsonb
+      );
+
+      CREATE TABLE IF NOT EXISTS agendamentos (
+        id UUID PRIMARY KEY,
+        negocio_id UUID REFERENCES usuarios(id) ON DELETE CASCADE,
+        negocio_slug TEXT,
+        nome TEXT NOT NULL,
+        email TEXT NOT NULL,
+        telefone TEXT NOT NULL,
+        servico TEXT DEFAULT '',
+        obs TEXT DEFAULT '',
+        data TEXT NOT NULL,
+        horario TEXT NOT NULL,
+        status TEXT DEFAULT 'pendente',
+        criado_em TEXT,
+        atualizado_em TEXT
+      );
+
+      CREATE TABLE IF NOT EXISTS horarios_bloqueados (
+        id UUID PRIMARY KEY,
+        negocio_id UUID REFERENCES usuarios(id) ON DELETE CASCADE,
+        data TEXT NOT NULL,
+        horario TEXT NOT NULL,
+        motivo TEXT DEFAULT '',
+        criado_em TEXT
+      );
+    `);
+    console.log('✅ Banco de dados iniciado com sucesso!');
+  } catch(e) {
+    console.error('❌ Erro ao iniciar banco:', e.message);
+  } finally {
+    client.release();
+  }
 }
 
-function lerDb() {
-  ensureDir();
-  if (!fs.existsSync(DB_FILE)) return criarDbVazio();
-  try { return JSON.parse(fs.readFileSync(DB_FILE, 'utf8')); }
-  catch(e) { return criarDbVazio(); }
-}
-
-function criarDbVazio() {
-  const db = { usuarios: [], agendamentos: [], horarios_bloqueados: [] };
-  salvarDb(db);
-  return db;
-}
-
-function salvarDb(db) {
-  ensureDir();
-  fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2), 'utf8');
-}
-
-module.exports = { lerDb, salvarDb };
+module.exports = { pool, initDb };
