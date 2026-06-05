@@ -2,8 +2,9 @@ const express = require('express');
 const router  = express.Router();
 const { v4: uuidv4 } = require('uuid');
 const { lerDb, salvarDb } = require('../middleware/database');
+const { enviarConfirmacao } = require('../middleware/email');
 
-// GET /p/:slug/info - info pública do negócio
+// GET /p/:slug/info
 router.get('/:slug/info', (req, res) => {
   const db = lerDb();
   const u  = db.usuarios.find(u => u.slug === req.params.slug && u.ativo);
@@ -12,11 +13,11 @@ router.get('/:slug/info', (req, res) => {
     nome_negocio: u.nome_negocio,
     nicho: u.nicho,
     config: {
-      horarios: u.config.horarios,
-      dias_uteis: u.config.dias_uteis,
-      telefone: u.config.telefone,
-      descricao: u.config.descricao,
-      cor: u.config.cor,
+      horarios:    u.config.horarios,
+      dias_uteis:  u.config.dias_uteis,
+      telefone:    u.config.telefone,
+      descricao:   u.config.descricao,
+      cor:         u.config.cor,
     }
   });
 });
@@ -55,7 +56,7 @@ router.get('/:slug/horarios', (req, res) => {
 });
 
 // POST /p/:slug/agendar
-router.post('/:slug/agendar', (req, res) => {
+router.post('/:slug/agendar', async (req, res) => {
   const { nome, email, telefone, servico, data, horario, obs } = req.body;
 
   if (!nome || !email || !telefone || !data || !horario)
@@ -76,21 +77,34 @@ router.post('/:slug/agendar', (req, res) => {
 
   db.agendamentos.push({
     id,
-    negocio_id: u.id,
+    negocio_id:   u.id,
     negocio_slug: u.slug,
-    nome: nome.trim(),
-    email: email.trim().toLowerCase(),
+    nome:     nome.trim(),
+    email:    email.trim().toLowerCase(),
     telefone: telefone.trim(),
-    servico: servico || '',
-    obs: obs || '',
+    servico:  servico || '',
+    obs:      obs || '',
     data,
     horario,
-    status: 'pendente',
-    criado_em: agora,
-    atualizado_em: agora,
+    status:       'pendente',
+    criado_em:    agora,
+    atualizado_em:agora,
   });
 
   salvarDb(db);
+
+  // Envia e-mail de confirmação (não bloqueia a resposta)
+  enviarConfirmacao({
+    nomeCliente:  nome.trim(),
+    emailCliente: email.trim().toLowerCase(),
+    nomeNegocio:  u.nome_negocio,
+    nicho:        u.nicho,
+    data,
+    horario,
+    servico:      servico || '',
+    corNegocio:   u.config.cor || '#0d9488',
+  }).catch(e => console.error('Erro email:', e.message));
+
   res.status(201).json({ sucesso: true, mensagem: 'Agendamento realizado com sucesso!' });
 });
 

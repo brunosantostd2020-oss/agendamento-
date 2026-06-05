@@ -136,11 +136,36 @@
     </div>
     <div class="card">
       <div class="card-titulo">🔗 Seu link de agendamento</div>
-      <div class="link-box">
-        <div class="link-url" id="link-url">—</div>
-        <button class="btn-copiar" onclick="copiarLink()">📋 Copiar link</button>
+      
+      <!-- Link bonito visual -->
+      <div style="background:linear-gradient(135deg,var(--teal) 0%,#0a7c72 100%);border-radius:14px;padding:24px;margin-bottom:16px;position:relative;overflow:hidden">
+        <div style="position:absolute;top:-20px;right:-20px;width:100px;height:100px;background:rgba(255,255,255,0.08);border-radius:50%"></div>
+        <div style="position:absolute;bottom:-30px;left:-10px;width:120px;height:120px;background:rgba(255,255,255,0.05);border-radius:50%"></div>
+        <div style="position:relative">
+          <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.7);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px">Seu link exclusivo</div>
+          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+            <div style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);border-radius:10px;padding:10px 16px;font-size:15px;font-weight:700;color:white;flex:1;word-break:break-all" id="link-url">—</div>
+            <button class="btn-copiar" style="background:white;color:var(--teal);flex-shrink:0" onclick="copiarLink()">📋 Copiar</button>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">
+            <button onclick="abrirLink()" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);border-radius:8px;padding:7px 14px;color:white;font-size:12px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s" onmouseover="this.style.background='rgba(255,255,255,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.15)'">
+              🌐 Abrir página
+            </button>
+            <button onclick="gerarQR()" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);border-radius:8px;padding:7px 14px;color:white;font-size:12px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s" onmouseover="this.style.background='rgba(255,255,255,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.15)'">
+              📱 Ver QR Code
+            </button>
+          </div>
+        </div>
       </div>
-      <p style="font-size:13px;color:var(--muted)">Compartilhe esse link com seus clientes pelo WhatsApp, Instagram ou onde preferir. Eles poderão agendar horários diretamente!</p>
+
+      <!-- QR Code (oculto por padrão) -->
+      <div id="qr-wrap" style="display:none;text-align:center;padding:20px;background:var(--bg);border-radius:12px;margin-bottom:16px">
+        <div style="font-size:13px;font-weight:700;color:var(--muted);margin-bottom:12px">Escaneie com o celular</div>
+        <img id="qr-img" src="" alt="QR Code" style="width:180px;height:180px;border-radius:10px"/>
+        <div style="font-size:12px;color:var(--muted);margin-top:10px">Compartilhe este QR Code no seu estabelecimento!</div>
+      </div>
+
+      <p style="font-size:13px;color:var(--muted)">💡 Compartilhe pelo WhatsApp, Instagram, cole na bio ou imprima o QR Code para seu estabelecimento!</p>
     </div>
   </div>
 
@@ -444,6 +469,18 @@ async function excluir(id) {
 function copiarLink() {
   const link = location.origin+'/agendar/'+usuario?.slug;
   navigator.clipboard.writeText(link).then(()=>toast('Link copiado!','ok'));
+}
+
+function abrirLink() {
+  window.open(location.origin + '/agendar/' + usuario?.slug, '_blank');
+}
+
+function gerarQR() {
+  const wrap = document.getElementById('qr-wrap');
+  const img  = document.getElementById('qr-img');
+  const link = location.origin + '/agendar/' + usuario?.slug;
+  img.src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(link)}&color=0d9488&bgcolor=ffffff`;
+  wrap.style.display = wrap.style.display === 'none' ? 'block' : 'none';
 }
 
 async function sair() {
