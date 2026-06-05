@@ -19,176 +19,131 @@
     html{-webkit-tap-highlight-color:transparent}
     body{font-family:'Inter',sans-serif;background:var(--bg);min-height:100dvh;overflow-x:hidden}
 
-    /* ── HEADER ── */
-    .header{
-      background:var(--teal);color:white;
-      padding:16px 20px;
-      display:flex;align-items:center;justify-content:space-between;
-      position:sticky;top:0;z-index:50;
-    }
+    .header{background:var(--teal);color:white;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
     .header-left{display:flex;align-items:center;gap:12px}
     .header-avatar{width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:white;border:2px solid rgba(255,255,255,0.3);flex-shrink:0}
     .header-nome{font-weight:800;font-size:16px;line-height:1.2}
-    .header-nicho{font-size:12px;opacity:0.85;font-weight:500}
-    .btn-sair{background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.3);border-radius:10px;color:white;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;padding:8px 14px;cursor:pointer;-webkit-tap-highlight-color:transparent}
-    .btn-sair:active{background:rgba(255,255,255,0.25)}
+    .header-nicho{font-size:12px;opacity:0.85}
+    .btn-sair{background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.3);border-radius:10px;color:white;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;padding:8px 14px;cursor:pointer}
 
-    /* ── LINK BANNER ── */
-    .link-banner{
-      background:linear-gradient(135deg,var(--teal-esc),#0a6b62);
-      padding:16px 20px;
-      display:flex;align-items:center;justify-content:space-between;gap:12px;
-    }
-    .link-banner-txt{color:white;font-size:13px;font-weight:600;opacity:0.9;flex:1;min-width:0}
-    .link-banner-url{color:white;font-size:14px;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-    .link-banner-btns{display:flex;gap:8px;flex-shrink:0}
-    .mini-btn{background:rgba(255,255,255,0.2);border:1.5px solid rgba(255,255,255,0.3);border-radius:8px;color:white;font-family:'Inter',sans-serif;font-size:12px;font-weight:700;padding:7px 12px;cursor:pointer;-webkit-tap-highlight-color:transparent;white-space:nowrap}
-    .mini-btn:active{background:rgba(255,255,255,0.3)}
+    .link-banner{background:linear-gradient(135deg,var(--teal-esc),#0a6b62);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .link-url{color:white;font-size:13px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+    .link-label{color:rgba(255,255,255,0.7);font-size:11px;font-weight:600}
+    .mini-btn{background:rgba(255,255,255,0.2);border:1.5px solid rgba(255,255,255,0.3);border-radius:8px;color:white;font-family:'Inter',sans-serif;font-size:12px;font-weight:700;padding:7px 12px;cursor:pointer;white-space:nowrap;flex-shrink:0}
 
-    /* ── CONTENT ── */
     .content{padding:16px 16px 100px}
     .page{display:none}.page.ativa{display:block}
 
-    /* ── STATS ── */
+    /* STATS */
     .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
     .stat{background:var(--branco);border:1.5px solid var(--borda);border-radius:var(--radius);padding:16px}
     .stat-lbl{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px}
     .stat-val{font-size:32px;font-weight:800;line-height:1}
-    .stat.teal .stat-val{color:var(--teal)}
-    .stat.laranja .stat-val{color:var(--laranja)}
-    .stat.verde .stat-val{color:var(--verde)}
-    .stat.azul .stat-val{color:var(--azul)}
+    .stat.teal .stat-val{color:var(--teal)}.stat.laranja .stat-val{color:var(--laranja)}
+    .stat.verde .stat-val{color:var(--verde)}.stat.azul .stat-val{color:var(--azul)}
     .stat-full{grid-column:1/-1}
 
-    /* ── CARD ── */
+    /* CARD */
     .card{background:var(--branco);border:1.5px solid var(--borda);border-radius:var(--radius);padding:16px;margin-bottom:12px}
-    .card-titulo{font-size:15px;font-weight:800;color:var(--dark);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+    .card-titulo{font-size:15px;font-weight:800;color:var(--dark);margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:8px}
 
-    /* ── FILTROS SCROLL ── */
+    /* FILTROS */
     .filtros{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:14px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
     .filtros::-webkit-scrollbar{display:none}
-    .filtro-btn{padding:8px 16px;border-radius:999px;border:1.5px solid var(--borda);background:var(--branco);color:var(--muted);font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;transition:all 0.2s;-webkit-tap-highlight-color:transparent;font-family:'Inter',sans-serif}
+    .filtro-btn{padding:8px 16px;border-radius:999px;border:1.5px solid var(--borda);background:var(--branco);color:var(--muted);font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:'Inter',sans-serif}
     .filtro-btn.ativo{border-color:var(--teal);color:var(--teal);background:var(--teal-lt)}
 
-    /* ── AGENDAMENTO CARD (mobile) ── */
-    .ag-card{
-      background:var(--branco);border:1.5px solid var(--borda);
-      border-radius:var(--radius);padding:16px;margin-bottom:10px;
-      transition:all 0.2s;
-    }
+    /* AGENDAMENTO CARD */
+    .ag-card{background:var(--branco);border:1.5px solid var(--borda);border-radius:var(--radius);padding:16px;margin-bottom:10px}
     .ag-card.urgente{border-left:4px solid var(--vermelho);background:#fff8f8}
     .ag-card.atencao{border-left:4px solid #f59e0b;background:#fffbeb}
     .ag-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px}
     .ag-nome{font-weight:800;font-size:15px;color:var(--dark)}
-    .ag-tel{font-size:12px;color:var(--muted);font-weight:500;margin-top:2px}
-    .ag-data{font-size:13px;font-weight:700;color:var(--teal)}
+    .ag-info{font-size:12px;color:var(--muted);margin-top:3px}
+    .ag-data{font-size:13px;font-weight:700;color:var(--teal);text-align:right}
+    .ag-servico{font-size:12px;color:var(--muted);text-align:right;margin-top:2px}
     .badge{display:inline-flex;align-items:center;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700}
     .b-pendente{background:rgba(234,88,12,0.1);color:var(--laranja)}
     .b-confirmado{background:rgba(22,163,74,0.1);color:var(--verde)}
     .b-cancelado{background:rgba(220,38,38,0.1);color:var(--vermelho)}
     .b-concluido{background:rgba(37,99,235,0.1);color:var(--azul)}
     .urg-tag{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:999px;font-size:10px;font-weight:800;margin-left:6px}
-    .urg-r{background:#fee2e2;color:var(--vermelho)}
-    .urg-a{background:#fef3c7;color:#b45309}
+    .urg-r{background:#fee2e2;color:var(--vermelho)}.urg-a{background:#fef3c7;color:#b45309}
     .ag-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px solid var(--borda)}
-    .ac-btn{padding:8px 14px;border-radius:10px;border:1.5px solid var(--borda);background:none;color:var(--muted);font-size:13px;font-weight:700;cursor:pointer;transition:all 0.2s;font-family:'Inter',sans-serif;-webkit-tap-highlight-color:transparent}
-    .ac-btn:active{transform:scale(0.95)}
-    .btn-wpp{padding:8px 14px;border-radius:10px;border:1.5px solid #25d366;background:#25d366;color:white;font-size:13px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;display:inline-flex;align-items:center;gap:4px;-webkit-tap-highlight-color:transparent}
-    .btn-wpp:active{background:#1da851;transform:scale(0.95)}
+    .ac-btn{padding:8px 14px;border-radius:10px;border:1.5px solid var(--borda);background:none;color:var(--muted);font-size:13px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif}
+    .btn-wpp{padding:8px 14px;border-radius:10px;border:1.5px solid #25d366;background:#25d366;color:white;font-size:13px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;display:inline-flex;align-items:center;gap:4px}
 
-    /* ── HOJE CARD ── */
-    .hoje-card{
-      background:var(--branco);border:1.5px solid var(--borda);
-      border-radius:var(--radius);padding:16px;margin-bottom:10px;
-      display:flex;gap:14px;align-items:flex-start;
-    }
+    /* HOJE */
+    .hoje-card{background:var(--branco);border:1.5px solid var(--borda);border-radius:var(--radius);padding:16px;margin-bottom:10px;display:flex;gap:14px;align-items:flex-start}
     .hoje-card.urgente{border-left:4px solid var(--vermelho);background:#fff8f8}
     .hoje-card.atencao{border-left:4px solid #f59e0b;background:#fffbeb}
     .hoje-hora{font-size:24px;font-weight:900;color:var(--teal);min-width:60px;line-height:1}
-    .hoje-hora.urg-r{color:var(--vermelho)}
-    .hoje-hora.urg-a{color:#b45309}
-    .hoje-info{flex:1}
+    .hoje-hora.urg-r{color:var(--vermelho)}.hoje-hora.urg-a{color:#b45309}
     .hoje-nome{font-weight:800;font-size:15px;color:var(--dark);margin-bottom:2px}
     .hoje-sub{font-size:12px;color:var(--muted)}
 
-    /* ── BLOQUEIOS ── */
-    .blq-form{display:flex;flex-direction:column;gap:12px;margin-bottom:16px}
-    .blq-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    .blq-input,.blq-select{width:100%;border:2px solid var(--borda);border-radius:12px;font-family:'Inter',sans-serif;font-size:15px;padding:13px 14px;color:var(--dark);background:var(--branco);outline:none;transition:all 0.2s;appearance:none;-webkit-appearance:none}
+    /* SERVIÇOS */
+    .servico-card{background:var(--branco);border:1.5px solid var(--borda);border-radius:var(--radius);padding:16px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .servico-info{flex:1}
+    .servico-nome{font-weight:800;font-size:15px;color:var(--dark);margin-bottom:4px}
+    .servico-detalhes{font-size:12px;color:var(--muted);display:flex;gap:12px;flex-wrap:wrap}
+    .servico-preco{font-size:18px;font-weight:900;color:var(--teal);white-space:nowrap}
+    .servico-actions{display:flex;gap:8px;flex-shrink:0}
+
+    /* BLOQUEIOS */
+    .blq-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+    .blq-input,.blq-select{width:100%;border:2px solid var(--borda);border-radius:12px;font-family:'Inter',sans-serif;font-size:15px;padding:13px 14px;color:var(--dark);background:var(--branco);outline:none;appearance:none;-webkit-appearance:none}
     .blq-input:focus,.blq-select:focus{border-color:var(--teal)}
     .blq-item{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--borda)}
     .blq-item:last-child{border-bottom:none}
 
-    /* ── CONFIG ── */
+    /* CONFIG */
     .cfg-label{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:8px;display:block}
-    .cfg-input,.cfg-textarea{width:100%;border:2px solid var(--borda);border-radius:12px;font-family:'Inter',sans-serif;font-size:15px;padding:13px 14px;color:var(--dark);background:var(--branco);outline:none;transition:all 0.2s;-webkit-appearance:none;margin-bottom:14px}
+    .cfg-input,.cfg-textarea{width:100%;border:2px solid var(--borda);border-radius:12px;font-family:'Inter',sans-serif;font-size:15px;padding:13px 14px;color:var(--dark);background:var(--branco);outline:none;appearance:none;margin-bottom:14px;-webkit-appearance:none}
     .cfg-input:focus,.cfg-textarea:focus{border-color:var(--teal);box-shadow:0 0 0 3px var(--teal-lt)}
     .cfg-textarea{resize:none;min-height:80px}
     .cfg-section{margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--borda)}
     .cfg-section:last-child{border-bottom:none;margin-bottom:0}
     .cfg-section-titulo{font-size:14px;font-weight:800;color:var(--dark);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+    .aviso-email{background:#fff7ed;border:2px solid #fed7aa;border-radius:12px;padding:14px;font-size:13px;color:#92400e;font-weight:600;line-height:1.5;margin-bottom:14px}
 
-    /* ── MODAL ── */
+    /* MODAL */
     .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:100;align-items:flex-end;justify-content:center;backdrop-filter:blur(3px)}
     .overlay.aberto{display:flex}
-    .modal{
-      background:var(--branco);border-radius:24px 24px 0 0;
-      padding:24px 20px;width:100%;max-width:600px;
-      padding-bottom:calc(24px + var(--safe-bottom));
-      animation:slideUp 0.3s cubic-bezier(0.34,1.56,0.64,1);
-      max-height:85vh;overflow-y:auto;
-    }
+    .modal{background:var(--branco);border-radius:24px 24px 0 0;padding:24px 20px;width:100%;max-width:600px;padding-bottom:calc(24px + var(--safe-bottom));animation:slideUp 0.3s cubic-bezier(0.34,1.56,0.64,1);max-height:90vh;overflow-y:auto}
     @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
     .modal-handle{width:40px;height:4px;background:var(--borda);border-radius:999px;margin:0 auto 20px}
     .modal-titulo{font-size:20px;font-weight:800;color:var(--dark);margin-bottom:20px}
     .m-label{display:block;font-size:13px;font-weight:700;color:var(--dark);margin-bottom:8px}
-    .m-input,.m-select,.m-textarea{width:100%;border:2px solid var(--borda);border-radius:12px;font-family:'Inter',sans-serif;font-size:15px;padding:13px 14px;color:var(--dark);background:var(--branco);outline:none;transition:all 0.2s;-webkit-appearance:none;margin-bottom:14px}
+    .m-input,.m-select,.m-textarea{width:100%;border:2px solid var(--borda);border-radius:12px;font-family:'Inter',sans-serif;font-size:15px;padding:13px 14px;color:var(--dark);background:var(--branco);outline:none;appearance:none;margin-bottom:14px;-webkit-appearance:none}
     .m-input:focus,.m-select:focus,.m-textarea:focus{border-color:var(--teal)}
     .m-textarea{resize:none;min-height:80px}
+    .m-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
     .modal-footer{display:flex;gap:10px;margin-top:8px}
-    .m-btn{flex:1;padding:14px;border-radius:12px;font-family:'Inter',sans-serif;font-size:15px;font-weight:800;cursor:pointer;border:none;-webkit-tap-highlight-color:transparent}
+    .m-btn{flex:1;padding:14px;border-radius:12px;font-family:'Inter',sans-serif;font-size:15px;font-weight:800;cursor:pointer;border:none}
     .m-btn-teal{background:var(--teal);color:white}
-    .m-btn-teal:active{background:var(--teal-esc)}
     .m-btn-out{background:none;border:2px solid var(--borda);color:var(--text)}
 
-    /* ── BOTTOM TABS ── */
-    .bottom-tabs{
-      position:fixed;bottom:0;left:0;right:0;
-      background:var(--branco);border-top:1px solid var(--borda);
-      display:flex;align-items:stretch;
-      padding-bottom:var(--safe-bottom);
-      z-index:50;box-shadow:0 -4px 20px rgba(0,0,0,0.08);
-    }
-    .tab{
-      flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
-      gap:4px;padding:10px 4px;cursor:pointer;transition:all 0.2s;
-      border:none;background:none;-webkit-tap-highlight-color:transparent;
-      color:var(--muted);font-family:'Inter',sans-serif;
-    }
-    .tab:active{background:var(--bg)}
+    /* BOTTOM TABS */
+    .bottom-tabs{position:fixed;bottom:0;left:0;right:0;background:var(--branco);border-top:1px solid var(--borda);display:flex;align-items:stretch;padding-bottom:var(--safe-bottom);z-index:50;box-shadow:0 -4px 20px rgba(0,0,0,0.08)}
+    .tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:10px 4px;cursor:pointer;border:none;background:none;color:var(--muted);font-family:'Inter',sans-serif}
     .tab.ativo{color:var(--teal)}
-    .tab-ico{font-size:22px;line-height:1}
+    .tab-ico{font-size:20px;line-height:1}
     .tab-lbl{font-size:10px;font-weight:700}
 
-    /* ── TOAST ── */
+    /* TOAST */
     .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--dark);color:white;border-radius:12px;padding:12px 24px;font-size:14px;font-weight:700;z-index:999;animation:up 0.3s ease;white-space:nowrap;box-shadow:0 8px 32px rgba(0,0,0,0.3)}
     .toast.ok{background:var(--verde)}.toast.err{background:var(--vermelho)}
     @keyframes up{from{opacity:0;transform:translateX(-50%) translateY(12px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
 
-    /* ── QR ── */
-    .qr-wrap{text-align:center;padding:20px;background:var(--bg);border-radius:12px;border:1.5px solid var(--borda);margin-top:12px}
-
-    /* ── EMPTY ── */
     .empty{text-align:center;padding:48px 20px;color:var(--muted)}
     .empty-ico{font-size:48px;margin-bottom:12px}
     .empty-txt{font-size:15px;font-weight:600}
 
-    /* ── BTN VERDE GRANDE ── */
-    .btn-verde{width:100%;padding:15px;border-radius:14px;background:var(--teal);color:white;font-family:'Inter',sans-serif;font-size:15px;font-weight:800;border:none;cursor:pointer;margin-top:4px;-webkit-tap-highlight-color:transparent}
-    .btn-verde:active{background:var(--teal-esc);transform:scale(0.98)}
+    .btn-verde{width:100%;padding:15px;border-radius:14px;background:var(--teal);color:white;font-family:'Inter',sans-serif;font-size:15px;font-weight:800;border:none;cursor:pointer;margin-top:4px}
+    .btn-add{display:flex;align-items:center;gap:8px;background:var(--teal);color:white;border:none;border-radius:10px;padding:10px 16px;font-family:'Inter',sans-serif;font-size:14px;font-weight:700;cursor:pointer}
 
-    /* AVISO EMAIL */
-    .aviso-email{background:#fff7ed;border:2px solid #fed7aa;border-radius:12px;padding:14px;font-size:13px;color:#92400e;font-weight:600;line-height:1.5;margin-bottom:14px}
+    .qr-wrap{text-align:center;padding:20px;background:var(--bg);border-radius:12px;border:1.5px solid var(--borda);margin-top:12px}
   </style>
 </head>
 <body>
@@ -205,14 +160,12 @@
 </div>
 
 <div class="link-banner" id="link-banner" style="display:none">
-  <div>
-    <div class="link-banner-txt">Seu link de agendamento</div>
-    <div class="link-banner-url" id="link-url">—</div>
+  <div style="flex:1;min-width:0">
+    <div class="link-label">Seu link de agendamento</div>
+    <div class="link-url" id="link-url">—</div>
   </div>
-  <div class="link-banner-btns">
-    <button class="mini-btn" onclick="copiarLink()">📋 Copiar</button>
-    <button class="mini-btn" onclick="abrirLink()">🔗</button>
-  </div>
+  <button class="mini-btn" onclick="copiarLink()">📋 Copiar</button>
+  <button class="mini-btn" onclick="abrirLink()">🔗</button>
 </div>
 
 <div class="content">
@@ -225,15 +178,13 @@
       <div class="stat verde"><div class="stat-lbl">Confirmados</div><div class="stat-val" id="s-conf">—</div></div>
       <div class="stat azul stat-full"><div class="stat-lbl">Agendamentos hoje</div><div class="stat-val" id="s-hoje">—</div></div>
     </div>
-
-    <!-- QR Code card -->
     <div class="card">
-      <div class="card-titulo">📱 QR Code do seu negócio</div>
-      <p style="font-size:13px;color:var(--muted);margin-bottom:12px">Imprima e cole no seu estabelecimento para facilitar os agendamentos!</p>
-      <button class="btn-verde" onclick="mostrarQR()">📱 Gerar QR Code</button>
+      <div class="card-titulo">📱 QR Code & Link</div>
+      <button class="btn-verde" style="margin-bottom:10px" onclick="copiarLink()">📋 Copiar meu link de agendamento</button>
+      <button class="btn-verde" style="background:#1d4ed8" onclick="mostrarQR()">📱 Gerar QR Code</button>
       <div id="qr-wrap" style="display:none" class="qr-wrap">
         <img id="qr-img" src="" style="width:160px;height:160px;border-radius:10px"/>
-        <div style="font-size:12px;color:var(--muted);margin-top:10px;font-weight:600">Escaneie para agendar!</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:10px;font-weight:600">Imprima e cole no seu estabelecimento!</div>
       </div>
     </div>
   </div>
@@ -252,11 +203,25 @@
 
   <!-- HOJE -->
   <div class="page" id="pg-hoje">
-    <div class="card" style="margin-bottom:12px;background:var(--teal);border-color:var(--teal)">
-      <div style="color:white;font-size:13px;font-weight:700;opacity:0.85">Agenda de hoje</div>
+    <div class="card" style="background:var(--teal);border-color:var(--teal);margin-bottom:12px">
+      <div style="color:rgba(255,255,255,0.8);font-size:12px;font-weight:700">Agenda de hoje</div>
       <div style="color:white;font-size:16px;font-weight:800" id="hoje-data-txt"></div>
     </div>
     <div id="hoje-lista"></div>
+  </div>
+
+  <!-- SERVIÇOS -->
+  <div class="page" id="pg-servicos">
+    <div class="card">
+      <div class="card-titulo">
+        <span>🛎️ Meus Serviços</span>
+        <button class="btn-add" onclick="abrirModalServico()">+ Adicionar</button>
+      </div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:14px;font-weight:500">
+        Cadastre os serviços que você oferece com preço e duração. Seus clientes poderão escolher na hora de agendar.
+      </p>
+      <div id="lista-servicos"></div>
+    </div>
   </div>
 
   <!-- BLOQUEIOS -->
@@ -265,8 +230,7 @@
       <div class="card-titulo">🔒 Novo bloqueio</div>
       <div class="blq-row">
         <div><label class="cfg-label">Data</label><input type="date" id="blq-data" class="blq-input"/></div>
-        <div>
-          <label class="cfg-label">Horário</label>
+        <div><label class="cfg-label">Horário</label>
           <select id="blq-hr" class="blq-select">
             <option value="todos">Dia inteiro</option>
             <option>08:00</option><option>09:00</option><option>10:00</option><option>11:00</option>
@@ -275,13 +239,10 @@
         </div>
       </div>
       <label class="cfg-label">Motivo (opcional)</label>
-      <input type="text" id="blq-motivo" class="blq-input" placeholder="Ex: Feriado, viagem..."/>
+      <input type="text" id="blq-motivo" class="blq-input" placeholder="Ex: Feriado, viagem..." style="margin-bottom:12px"/>
       <button class="btn-verde" onclick="bloquear()">🔒 Bloquear horário</button>
     </div>
-    <div class="card">
-      <div class="card-titulo">📋 Horários bloqueados</div>
-      <div id="lista-bloq"></div>
-    </div>
+    <div class="card"><div class="card-titulo">📋 Bloqueados</div><div id="lista-bloq"></div></div>
   </div>
 
   <!-- CONFIG -->
@@ -289,29 +250,20 @@
     <div class="card">
       <div class="cfg-section">
         <div class="cfg-section-titulo">🏢 Informações do negócio</div>
-        <label class="cfg-label">Nome do negócio</label>
-        <input class="cfg-input" type="text" id="cfg-nome"/>
-        <label class="cfg-label">Descrição para os clientes</label>
-        <textarea class="cfg-textarea" id="cfg-desc" placeholder="Ex: Barbearia especializada em cortes modernos..."></textarea>
-        <label class="cfg-label">Telefone / WhatsApp</label>
-        <input class="cfg-input" type="tel" id="cfg-tel" placeholder="(21) 99999-9999"/>
-        <label class="cfg-label">Cor principal</label>
-        <input class="cfg-input" type="color" id="cfg-cor" style="padding:8px;height:52px"/>
-        <label class="cfg-label">Horários disponíveis</label>
-        <input class="cfg-input" type="text" id="cfg-horarios" placeholder="08:00,09:00,10:00..."/>
+        <label class="cfg-label">Nome do negócio</label><input class="cfg-input" type="text" id="cfg-nome"/>
+        <label class="cfg-label">Descrição para clientes</label><textarea class="cfg-textarea" id="cfg-desc"></textarea>
+        <label class="cfg-label">Telefone / WhatsApp</label><input class="cfg-input" type="tel" id="cfg-tel"/>
+        <label class="cfg-label">Cor principal</label><input class="cfg-input" type="color" id="cfg-cor" style="padding:8px;height:52px"/>
+        <label class="cfg-label">Horários disponíveis</label><input class="cfg-input" type="text" id="cfg-horarios" placeholder="08:00,09:00,10:00..."/>
       </div>
-
       <div class="cfg-section">
         <div class="cfg-section-titulo">📧 E-mail para confirmações</div>
         <div class="aviso-email">⚠️ Use um Gmail. Crie uma senha de app em <strong>myaccount.google.com/apppasswords</strong></div>
-        <label class="cfg-label">Seu Gmail</label>
-        <input class="cfg-input" type="email" id="cfg-email-neg" placeholder="seuemail@gmail.com"/>
-        <label class="cfg-label">Senha de app</label>
-        <input class="cfg-input" type="password" id="cfg-email-senha" placeholder="xxxx xxxx xxxx xxxx"/>
+        <label class="cfg-label">Seu Gmail</label><input class="cfg-input" type="email" id="cfg-email-neg" placeholder="seuemail@gmail.com"/>
+        <label class="cfg-label">Senha de app</label><input class="cfg-input" type="password" id="cfg-email-senha" placeholder="xxxx xxxx xxxx xxxx"/>
         <button class="btn-verde" style="background:#1d4ed8;margin-bottom:12px" onclick="testarEmail()">📤 Testar e-mail</button>
         <div id="email-status" style="display:none;padding:12px;border-radius:10px;font-size:13px;font-weight:700"></div>
       </div>
-
       <button class="btn-verde" onclick="salvarConfig()">💾 Salvar configurações</button>
     </div>
   </div>
@@ -323,11 +275,11 @@
   <button class="tab ativo" onclick="pg('dashboard',this)"><div class="tab-ico">📊</div><div class="tab-lbl">Início</div></button>
   <button class="tab" onclick="pg('agendamentos',this)"><div class="tab-ico">📅</div><div class="tab-lbl">Agenda</div></button>
   <button class="tab" onclick="pg('hoje',this)"><div class="tab-ico">📆</div><div class="tab-lbl">Hoje</div></button>
-  <button class="tab" onclick="pg('bloqueios',this)"><div class="tab-ico">🔒</div><div class="tab-lbl">Bloqueios</div></button>
+  <button class="tab" onclick="pg('servicos',this)"><div class="tab-ico">🛎️</div><div class="tab-lbl">Serviços</div></button>
   <button class="tab" onclick="pg('config',this)"><div class="tab-ico">⚙️</div><div class="tab-lbl">Config</div></button>
 </div>
 
-<!-- MODAL STATUS -->
+<!-- MODAL STATUS AGENDAMENTO -->
 <div class="overlay" id="modal-overlay">
   <div class="modal">
     <div class="modal-handle"></div>
@@ -344,22 +296,48 @@
     <label class="m-label">Observações internas</label>
     <textarea class="m-textarea" id="modal-obs" placeholder="Notas para uso interno..."></textarea>
     <div class="modal-footer">
-      <button class="m-btn m-btn-out" onclick="fecharModal()">Cancelar</button>
+      <button class="m-btn m-btn-out" onclick="fecharModal('modal-overlay')">Cancelar</button>
       <button class="m-btn m-btn-teal" onclick="salvarStatus()">Salvar</button>
     </div>
   </div>
 </div>
 
+<!-- MODAL SERVIÇO -->
+<div class="overlay" id="modal-servico">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-titulo" id="modal-servico-titulo">Novo Serviço</div>
+    <input type="hidden" id="servico-id"/>
+    <label class="m-label">Nome do serviço *</label>
+    <input class="m-input" type="text" id="s-nome" placeholder="Nome do serviço"/>
+    <div class="m-row">
+      <div>
+        <label class="m-label">Preço (R$)</label>
+        <input class="m-input" type="number" id="s-preco" placeholder="Ex: 45.00" step="0.01" min="0"/>
+      </div>
+      <div>
+        <label class="m-label">Duração (min)</label>
+        <input class="m-input" type="number" id="s-duracao" placeholder="Ex: 60" min="5" step="5"/>
+      </div>
+    </div>
+    <label class="m-label">Descrição (opcional)</label>
+    <textarea class="m-textarea" id="s-desc" placeholder="Descreva o serviço..."></textarea>
+    <div class="modal-footer">
+      <button class="m-btn m-btn-out" onclick="fecharModal('modal-servico')">Cancelar</button>
+      <button class="m-btn m-btn-teal" onclick="salvarServico()">Salvar serviço</button>
+    </div>
+  </div>
+</div>
+
 <script>
-let usuario=null,filtroAtual='';
+let usuario=null, filtroAtual='', editandoServicoId=null;
 
 async function init(){
   try{
     const r=await fetch('/auth/me',{credentials:'include'});
     if(!r.ok){location.href='/login';return;}
     usuario=await r.json();
-    const inicial=usuario.nome_negocio.charAt(0).toUpperCase();
-    document.getElementById('h-avatar').textContent=inicial;
+    document.getElementById('h-avatar').textContent=usuario.nome_negocio.charAt(0).toUpperCase();
     document.getElementById('h-nome').textContent=usuario.nome_negocio;
     document.getElementById('h-nicho').textContent=usuario.nicho;
     const link=location.origin+'/agendar/'+usuario.slug;
@@ -378,6 +356,7 @@ function pg(nome,el){
   if(nome==='dashboard') carregarDash();
   if(nome==='agendamentos') carregarAg();
   if(nome==='hoje') carregarHoje();
+  if(nome==='servicos') carregarServicos();
   if(nome==='bloqueios') carregarBloq();
   if(nome==='config') carregarConfig();
   window.scrollTo({top:0,behavior:'smooth'});
@@ -395,9 +374,7 @@ async function carregarDash(){
 }
 
 function calcUrg(data,horario){
-  const agora=new Date();
-  const dt=new Date(data+'T'+horario+':00');
-  const diff=(dt-agora)/60000;
+  const diff=(new Date(data+'T'+horario+':00')-new Date())/60000;
   if(diff<=0) return 'none';
   if(diff<=60) return 'r';
   if(diff<=180) return 'a';
@@ -406,17 +383,23 @@ function calcUrg(data,horario){
 
 function badgeTxt(s){return{pendente:'⏳ Pendente',confirmado:'✅ Confirmado',cancelado:'❌ Cancelado',concluido:'🔵 Concluído'}[s]||s;}
 
-function wppBtn(tel,nome,data,horario){
-  if(!tel) return '';
-  return `<button class="btn-wpp" onclick="enviarWpp('${tel}','${nome}','${data}','${horario}')">📱 WhatsApp</button>`;
-}
-
-function enviarWpp(tel,nome,data,horario){
+function enviarWpp(tel,nome,data,horario,servico,preco){
   let num=tel.replace(/\D/g,'');
   if(num.length<=11) num='55'+num;
   const [ano,mes,dia]=data.split('-');
-  const neg=usuario?.nome_negocio||'nosso estabelecimento';
-  const msg=encodeURIComponent(`Olá ${nome}! 😊\n\nPassando para lembrar que você tem um agendamento em *${neg}* marcado para *hoje às ${horario}* (${dia}/${mes}/${ano}).\n\nQualquer dúvida estamos à disposição! 🗓️`);
+  const dataFmt=`${dia}/${mes}/${ano}`;
+  const neg=usuario?.nome_negocio||'nosso escritório';
+  let linhaServico='';
+  if(servico) linhaServico=`\nServico: ${servico}`;
+  if(preco) linhaServico+=` - R$ ${parseFloat(preco).toFixed(2).replace('.',',')}`;
+  const msg=encodeURIComponent(
+    `Prezado(a) ${nome},\n\n`+
+    `Entramos em contato para confirmar o seu agendamento em ${neg}.\n\n`+
+    `Data: ${dataFmt}\n`+
+    `Horario: ${horario}${linhaServico}\n\n`+
+    `Por favor, confirme sua presenca respondendo esta mensagem.\n\n`+
+    `Atenciosamente,\n${neg}`
+  );
   window.open(`https://wa.me/${num}?text=${msg}`,'_blank');
 }
 
@@ -426,24 +409,20 @@ async function carregarAg(status=filtroAtual){
     const r=await fetch('/negocio/agendamentos'+(status?'?status='+status:''),{credentials:'include'});
     const d=await r.json();
     const el=document.getElementById('lista-ag');
-    if(!d.agendamentos.length){el.innerHTML='<div class="empty"><div class="empty-ico">📭</div><div class="empty-txt">Nenhum agendamento encontrado</div></div>';return;}
+    if(!d.agendamentos.length){el.innerHTML='<div class="empty"><div class="empty-ico">📭</div><div class="empty-txt">Nenhum agendamento</div></div>';return;}
     el.innerHTML=d.agendamentos.map(a=>{
       const [ano,mes,dia]=a.data.split('-');
       const urg=calcUrg(a.data,a.horario);
       const urgTag=urg==='r'?'<span class="urg-tag urg-r">🔴 &lt;1h</span>':urg==='a'?'<span class="urg-tag urg-a">🟡 &lt;3h</span>':'';
+      const precoTxt=a.preco_servico?` • R$${parseFloat(a.preco_servico).toFixed(2).replace('.',',')}`:''
       return `<div class="ag-card${urg==='r'?' urgente':urg==='a'?' atencao':''}">
         <div class="ag-top">
-          <div>
-            <div class="ag-nome">${a.nome}${urgTag}</div>
-            <div class="ag-tel">${a.telefone}${a.servico?' • '+a.servico:''}</div>
-          </div>
-          <div style="text-align:right">
-            <div class="ag-data">${dia}/${mes} às ${a.horario}</div>
-            <span class="badge b-${a.status}" style="margin-top:4px">${badgeTxt(a.status)}</span>
-          </div>
+          <div><div class="ag-nome">${a.nome}${urgTag}</div><div class="ag-info">${a.telefone}</div></div>
+          <div><div class="ag-data">${dia}/${mes} às ${a.horario}</div><div class="ag-servico">${a.servico_nome||a.servico||''}${precoTxt}</div></div>
         </div>
+        <span class="badge b-${a.status}">${badgeTxt(a.status)}</span>
         <div class="ag-actions">
-          ${wppBtn(a.telefone,a.nome,a.data,a.horario)}
+          ${a.telefone?`<button class="btn-wpp" onclick="enviarWpp('${a.telefone}','${a.nome}','${a.data}','${a.horario}','${(a.servico_nome||a.servico||'').replace(/'/g,"\\'")}','${a.preco_servico||''}')">📱 WhatsApp</button>`:''}
           <button class="ac-btn" onclick="abrirModal('${a.id}','${a.nome}','${a.status}',\`${(a.obs||'')}\`)">✏️ Editar</button>
           <button class="ac-btn" style="color:var(--vermelho);border-color:var(--vermelho)" onclick="excluir('${a.id}')">🗑️</button>
         </div>
@@ -466,14 +445,15 @@ async function carregarHoje(){
     if(!d.agendamentos.length){el.innerHTML='<div class="empty"><div class="empty-ico">☀️</div><div class="empty-txt">Nenhuma consulta hoje</div></div>';return;}
     el.innerHTML=d.agendamentos.map(a=>{
       const urg=calcUrg(a.data,a.horario);
+      const precoTxt=a.preco_servico?` • R$${parseFloat(a.preco_servico).toFixed(2).replace('.',',')}`:'';
       return `<div class="hoje-card${urg==='r'?' urgente':urg==='a'?' atencao':''}">
         <div class="hoje-hora${urg==='r'?' urg-r':urg==='a'?' urg-a':''}">${a.horario}</div>
-        <div class="hoje-info">
+        <div style="flex:1">
           <div class="hoje-nome">${a.nome}</div>
-          <div class="hoje-sub">${a.telefone}${a.servico?' • '+a.servico:''}</div>
+          <div class="hoje-sub">${a.telefone}${a.servico_nome?' • '+a.servico_nome:''}${precoTxt}</div>
           <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
             <span class="badge b-${a.status}">${badgeTxt(a.status)}</span>
-            ${wppBtn(a.telefone,a.nome,a.data,a.horario)}
+            ${a.telefone?`<button class="btn-wpp" onclick="enviarWpp('${a.telefone}','${a.nome}','${a.data}','${a.horario}','${(a.servico_nome||a.servico||'').replace(/'/g,"\\'")}','${a.preco_servico||''}')">📱</button>`:''}
             <button class="ac-btn" onclick="abrirModal('${a.id}','${a.nome}','${a.status}',\`${a.obs||''}\`)">✏️</button>
           </div>
         </div>
@@ -482,6 +462,87 @@ async function carregarHoje(){
   }catch(e){}
 }
 
+// ── SERVIÇOS ──
+async function carregarServicos(){
+  try{
+    const r=await fetch('/servicos',{credentials:'include'});
+    const d=await r.json();
+    const el=document.getElementById('lista-servicos');
+    if(!d.servicos.length){
+      el.innerHTML='<div class="empty" style="padding:24px"><div class="empty-ico">🛎️</div><div class="empty-txt">Nenhum serviço cadastrado ainda</div><p style="font-size:13px;margin-top:8px;color:var(--muted)">Clique em "+ Adicionar" para criar seu primeiro serviço</p></div>';
+      return;
+    }
+    el.innerHTML=d.servicos.map(s=>{
+      const preco=s.preco?`R$ ${parseFloat(s.preco).toFixed(2).replace('.',',')}`:'-';
+      const dur=s.duracao?`${s.duracao} min`:'';
+      return `<div class="servico-card">
+        <div class="servico-info">
+          <div class="servico-nome">${s.nome}</div>
+          <div class="servico-detalhes">
+            ${dur?`<span>⏱️ ${dur}</span>`:''}
+            ${s.descricao?`<span>${s.descricao}</span>`:''}
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="servico-preco">${preco}</div>
+          <div class="servico-actions">
+            <button class="ac-btn" onclick="editarServico('${s.id}','${s.nome.replace(/'/g,"\\'")}','${s.preco||''}','${s.duracao||60}','${(s.descricao||'').replace(/'/g,"\\'")}')">✏️</button>
+            <button class="ac-btn" style="color:var(--vermelho);border-color:var(--vermelho)" onclick="excluirServico('${s.id}')">🗑️</button>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  }catch(e){}
+}
+
+function abrirModalServico(){
+  editandoServicoId=null;
+  document.getElementById('modal-servico-titulo').textContent='Novo Serviço';
+  document.getElementById('servico-id').value='';
+  document.getElementById('s-nome').value='';
+  document.getElementById('s-preco').value='';
+  document.getElementById('s-duracao').value='60';
+  document.getElementById('s-desc').value='';
+  document.getElementById('modal-servico').classList.add('aberto');
+}
+
+function editarServico(id,nome,preco,duracao,desc){
+  editandoServicoId=id;
+  document.getElementById('modal-servico-titulo').textContent='Editar Serviço';
+  document.getElementById('servico-id').value=id;
+  document.getElementById('s-nome').value=nome;
+  document.getElementById('s-preco').value=preco;
+  document.getElementById('s-duracao').value=duracao;
+  document.getElementById('s-desc').value=desc;
+  document.getElementById('modal-servico').classList.add('aberto');
+}
+
+async function salvarServico(){
+  const nome=document.getElementById('s-nome').value.trim();
+  const preco=document.getElementById('s-preco').value;
+  const duracao=document.getElementById('s-duracao').value;
+  const desc=document.getElementById('s-desc').value.trim();
+  if(!nome){toast('Informe o nome do serviço','err');return;}
+  try{
+    const url=editandoServicoId?`/servicos/${editandoServicoId}`:'/servicos';
+    const method=editandoServicoId?'PATCH':'POST';
+    const r=await fetch(url,{method,credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({nome,preco:preco||null,duracao:duracao||60,descricao:desc})});
+    if(!r.ok) throw new Error();
+    fecharModal('modal-servico');
+    toast(editandoServicoId?'Serviço atualizado!':'Serviço criado!','ok');
+    carregarServicos();
+  }catch(e){toast('Erro ao salvar','err');}
+}
+
+async function excluirServico(id){
+  if(!confirm('Excluir este serviço?')) return;
+  try{
+    await fetch(`/servicos/${id}`,{method:'DELETE',credentials:'include'});
+    toast('Serviço removido','ok');carregarServicos();
+  }catch(e){}
+}
+
+// ── BLOQUEIOS ──
 async function carregarBloq(){
   try{
     const r=await fetch('/negocio/bloqueados',{credentials:'include'});
@@ -490,13 +551,7 @@ async function carregarBloq(){
     if(!d.bloqueados.length){el.innerHTML='<p style="color:var(--muted);font-size:14px;font-weight:600">Nenhum horário bloqueado.</p>';return;}
     el.innerHTML=d.bloqueados.map(b=>{
       const [ano,mes,dia]=b.data.split('-');
-      return `<div class="blq-item">
-        <div>
-          <div style="font-weight:700;font-size:14px">${dia}/${mes}/${ano} às ${b.horario}</div>
-          ${b.motivo?`<div style="font-size:12px;color:var(--muted)">${b.motivo}</div>`:''}
-        </div>
-        <button class="ac-btn" style="color:var(--vermelho);border-color:var(--vermelho)" onclick="removerBloq('${b.id}')">Remover</button>
-      </div>`;
+      return `<div class="blq-item"><div><div style="font-weight:700;font-size:14px">${dia}/${mes}/${ano} às ${b.horario}</div>${b.motivo?`<div style="font-size:12px;color:var(--muted)">${b.motivo}</div>`:''}</div><button class="ac-btn" style="color:var(--vermelho);border-color:var(--vermelho)" onclick="removerBloq('${b.id}')">Remover</button></div>`;
     }).join('');
   }catch(e){}
 }
@@ -513,12 +568,10 @@ async function bloquear(){
 }
 
 async function removerBloq(id){
-  try{
-    await fetch('/negocio/bloqueados/'+id,{method:'DELETE',credentials:'include'});
-    toast('Removido','ok');carregarBloq();
-  }catch(e){}
+  try{await fetch('/negocio/bloqueados/'+id,{method:'DELETE',credentials:'include'});toast('Removido','ok');carregarBloq();}catch(e){}
 }
 
+// ── CONFIG ──
 async function carregarConfig(){
   try{
     const r=await fetch('/negocio/config',{credentials:'include'});
@@ -535,22 +588,14 @@ async function carregarConfig(){
 
 async function salvarConfig(){
   const emailSenha=document.getElementById('cfg-email-senha').value;
-  const payload={
-    nome_negocio:document.getElementById('cfg-nome').value,
-    descricao:document.getElementById('cfg-desc').value,
-    telefone:document.getElementById('cfg-tel').value,
-    cor:document.getElementById('cfg-cor').value,
-    horarios:document.getElementById('cfg-horarios').value,
-    email_negocio:document.getElementById('cfg-email-neg').value,
-  };
+  const payload={nome_negocio:document.getElementById('cfg-nome').value,descricao:document.getElementById('cfg-desc').value,telefone:document.getElementById('cfg-tel').value,cor:document.getElementById('cfg-cor').value,horarios:document.getElementById('cfg-horarios').value,email_negocio:document.getElementById('cfg-email-neg').value};
   if(emailSenha&&!emailSenha.startsWith('•')) payload.email_senha=emailSenha;
   try{
     await fetch('/negocio/config',{method:'PATCH',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
     toast('Configurações salvas!','ok');
-    const me=await fetch('/auth/me',{credentials:'include'});
-    usuario=await me.json();
+    const me=await fetch('/auth/me',{credentials:'include'});usuario=await me.json();
     document.getElementById('h-nome').textContent=usuario.nome_negocio;
-  }catch(e){toast('Erro ao salvar','err');}
+  }catch(e){toast('Erro','err');}
 }
 
 async function testarEmail(){
@@ -567,6 +612,7 @@ async function testarEmail(){
   }catch(e){st.style.background='#fef2f2';st.style.color='#dc2626';st.textContent='❌ Erro de conexão.';}
 }
 
+// ── MODAL STATUS ──
 function abrirModal(id,nome,status,obs){
   document.getElementById('modal-id').value=id;
   document.getElementById('modal-cliente').textContent='👤 '+nome;
@@ -574,7 +620,7 @@ function abrirModal(id,nome,status,obs){
   document.getElementById('modal-obs').value=obs;
   document.getElementById('modal-overlay').classList.add('aberto');
 }
-function fecharModal(){document.getElementById('modal-overlay').classList.remove('aberto');}
+function fecharModal(id){document.getElementById(id).classList.remove('aberto');}
 
 async function salvarStatus(){
   const id=document.getElementById('modal-id').value;
@@ -582,42 +628,31 @@ async function salvarStatus(){
   const obs=document.getElementById('modal-obs').value;
   try{
     await fetch('/negocio/agendamentos/'+id+'/status',{method:'PATCH',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({status,obs})});
-    fecharModal();toast('Atualizado!','ok');carregarAg();
+    fecharModal('modal-overlay');toast('Atualizado!','ok');carregarAg();
   }catch(e){toast('Erro','err');}
 }
 
 async function excluir(id){
   if(!confirm('Excluir este agendamento?')) return;
-  try{
-    await fetch('/negocio/agendamentos/'+id,{method:'DELETE',credentials:'include'});
-    toast('Excluído','ok');carregarAg();
-  }catch(e){}
+  try{await fetch('/negocio/agendamentos/'+id,{method:'DELETE',credentials:'include'});toast('Excluído','ok');carregarAg();}catch(e){}
 }
 
-function copiarLink(){
-  navigator.clipboard.writeText(location.origin+'/agendar/'+usuario?.slug).then(()=>toast('Link copiado!','ok'));
-}
+function copiarLink(){navigator.clipboard.writeText(location.origin+'/agendar/'+usuario?.slug).then(()=>toast('Link copiado!','ok'));}
 function abrirLink(){window.open(location.origin+'/agendar/'+usuario?.slug,'_blank');}
-
 function mostrarQR(){
-  const wrap=document.getElementById('qr-wrap');
-  const img=document.getElementById('qr-img');
+  const wrap=document.getElementById('qr-wrap'),img=document.getElementById('qr-img');
   const link=location.origin+'/agendar/'+usuario?.slug;
   img.src=`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(link)}&color=0d9488&bgcolor=ffffff`;
   wrap.style.display=wrap.style.display==='none'?'block':'none';
 }
-
-async function sair(){
-  await fetch('/auth/logout',{method:'POST',credentials:'include'});
-  location.href='/';
-}
+async function sair(){await fetch('/auth/logout',{method:'POST',credentials:'include'});location.href='/';}
 
 function toast(msg,tipo='ok'){
   const t=document.createElement('div');t.className='toast '+tipo;t.textContent=msg;
   document.body.appendChild(t);setTimeout(()=>t.remove(),3000);
 }
 
-document.getElementById('modal-overlay').addEventListener('click',function(e){if(e.target===this)fecharModal();});
+document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',function(e){if(e.target===this)this.classList.remove('aberto');}));
 init();
 </script>
 </body>
