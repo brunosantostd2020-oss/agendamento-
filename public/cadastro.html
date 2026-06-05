@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Criar conta — AgendaOK</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--teal:#0d9488;--teal-esc:#0a7c72;--teal-lt:#ccfbf1;--dark:#0f172a;--text:#334155;--muted:#64748b;--borda:#e2e8f0;--bg:#f0f9ff;--branco:#fff;--vermelho:#dc2626;--radius:14px}
+    body{font-family:'Inter',sans-serif;background:var(--bg);min-height:100vh;display:flex;flex-direction:column}
+    header{background:var(--branco);border-bottom:1px solid var(--borda);padding:0 32px;height:64px;display:flex;align-items:center}
+    .logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+    .logo-box{width:34px;height:34px;border-radius:8px;background:var(--teal);color:white;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px}
+    .logo-txt{font-weight:800;font-size:17px;color:var(--dark)}
+    .wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:40px 20px}
+    .card{background:var(--branco);border:1.5px solid var(--borda);border-radius:20px;padding:40px;width:100%;max-width:520px;box-shadow:0 4px 32px rgba(0,0,0,0.06)}
+    .card-titulo{font-size:26px;font-weight:800;color:var(--dark);margin-bottom:4px}
+    .card-sub{font-size:14px;color:var(--muted);margin-bottom:32px}
+    /* Steps */
+    .steps{display:flex;gap:0;margin-bottom:32px;align-items:center}
+    .step-item{display:flex;flex-direction:column;align-items:center;gap:4px}
+    .step-c{width:36px;height:36px;border-radius:50%;border:2px solid var(--borda);background:var(--branco);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--muted);transition:all 0.3s}
+    .step-item.ativo .step-c{border-color:var(--teal);background:var(--teal);color:white}
+    .step-item.feito .step-c{border-color:var(--teal);background:var(--teal-lt);color:var(--teal)}
+    .step-lbl{font-size:11px;font-weight:600;color:var(--muted);white-space:nowrap}
+    .step-item.ativo .step-lbl{color:var(--teal)}
+    .step-linha{flex:1;height:2px;background:var(--borda);margin-bottom:14px;transition:background 0.3s}
+    .step-linha.feita{background:var(--teal)}
+    /* Form */
+    .secao{display:none}.secao.ativa{display:block}
+    .campo{margin-bottom:18px}
+    .campo label{display:block;font-size:13px;font-weight:600;color:var(--dark);margin-bottom:6px}
+    .campo input,.campo select{width:100%;border:1.5px solid var(--borda);border-radius:10px;font-family:'Inter',sans-serif;font-size:15px;padding:12px 14px;color:var(--dark);background:var(--branco);outline:none;transition:all 0.2s;appearance:none}
+    .campo input:focus,.campo select:focus{border-color:var(--teal);box-shadow:0 0 0 3px var(--teal-lt)}
+    .linha2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    /* Nichos */
+    .nichos-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:4px}
+    .nicho-opt{
+      border:1.5px solid var(--borda);border-radius:10px;padding:12px 8px;
+      text-align:center;cursor:pointer;transition:all 0.2s;background:var(--branco);
+    }
+    .nicho-opt:hover{border-color:var(--teal);background:var(--teal-lt)}
+    .nicho-opt.sel{border-color:var(--teal);background:var(--teal-lt);color:var(--teal)}
+    .nicho-opt .icone{font-size:22px;margin-bottom:4px}
+    .nicho-opt .nome{font-size:12px;font-weight:600}
+    /* Planos */
+    .planos-sel{display:flex;flex-direction:column;gap:12px}
+    .plano-opt{
+      border:1.5px solid var(--borda);border-radius:12px;padding:16px 18px;
+      cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:space-between;
+    }
+    .plano-opt:hover{border-color:var(--teal)}
+    .plano-opt.sel{border-color:var(--teal);background:var(--teal-lt)}
+    .plano-opt.popular-opt{border-color:var(--teal)}
+    .plano-nome-p{font-weight:700;font-size:15px}
+    .plano-preco-p{font-size:13px;color:var(--muted)}
+    .plano-badge-p{background:var(--teal);color:white;font-size:10px;font-weight:700;padding:2px 10px;border-radius:999px}
+    /* Botões */
+    .btn-prox{width:100%;padding:14px;border-radius:12px;background:var(--teal);color:white;font-family:'Inter',sans-serif;font-size:15px;font-weight:700;border:none;cursor:pointer;transition:all 0.2s;margin-top:8px}
+    .btn-prox:hover{background:var(--teal-esc)}
+    .btn-volt{width:100%;padding:12px;border-radius:12px;background:none;border:1.5px solid var(--borda);color:var(--text);font-family:'Inter',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all 0.2s;margin-top:8px}
+    .btn-volt:hover{border-color:var(--teal);color:var(--teal)}
+    .link-login{text-align:center;margin-top:20px;font-size:14px;color:var(--muted)}
+    .link-login a{color:var(--teal);font-weight:600;text-decoration:none}
+    .erro-msg{color:var(--vermelho);font-size:13px;font-weight:600;margin-top:8px;min-height:18px}
+    .sucesso-box{text-align:center;padding:20px 0}
+    .sucesso-box .big{font-size:56px;margin-bottom:16px}
+    .sucesso-box h3{font-size:22px;font-weight:800;color:var(--dark);margin-bottom:8px}
+    .sucesso-box p{font-size:15px;color:var(--muted);line-height:1.6;margin-bottom:24px}
+  </style>
+</head>
+<body>
+<header>
+  <a class="logo" href="/"><div class="logo-box">OK</div><span class="logo-txt">AGENDA OK</span></a>
+</header>
+<div class="wrap">
+  <div class="card">
+    <div class="card-titulo">Criar sua conta</div>
+    <div class="card-sub">14 dias grátis, sem cartão de crédito</div>
+
+    <div class="steps">
+      <div class="step-item ativo" id="si1"><div class="step-c">1</div><div class="step-lbl">Seus dados</div></div>
+      <div class="step-linha" id="sl1"></div>
+      <div class="step-item" id="si2"><div class="step-c">2</div><div class="step-lbl">Seu negócio</div></div>
+      <div class="step-linha" id="sl2"></div>
+      <div class="step-item" id="si3"><div class="step-c">3</div><div class="step-lbl">Plano</div></div>
+    </div>
+
+    <!-- STEP 1 -->
+    <div class="secao ativa" id="s1">
+      <div class="linha2">
+        <div class="campo"><label>Nome completo</label><input type="text" id="nome" placeholder="Seu nome"/></div>
+        <div class="campo"><label>E-mail</label><input type="email" id="email" placeholder="seu@email.com"/></div>
+      </div>
+      <div class="campo"><label>Senha</label><input type="password" id="senha" placeholder="Mínimo 6 caracteres"/></div>
+      <div class="campo"><label>Confirmar senha</label><input type="password" id="senha2" placeholder="Repita a senha"/></div>
+      <div class="erro-msg" id="e1"></div>
+      <button class="btn-prox" onclick="ir(2)">Próximo →</button>
+      <div class="link-login">Já tem conta? <a href="/login">Entrar</a></div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="secao" id="s2">
+      <div class="campo"><label>Nome do seu negócio</label><input type="text" id="nome_negocio" placeholder="Ex: Barbearia do João"/></div>
+      <div class="campo">
+        <label>Qual é o seu nicho?</label>
+        <div class="nichos-grid" id="nichos-grid"></div>
+        <input type="hidden" id="nicho"/>
+      </div>
+      <div class="erro-msg" id="e2"></div>
+      <button class="btn-volt" onclick="ir(1)">← Voltar</button>
+      <button class="btn-prox" onclick="ir(3)">Próximo →</button>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="secao" id="s3">
+      <div class="campo"><label>Escolha seu plano</label>
+        <div class="planos-sel">
+          <div class="plano-opt" onclick="selPlano('basico',this)">
+            <div><div class="plano-nome-p">Básico</div><div class="plano-preco-p">R$49/mês</div></div>
+            <div id="rb-basico"></div>
+          </div>
+          <div class="plano-opt popular-opt sel" onclick="selPlano('profissional',this)">
+            <div><div class="plano-nome-p">Profissional</div><div class="plano-preco-p">R$99/mês</div></div>
+            <div class="plano-badge-p">Popular</div>
+          </div>
+          <div class="plano-opt" onclick="selPlano('premium',this)">
+            <div><div class="plano-nome-p">Premium</div><div class="plano-preco-p">R$199/mês</div></div>
+            <div id="rb-premium"></div>
+          </div>
+        </div>
+        <input type="hidden" id="plano" value="profissional"/>
+      </div>
+      <div class="erro-msg" id="e3"></div>
+      <button class="btn-volt" onclick="ir(2)">← Voltar</button>
+      <button class="btn-prox" id="btn-criar" onclick="criar()">Criar minha conta ✓</button>
+    </div>
+
+    <!-- SUCESSO -->
+    <div class="secao" id="s4">
+      <div class="sucesso-box">
+        <div class="big">🎉</div>
+        <h3>Conta criada com sucesso!</h3>
+        <p>Sua agenda está pronta. Compartilhe seu link com seus clientes!</p>
+        <button class="btn-prox" onclick="irPainel()">Ir para meu painel →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const NICHOS = [
+  {id:'barbearia',nome:'Barbearia',icone:'✂️'},
+  {id:'salao',nome:'Salão de beleza',icone:'💇'},
+  {id:'clinica',nome:'Clínica',icone:'🏥'},
+  {id:'odonto',nome:'Odontologia',icone:'🦷'},
+  {id:'advocacia',nome:'Advocacia',icone:'⚖️'},
+  {id:'estetica',nome:'Estética',icone:'💅'},
+  {id:'tatuagem',nome:'Tatuagem',icone:'🎨'},
+  {id:'psicologia',nome:'Psicologia',icone:'🧠'},
+  {id:'nutricao',nome:'Nutrição',icone:'🥗'},
+  {id:'fisio',nome:'Fisioterapia',icone:'🦴'},
+  {id:'personal',nome:'Personal',icone:'💪'},
+  {id:'outro',nome:'Outro',icone:'🏢'},
+];
+
+let slugCriado = '';
+
+// Renderiza nichos
+document.getElementById('nichos-grid').innerHTML = NICHOS.map(n => `
+  <div class="nicho-opt" onclick="selNicho('${n.id}',this)">
+    <div class="icone">${n.icone}</div>
+    <div class="nome">${n.nome}</div>
+  </div>
+`).join('');
+
+// Pré-seleciona plano da URL
+const urlPlano = new URLSearchParams(location.search).get('plano');
+if (urlPlano) selPlanoInicial(urlPlano);
+
+function selNicho(id, el) {
+  document.querySelectorAll('.nicho-opt').forEach(e => e.classList.remove('sel'));
+  el.classList.add('sel');
+  document.getElementById('nicho').value = id;
+}
+
+function selPlano(id, el) {
+  document.querySelectorAll('.plano-opt').forEach(e => e.classList.remove('sel'));
+  el.classList.add('sel');
+  document.getElementById('plano').value = id;
+}
+
+function selPlanoInicial(id) {
+  document.getElementById('plano').value = id;
+  document.querySelectorAll('.plano-opt').forEach((el, i) => {
+    el.classList.remove('sel');
+    if (['basico','profissional','premium'][i] === id) el.classList.add('sel');
+  });
+}
+
+function ir(n) {
+  if (n === 2 && !validar1()) return;
+  if (n === 3 && !validar2()) return;
+  [1,2,3].forEach(i => {
+    const el = document.getElementById('si'+i);
+    el.classList.remove('ativo','feito');
+    if (i < n) el.classList.add('feito');
+    else if (i === n) el.classList.add('ativo');
+    if (i <= 2) document.getElementById('sl'+i).classList.toggle('feita', i < n);
+  });
+  document.querySelectorAll('.secao').forEach(s => s.classList.remove('ativa'));
+  document.getElementById('s'+n).classList.add('ativa');
+}
+
+function validar1() {
+  const nome=v('nome'),email=v('email'),senha=v('senha'),senha2=v('senha2');
+  const e = document.getElementById('e1');
+  if (!nome) { e.textContent='Informe seu nome'; return false; }
+  if (!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { e.textContent='E-mail inválido'; return false; }
+  if (senha.length < 6) { e.textContent='Senha deve ter pelo menos 6 caracteres'; return false; }
+  if (senha !== senha2) { e.textContent='As senhas não conferem'; return false; }
+  e.textContent=''; return true;
+}
+
+function validar2() {
+  const nome=v('nome_negocio'),nicho=v('nicho');
+  const e = document.getElementById('e2');
+  if (!nome) { e.textContent='Informe o nome do seu negócio'; return false; }
+  if (!nicho) { e.textContent='Selecione o nicho do seu negócio'; return false; }
+  e.textContent=''; return true;
+}
+
+function v(id) { return document.getElementById(id).value.trim(); }
+
+async function criar() {
+  const btn = document.getElementById('btn-criar');
+  btn.disabled = true; btn.textContent = 'Criando conta...';
+  document.getElementById('e3').textContent = '';
+  try {
+    const r = await fetch('/auth/cadastro', {
+      method:'POST', credentials:'include',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        nome: v('nome'), email: v('email'), senha: v('senha'),
+        nome_negocio: v('nome_negocio'), nicho: v('nicho'), plano: v('plano'),
+      }),
+    });
+    const d = await r.json();
+    if (!r.ok) { document.getElementById('e3').textContent = d.erro; btn.disabled=false; btn.textContent='Criar minha conta ✓'; return; }
+    slugCriado = d.slug;
+    document.querySelectorAll('.secao').forEach(s => s.classList.remove('ativa'));
+    document.getElementById('s4').classList.add('ativa');
+  } catch(e) {
+    document.getElementById('e3').textContent = 'Erro de conexão. Tente novamente.';
+    btn.disabled=false; btn.textContent='Criar minha conta ✓';
+  }
+}
+
+function irPainel() { location.href = '/painel'; }
+</script>
+</body>
+</html>

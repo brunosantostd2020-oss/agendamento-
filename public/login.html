@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Entrar — AgendaOK</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--teal:#0d9488;--teal-esc:#0a7c72;--teal-lt:#ccfbf1;--dark:#0f172a;--text:#334155;--muted:#64748b;--borda:#e2e8f0;--bg:#f0f9ff;--branco:#fff;--vermelho:#dc2626}
+    body{font-family:'Inter',sans-serif;background:var(--bg);min-height:100vh;display:flex;flex-direction:column}
+    header{background:var(--branco);border-bottom:1px solid var(--borda);padding:0 32px;height:64px;display:flex;align-items:center}
+    .logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+    .logo-box{width:34px;height:34px;border-radius:8px;background:var(--teal);color:white;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px}
+    .logo-txt{font-weight:800;font-size:17px;color:var(--dark)}
+    .wrap{flex:1;display:flex}
+    .lado-img{
+      flex:1;background:linear-gradient(135deg,var(--teal) 0%,#0a7c72 100%);
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      padding:48px;color:white;
+    }
+    .lado-img h2{font-size:32px;font-weight:800;margin-bottom:12px;line-height:1.2}
+    .lado-img p{font-size:16px;opacity:0.85;line-height:1.6;max-width:340px;text-align:center}
+    .lado-img .ilus{font-size:80px;margin-bottom:28px}
+    .lado-form{
+      flex:1;display:flex;align-items:center;justify-content:center;
+      padding:48px 32px;
+    }
+    .card{width:100%;max-width:400px}
+    .card-titulo{font-size:28px;font-weight:800;color:var(--dark);margin-bottom:4px}
+    .card-sub{font-size:14px;color:var(--muted);margin-bottom:32px}
+    .campo{margin-bottom:18px}
+    .campo label{display:block;font-size:13px;font-weight:600;color:var(--dark);margin-bottom:6px}
+    .campo input{width:100%;border:1.5px solid var(--borda);border-radius:10px;font-family:'Inter',sans-serif;font-size:15px;padding:13px 14px;color:var(--dark);background:var(--branco);outline:none;transition:all 0.2s}
+    .campo input:focus{border-color:var(--teal);box-shadow:0 0 0 3px var(--teal-lt)}
+    .btn-entrar{width:100%;padding:14px;border-radius:12px;background:var(--teal);color:white;font-family:'Inter',sans-serif;font-size:15px;font-weight:700;border:none;cursor:pointer;transition:all 0.2s;margin-top:4px}
+    .btn-entrar:hover{background:var(--teal-esc)}
+    .erro{color:var(--vermelho);font-size:13px;font-weight:600;margin-top:8px;min-height:18px;text-align:center}
+    .link-cad{text-align:center;margin-top:20px;font-size:14px;color:var(--muted)}
+    .link-cad a{color:var(--teal);font-weight:600;text-decoration:none}
+    @media(max-width:700px){.lado-img{display:none}}
+  </style>
+</head>
+<body>
+<header>
+  <a class="logo" href="/"><div class="logo-box">OK</div><span class="logo-txt">AGENDA OK</span></a>
+</header>
+<div class="wrap">
+  <div class="lado-img">
+    <div class="ilus">📅</div>
+    <h2>Bem-vindo de volta!</h2>
+    <p>Acesse seu painel e gerencie todos os agendamentos do seu negócio.</p>
+  </div>
+  <div class="lado-form">
+    <div class="card">
+      <div class="card-titulo">Conecte-se</div>
+      <div class="card-sub">Entre na sua conta para continuar</div>
+      <div class="campo"><label>E-mail</label><input type="email" id="email" placeholder="seu@email.com" onkeydown="if(event.key==='Enter')entrar()"/></div>
+      <div class="campo"><label>Senha</label><input type="password" id="senha" placeholder="Sua senha" onkeydown="if(event.key==='Enter')entrar()"/></div>
+      <div class="erro" id="erro"></div>
+      <button class="btn-entrar" onclick="entrar()">Entrar</button>
+      <div class="link-cad">Não tem conta? <a href="/cadastro">Criar conta grátis</a></div>
+    </div>
+  </div>
+</div>
+<script>
+async function entrar() {
+  const email = document.getElementById('email').value.trim();
+  const senha = document.getElementById('senha').value;
+  const erro  = document.getElementById('erro');
+  erro.textContent = '';
+  if (!email || !senha) { erro.textContent = 'Preencha e-mail e senha'; return; }
+  try {
+    const r = await fetch('/auth/login', {
+      method:'POST', credentials:'include',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ email, senha }),
+    });
+    const d = await r.json();
+    if (!r.ok) { erro.textContent = d.erro; return; }
+    location.href = '/painel';
+  } catch(e) { erro.textContent = 'Erro de conexão. Tente novamente.'; }
+}
+</script>
+</body>
+</html>

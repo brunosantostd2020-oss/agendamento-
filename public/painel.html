@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Painel — AgendaOK</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--teal:#0d9488;--teal-esc:#0a7c72;--teal-lt:#ccfbf1;--teal-md:#99f6e4;--dark:#0f172a;--text:#334155;--muted:#64748b;--borda:#e2e8f0;--bg:#f0f9ff;--branco:#fff;--verde:#16a34a;--vermelho:#dc2626;--laranja:#ea580c;--azul:#2563eb;--radius:12px}
+    body{font-family:'Inter',sans-serif;background:var(--bg);min-height:100vh;display:flex}
+    /* SIDEBAR */
+    .sidebar{width:240px;background:var(--branco);border-right:1px solid var(--borda);display:flex;flex-direction:column;position:fixed;top:0;bottom:0;left:0;z-index:10}
+    .sb-logo{padding:20px 20px 16px;border-bottom:1px solid var(--borda);display:flex;align-items:center;gap:10px}
+    .logo-box{width:32px;height:32px;border-radius:8px;background:var(--teal);color:white;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:12px;flex-shrink:0}
+    .sb-nome{font-weight:800;font-size:15px;color:var(--dark);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .sb-nicho{font-size:11px;color:var(--muted);font-weight:500}
+    nav{flex:1;padding:12px 0}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;cursor:pointer;transition:all 0.2s;font-size:14px;color:var(--text);font-weight:500;text-decoration:none;border-left:3px solid transparent}
+    .nav-item:hover{background:var(--bg);color:var(--dark)}
+    .nav-item.ativo{color:var(--teal);border-left-color:var(--teal);background:var(--teal-lt);font-weight:600}
+    .nav-icone{font-size:16px;width:20px;text-align:center;flex-shrink:0}
+    .sb-bottom{padding:16px 20px;border-top:1px solid var(--borda)}
+    .link-pub{display:flex;align-items:center;gap:8px;background:var(--teal-lt);border:1px solid var(--teal-md);border-radius:8px;padding:10px 12px;margin-bottom:10px;font-size:12px;font-weight:600;color:var(--teal);text-decoration:none;word-break:break-all;cursor:pointer}
+    .btn-sair{width:100%;background:none;border:1.5px solid var(--borda);border-radius:8px;padding:9px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.2s}
+    .btn-sair:hover{border-color:var(--vermelho);color:var(--vermelho)}
+    /* MAIN */
+    .main{margin-left:240px;flex:1;min-height:100vh;padding:32px}
+    .page{display:none}.page.ativa{display:block}
+    .page-titulo{font-size:26px;font-weight:800;color:var(--dark);margin-bottom:4px}
+    .page-sub{font-size:14px;color:var(--muted);margin-bottom:28px}
+    /* STATS */
+    .stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:16px;margin-bottom:28px}
+    .stat{background:var(--branco);border:1.5px solid var(--borda);border-radius:var(--radius);padding:20px}
+    .stat-lbl{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px}
+    .stat-val{font-size:36px;font-weight:800;line-height:1}
+    .stat.teal .stat-val{color:var(--teal)}
+    .stat.laranja .stat-val{color:var(--laranja)}
+    .stat.verde .stat-val{color:var(--verde)}
+    .stat.azul .stat-val{color:var(--azul)}
+    /* CARD */
+    .card{background:var(--branco);border:1.5px solid var(--borda);border-radius:var(--radius);padding:24px}
+    .card-titulo{font-size:16px;font-weight:700;color:var(--dark);margin-bottom:16px}
+    /* FILTROS */
+    .filtros{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+    .filtro-btn{padding:7px 16px;border-radius:999px;border:1.5px solid var(--borda);background:none;color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:'Inter',sans-serif}
+    .filtro-btn:hover,.filtro-btn.ativo{border-color:var(--teal);color:var(--teal);background:var(--teal-lt)}
+    /* TABELA */
+    .tabela-wrap{overflow-x:auto}
+    table{width:100%;border-collapse:collapse}
+    th{text-align:left;padding:10px 14px;font-size:11px;font-weight:700;text-transform:uppercase;color:var(--muted);border-bottom:1.5px solid var(--borda);letter-spacing:0.05em}
+    td{padding:13px 14px;font-size:13px;border-bottom:1px solid var(--borda);vertical-align:middle}
+    tr:last-child td{border-bottom:none}
+    tr:hover td{background:var(--bg)}
+    .badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:700}
+    .b-pendente{background:rgba(234,88,12,0.1);color:var(--laranja)}
+    .b-confirmado{background:rgba(22,163,74,0.1);color:var(--verde)}
+    .b-cancelado{background:rgba(220,38,38,0.1);color:var(--vermelho)}
+    .b-concluido{background:rgba(37,99,235,0.1);color:var(--azul)}
+    .ac-btn{padding:5px 12px;border-radius:6px;border:1.5px solid var(--borda);background:none;color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:'Inter',sans-serif}
+    .ac-btn:hover{border-color:var(--teal);color:var(--teal)}
+    .ac-btn.del:hover{border-color:var(--vermelho);color:var(--vermelho)}
+    /* MODAL */
+    .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:100;align-items:center;justify-content:center;backdrop-filter:blur(3px)}
+    .overlay.aberto{display:flex}
+    .modal{background:var(--branco);border-radius:16px;padding:28px;width:100%;max-width:440px;animation:up 0.3s ease}
+    @keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+    .modal-titulo{font-size:20px;font-weight:700;color:var(--dark);margin-bottom:20px}
+    .m-campo{margin-bottom:14px}
+    .m-label{display:block;font-size:12px;font-weight:600;color:var(--dark);margin-bottom:5px}
+    .m-input,.m-select,.m-textarea{width:100%;border:1.5px solid var(--borda);border-radius:8px;font-family:'Inter',sans-serif;font-size:14px;padding:10px 12px;color:var(--dark);outline:none;transition:all 0.2s;background:var(--branco);appearance:none}
+    .m-input:focus,.m-select:focus,.m-textarea:focus{border-color:var(--teal)}
+    .m-textarea{resize:vertical;min-height:70px}
+    .modal-footer{display:flex;justify-content:flex-end;gap:10px;margin-top:20px}
+    .m-btn{padding:9px 20px;border-radius:8px;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.2s;border:none}
+    .m-btn-teal{background:var(--teal);color:white}
+    .m-btn-teal:hover{background:var(--teal-esc)}
+    .m-btn-out{background:none;border:1.5px solid var(--borda);color:var(--text)}
+    /* CONFIG */
+    .cfg-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .cfg-full{grid-column:1/-1}
+    /* TOAST */
+    .toast{position:fixed;bottom:20px;right:20px;background:var(--dark);color:white;border-radius:10px;padding:12px 20px;font-size:13px;font-weight:600;z-index:999;animation:up 0.3s ease;box-shadow:0 8px 24px rgba(0,0,0,0.3)}
+    .toast.ok{background:var(--verde)}
+    .toast.err{background:var(--vermelho)}
+    /* LINK BOX */
+    .link-box{background:var(--teal-lt);border:1.5px solid var(--teal-md);border-radius:var(--radius);padding:20px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:20px}
+    .link-url{font-size:15px;font-weight:600;color:var(--teal);word-break:break-all}
+    .btn-copiar{padding:8px 18px;border-radius:8px;background:var(--teal);color:white;border:none;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;transition:all 0.2s}
+    .btn-copiar:hover{background:var(--teal-esc)}
+    /* EMPTY */
+    .empty{text-align:center;padding:40px;color:var(--muted);font-size:14px;font-weight:500}
+    .empty .ico{font-size:36px;margin-bottom:10px}
+    @media(max-width:768px){.sidebar{display:none}.main{margin-left:0}}
+  </style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sb-logo">
+    <div class="logo-box">OK</div>
+    <div><div class="sb-nome" id="sb-nome">Meu Negócio</div><div class="sb-nicho" id="sb-nicho">—</div></div>
+  </div>
+  <nav>
+    <a class="nav-item ativo" onclick="pg('dashboard')"><span class="nav-icone">📊</span>Dashboard</a>
+    <a class="nav-item" onclick="pg('agendamentos')"><span class="nav-icone">📅</span>Agendamentos</a>
+    <a class="nav-item" onclick="pg('hoje')"><span class="nav-icone">📆</span>Hoje</a>
+    <a class="nav-item" onclick="pg('bloqueios')"><span class="nav-icone">🔒</span>Bloquear horários</a>
+    <a class="nav-item" onclick="pg('config')"><span class="nav-icone">⚙️</span>Configurações</a>
+  </nav>
+  <div class="sb-bottom">
+    <div class="link-pub" id="link-pub-sb" onclick="copiarLink()">🔗 <span id="link-txt-sb">Copiar meu link</span></div>
+    <button class="btn-sair" onclick="sair()">Sair</button>
+  </div>
+</aside>
+
+<main class="main">
+  <!-- DASHBOARD -->
+  <div class="page ativa" id="pg-dashboard">
+    <div class="page-titulo">Dashboard</div>
+    <div class="page-sub" id="data-hoje"></div>
+    <div class="stats">
+      <div class="stat teal"><div class="stat-lbl">Total</div><div class="stat-val" id="s-total">—</div></div>
+      <div class="stat laranja"><div class="stat-lbl">Pendentes</div><div class="stat-val" id="s-pend">—</div></div>
+      <div class="stat verde"><div class="stat-lbl">Confirmados</div><div class="stat-val" id="s-conf">—</div></div>
+      <div class="stat azul"><div class="stat-lbl">Hoje</div><div class="stat-val" id="s-hoje">—</div></div>
+      <div class="stat teal"><div class="stat-lbl">Este mês</div><div class="stat-val" id="s-mes">—</div></div>
+    </div>
+    <div class="card">
+      <div class="card-titulo">🔗 Seu link de agendamento</div>
+      <div class="link-box">
+        <div class="link-url" id="link-url">—</div>
+        <button class="btn-copiar" onclick="copiarLink()">📋 Copiar link</button>
+      </div>
+      <p style="font-size:13px;color:var(--muted)">Compartilhe esse link com seus clientes pelo WhatsApp, Instagram ou onde preferir. Eles poderão agendar horários diretamente!</p>
+    </div>
+  </div>
+
+  <!-- AGENDAMENTOS -->
+  <div class="page" id="pg-agendamentos">
+    <div class="page-titulo">Agendamentos</div>
+    <div class="page-sub">Gerencie todos os seus horários</div>
+    <div class="card">
+      <div class="filtros">
+        <button class="filtro-btn ativo" onclick="filtrar('')">Todos</button>
+        <button class="filtro-btn" onclick="filtrar('pendente')">Pendentes</button>
+        <button class="filtro-btn" onclick="filtrar('confirmado')">Confirmados</button>
+        <button class="filtro-btn" onclick="filtrar('cancelado')">Cancelados</button>
+        <button class="filtro-btn" onclick="filtrar('concluido')">Concluídos</button>
+      </div>
+      <div class="tabela-wrap">
+        <table><thead><tr><th>Cliente</th><th>Serviço</th><th>Data</th><th>Horário</th><th>Status</th><th>Ações</th></tr></thead>
+        <tbody id="tabela-ag"></tbody></table>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOJE -->
+  <div class="page" id="pg-hoje">
+    <div class="page-titulo">Agenda de Hoje</div>
+    <div class="page-sub" id="hoje-data-sub"></div>
+    <div id="hoje-lista"></div>
+  </div>
+
+  <!-- BLOQUEIOS -->
+  <div class="page" id="pg-bloqueios">
+    <div class="page-titulo">Bloquear Horários</div>
+    <div class="page-sub">Impeça agendamentos em datas ou horários específicos</div>
+    <div class="card" style="margin-bottom:20px">
+      <div class="card-titulo">Novo bloqueio</div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
+        <div><label style="display:block;font-size:12px;font-weight:600;color:var(--dark);margin-bottom:5px">Data</label><input type="date" id="blq-data" class="m-input" style="width:auto"/></div>
+        <div><label style="display:block;font-size:12px;font-weight:600;color:var(--dark);margin-bottom:5px">Horário</label>
+          <select id="blq-hr" class="m-select" style="width:auto">
+            <option value="todos">— Dia inteiro —</option>
+            <option>08:00</option><option>09:00</option><option>10:00</option><option>11:00</option>
+            <option>14:00</option><option>15:00</option><option>16:00</option><option>17:00</option>
+          </select>
+        </div>
+        <div style="flex:1;min-width:160px"><label style="display:block;font-size:12px;font-weight:600;color:var(--dark);margin-bottom:5px">Motivo (opcional)</label><input type="text" id="blq-motivo" class="m-input" placeholder="Ex: Feriado..."/></div>
+        <button class="btn-copiar" onclick="bloquear()">Bloquear</button>
+      </div>
+    </div>
+    <div class="card"><div class="card-titulo">Horários bloqueados</div><div id="lista-bloq"></div></div>
+  </div>
+
+  <!-- CONFIG -->
+  <div class="page" id="pg-config">
+    <div class="page-titulo">Configurações</div>
+    <div class="page-sub">Personalize seu negócio</div>
+    <div class="card" style="max-width:640px">
+      <div class="cfg-grid">
+        <div class="m-campo cfg-full"><label class="m-label">Nome do negócio</label><input class="m-input" type="text" id="cfg-nome"/></div>
+        <div class="m-campo cfg-full"><label class="m-label">Descrição para os clientes (opcional)</label><textarea class="m-textarea" id="cfg-desc"></textarea></div>
+        <div class="m-campo"><label class="m-label">Telefone / WhatsApp</label><input class="m-input" type="text" id="cfg-tel"/></div>
+        <div class="m-campo"><label class="m-label">Cor principal do seu site</label><input class="m-input" type="color" id="cfg-cor" style="padding:4px 8px;height:42px"/></div>
+        <div class="m-campo cfg-full"><label class="m-label">Horários disponíveis (separados por vírgula)</label><input class="m-input" type="text" id="cfg-horarios" placeholder="08:00,09:00,10:00..."/></div>
+      </div>
+      <button class="btn-copiar" style="margin-top:8px" onclick="salvarConfig()">Salvar configurações</button>
+    </div>
+  </div>
+</main>
+
+<!-- MODAL STATUS -->
+<div class="overlay" id="modal-overlay">
+  <div class="modal">
+    <div class="modal-titulo">Atualizar agendamento</div>
+    <input type="hidden" id="modal-id"/>
+    <div class="m-campo"><label class="m-label">Cliente</label><div id="modal-cliente" style="font-size:15px;font-weight:600;color:var(--dark)"></div></div>
+    <div class="m-campo"><label class="m-label">Status</label>
+      <select class="m-select" id="modal-status">
+        <option value="pendente">⏳ Pendente</option>
+        <option value="confirmado">✅ Confirmado</option>
+        <option value="cancelado">❌ Cancelado</option>
+        <option value="concluido">🔵 Concluído</option>
+      </select>
+    </div>
+    <div class="m-campo"><label class="m-label">Observações internas</label><textarea class="m-textarea" id="modal-obs" placeholder="Notas para uso interno..."></textarea></div>
+    <div class="modal-footer">
+      <button class="m-btn m-btn-out" onclick="fecharModal()">Cancelar</button>
+      <button class="m-btn m-btn-teal" onclick="salvarStatus()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let usuario = null;
+let filtroAtual = '';
+
+async function init() {
+  try {
+    const r = await fetch('/auth/me', { credentials:'include' });
+    if (!r.ok) { location.href = '/login'; return; }
+    usuario = await r.json();
+    document.getElementById('sb-nome').textContent = usuario.nome_negocio;
+    document.getElementById('sb-nicho').textContent = usuario.nicho;
+    const link = location.origin + '/agendar/' + usuario.slug;
+    document.getElementById('link-url').textContent = link;
+    document.getElementById('link-txt-sb').textContent = link.replace(location.origin,'');
+    document.getElementById('data-hoje').textContent = new Date().toLocaleDateString('pt-BR',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+    document.getElementById('hoje-data-sub').textContent = new Date().toLocaleDateString('pt-BR',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+    carregarDash();
+    carregarConfig();
+  } catch(e) { location.href = '/login'; }
+}
+
+function pg(nome) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('ativa'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('ativo'));
+  document.getElementById('pg-'+nome).classList.add('ativa');
+  event.currentTarget.classList.add('ativo');
+  if (nome==='dashboard') carregarDash();
+  if (nome==='agendamentos') carregarAg();
+  if (nome==='hoje') carregarHoje();
+  if (nome==='bloqueios') carregarBloq();
+  if (nome==='config') carregarConfig();
+}
+
+async function carregarDash() {
+  try {
+    const r = await fetch('/negocio/painel', { credentials:'include' });
+    const d = await r.json();
+    document.getElementById('s-total').textContent = d.stats.total;
+    document.getElementById('s-pend').textContent  = d.stats.pendentes;
+    document.getElementById('s-conf').textContent  = d.stats.confirmados;
+    document.getElementById('s-hoje').textContent  = d.stats.hoje;
+    document.getElementById('s-mes').textContent   = d.stats.mes;
+  } catch(e){}
+}
+
+async function carregarAg(status=filtroAtual) {
+  filtroAtual = status;
+  try {
+    const r = await fetch('/negocio/agendamentos'+(status?'?status='+status:''), { credentials:'include' });
+    const d = await r.json();
+    const tb = document.getElementById('tabela-ag');
+    if (!d.agendamentos.length) { tb.innerHTML = '<tr><td colspan="6"><div class="empty"><div class="ico">📭</div>Nenhum agendamento encontrado</div></td></tr>'; return; }
+    tb.innerHTML = d.agendamentos.map(a => {
+      const [ano,mes,dia] = a.data.split('-');
+      return `<tr>
+        <td><div style="font-weight:600">${a.nome}</div><div style="font-size:12px;color:var(--muted)">${a.telefone}</div></td>
+        <td style="font-size:12px">${a.servico||'—'}</td>
+        <td>${dia}/${mes}/${ano}</td>
+        <td><strong>${a.horario}</strong></td>
+        <td><span class="badge b-${a.status}">${badgeTxt(a.status)}</span></td>
+        <td><div style="display:flex;gap:6px">
+          <button class="ac-btn" onclick="abrirModal('${a.id}','${a.nome}','${a.status}',\`${(a.obs||'')}\`)">Editar</button>
+          <button class="ac-btn del" onclick="excluir('${a.id}')">Excluir</button>
+        </div></td>
+      </tr>`;
+    }).join('');
+  } catch(e){}
+}
+
+function filtrar(s) {
+  document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('ativo'));
+  event.currentTarget.classList.add('ativo');
+  carregarAg(s);
+}
+
+async function carregarHoje() {
+  try {
+    const r = await fetch('/negocio/agendamentos/hoje', { credentials:'include' });
+    const d = await r.json();
+    const el = document.getElementById('hoje-lista');
+    if (!d.agendamentos.length) { el.innerHTML='<div class="card"><div class="empty"><div class="ico">📭</div>Nenhuma consulta hoje</div></div>'; return; }
+    el.innerHTML = '<div style="display:flex;flex-direction:column;gap:12px">' +
+      d.agendamentos.map(a => `
+        <div class="card" style="display:flex;align-items:center;gap:20px;flex-wrap:wrap">
+          <div style="font-size:28px;font-weight:800;color:var(--teal);min-width:65px">${a.horario}</div>
+          <div style="flex:1;min-width:180px">
+            <div style="font-weight:700;margin-bottom:2px">${a.nome}</div>
+            <div style="font-size:12px;color:var(--muted)">${a.telefone}${a.servico?' • '+a.servico:''}</div>
+          </div>
+          <span class="badge b-${a.status}">${badgeTxt(a.status)}</span>
+          <button class="ac-btn" onclick="abrirModal('${a.id}','${a.nome}','${a.status}',\`${a.obs||''}\`)">Atualizar</button>
+        </div>
+      `).join('') + '</div>';
+  } catch(e){}
+}
+
+async function carregarBloq() {
+  try {
+    const r = await fetch('/negocio/bloqueados', { credentials:'include' });
+    const d = await r.json();
+    const el = document.getElementById('lista-bloq');
+    if (!d.bloqueados.length) { el.innerHTML='<p style="color:var(--muted);font-size:14px">Nenhum horário bloqueado.</p>'; return; }
+    el.innerHTML = '<table style="width:100%;border-collapse:collapse"><thead><tr><th style="text-align:left;padding:8px 12px;font-size:11px;color:var(--muted);text-transform:uppercase;border-bottom:1.5px solid var(--borda)">Data</th><th style="text-align:left;padding:8px 12px;font-size:11px;color:var(--muted);text-transform:uppercase;border-bottom:1.5px solid var(--borda)">Horário</th><th style="text-align:left;padding:8px 12px;font-size:11px;color:var(--muted);text-transform:uppercase;border-bottom:1.5px solid var(--borda)">Motivo</th><th style="border-bottom:1.5px solid var(--borda)"></th></tr></thead><tbody>' +
+      d.bloqueados.map(b => {
+        const [ano,mes,dia]=b.data.split('-');
+        return `<tr><td style="padding:10px 12px;font-size:13px;border-bottom:1px solid var(--borda)">${dia}/${mes}/${ano}</td><td style="padding:10px 12px;font-size:13px;border-bottom:1px solid var(--borda)">${b.horario}</td><td style="padding:10px 12px;font-size:13px;color:var(--muted);border-bottom:1px solid var(--borda)">${b.motivo||'—'}</td><td style="padding:10px 12px;border-bottom:1px solid var(--borda)"><button class="ac-btn del" onclick="removerBloq('${b.id}')">Remover</button></td></tr>`;
+      }).join('') + '</tbody></table>';
+  } catch(e){}
+}
+
+async function bloquear() {
+  const data=document.getElementById('blq-data').value;
+  const hr=document.getElementById('blq-hr').value;
+  const motivo=document.getElementById('blq-motivo').value;
+  if (!data) { toast('Selecione uma data','err'); return; }
+  try {
+    await fetch('/negocio/bloquear',{method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({data,horario:hr,motivo})});
+    toast('Bloqueado com sucesso!','ok');
+    carregarBloq();
+  } catch(e){ toast('Erro ao bloquear','err'); }
+}
+
+async function removerBloq(id) {
+  try {
+    await fetch('/negocio/bloqueados/'+id,{method:'DELETE',credentials:'include'});
+    toast('Removido','ok'); carregarBloq();
+  } catch(e){}
+}
+
+async function carregarConfig() {
+  try {
+    const r = await fetch('/negocio/config',{credentials:'include'});
+    const d = await r.json();
+    document.getElementById('cfg-nome').value = usuario?.nome_negocio||'';
+    document.getElementById('cfg-desc').value = d.descricao||'';
+    document.getElementById('cfg-tel').value  = d.telefone||'';
+    document.getElementById('cfg-cor').value  = d.cor||'#0d9488';
+    document.getElementById('cfg-horarios').value = d.horarios||'';
+  } catch(e){}
+}
+
+async function salvarConfig() {
+  try {
+    const r = await fetch('/negocio/config',{method:'PATCH',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+      nome_negocio: document.getElementById('cfg-nome').value,
+      descricao: document.getElementById('cfg-desc').value,
+      telefone: document.getElementById('cfg-tel').value,
+      cor: document.getElementById('cfg-cor').value,
+      horarios: document.getElementById('cfg-horarios').value,
+    })});
+    if (!r.ok) throw new Error();
+    toast('Configurações salvas!','ok');
+    const me = await fetch('/auth/me',{credentials:'include'});
+    usuario = await me.json();
+    document.getElementById('sb-nome').textContent = usuario.nome_negocio;
+  } catch(e){ toast('Erro ao salvar','err'); }
+}
+
+function abrirModal(id,nome,status,obs) {
+  document.getElementById('modal-id').value=id;
+  document.getElementById('modal-cliente').textContent=nome;
+  document.getElementById('modal-status').value=status;
+  document.getElementById('modal-obs').value=obs;
+  document.getElementById('modal-overlay').classList.add('aberto');
+}
+
+function fecharModal() { document.getElementById('modal-overlay').classList.remove('aberto'); }
+
+async function salvarStatus() {
+  const id=document.getElementById('modal-id').value;
+  const status=document.getElementById('modal-status').value;
+  const obs=document.getElementById('modal-obs').value;
+  try {
+    await fetch('/negocio/agendamentos/'+id+'/status',{method:'PATCH',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({status,obs})});
+    fecharModal(); toast('Atualizado!','ok'); carregarAg();
+  } catch(e){ toast('Erro','err'); }
+}
+
+async function excluir(id) {
+  if (!confirm('Excluir este agendamento?')) return;
+  try {
+    await fetch('/negocio/agendamentos/'+id,{method:'DELETE',credentials:'include'});
+    toast('Excluído','ok'); carregarAg();
+  } catch(e){}
+}
+
+function copiarLink() {
+  const link = location.origin+'/agendar/'+usuario?.slug;
+  navigator.clipboard.writeText(link).then(()=>toast('Link copiado!','ok'));
+}
+
+async function sair() {
+  await fetch('/auth/logout',{method:'POST',credentials:'include'});
+  location.href='/';
+}
+
+function badgeTxt(s) {
+  return {pendente:'⏳ Pendente',confirmado:'✅ Confirmado',cancelado:'❌ Cancelado',concluido:'🔵 Concluído'}[s]||s;
+}
+
+function toast(msg,tipo='ok') {
+  const t=document.createElement('div');
+  t.className='toast '+tipo; t.textContent=msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(),3000);
+}
+
+document.getElementById('modal-overlay').addEventListener('click',function(e){if(e.target===this)fecharModal()});
+init();
+</script>
+</body>
+</html>
