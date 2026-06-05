@@ -22,16 +22,58 @@ router.get('/:slug/horarios', async (req, res) => {
     const r = await pool.query('SELECT * FROM usuarios WHERE slug=$1 AND ativo=true', [req.params.slug]);
     if (!r.rows.length) return res.status(404).json({ erro: 'Negócio não encontrado.' });
     const u = r.rows[0];
-    const diasUteis = (u.config.dias_uteis||'1,2,3,4,5').split(',').map(Number);
-    const diaSemana = new Date(data+'T12:00:00').getDay();
-    if (!diasUteis.includes(diaSemana)) return res.json({ horarios: [], mensagem: 'Dia não disponível.' });
-    const hoje = new Date().toISOString().split('T')[0];
+    // Verifica dias bloqueados apenas se o dono configurou restrição
+    const diasUteisCfg = u.config.dias_uteis ? u.config.dias_uteis.trim() : '';
+    if(diasUteisCfg) {
+      const diasUteis = diasUteisCfg.split(',').map(Number);
+      const diaSemana = new Date(data+'T12:00:00').getDay();
+      if (!diasUteis.includes(diaSemana)) return res.json({ horarios: [], mensagem: 'Dia não disponível.' });
+    }
+    const agora  = new Date();
+    const hoje   = agora.toISOString().split('T')[0];
     if (data < hoje) return res.json({ horarios: [], mensagem: 'Data no passado.' });
-    const todos = (u.config.horarios||'').split(',');
-    const ocupados = (await pool.query(`SELECT horario FROM agendamentos WHERE negocio_id=$1 AND data=$2 AND status IN ('pendente','confirmado')`, [u.id, data])).rows.map(r=>r.horario);
-    const bloqueados = (await pool.query('SELECT horario FROM horarios_bloqueados WHERE negocio_id=$1 AND data=$2', [u.id, data])).rows.map(r=>r.horario);
+
+    const todos = (u.config.horarios||'').split(',').filter(h => h.trim());
+
+    // Agendamentos que bloqueiam vaga: pendente, confirmado e reagendado
+    const ocupados = (await pool.query(
+      `SELECT horario FROM agendamentos WHERE negocio_id=$1 AND data=$2 AND status IN ('pendente','confirmado','reagendado')`,
+      [u.id, data]
+    )).rows.map(r => r.horario);
+
+    // Horários bloqueados pelo dono (dia inteiro ou horário específico)
+    const bloqRows = (await pool.query(
+      'SELECT horario FROM horarios_bloqueados WHERE negocio_id=$1 AND data=$2',
+      [u.id, data]
+    )).rows;
+
+    const bloqueados = [];
+    for (const b of bloqRows) {
+      if (b.horario === 'todos') {
+        // Dia inteiro bloqueado — retorna tudo indisponível
+        return res.json({ horarios: todos.map(h => ({ horario: h, disponivel: false, motivo: 'bloqueado' })) });
+      }
+      bloqueados.push(b.horario);
+    }
+
     const indisponiveis = new Set([...ocupados, ...bloqueados]);
-    res.json({ horarios: todos.map(h => ({ horario: h, disponivel: !indisponiveis.has(h) })) });
+
+    // Se for hoje, filtra horários que já passaram (com 30 min de antecedência)
+    const isHoje = data === hoje;
+    const limiteMin = isHoje ? agora.getHours() * 60 + agora.getMinutes() + 30 : 0;
+
+    const result = todos.map(h => {
+      const [hh, mm] = h.split(':').map(Number);
+      const minHorario = hh * 60 + (mm || 0);
+      const jaPAssou = isHoje && minHorario < limiteMin;
+      return {
+        horario: h,
+        disponivel: !indisponiveis.has(h) && !jaPAssou,
+        motivo: indisponiveis.has(h) ? 'ocupado' : jaPAssou ? 'passado' : null,
+      };
+    });
+
+    res.json({ horarios: result });
   } catch(e) { res.status(500).json({ erro: e.message }); }
 });
 

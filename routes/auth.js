@@ -45,10 +45,14 @@ router.post('/cadastro', async (req, res) => {
       email_negocio: '', email_senha: '',
     };
 
+    const trialExpira = new Date();
+    trialExpira.setDate(trialExpira.getDate() + 7);
+    const trialStr = trialExpira.toISOString().split('T')[0];
+
     await pool.query(
-      `INSERT INTO usuarios (id, nome, email, senha, nome_negocio, nicho, plano, slug, ativo, criado_em, config)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,true,$9,$10)`,
-      [id, nome.trim(), email.toLowerCase().trim(), hash, nome_negocio.trim(), nicho, plano, slug, agora, JSON.stringify(config)]
+      `INSERT INTO usuarios (id, nome, email, senha, nome_negocio, nicho, plano, slug, ativo, criado_em, config, trial_expira, acesso_ativo, plano_pago, acesso_expira)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,true,$9,$10,$11,true,false,'')`,
+      [id, nome.trim(), email.toLowerCase().trim(), hash, nome_negocio.trim(), nicho, plano, slug, agora, JSON.stringify(config), trialStr]
     );
 
     req.session.userId    = id;
@@ -123,12 +127,18 @@ router.get('/me', async (req, res) => {
     let acesso_ok = true;
     let motivo_bloqueio = '';
 
-    if (!u.acesso_ativo) {
+    if (u.acesso_ativo === false) {
       acesso_ok = false; motivo_bloqueio = 'bloqueado';
     } else if (u.plano_pago) {
-      if (u.acesso_expira && u.acesso_expira < hoje) { acesso_ok = false; motivo_bloqueio = 'expirado'; }
+      if (u.acesso_expira && u.acesso_expira !== '' && u.acesso_expira < hoje) {
+        acesso_ok = false; motivo_bloqueio = 'expirado';
+      }
     } else {
-      if (!u.trial_expira || u.trial_expira < hoje) { acesso_ok = false; motivo_bloqueio = 'trial_expirado'; }
+      // Trial — só bloqueia se trial_expira existe E já passou
+      if (u.trial_expira && u.trial_expira !== '' && u.trial_expira < hoje) {
+        acesso_ok = false; motivo_bloqueio = 'trial_expirado';
+      }
+      // Se trial_expira está vazio/nulo, dá acesso (vai ser corrigido pela migration)
     }
 
     res.json({

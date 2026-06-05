@@ -156,11 +156,19 @@ async function initTrial() {
       ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS plano_pago BOOLEAN DEFAULT false;
       ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS acesso_expira TEXT DEFAULT '';
     `);
-    // Preenche trial_expira para quem não tem
+    // Preenche trial_expira para quem não tem (usuários antigos)
     await client.query(`
       UPDATE usuarios
-      SET trial_expira = to_char(NOW() + INTERVAL '7 days', 'YYYY-MM-DD')
-      WHERE trial_expira = '' OR trial_expira IS NULL
+      SET trial_expira = to_char(NOW() + INTERVAL '7 days', 'YYYY-MM-DD'),
+          acesso_ativo = true
+      WHERE (trial_expira = '' OR trial_expira IS NULL)
+        AND plano_pago = false
+    `);
+    // Garante acesso_ativo true para quem tem trial válido
+    await client.query(`
+      UPDATE usuarios
+      SET acesso_ativo = true
+      WHERE acesso_ativo IS NULL
     `);
     console.log('✅ Colunas trial OK!');
   } catch(e) {

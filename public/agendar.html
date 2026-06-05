@@ -185,8 +185,12 @@
     }
     .hr-btn:active:not(.ocup) { opacity: 0.6; }
     .hr-btn.sel { background: var(--cor) !important; border-color: var(--cor) !important; color: #fff !important; font-weight: 700; }
-    .hr-btn.ocup { opacity: 0.2; cursor: not-allowed; text-decoration: line-through; font-size: 12px; }
+    .hr-btn.ocup { opacity: 0.22; cursor: not-allowed; text-decoration: line-through; font-size: 12px; color: var(--muted); background: var(--bg); }
+    .hr-btn.passado { opacity: 0.15; cursor: not-allowed; font-size: 12px; color: var(--muted); background: var(--bg); }
     .hr-load { text-align: center; padding: 28px; font-size: 13px; color: var(--muted); }
+    .hr-info { font-size: 11px; color: var(--muted); margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--borda); display: flex; align-items: center; gap: 16px; }
+    .hr-leg { display: flex; align-items: center; gap: 5px; }
+    .hr-leg-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 
     /* ── RESUMO ── */
     .res-card {
@@ -290,10 +294,23 @@
 
   <!-- S1 -->
   <div class="sec ativa" id="s1">
-    <div class="campo"><label>Nome completo</label><input type="text" id="nome" placeholder="Seu nome completo" autocomplete="name" autocorrect="off" autocapitalize="words"/></div>
-    <div class="campo"><label>WhatsApp</label><input type="tel" id="telefone" placeholder="(XX) 9 XXXX-XXXX" autocomplete="tel" inputmode="tel"/></div>
-    <div class="campo"><label>E-mail</label><input type="email" id="email" placeholder="seu@email.com" autocomplete="email" inputmode="email" autocorrect="off" autocapitalize="none"/></div>
-    <div class="campo"><label>Observação <span style="text-transform:none;letter-spacing:0;font-weight:400">(opcional)</span></label><textarea id="obs"></textarea></div>
+    <div class="campo">
+      <label>Nome completo</label>
+      <input type="text" id="nome" placeholder="Seu nome completo" autocomplete="name" autocorrect="off" autocapitalize="words"/>
+    </div>
+    <div class="campo">
+      <label>WhatsApp</label>
+      <div style="position:relative">
+        <div style="position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:15px;font-weight:600;color:var(--muted);pointer-events:none;display:flex;align-items:center;gap:6px">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#6b6860"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.121.555 4.112 1.528 5.836L0 24l6.336-1.508A11.946 11.946 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.003-1.368l-.36-.213-3.76.895.952-3.655-.234-.374A9.786 9.786 0 012.182 12C2.182 6.592 6.592 2.182 12 2.182S21.818 6.592 21.818 12 17.408 21.818 12 21.818z"/></svg>
+        </div>
+        <input type="tel" id="telefone" placeholder="(XX) 9 XXXX-XXXX" autocomplete="tel" inputmode="tel" style="padding-left:40px"/>
+      </div>
+    </div>
+    <div class="campo">
+      <label>Observação <span style="text-transform:none;letter-spacing:0;font-weight:400">(opcional)</span></label>
+      <textarea id="obs" placeholder="Alguma informação adicional..."></textarea>
+    </div>
   </div>
 
   <!-- S2 -->
@@ -362,7 +379,7 @@ const TEMAS={barbearia:{ico:'✂',cor:'#111827'},salao:{ico:'◇',cor:'#4a0728'}
 const MESES=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const DIAS_S=['D','S','T','Q','Q','S','S'];
 const slug=location.pathname.split('/').pop();
-const E={passo:1,data:null,horario:null,ano:new Date().getFullYear(),mes:new Date().getMonth(),diasUteis:[1,2,3,4,5],srvId:null,srvNome:'',srvPreco:null,srvDur:null,temSrv:false};
+const E={passo:1,data:null,horario:null,ano:new Date().getFullYear(),mes:new Date().getMonth(),diasUteis:[0,1,2,3,4,5,6],srvId:null,srvNome:'',srvPreco:null,srvDur:null,temSrv:false};
 
 async function init(){
   try{
@@ -379,7 +396,10 @@ async function init(){
     document.getElementById('h-sub').textContent=nicho;
     document.getElementById('r-neg').textContent=info.nome_negocio;
     document.title=info.nome_negocio+' — Agendar';
-    if(info.config?.dias_uteis) E.diasUteis=info.config.dias_uteis.split(',').map(Number);
+    if(info.config?.dias_uteis && info.config.dias_uteis.trim()!==''){
+      E.diasUteis=info.config.dias_uteis.split(',').map(Number);
+    }
+    // Se não configurado, todos os dias ficam disponíveis
     const lista=document.getElementById('srv-lista');
     if(srvD.servicos&&srvD.servicos.length){
       E.temSrv=true;
@@ -447,10 +467,9 @@ function var_cor(){
 }
 
 function v1(){
-  const nome=g('nome'),tel=g('telefone'),email=g('email');
-  if(!nome){toast('Informe seu nome','err');return false;}
-  if(!tel){toast('Informe seu WhatsApp','err');return false;}
-  if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){toast('E-mail inválido','err');return false;}
+  const nome=g('nome'),tel=g('telefone');
+  if(!nome){toast('Informe seu nome completo','err');return false;}
+  if(!tel||tel.replace(/\D/g,'').length<10){toast('Informe um WhatsApp válido','err');return false;}
   return true;
 }
 function v3(){
@@ -471,7 +490,7 @@ function renderCal(){
     const dt=new Date(E.ano,E.mes,d);
     const iso=dt.toISOString().split('T')[0];
     const dow=dt.getDay();
-    const pas=dt<hoje,fds=!E.diasUteis.includes(dow);
+    const pas=dt<hoje,fds=E.diasUteis.length<7&&!E.diasUteis.includes(dow);
     const sel=iso===E.data,ehHoje=dt.getTime()===hoje.getTime();
     let cls='cal-dia';
     if(pas||fds)cls+=' dis';else if(sel)cls+=' sel';else if(ehHoje)cls+=' hj';
@@ -492,7 +511,25 @@ async function selData(iso){
     const d=await r.json();
     load.style.display='none';
     if(!d.horarios||!d.horarios.length){grade.innerHTML='<p style="color:var(--muted);font-size:13px;grid-column:1/-1;padding:8px 0">Nenhum horário disponível.</p>';return;}
-    grade.innerHTML=d.horarios.map(h=>`<button class="hr-btn${h.disponivel?'':' ocup'}" ${h.disponivel?`onclick="selHr('${h.horario}')"`:'disabled'}>${h.horario}</button>`).join('');
+    const livres=d.horarios.filter(h=>h.disponivel).length;
+    grade.innerHTML=d.horarios.map(h=>{
+      if(h.disponivel) return `<button class="hr-btn" onclick="selHr('${h.horario}')">${h.horario}</button>`;
+      if(h.motivo==='passado') return `<button class="hr-btn" style="opacity:.15;cursor:not-allowed;text-decoration:line-through;font-size:12px" disabled>${h.horario}</button>`;
+      return `<button class="hr-btn ocup" disabled title="Ocupado">${h.horario}</button>`;
+    }).join('');
+    // Legenda
+    const old_info=grade.nextElementSibling;
+    if(old_info&&old_info.classList.contains('hr-leg-info'))old_info.remove();
+    if(d.horarios.length>0){
+      const info=document.createElement('div');
+      info.className='hr-leg-info';
+      info.style.cssText='font-size:11px;color:var(--muted);margin-top:12px;padding-top:10px;border-top:1px solid var(--borda);display:flex;gap:14px;flex-wrap:wrap';
+      const ocup=d.horarios.length-livres;
+      info.innerHTML=`<span style="display:flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:50%;background:var(--cor);display:inline-block"></span>${livres} disponível${livres!==1?'s':''}</span>`
+        +(ocup>0?`<span style="display:flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:50%;background:var(--borda);display:inline-block"></span>${ocup} ocupado${ocup!==1?'s':''}</span>`:'');
+      grade.after(info);
+    }
+    if(livres===0){grade.innerHTML='<p style="color:var(--vermelho);font-size:13px;font-weight:600;grid-column:1/-1;padding:8px 0">Nenhum horário disponível nesta data.</p>';}
   }catch(e){load.style.display='none';grade.innerHTML='<p style="color:var(--vermelho);font-size:13px;grid-column:1/-1">Erro. Tente novamente.</p>';}
 }
 
@@ -516,7 +553,7 @@ async function confirmar(){
   const btn=document.getElementById('btn-prox');
   btn.disabled=true;btn.textContent='Enviando...';
   try{
-    const r=await fetch('/p/'+slug+'/agendar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nome:g('nome'),email:g('email'),telefone:g('telefone'),servico:E.srvNome,servico_id:E.srvId,preco_servico:E.srvPreco,obs:g('obs'),data:E.data,horario:E.horario})});
+    const r=await fetch('/p/'+slug+'/agendar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nome:g('nome'),email:'',telefone:g('telefone'),servico:E.srvNome,servico_id:E.srvId,preco_servico:E.srvPreco,obs:g('obs'),data:E.data,horario:E.horario})});
     const d=await r.json();
     if(!r.ok)throw new Error(d.erro||'Erro');
     ir(5);
@@ -526,7 +563,7 @@ async function confirmar(){
 function novo(){
   E.data=null;E.horario=null;E.mes=new Date().getMonth();E.ano=new Date().getFullYear();
   E.srvId=null;E.srvNome='';E.srvPreco=null;E.srvDur=null;
-  ['nome','telefone','email','obs'].forEach(id=>document.getElementById(id).value='');
+  ['nome','telefone','obs'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
   document.querySelectorAll('.srv-opt').forEach(e=>e.classList.remove('sel'));
   document.getElementById('hr-sec').style.display='none';
   document.getElementById('btm').style.display='flex';
