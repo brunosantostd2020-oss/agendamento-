@@ -352,7 +352,7 @@
     <div class="logo-mark"><svg viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12" rx="2"/><line x1="5" y1="6" x2="11" y2="6" stroke="#fafaf9" stroke-width="1.5" stroke-linecap="round"/><line x1="5" y1="9" x2="9" y2="9" stroke="#fafaf9" stroke-width="1.5" stroke-linecap="round"/></svg></div>
     <span class="logo-txt">AgendaOK</span>
   </a>
-  <span class="footer-copy">© 2025 AgendaOK</span>
+  <span class="footer-copy">© 2025 AgendaOK · Desenvolvido por Bruno Oliveira</span>
   <div class="footer-links">
     <a href="#como">Como funciona</a>
     <a href="#recursos">Recursos</a>
@@ -362,11 +362,12 @@
   </div>
 </footer>
 
-<!-- ACESSO MASTER OCULTO -->
-<div style="text-align:center;padding:10px;background:var(--branco)">
-  <span id="master-trigger" onclick="toggleMasterPanel()"
-    style="font-size:10px;color:transparent;user-select:none;cursor:default;padding:8px 16px;display:inline-block">
-    ·
+<!-- ACESSO MASTER -->
+<div style="text-align:center;padding:14px;background:var(--branco);border-top:1px solid var(--cinza2)">
+  <span onclick="toggleMasterPanel()"
+    style="font-size:11px;color:var(--cinza3);font-weight:500;cursor:pointer;font-family:'Inter',sans-serif;padding:8px 16px;border-radius:4px;transition:color 0.15s"
+    onmouseover="this.style.color='var(--preto)'" onmouseout="this.style.color='var(--cinza3)'">
+    Acesso administrativo
   </span>
 </div>
 
@@ -396,18 +397,10 @@
 </div>
 
 <script>
-let masterClicks = 0, masterTimer = null;
-
 function toggleMasterPanel() {
-  masterClicks++;
-  clearTimeout(masterTimer);
-  masterTimer = setTimeout(() => { masterClicks = 0; }, 2000);
-  if (masterClicks >= 5) {
-    masterClicks = 0;
-    const p = document.getElementById('master-panel');
-    p.style.display = p.style.display === 'none' ? 'flex' : 'none';
-    if (p.style.display === 'flex') document.getElementById('mp-user').focus();
-  }
+  const p = document.getElementById('master-panel');
+  p.style.display = p.style.display === 'none' || p.style.display === '' ? 'flex' : 'none';
+  if (p.style.display === 'flex') setTimeout(() => document.getElementById('mp-user').focus(), 50);
 }
 
 function fecharMaster() {
