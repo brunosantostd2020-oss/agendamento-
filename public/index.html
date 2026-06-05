@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
   <meta name="theme-color" content="#0a0a0a"/>
   <title>AgendaOK — Agendamento que funciona de verdade</title>
   <meta name="description" content="Plataforma de agendamento online para barbearias, clínicas, salões e qualquer negócio que trabalha com horários."/>
@@ -157,6 +157,25 @@
       .nichos-grid{grid-template-columns:repeat(2,1fr)}
       .passos{grid-template-columns:1fr}
     }
+  
+    /* ── MOBILE FIRST ── */
+    @media(max-width:600px){
+      header{padding:0 16px}
+      h1{font-size:34px;letter-spacing:-0.03em}
+      .hero-sub{font-size:16px}
+      .hero-actions{flex-direction:column;align-items:stretch}
+      .btn-hero,.btn-hero-wpp{text-align:center;justify-content:center;padding:16px 20px;font-size:16px}
+      .faixa{padding:12px 16px;gap:24px}
+      section{padding:56px 16px}
+      .sec-titulo{margin-bottom:32px}
+      .passos{gap:0}
+      .passo{padding:24px 18px}
+      .cta-section{padding:56px 16px}
+      .cta-card{padding:24px 20px}
+      .cta-wpp-num{font-size:16px}
+      footer{padding:20px 16px}
+    }
+
   </style>
 </head>
 <body>

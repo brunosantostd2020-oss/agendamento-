@@ -1,258 +1,191 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+  <meta name="theme-color" content="#0a0a0a"/>
   <title>Criar conta — AgendaOK</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     :root{
-      --preto:#0a0a0a;--branco:#fafaf9;--cinza:#f5f4f0;
-      --cinza2:#e8e6e1;--cinza3:#6b6860;--texto:#1c1b18;
-      --verde:#1a7a5e;--verde-lt:#e8f4f0;--radius:4px;
-      --vermelho:#dc2626;--safe-bottom:env(safe-area-inset-bottom,0px);
+      --preto:#0a0a0a;--branco:#fff;--bg:#fafaf9;
+      --cinza:#f5f4f0;--cinza2:#e8e6e1;--muted:#6b6860;--texto:#1c1b18;
+      --verde:#16a34a;--vermelho:#dc2626;
+      --r:6px;--sb:env(safe-area-inset-bottom,0px);--st:env(safe-area-inset-top,0px);
     }
-    html{-webkit-tap-highlight-color:transparent}
-    body{font-family:'DM Sans',sans-serif;background:var(--branco);color:var(--texto);min-height:100dvh;display:flex;flex-direction:column}
+    html{-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
+    body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--texto);min-height:100dvh;-webkit-font-smoothing:antialiased}
 
     /* HEADER */
-    header{border-bottom:1px solid var(--cinza2);padding:0 48px;height:60px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-    .logo{display:flex;align-items:center;gap:10px;text-decoration:none}
-    .logo-mark{width:28px;height:28px;background:var(--preto);border-radius:6px;display:flex;align-items:center;justify-content:center}
-    .logo-mark svg{width:14px;height:14px;fill:var(--branco)}
-    .logo-txt{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;color:var(--preto);letter-spacing:-0.3px}
-    .header-link{font-size:14px;color:var(--cinza3);text-decoration:none;font-weight:400;transition:color 0.15s}
-    .header-link:hover{color:var(--preto)}
+    .hdr{border-bottom:1px solid var(--cinza2);padding:0 20px;padding-top:var(--st);height:calc(56px + var(--st));display:flex;align-items:flex-end;justify-content:space-between;padding-bottom:10px;background:var(--branco)}
+    .logo{display:flex;align-items:center;gap:9px;text-decoration:none}
+    .logo-m{width:26px;height:26px;background:var(--preto);border-radius:5px;display:flex;align-items:center;justify-content:center}
+    .logo-m svg{width:13px;height:13px;fill:var(--branco)}
+    .logo-t{font-size:15px;font-weight:800;color:var(--preto);letter-spacing:-0.3px}
+    .hdr-link{font-size:13px;color:var(--muted);text-decoration:none;font-weight:400}
 
-    /* PROGRESS */
-    .progress-bar{height:2px;background:var(--cinza2);position:relative;flex-shrink:0}
-    .progress-fill{height:100%;background:var(--preto);transition:width 0.4s ease;width:33.33%}
+    /* PROGRESSO */
+    .prog{height:2px;background:var(--cinza2)}
+    .prog-fill{height:100%;background:var(--preto);transition:width 0.35s ease;width:33.33%}
 
-    /* LAYOUT */
-    .layout{flex:1;display:grid;grid-template-columns:380px 1fr}
+    /* STEPS TOPO */
+    .steps-topo{background:var(--branco);border-bottom:1px solid var(--cinza2);padding:14px 20px;display:flex;align-items:center;justify-content:center;gap:0}
+    .si{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:60px}
+    .sc{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--cinza2);background:var(--branco);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--muted);transition:all 0.25s}
+    .si.ativo .sc{border-color:var(--preto);background:var(--preto);color:var(--branco)}
+    .si.feito .sc{border-color:var(--verde);background:var(--verde);color:var(--branco)}
+    .slbl{font-size:9px;font-weight:600;color:var(--muted);letter-spacing:0.06em;text-transform:uppercase}
+    .si.ativo .slbl{color:var(--preto)}.si.feito .slbl{color:var(--verde)}
+    .sl{flex:1;height:1.5px;background:var(--cinza2);max-width:28px;margin-bottom:14px;transition:background 0.3s}
+    .sl.feita{background:var(--verde)}
 
-    /* SIDEBAR */
-    .sidebar{
-      background:var(--cinza);border-right:1px solid var(--cinza2);
-      padding:48px 40px;display:flex;flex-direction:column;justify-content:space-between;
-      position:sticky;top:62px;height:calc(100vh - 62px);overflow:auto;
-    }
-    .sidebar-step{margin-bottom:32px}
-    .step-num{font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--cinza3);font-weight:500;margin-bottom:6px}
-    .step-titulo{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--cinza3);transition:color 0.2s}
-    .step-titulo.ativo{color:var(--preto)}
-    .step-linha{width:1px;height:24px;background:var(--cinza2);margin-left:0;margin:8px 0 8px 4px}
-    .sidebar-info{font-size:13px;color:var(--cinza3);font-weight:300;line-height:1.7;border-top:1px solid var(--cinza2);padding-top:24px}
-    .sidebar-info strong{color:var(--texto);font-weight:500}
+    /* CONTENT */
+    .content{padding:28px 20px calc(88px + var(--sb));max-width:480px;margin:0 auto}
+    .sec{display:none}.sec.ativa{display:block}
+    .sec-titulo{font-size:22px;font-weight:800;color:var(--preto);letter-spacing:-0.4px;margin-bottom:6px}
+    .sec-sub{font-size:14px;color:var(--muted);font-weight:400;margin-bottom:24px;line-height:1.5}
 
-    /* FORM AREA */
-    .form-area{padding:56px 64px;display:flex;align-items:flex-start;justify-content:center}
-    .form-wrap{width:100%;max-width:420px}
-
-    .form-titulo{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:var(--preto);margin-bottom:6px;letter-spacing:-0.02em}
-    .form-sub{font-size:14px;color:var(--cinza3);font-weight:300;margin-bottom:32px;line-height:1.6}
-
-    .secao{display:none}.secao.ativa{display:block}
-
-    .campo{margin-bottom:16px}
-    .campo label{display:block;font-size:12px;font-weight:500;color:var(--cinza3);letter-spacing:0.04em;text-transform:uppercase;margin-bottom:8px}
-    .campo input{
-      width:100%;border:1px solid var(--cinza2);border-radius:var(--radius);
-      font-family:'DM Sans',sans-serif;font-size:15px;font-weight:300;
-      padding:13px 14px;color:var(--texto);background:var(--branco);
-      outline:none;transition:border-color 0.15s;appearance:none;-webkit-appearance:none;
-    }
+    /* CAMPOS */
+    .campo{margin-bottom:18px}
+    .campo label{display:block;font-size:11px;font-weight:600;color:var(--muted);letter-spacing:0.07em;text-transform:uppercase;margin-bottom:8px}
+    .campo input{width:100%;border:1.5px solid var(--cinza2);border-radius:var(--r);font-family:'Inter',sans-serif;font-size:17px;font-weight:400;padding:15px 16px;color:var(--texto);background:var(--branco);outline:none;transition:border-color 0.15s;-webkit-appearance:none;appearance:none}
     .campo input:focus{border-color:var(--preto)}
-    .campo input::placeholder{color:#bbb}
-    .linha2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .campo input::placeholder{color:#c5c3be}
+    .linha2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 
     /* NICHOS */
-    .nichos-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:4px}
-    .nicho-opt{
-      border:1px solid var(--cinza2);border-radius:var(--radius);
-      padding:14px 10px;text-align:center;cursor:pointer;
-      transition:all 0.15s;background:var(--branco);
-      -webkit-tap-highlight-color:transparent;
-    }
-    .nicho-opt:hover{border-color:var(--cinza3);background:var(--cinza)}
-    .nicho-opt.sel{border-color:var(--preto);background:var(--preto)}
-    .nicho-opt .ico{font-size:20px;margin-bottom:6px;display:block}
-    .nicho-opt .nm{font-size:11px;font-weight:500;color:var(--cinza3);line-height:1.3}
-    .nicho-opt.sel .nm{color:var(--branco)}
+    .nichos-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+    .n-opt{border:1.5px solid var(--cinza2);border-radius:var(--r);padding:14px 8px;text-align:center;cursor:pointer;background:var(--branco);transition:all 0.15s;-webkit-tap-highlight-color:transparent;user-select:none;min-height:72px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
+    .n-opt:active{opacity:0.7}
+    .n-opt.sel{border-color:var(--preto);background:var(--preto)}
+    .n-ico{font-size:22px;line-height:1}
+    .n-nm{font-size:11px;font-weight:600;color:var(--muted);line-height:1.3}
+    .n-opt.sel .n-nm{color:rgba(255,255,255,0.8)}
 
     /* PLANO */
-    .plano-card{
-      border:1px solid var(--cinza2);border-radius:var(--radius);padding:24px;
-      background:var(--cinza);margin-top:4px;
-    }
+    .plano-card{border:1.5px solid var(--cinza2);border-radius:var(--r);padding:22px;background:var(--cinza)}
     .plano-top{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:16px}
-    .plano-nome{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--preto)}
-    .plano-preco{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--preto)}
-    .plano-preco span{font-size:14px;font-weight:400;color:var(--cinza3)}
-    .plano-lista{list-style:none;border-top:1px solid var(--cinza2);padding-top:16px}
-    .plano-lista li{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--cinza3);font-weight:300;padding:7px 0;border-bottom:1px solid var(--cinza2)}
+    .plano-nome{font-size:17px;font-weight:800;color:var(--preto);letter-spacing:-0.2px}
+    .plano-preco{font-size:26px;font-weight:900;color:var(--preto);letter-spacing:-0.5px}
+    .plano-preco span{font-size:13px;font-weight:400;color:var(--muted)}
+    .plano-lista{list-style:none;border-top:1px solid var(--cinza2);padding-top:14px;display:flex;flex-direction:column;gap:0}
+    .plano-lista li{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted);font-weight:400;padding:8px 0;border-bottom:1px solid var(--cinza2)}
     .plano-lista li:last-child{border-bottom:none}
-    .chk{width:16px;height:16px;border-radius:50%;background:var(--verde-lt);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:9px;color:var(--verde);font-weight:700}
-    .plano-trial{font-size:12px;color:var(--cinza3);font-weight:300;margin-top:14px;padding-top:14px;border-top:1px solid var(--cinza2)}
+    .chk{width:16px;height:16px;border-radius:50%;background:#dcfce7;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:9px;color:var(--verde);font-weight:700}
+    .plano-trial{font-size:11px;color:var(--muted);font-weight:400;margin-top:14px;padding-top:14px;border-top:1px solid var(--cinza2);text-align:center}
 
-    /* BOTÕES */
-    .btn-prox{
-      width:100%;padding:14px;border-radius:var(--radius);
-      background:var(--preto);color:var(--branco);
-      font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;
-      border:none;cursor:pointer;transition:background 0.15s;margin-top:20px;
-      display:flex;align-items:center;justify-content:center;gap:8px;
-    }
-    .btn-prox:hover{background:#2a2a2a}
-    .btn-prox:disabled{opacity:0.5;cursor:not-allowed}
-    .btn-volt{
-      background:none;border:none;color:var(--cinza3);font-family:'DM Sans',sans-serif;
-      font-size:14px;font-weight:400;cursor:pointer;padding:0;margin-top:14px;
-      display:block;text-align:center;width:100%;transition:color 0.15s;
-    }
-    .btn-volt:hover{color:var(--preto)}
-
-    .erro{background:#fef2f2;border:1px solid #fecaca;border-radius:var(--radius);padding:12px 14px;font-size:13px;color:var(--vermelho);font-weight:400;margin-bottom:14px;display:none}
+    /* ERRO */
+    .erro{background:#fef2f2;border:1px solid #fecaca;border-radius:var(--r);padding:12px 14px;font-size:13px;color:var(--vermelho);font-weight:500;margin-bottom:14px;display:none;line-height:1.4}
     .erro.show{display:block}
 
-    .link-login{text-align:center;font-size:14px;color:var(--cinza3);font-weight:300;margin-top:20px}
-    .link-login a{color:var(--preto);font-weight:500;text-decoration:none;border-bottom:1px solid var(--cinza2);transition:border-color 0.15s}
-    .link-login a:hover{border-color:var(--preto)}
-
     /* SUCESSO */
-    .suc-wrap{text-align:center;padding:40px 0}
-    .suc-check{width:56px;height:56px;border-radius:50%;background:var(--preto);display:flex;align-items:center;justify-content:center;margin:0 auto 24px}
-    .suc-check svg{width:24px;height:24px}
-    .suc-titulo{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--preto);margin-bottom:10px;letter-spacing:-0.02em}
-    .suc-txt{font-size:15px;color:var(--cinza3);font-weight:300;line-height:1.7;margin-bottom:28px}
+    .suc{text-align:center;padding:40px 0}
+    .suc-ico{width:64px;height:64px;border-radius:50%;background:var(--preto);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;animation:pop 0.4s cubic-bezier(0.34,1.56,0.64,1)}
+    @keyframes pop{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+    .suc-t{font-size:22px;font-weight:800;color:var(--preto);letter-spacing:-0.4px;margin-bottom:10px}
+    .suc-s{font-size:14px;color:var(--muted);font-weight:400;line-height:1.6;margin-bottom:24px}
 
-    @media(max-width:900px){
-      header{padding:0 20px}
-      .layout{grid-template-columns:1fr}
-      .sidebar{display:none}
-      .form-area{padding:40px 20px}
-    }
+    /* BOTTOM */
+    .btm{position:fixed;bottom:0;left:0;right:0;background:var(--branco);border-top:1px solid var(--cinza2);padding:12px 20px;padding-bottom:calc(12px + var(--sb));display:flex;gap:10px;z-index:100}
+    .btn-prox{flex:1;padding:17px;border-radius:var(--r);background:var(--preto);color:var(--branco);font-family:'Inter',sans-serif;font-size:16px;font-weight:600;border:none;cursor:pointer;letter-spacing:-0.1px;-webkit-tap-highlight-color:transparent;transition:opacity 0.15s}
+    .btn-prox:active{opacity:0.75}
+    .btn-prox:disabled{opacity:0.35}
+    .btn-volt{padding:17px 22px;border-radius:var(--r);background:none;border:1.5px solid var(--cinza2);color:var(--muted);font-family:'Inter',sans-serif;font-size:15px;font-weight:500;cursor:pointer;-webkit-tap-highlight-color:transparent}
+    .btn-volt:active{opacity:0.6}
+    .link-login{text-align:center;font-size:13px;color:var(--muted);font-weight:400;margin-top:16px}
+    .link-login a{color:var(--preto);font-weight:600;text-decoration:none;border-bottom:1px solid var(--cinza2)}
   </style>
 </head>
 <body>
 
-<header>
+<div class="hdr">
   <a class="logo" href="/">
-    <div class="logo-mark">
-      <svg viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12" rx="2"/><line x1="5" y1="6" x2="11" y2="6" stroke="#fafaf9" stroke-width="1.5" stroke-linecap="round"/><line x1="5" y1="9" x2="9" y2="9" stroke="#fafaf9" stroke-width="1.5" stroke-linecap="round"/></svg>
-    </div>
-    <span class="logo-txt">AgendaOK</span>
+    <div class="logo-m"><svg viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12" rx="2"/><line x1="5" y1="6" x2="11" y2="6" stroke="#fafaf9" stroke-width="1.5" stroke-linecap="round"/><line x1="5" y1="9" x2="9" y2="9" stroke="#fafaf9" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+    <span class="logo-t">AgendaOK</span>
   </a>
-  <a href="/login" class="header-link">Já tem conta? Entrar →</a>
-</header>
+  <a href="/login" class="hdr-link">Entrar →</a>
+</div>
 
-<div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+<div class="prog"><div class="prog-fill" id="prog"></div></div>
 
-<div class="layout">
-  <div class="sidebar">
-    <div>
-      <div class="sidebar-step">
-        <div class="step-num">Passo 01</div>
-        <div class="step-titulo ativo" id="st1">Seus dados</div>
-        <div class="step-linha"></div>
-        <div class="step-num">Passo 02</div>
-        <div class="step-titulo" id="st2">Seu negócio</div>
-        <div class="step-linha"></div>
-        <div class="step-num">Passo 03</div>
-        <div class="step-titulo" id="st3">Plano</div>
-      </div>
+<div class="steps-topo">
+  <div class="si ativo" id="si1"><div class="sc">1</div><div class="slbl">Dados</div></div>
+  <div class="sl" id="sl1"></div>
+  <div class="si" id="si2"><div class="sc">2</div><div class="slbl">Negócio</div></div>
+  <div class="sl" id="sl2"></div>
+  <div class="si" id="si3"><div class="sc">3</div><div class="slbl">Plano</div></div>
+</div>
+
+<div class="content">
+
+  <!-- S1 -->
+  <div class="sec ativa" id="s1">
+    <div class="sec-titulo">Criar conta</div>
+    <div class="sec-sub">Seus dados de acesso.</div>
+    <div class="erro" id="e1"></div>
+    <div class="campo"><label>Nome completo</label><input type="text" id="nome" placeholder="Seu nome" autocomplete="name" autocapitalize="words"/></div>
+    <div class="campo"><label>E-mail</label><input type="email" id="email" placeholder="seu@email.com" autocomplete="email" inputmode="email" autocorrect="off" autocapitalize="none"/></div>
+    <div class="linha2">
+      <div class="campo"><label>Senha</label><input type="password" id="senha" placeholder="Mín. 6 caracteres" autocomplete="new-password"/></div>
+      <div class="campo"><label>Confirmar</label><input type="password" id="senha2" placeholder="Repita a senha" autocomplete="new-password"/></div>
     </div>
-    <div class="sidebar-info">
-      <strong>14 dias grátis.</strong> Sem cartão de crédito. Cancele quando quiser. Suporte incluído desde o primeiro dia.
+    <div class="link-login">Já tem conta? <a href="/login">Entrar</a></div>
+  </div>
+
+  <!-- S2 -->
+  <div class="sec" id="s2">
+    <div class="sec-titulo">Seu negócio</div>
+    <div class="sec-sub">Como se chama e o que você faz?</div>
+    <div class="erro" id="e2"></div>
+    <div class="campo"><label>Nome do negócio</label><input type="text" id="nome_neg" placeholder="Ex: Clínica Silva"/></div>
+    <div class="campo">
+      <label>Segmento</label>
+      <div class="nichos-grid" id="nichos-grid"></div>
+      <input type="hidden" id="nicho"/>
     </div>
   </div>
 
-  <div class="form-area">
-    <div class="form-wrap">
-
-      <!-- S1 -->
-      <div class="secao ativa" id="s1">
-        <div class="form-titulo">Crie sua conta</div>
-        <div class="form-sub">Comece com seus dados de acesso.</div>
-        <div class="erro" id="e1"></div>
-        <div class="campo"><label>Nome completo</label><input type="text" id="nome" placeholder="Seu nome" autocomplete="name"/></div>
-        <div class="campo"><label>E-mail</label><input type="email" id="email" placeholder="seu@email.com" autocomplete="email" inputmode="email"/></div>
-        <div class="linha2">
-          <div class="campo"><label>Senha</label><input type="password" id="senha" placeholder="Mínimo 6 caracteres" autocomplete="new-password"/></div>
-          <div class="campo"><label>Confirmar senha</label><input type="password" id="senha2" placeholder="Repita a senha" autocomplete="new-password"/></div>
-        </div>
-        <button class="btn-prox" onclick="ir(2)">
-          Continuar
-          <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-        <div class="link-login">Já tem conta? <a href="/login">Entrar</a></div>
-      </div>
-
-      <!-- S2 -->
-      <div class="secao" id="s2">
-        <div class="form-titulo">Seu negócio</div>
-        <div class="form-sub">Como se chama e o que você faz?</div>
-        <div class="erro" id="e2"></div>
-        <div class="campo"><label>Nome do negócio</label><input type="text" id="nome_negocio" placeholder="Ex: Silva Advocacia"/></div>
-        <div class="campo">
-          <label>Qual é o seu segmento?</label>
-          <div class="nichos-grid" id="nichos-grid"></div>
-          <input type="hidden" id="nicho"/>
-        </div>
-        <button class="btn-prox" onclick="ir(3)">
-          Continuar
-          <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-        <button class="btn-volt" onclick="ir(1)">← Voltar</button>
-      </div>
-
-      <!-- S3 -->
-      <div class="secao" id="s3">
-        <div class="form-titulo">Plano único</div>
-        <div class="form-sub">Tudo incluso. Sem surpresas.</div>
-        <div class="erro" id="e3"></div>
-        <input type="hidden" id="plano" value="completo"/>
-        <div class="plano-card">
-          <div class="plano-top">
-            <div class="plano-nome">AgendaOK</div>
-            <div class="plano-preco">R$149<span>/mês</span></div>
-          </div>
-          <ul class="plano-lista">
-            <li><span class="chk">✓</span>Página pública de agendamento</li>
-            <li><span class="chk">✓</span>Agendamentos ilimitados</li>
-            <li><span class="chk">✓</span>Serviços com preço e duração</li>
-            <li><span class="chk">✓</span>Lembrete via WhatsApp</li>
-            <li><span class="chk">✓</span>E-mail automático de confirmação</li>
-            <li><span class="chk">✓</span>Cancelamento pelo cliente</li>
-            <li><span class="chk">✓</span>Avaliações pós-atendimento</li>
-            <li><span class="chk">✓</span>Lista de espera automática</li>
-            <li><span class="chk">✓</span>Relatório mensal</li>
-            <li><span class="chk">✓</span>QR Code exclusivo</li>
-          </ul>
-          <div class="plano-trial">7 dias grátis para testar. Sem cartão de crédito.</div>
-        </div>
-        <button class="btn-prox" id="btn-criar" onclick="criar()">
-          Criar minha conta
-          <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-        <button class="btn-volt" onclick="ir(2)">← Voltar</button>
-      </div>
-
-      <!-- SUCESSO -->
-      <div class="secao" id="s4">
-        <div class="suc-wrap">
-          <div class="suc-check">
-            <svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#fafaf9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </div>
-          <div class="suc-titulo">Conta criada.</div>
-          <div class="suc-txt">Enviamos seus dados de acesso e as instruções de pagamento para o seu e-mail. Acesse seu painel para começar.</div>
-          <button class="btn-prox" onclick="location.href='/painel'">Ir para o painel</button>
-        </div>
-      </div>
-
+  <!-- S3 -->
+  <div class="sec" id="s3">
+    <div class="sec-titulo">Plano único</div>
+    <div class="sec-sub">Tudo incluso, sem surpresas.</div>
+    <div class="erro" id="e3"></div>
+    <input type="hidden" id="plano" value="completo"/>
+    <div class="plano-card">
+      <div class="plano-top"><div class="plano-nome">AgendaOK</div><div class="plano-preco">R$149<span>/mês</span></div></div>
+      <ul class="plano-lista">
+        <li><span class="chk">✓</span>Página pública de agendamento</li>
+        <li><span class="chk">✓</span>Agendamentos ilimitados</li>
+        <li><span class="chk">✓</span>Serviços com preço e duração</li>
+        <li><span class="chk">✓</span>Lembrete via WhatsApp</li>
+        <li><span class="chk">✓</span>Cancelamento pelo cliente</li>
+        <li><span class="chk">✓</span>Avaliações pós-atendimento</li>
+        <li><span class="chk">✓</span>Lista de espera automática</li>
+        <li><span class="chk">✓</span>Relatório mensal</li>
+        <li><span class="chk">✓</span>QR Code exclusivo</li>
+      </ul>
+      <div class="plano-trial">7 dias grátis · Sem cartão de crédito</div>
     </div>
   </div>
+
+  <!-- SUCESSO -->
+  <div class="sec" id="s4">
+    <div class="suc">
+      <div class="suc-ico">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M6 15l5 5 11-11" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="suc-t">Conta criada.</div>
+      <div class="suc-s">Seus dados de acesso foram enviados para o seu e-mail. Acesse o painel para começar.</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="btm" id="btm">
+  <button class="btn-volt" id="btn-volt" onclick="voltar()" style="display:none">‹</button>
+  <button class="btn-prox" id="btn-prox" onclick="avancar()">Continuar</button>
 </div>
 
 <script>
@@ -267,73 +200,73 @@ const NICHOS=[
 let passo=1;
 
 document.getElementById('nichos-grid').innerHTML=NICHOS.map(n=>`
-  <div class="nicho-opt" onclick="selNicho('${n.id}',this)">
-    <span class="ico">${n.ico}</span>
-    <span class="nm">${n.nm}</span>
+  <div class="n-opt" onclick="selN('${n.id}',this)">
+    <span class="n-ico">${n.ico}</span>
+    <span class="n-nm">${n.nm}</span>
   </div>`).join('');
 
-function selNicho(id,el){
-  document.querySelectorAll('.nicho-opt').forEach(e=>e.classList.remove('sel'));
-  el.classList.add('sel');
-  document.getElementById('nicho').value=id;
+function selN(id,el){
+  document.querySelectorAll('.n-opt').forEach(e=>e.classList.remove('sel'));
+  el.classList.add('sel');document.getElementById('nicho').value=id;
 }
 
+function avancar(){
+  if(passo===1&&!v1())return;
+  if(passo===2&&!v2())return;
+  if(passo===3){criar();return;}
+  ir(passo+1);
+}
+function voltar(){if(passo>1)ir(passo-1);}
+
 function ir(n){
-  if(n===2&&!v1()) return;
-  if(n===3&&!v2()) return;
   passo=n;
-  document.querySelectorAll('.secao').forEach(s=>s.classList.remove('ativa'));
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('ativa'));
   document.getElementById('s'+n).classList.add('ativa');
-  // Progress
-  const pct={1:33.33,2:66.66,3:100,4:100}[n]||33.33;
-  document.getElementById('progress').style.width=pct+'%';
-  // Sidebar
-  ['st1','st2','st3'].forEach((id,i)=>{
-    document.getElementById(id).classList.toggle('ativo',i+1===n);
+  [1,2,3].forEach(i=>{
+    const el=document.getElementById('si'+i);
+    el.classList.remove('ativo','feito');
+    if(i<n)el.classList.add('feito');else if(i===n)el.classList.add('ativo');
+    if(i<=2)document.getElementById('sl'+i).classList.toggle('feita',i<n);
   });
+  document.getElementById('prog').style.width=({1:33,2:66,3:100,4:100}[n]||33)+'%';
+  document.getElementById('btn-volt').style.display=(n>1&&n<4)?'block':'none';
+  const prox=document.getElementById('btn-prox');
+  if(n===3)prox.textContent='Criar minha conta';
+  else if(n===4){document.getElementById('btm').style.display='none';setTimeout(()=>{location.href='/painel';},2000);}
+  else prox.textContent='Continuar';
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
 function mostrarErro(id,msg){
-  const el=document.getElementById(id);
-  el.textContent=msg;el.classList.add('show');
+  const el=document.getElementById(id);el.textContent=msg;el.classList.add('show');
   setTimeout(()=>el.classList.remove('show'),4000);
 }
 
 function v1(){
   const nome=g('nome'),email=g('email'),senha=g('senha'),senha2=g('senha2');
-  if(!nome){mostrarErro('e1','Informe seu nome.');return false}
-  if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){mostrarErro('e1','E-mail inválido.');return false}
-  if(senha.length<6){mostrarErro('e1','Senha deve ter pelo menos 6 caracteres.');return false}
-  if(senha!==senha2){mostrarErro('e1','As senhas não conferem.');return false}
+  if(!nome){mostrarErro('e1','Informe seu nome completo.');return false;}
+  if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){mostrarErro('e1','E-mail inválido.');return false;}
+  if(senha.length<6){mostrarErro('e1','Senha deve ter pelo menos 6 caracteres.');return false;}
+  if(senha!==senha2){mostrarErro('e1','As senhas não conferem.');return false;}
   return true;
 }
 function v2(){
-  if(!g('nome_negocio')){mostrarErro('e2','Informe o nome do negócio.');return false}
-  if(!g('nicho')){mostrarErro('e2','Selecione o segmento do negócio.');return false}
+  if(!g('nome_neg')){mostrarErro('e2','Informe o nome do negócio.');return false;}
+  if(!g('nicho')){mostrarErro('e2','Selecione o segmento.');return false;}
   return true;
 }
-function g(id){return document.getElementById(id).value.trim()}
+function g(id){return document.getElementById(id).value.trim();}
 
 async function criar(){
-  const btn=document.getElementById('btn-criar');
-  btn.disabled=true;btn.innerHTML='Criando conta...';
+  const btn=document.getElementById('btn-prox');
+  btn.disabled=true;btn.textContent='Criando conta...';
   document.getElementById('e3').classList.remove('show');
   try{
-    const r=await fetch('/auth/cadastro',{
-      method:'POST',credentials:'include',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({nome:g('nome'),email:g('email'),senha:g('senha'),nome_negocio:g('nome_negocio'),nicho:g('nicho'),plano:g('plano')}),
-    });
+    const r=await fetch('/auth/cadastro',{method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({nome:g('nome'),email:g('email'),senha:g('senha'),nome_negocio:g('nome_neg'),nicho:g('nicho'),plano:g('plano')})});
     const d=await r.json();
-    if(!r.ok){mostrarErro('e3',d.erro);btn.disabled=false;btn.innerHTML='Criar minha conta →';return;}
-    document.getElementById('progress').style.width='100%';
-    document.querySelectorAll('.secao').forEach(s=>s.classList.remove('ativa'));
-    document.getElementById('s4').classList.add('ativa');
-  }catch(e){
-    mostrarErro('e3','Erro de conexão. Tente novamente.');
-    btn.disabled=false;btn.innerHTML='Criar minha conta →';
-  }
+    if(!r.ok){mostrarErro('e3',d.erro);btn.disabled=false;btn.textContent='Criar minha conta';return;}
+    ir(4);
+  }catch(e){mostrarErro('e3','Erro de conexão. Tente novamente.');btn.disabled=false;btn.textContent='Criar minha conta';}
 }
 </script>
 </body>
