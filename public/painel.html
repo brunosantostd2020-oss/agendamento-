@@ -59,6 +59,15 @@
     .ac-btn{padding:5px 12px;border-radius:6px;border:1.5px solid var(--borda);background:none;color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:'Inter',sans-serif}
     .ac-btn:hover{border-color:var(--teal);color:var(--teal)}
     .ac-btn.del:hover{border-color:var(--vermelho);color:var(--vermelho)}
+    /* WhatsApp button */
+    .btn-wpp{padding:5px 12px;border-radius:6px;border:1.5px solid #25d366;background:#25d366;color:white;font-size:12px;font-weight:700;cursor:pointer;transition:all 0.2s;font-family:'Inter',sans-serif;display:inline-flex;align-items:center;gap:4px}
+    .btn-wpp:hover{background:#1da851;border-color:#1da851;transform:scale(1.05)}
+    /* Urgência de tempo */
+    .row-urgente td{background:#fff1f1!important;border-left:3px solid var(--vermelho)}
+    .row-atencao td{background:#fffbeb!important;border-left:3px solid #f59e0b}
+    .urgencia-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:700;margin-left:6px}
+    .urg-vermelho{background:#fee2e2;color:var(--vermelho)}
+    .urg-amarelo{background:#fef3c7;color:#b45309}
     /* MODAL */
     .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:100;align-items:center;justify-content:center;backdrop-filter:blur(3px)}
     .overlay.aberto{display:flex}
@@ -276,13 +285,22 @@ async function carregarAg(status=filtroAtual) {
     if (!d.agendamentos.length) { tb.innerHTML = '<tr><td colspan="6"><div class="empty"><div class="ico">📭</div>Nenhum agendamento encontrado</div></td></tr>'; return; }
     tb.innerHTML = d.agendamentos.map(a => {
       const [ano,mes,dia] = a.data.split('-');
-      return `<tr>
-        <td><div style="font-weight:600">${a.nome}</div><div style="font-size:12px;color:var(--muted)">${a.telefone}</div></td>
+      const urgencia = calcUrgencia(a.data, a.horario);
+      const rowCls = urgencia === 'vermelho' ? 'row-urgente' : urgencia === 'amarelo' ? 'row-atencao' : '';
+      const urgBadge = urgencia === 'vermelho'
+        ? '<span class="urgencia-badge urg-vermelho">🔴 Menos de 1h</span>'
+        : urgencia === 'amarelo'
+        ? '<span class="urgencia-badge urg-amarelo">🟡 Menos de 3h</span>'
+        : '';
+      const wppBtn = a.telefone ? `<button class="btn-wpp" onclick="enviarWpp('${a.telefone}','${a.nome}','${a.data}','${a.horario}')">📱 WhatsApp</button>` : '';
+      return `<tr class="${rowCls}">
+        <td><div style="font-weight:600">${a.nome}${urgBadge}</div><div style="font-size:12px;color:var(--muted)">${a.telefone}</div></td>
         <td style="font-size:12px">${a.servico||'—'}</td>
         <td>${dia}/${mes}/${ano}</td>
         <td><strong>${a.horario}</strong></td>
         <td><span class="badge b-${a.status}">${badgeTxt(a.status)}</span></td>
-        <td><div style="display:flex;gap:6px">
+        <td><div style="display:flex;gap:6px;flex-wrap:wrap">
+          ${wppBtn}
           <button class="ac-btn" onclick="abrirModal('${a.id}','${a.nome}','${a.status}',\`${(a.obs||'')}\`)">Editar</button>
           <button class="ac-btn del" onclick="excluir('${a.id}')">Excluir</button>
         </div></td>
@@ -304,17 +322,32 @@ async function carregarHoje() {
     const el = document.getElementById('hoje-lista');
     if (!d.agendamentos.length) { el.innerHTML='<div class="card"><div class="empty"><div class="ico">📭</div>Nenhuma consulta hoje</div></div>'; return; }
     el.innerHTML = '<div style="display:flex;flex-direction:column;gap:12px">' +
-      d.agendamentos.map(a => `
-        <div class="card" style="display:flex;align-items:center;gap:20px;flex-wrap:wrap">
-          <div style="font-size:28px;font-weight:800;color:var(--teal);min-width:65px">${a.horario}</div>
-          <div style="flex:1;min-width:180px">
-            <div style="font-weight:700;margin-bottom:2px">${a.nome}</div>
-            <div style="font-size:12px;color:var(--muted)">${a.telefone}${a.servico?' • '+a.servico:''}</div>
-          </div>
-          <span class="badge b-${a.status}">${badgeTxt(a.status)}</span>
-          <button class="ac-btn" onclick="abrirModal('${a.id}','${a.nome}','${a.status}',\`${a.obs||''}\`)">Atualizar</button>
-        </div>
-      `).join('') + '</div>';
+      d.agendamentos.map(a => {
+        const urgencia = calcUrgencia(a.data, a.horario);
+        const bordaCor = urgencia==='vermelho' ? '#dc2626' : urgencia==='amarelo' ? '#f59e0b' : 'var(--borda)';
+        const bgCor    = urgencia==='vermelho' ? '#fff1f1' : urgencia==='amarelo' ? '#fffbeb' : 'var(--branco)';
+        const urgLabel = urgencia==='vermelho'
+          ? '<span class="urgencia-badge urg-vermelho" style="margin-left:8px">🔴 MENOS DE 1H</span>'
+          : urgencia==='amarelo'
+          ? '<span class="urgencia-badge urg-amarelo" style="margin-left:8px">🟡 Menos de 3h</span>'
+          : '';
+        const wppBtn = a.telefone
+          ? `<button class="btn-wpp" onclick="enviarWpp('${a.telefone}','${a.nome}','${a.data}','${a.horario}')">📱 WhatsApp</button>`
+          : '';
+        return `
+          <div class="card" style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;border-color:${bordaCor};background:${bgCor}">
+            <div style="font-size:28px;font-weight:800;color:${urgencia==='vermelho'?'var(--vermelho)':urgencia==='amarelo'?'#b45309':'var(--teal)'};min-width:65px">${a.horario}</div>
+            <div style="flex:1;min-width:180px">
+              <div style="font-weight:700;margin-bottom:2px">${a.nome}${urgLabel}</div>
+              <div style="font-size:12px;color:var(--muted)">${a.telefone}${a.servico?' • '+a.servico:''}</div>
+            </div>
+            <span class="badge b-${a.status}">${badgeTxt(a.status)}</span>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              ${wppBtn}
+              <button class="ac-btn" onclick="abrirModal('${a.id}','${a.nome}','${a.status}',\`${a.obs||''}\`)">Atualizar</button>
+            </div>
+          </div>`;
+      }).join('') + '</div>';
   } catch(e){}
 }
 
@@ -420,6 +453,42 @@ async function sair() {
 
 function badgeTxt(s) {
   return {pendente:'⏳ Pendente',confirmado:'✅ Confirmado',cancelado:'❌ Cancelado',concluido:'🔵 Concluído'}[s]||s;
+}
+
+// Calcula urgência com base na data e horário do agendamento
+function calcUrgencia(data, horario) {
+  try {
+    const agora  = new Date();
+    const dtAg   = new Date(data + 'T' + horario + ':00');
+    const diffMs = dtAg - agora;
+    const diffMin = diffMs / 60000;
+    if (diffMin <= 0) return 'none';         // já passou
+    if (diffMin <= 60)  return 'vermelho';   // menos de 1h
+    if (diffMin <= 180) return 'amarelo';    // menos de 3h
+    return 'none';
+  } catch(e) { return 'none'; }
+}
+
+// Abre WhatsApp com mensagem pronta
+function enviarWpp(telefone, nome, data, horario) {
+  // Formata o número (remove tudo que não for dígito)
+  let num = telefone.replace(/\D/g, '');
+  // Adiciona código do Brasil se não tiver
+  if (num.length === 11) num = '55' + num;
+  else if (num.length === 10) num = '55' + num;
+
+  const [ano,mes,dia] = data.split('-');
+  const dataFmt = `${dia}/${mes}/${ano}`;
+
+  const negocio = usuario?.nome_negocio || 'nosso estabelecimento';
+
+  const msg = encodeURIComponent(
+    `Olá ${nome}! 😊\n\n` +
+    `Passando para lembrar que você tem um agendamento em *${negocio}* marcado para *hoje às ${horario}* (${dataFmt}).\n\n` +
+    `Qualquer dúvida estamos à disposição! Até logo! 🗓️`
+  );
+
+  window.open(`https://wa.me/${num}?text=${msg}`, '_blank');
 }
 
 function toast(msg,tipo='ok') {
