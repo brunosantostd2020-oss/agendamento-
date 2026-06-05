@@ -9,7 +9,7 @@ function requireMaster(req, res, next) {
 }
 
 // POST /admin/login
-router.post('/login', (req, res) => {
+router.post('/login', async (req, res) => {
   const { usuario, senha } = req.body;
   const MASTER_USER  = process.env.MASTER_USER;
   const MASTER_SENHA = process.env.MASTER_SENHA;
