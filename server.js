@@ -20,7 +20,13 @@ app.use(session({
   secret: process.env.SESSION_SECRET || 'agendaok-secret-2024',
   resave: false,
   saveUninitialized: false,
-  cookie: { secure: process.env.NODE_ENV==='production', httpOnly: true, maxAge: 24*60*60*1000, sameSite: process.env.NODE_ENV==='production'?'none':'lax' },
+  rolling: true, // renova a sessão a cada requisição
+  cookie: {
+    secure: process.env.NODE_ENV === 'production',
+    httpOnly: true,
+    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 dias
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+  },
 }));
 
 app.use('/auth',     require('./routes/auth'));
