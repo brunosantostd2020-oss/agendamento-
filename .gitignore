@@ -1,5 +1,25 @@
+# Dependências
 node_modules/
+
+# Variáveis de ambiente — NUNCA subir para o GitHub
 .env
+.env.local
+.env.production
+.env.*
+
+# Dados locais
 data/
 *.db
+*.sqlite
+
+# Sistema
 .DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Build
+dist/
+.cache/

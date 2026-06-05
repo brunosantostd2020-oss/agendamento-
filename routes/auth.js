@@ -79,9 +79,10 @@ router.post('/login', async (req, res) => {
   const { email, senha } = req.body;
   if (!email || !senha) return res.status(400).json({ erro: 'E-mail e senha obrigatórios.' });
 
-  // Admin master
-  if (email === (process.env.ADMIN_EMAIL || 'admin@agendaok.com') &&
-      senha  === (process.env.ADMIN_PASSWORD || 'admin123')) {
+  // Admin master (apenas via variáveis de ambiente)
+  if (process.env.ADMIN_EMAIL && process.env.ADMIN_PASSWORD &&
+      email === process.env.ADMIN_EMAIL &&
+      senha === process.env.ADMIN_PASSWORD) {
     req.session.userId  = 'admin';
     req.session.isAdmin = true;
     return res.json({ sucesso: true, isAdmin: true });
