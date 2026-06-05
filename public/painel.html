@@ -1,279 +1,348 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+  <meta name="theme-color" content="#0d9488"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
   <title>Painel — AgendaOK</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    :root{--teal:#0d9488;--teal-esc:#0a7c72;--teal-lt:#ccfbf1;--teal-md:#99f6e4;--dark:#0f172a;--text:#334155;--muted:#64748b;--borda:#e2e8f0;--bg:#f0f9ff;--branco:#fff;--verde:#16a34a;--vermelho:#dc2626;--laranja:#ea580c;--azul:#2563eb;--radius:12px}
-    body{font-family:'Inter',sans-serif;background:var(--bg);min-height:100vh;display:flex}
-    /* SIDEBAR */
-    .sidebar{width:240px;background:var(--branco);border-right:1px solid var(--borda);display:flex;flex-direction:column;position:fixed;top:0;bottom:0;left:0;z-index:10}
-    .sb-logo{padding:20px 20px 16px;border-bottom:1px solid var(--borda);display:flex;align-items:center;gap:10px}
-    .logo-box{width:32px;height:32px;border-radius:8px;background:var(--teal);color:white;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:12px;flex-shrink:0}
-    .sb-nome{font-weight:800;font-size:15px;color:var(--dark);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-    .sb-nicho{font-size:11px;color:var(--muted);font-weight:500}
-    nav{flex:1;padding:12px 0}
-    .nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;cursor:pointer;transition:all 0.2s;font-size:14px;color:var(--text);font-weight:500;text-decoration:none;border-left:3px solid transparent}
-    .nav-item:hover{background:var(--bg);color:var(--dark)}
-    .nav-item.ativo{color:var(--teal);border-left-color:var(--teal);background:var(--teal-lt);font-weight:600}
-    .nav-icone{font-size:16px;width:20px;text-align:center;flex-shrink:0}
-    .sb-bottom{padding:16px 20px;border-top:1px solid var(--borda)}
-    .link-pub{display:flex;align-items:center;gap:8px;background:var(--teal-lt);border:1px solid var(--teal-md);border-radius:8px;padding:10px 12px;margin-bottom:10px;font-size:12px;font-weight:600;color:var(--teal);text-decoration:none;word-break:break-all;cursor:pointer}
-    .btn-sair{width:100%;background:none;border:1.5px solid var(--borda);border-radius:8px;padding:9px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.2s}
-    .btn-sair:hover{border-color:var(--vermelho);color:var(--vermelho)}
-    /* MAIN */
-    .main{margin-left:240px;flex:1;min-height:100vh;padding:32px}
+    :root{
+      --teal:#0d9488;--teal-esc:#0a7c72;--teal-lt:#ccfbf1;--teal-md:#99f6e4;
+      --dark:#0f172a;--text:#334155;--muted:#64748b;--borda:#e2e8f0;
+      --bg:#f8faff;--branco:#fff;
+      --verde:#16a34a;--vermelho:#dc2626;--laranja:#ea580c;--azul:#2563eb;
+      --radius:14px;--safe-bottom:env(safe-area-inset-bottom,0px);
+    }
+    html{-webkit-tap-highlight-color:transparent}
+    body{font-family:'Inter',sans-serif;background:var(--bg);min-height:100dvh;overflow-x:hidden}
+
+    /* ── HEADER ── */
+    .header{
+      background:var(--teal);color:white;
+      padding:16px 20px;
+      display:flex;align-items:center;justify-content:space-between;
+      position:sticky;top:0;z-index:50;
+    }
+    .header-left{display:flex;align-items:center;gap:12px}
+    .header-avatar{width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:white;border:2px solid rgba(255,255,255,0.3);flex-shrink:0}
+    .header-nome{font-weight:800;font-size:16px;line-height:1.2}
+    .header-nicho{font-size:12px;opacity:0.85;font-weight:500}
+    .btn-sair{background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.3);border-radius:10px;color:white;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;padding:8px 14px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+    .btn-sair:active{background:rgba(255,255,255,0.25)}
+
+    /* ── LINK BANNER ── */
+    .link-banner{
+      background:linear-gradient(135deg,var(--teal-esc),#0a6b62);
+      padding:16px 20px;
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+    }
+    .link-banner-txt{color:white;font-size:13px;font-weight:600;opacity:0.9;flex:1;min-width:0}
+    .link-banner-url{color:white;font-size:14px;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .link-banner-btns{display:flex;gap:8px;flex-shrink:0}
+    .mini-btn{background:rgba(255,255,255,0.2);border:1.5px solid rgba(255,255,255,0.3);border-radius:8px;color:white;font-family:'Inter',sans-serif;font-size:12px;font-weight:700;padding:7px 12px;cursor:pointer;-webkit-tap-highlight-color:transparent;white-space:nowrap}
+    .mini-btn:active{background:rgba(255,255,255,0.3)}
+
+    /* ── CONTENT ── */
+    .content{padding:16px 16px 100px}
     .page{display:none}.page.ativa{display:block}
-    .page-titulo{font-size:26px;font-weight:800;color:var(--dark);margin-bottom:4px}
-    .page-sub{font-size:14px;color:var(--muted);margin-bottom:28px}
-    /* STATS */
-    .stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:16px;margin-bottom:28px}
-    .stat{background:var(--branco);border:1.5px solid var(--borda);border-radius:var(--radius);padding:20px}
-    .stat-lbl{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px}
-    .stat-val{font-size:36px;font-weight:800;line-height:1}
+
+    /* ── STATS ── */
+    .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+    .stat{background:var(--branco);border:1.5px solid var(--borda);border-radius:var(--radius);padding:16px}
+    .stat-lbl{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px}
+    .stat-val{font-size:32px;font-weight:800;line-height:1}
     .stat.teal .stat-val{color:var(--teal)}
     .stat.laranja .stat-val{color:var(--laranja)}
     .stat.verde .stat-val{color:var(--verde)}
     .stat.azul .stat-val{color:var(--azul)}
-    /* CARD */
-    .card{background:var(--branco);border:1.5px solid var(--borda);border-radius:var(--radius);padding:24px}
-    .card-titulo{font-size:16px;font-weight:700;color:var(--dark);margin-bottom:16px}
-    /* FILTROS */
-    .filtros{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
-    .filtro-btn{padding:7px 16px;border-radius:999px;border:1.5px solid var(--borda);background:none;color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:'Inter',sans-serif}
-    .filtro-btn:hover,.filtro-btn.ativo{border-color:var(--teal);color:var(--teal);background:var(--teal-lt)}
-    /* TABELA */
-    .tabela-wrap{overflow-x:auto}
-    table{width:100%;border-collapse:collapse}
-    th{text-align:left;padding:10px 14px;font-size:11px;font-weight:700;text-transform:uppercase;color:var(--muted);border-bottom:1.5px solid var(--borda);letter-spacing:0.05em}
-    td{padding:13px 14px;font-size:13px;border-bottom:1px solid var(--borda);vertical-align:middle}
-    tr:last-child td{border-bottom:none}
-    tr:hover td{background:var(--bg)}
-    .badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:700}
+    .stat-full{grid-column:1/-1}
+
+    /* ── CARD ── */
+    .card{background:var(--branco);border:1.5px solid var(--borda);border-radius:var(--radius);padding:16px;margin-bottom:12px}
+    .card-titulo{font-size:15px;font-weight:800;color:var(--dark);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+
+    /* ── FILTROS SCROLL ── */
+    .filtros{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:14px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+    .filtros::-webkit-scrollbar{display:none}
+    .filtro-btn{padding:8px 16px;border-radius:999px;border:1.5px solid var(--borda);background:var(--branco);color:var(--muted);font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;transition:all 0.2s;-webkit-tap-highlight-color:transparent;font-family:'Inter',sans-serif}
+    .filtro-btn.ativo{border-color:var(--teal);color:var(--teal);background:var(--teal-lt)}
+
+    /* ── AGENDAMENTO CARD (mobile) ── */
+    .ag-card{
+      background:var(--branco);border:1.5px solid var(--borda);
+      border-radius:var(--radius);padding:16px;margin-bottom:10px;
+      transition:all 0.2s;
+    }
+    .ag-card.urgente{border-left:4px solid var(--vermelho);background:#fff8f8}
+    .ag-card.atencao{border-left:4px solid #f59e0b;background:#fffbeb}
+    .ag-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px}
+    .ag-nome{font-weight:800;font-size:15px;color:var(--dark)}
+    .ag-tel{font-size:12px;color:var(--muted);font-weight:500;margin-top:2px}
+    .ag-data{font-size:13px;font-weight:700;color:var(--teal)}
+    .badge{display:inline-flex;align-items:center;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700}
     .b-pendente{background:rgba(234,88,12,0.1);color:var(--laranja)}
     .b-confirmado{background:rgba(22,163,74,0.1);color:var(--verde)}
     .b-cancelado{background:rgba(220,38,38,0.1);color:var(--vermelho)}
     .b-concluido{background:rgba(37,99,235,0.1);color:var(--azul)}
-    .ac-btn{padding:5px 12px;border-radius:6px;border:1.5px solid var(--borda);background:none;color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:'Inter',sans-serif}
-    .ac-btn:hover{border-color:var(--teal);color:var(--teal)}
-    .ac-btn.del:hover{border-color:var(--vermelho);color:var(--vermelho)}
-    /* WhatsApp button */
-    .btn-wpp{padding:5px 12px;border-radius:6px;border:1.5px solid #25d366;background:#25d366;color:white;font-size:12px;font-weight:700;cursor:pointer;transition:all 0.2s;font-family:'Inter',sans-serif;display:inline-flex;align-items:center;gap:4px}
-    .btn-wpp:hover{background:#1da851;border-color:#1da851;transform:scale(1.05)}
-    /* Urgência de tempo */
-    .row-urgente td{background:#fff1f1!important;border-left:3px solid var(--vermelho)}
-    .row-atencao td{background:#fffbeb!important;border-left:3px solid #f59e0b}
-    .urgencia-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:700;margin-left:6px}
-    .urg-vermelho{background:#fee2e2;color:var(--vermelho)}
-    .urg-amarelo{background:#fef3c7;color:#b45309}
-    /* MODAL */
-    .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:100;align-items:center;justify-content:center;backdrop-filter:blur(3px)}
+    .urg-tag{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:999px;font-size:10px;font-weight:800;margin-left:6px}
+    .urg-r{background:#fee2e2;color:var(--vermelho)}
+    .urg-a{background:#fef3c7;color:#b45309}
+    .ag-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px solid var(--borda)}
+    .ac-btn{padding:8px 14px;border-radius:10px;border:1.5px solid var(--borda);background:none;color:var(--muted);font-size:13px;font-weight:700;cursor:pointer;transition:all 0.2s;font-family:'Inter',sans-serif;-webkit-tap-highlight-color:transparent}
+    .ac-btn:active{transform:scale(0.95)}
+    .btn-wpp{padding:8px 14px;border-radius:10px;border:1.5px solid #25d366;background:#25d366;color:white;font-size:13px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;display:inline-flex;align-items:center;gap:4px;-webkit-tap-highlight-color:transparent}
+    .btn-wpp:active{background:#1da851;transform:scale(0.95)}
+
+    /* ── HOJE CARD ── */
+    .hoje-card{
+      background:var(--branco);border:1.5px solid var(--borda);
+      border-radius:var(--radius);padding:16px;margin-bottom:10px;
+      display:flex;gap:14px;align-items:flex-start;
+    }
+    .hoje-card.urgente{border-left:4px solid var(--vermelho);background:#fff8f8}
+    .hoje-card.atencao{border-left:4px solid #f59e0b;background:#fffbeb}
+    .hoje-hora{font-size:24px;font-weight:900;color:var(--teal);min-width:60px;line-height:1}
+    .hoje-hora.urg-r{color:var(--vermelho)}
+    .hoje-hora.urg-a{color:#b45309}
+    .hoje-info{flex:1}
+    .hoje-nome{font-weight:800;font-size:15px;color:var(--dark);margin-bottom:2px}
+    .hoje-sub{font-size:12px;color:var(--muted)}
+
+    /* ── BLOQUEIOS ── */
+    .blq-form{display:flex;flex-direction:column;gap:12px;margin-bottom:16px}
+    .blq-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .blq-input,.blq-select{width:100%;border:2px solid var(--borda);border-radius:12px;font-family:'Inter',sans-serif;font-size:15px;padding:13px 14px;color:var(--dark);background:var(--branco);outline:none;transition:all 0.2s;appearance:none;-webkit-appearance:none}
+    .blq-input:focus,.blq-select:focus{border-color:var(--teal)}
+    .blq-item{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--borda)}
+    .blq-item:last-child{border-bottom:none}
+
+    /* ── CONFIG ── */
+    .cfg-label{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:8px;display:block}
+    .cfg-input,.cfg-textarea{width:100%;border:2px solid var(--borda);border-radius:12px;font-family:'Inter',sans-serif;font-size:15px;padding:13px 14px;color:var(--dark);background:var(--branco);outline:none;transition:all 0.2s;-webkit-appearance:none;margin-bottom:14px}
+    .cfg-input:focus,.cfg-textarea:focus{border-color:var(--teal);box-shadow:0 0 0 3px var(--teal-lt)}
+    .cfg-textarea{resize:none;min-height:80px}
+    .cfg-section{margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--borda)}
+    .cfg-section:last-child{border-bottom:none;margin-bottom:0}
+    .cfg-section-titulo{font-size:14px;font-weight:800;color:var(--dark);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+
+    /* ── MODAL ── */
+    .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:100;align-items:flex-end;justify-content:center;backdrop-filter:blur(3px)}
     .overlay.aberto{display:flex}
-    .modal{background:var(--branco);border-radius:16px;padding:28px;width:100%;max-width:440px;animation:up 0.3s ease}
-    @keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-    .modal-titulo{font-size:20px;font-weight:700;color:var(--dark);margin-bottom:20px}
-    .m-campo{margin-bottom:14px}
-    .m-label{display:block;font-size:12px;font-weight:600;color:var(--dark);margin-bottom:5px}
-    .m-input,.m-select,.m-textarea{width:100%;border:1.5px solid var(--borda);border-radius:8px;font-family:'Inter',sans-serif;font-size:14px;padding:10px 12px;color:var(--dark);outline:none;transition:all 0.2s;background:var(--branco);appearance:none}
+    .modal{
+      background:var(--branco);border-radius:24px 24px 0 0;
+      padding:24px 20px;width:100%;max-width:600px;
+      padding-bottom:calc(24px + var(--safe-bottom));
+      animation:slideUp 0.3s cubic-bezier(0.34,1.56,0.64,1);
+      max-height:85vh;overflow-y:auto;
+    }
+    @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+    .modal-handle{width:40px;height:4px;background:var(--borda);border-radius:999px;margin:0 auto 20px}
+    .modal-titulo{font-size:20px;font-weight:800;color:var(--dark);margin-bottom:20px}
+    .m-label{display:block;font-size:13px;font-weight:700;color:var(--dark);margin-bottom:8px}
+    .m-input,.m-select,.m-textarea{width:100%;border:2px solid var(--borda);border-radius:12px;font-family:'Inter',sans-serif;font-size:15px;padding:13px 14px;color:var(--dark);background:var(--branco);outline:none;transition:all 0.2s;-webkit-appearance:none;margin-bottom:14px}
     .m-input:focus,.m-select:focus,.m-textarea:focus{border-color:var(--teal)}
-    .m-textarea{resize:vertical;min-height:70px}
-    .modal-footer{display:flex;justify-content:flex-end;gap:10px;margin-top:20px}
-    .m-btn{padding:9px 20px;border-radius:8px;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.2s;border:none}
+    .m-textarea{resize:none;min-height:80px}
+    .modal-footer{display:flex;gap:10px;margin-top:8px}
+    .m-btn{flex:1;padding:14px;border-radius:12px;font-family:'Inter',sans-serif;font-size:15px;font-weight:800;cursor:pointer;border:none;-webkit-tap-highlight-color:transparent}
     .m-btn-teal{background:var(--teal);color:white}
-    .m-btn-teal:hover{background:var(--teal-esc)}
-    .m-btn-out{background:none;border:1.5px solid var(--borda);color:var(--text)}
-    /* CONFIG */
-    .cfg-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-    .cfg-full{grid-column:1/-1}
-    /* TOAST */
-    .toast{position:fixed;bottom:20px;right:20px;background:var(--dark);color:white;border-radius:10px;padding:12px 20px;font-size:13px;font-weight:600;z-index:999;animation:up 0.3s ease;box-shadow:0 8px 24px rgba(0,0,0,0.3)}
-    .toast.ok{background:var(--verde)}
-    .toast.err{background:var(--vermelho)}
-    /* LINK BOX */
-    .link-box{background:var(--teal-lt);border:1.5px solid var(--teal-md);border-radius:var(--radius);padding:20px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:20px}
-    .link-url{font-size:15px;font-weight:600;color:var(--teal);word-break:break-all}
-    .btn-copiar{padding:8px 18px;border-radius:8px;background:var(--teal);color:white;border:none;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;transition:all 0.2s}
-    .btn-copiar:hover{background:var(--teal-esc)}
-    /* EMPTY */
-    .empty{text-align:center;padding:40px;color:var(--muted);font-size:14px;font-weight:500}
-    .empty .ico{font-size:36px;margin-bottom:10px}
-    @media(max-width:768px){.sidebar{display:none}.main{margin-left:0}}
+    .m-btn-teal:active{background:var(--teal-esc)}
+    .m-btn-out{background:none;border:2px solid var(--borda);color:var(--text)}
+
+    /* ── BOTTOM TABS ── */
+    .bottom-tabs{
+      position:fixed;bottom:0;left:0;right:0;
+      background:var(--branco);border-top:1px solid var(--borda);
+      display:flex;align-items:stretch;
+      padding-bottom:var(--safe-bottom);
+      z-index:50;box-shadow:0 -4px 20px rgba(0,0,0,0.08);
+    }
+    .tab{
+      flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+      gap:4px;padding:10px 4px;cursor:pointer;transition:all 0.2s;
+      border:none;background:none;-webkit-tap-highlight-color:transparent;
+      color:var(--muted);font-family:'Inter',sans-serif;
+    }
+    .tab:active{background:var(--bg)}
+    .tab.ativo{color:var(--teal)}
+    .tab-ico{font-size:22px;line-height:1}
+    .tab-lbl{font-size:10px;font-weight:700}
+
+    /* ── TOAST ── */
+    .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--dark);color:white;border-radius:12px;padding:12px 24px;font-size:14px;font-weight:700;z-index:999;animation:up 0.3s ease;white-space:nowrap;box-shadow:0 8px 32px rgba(0,0,0,0.3)}
+    .toast.ok{background:var(--verde)}.toast.err{background:var(--vermelho)}
+    @keyframes up{from{opacity:0;transform:translateX(-50%) translateY(12px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+
+    /* ── QR ── */
+    .qr-wrap{text-align:center;padding:20px;background:var(--bg);border-radius:12px;border:1.5px solid var(--borda);margin-top:12px}
+
+    /* ── EMPTY ── */
+    .empty{text-align:center;padding:48px 20px;color:var(--muted)}
+    .empty-ico{font-size:48px;margin-bottom:12px}
+    .empty-txt{font-size:15px;font-weight:600}
+
+    /* ── BTN VERDE GRANDE ── */
+    .btn-verde{width:100%;padding:15px;border-radius:14px;background:var(--teal);color:white;font-family:'Inter',sans-serif;font-size:15px;font-weight:800;border:none;cursor:pointer;margin-top:4px;-webkit-tap-highlight-color:transparent}
+    .btn-verde:active{background:var(--teal-esc);transform:scale(0.98)}
+
+    /* AVISO EMAIL */
+    .aviso-email{background:#fff7ed;border:2px solid #fed7aa;border-radius:12px;padding:14px;font-size:13px;color:#92400e;font-weight:600;line-height:1.5;margin-bottom:14px}
   </style>
 </head>
 <body>
 
-<aside class="sidebar">
-  <div class="sb-logo">
-    <div class="logo-box">OK</div>
-    <div><div class="sb-nome" id="sb-nome">Meu Negócio</div><div class="sb-nicho" id="sb-nicho">—</div></div>
+<div class="header">
+  <div class="header-left">
+    <div class="header-avatar" id="h-avatar">?</div>
+    <div>
+      <div class="header-nome" id="h-nome">Carregando...</div>
+      <div class="header-nicho" id="h-nicho"></div>
+    </div>
   </div>
-  <nav>
-    <a class="nav-item ativo" onclick="pg('dashboard')"><span class="nav-icone">📊</span>Dashboard</a>
-    <a class="nav-item" onclick="pg('agendamentos')"><span class="nav-icone">📅</span>Agendamentos</a>
-    <a class="nav-item" onclick="pg('hoje')"><span class="nav-icone">📆</span>Hoje</a>
-    <a class="nav-item" onclick="pg('bloqueios')"><span class="nav-icone">🔒</span>Bloquear horários</a>
-    <a class="nav-item" onclick="pg('config')"><span class="nav-icone">⚙️</span>Configurações</a>
-  </nav>
-  <div class="sb-bottom">
-    <div class="link-pub" id="link-pub-sb" onclick="copiarLink()">🔗 <span id="link-txt-sb">Copiar meu link</span></div>
-    <button class="btn-sair" onclick="sair()">Sair</button>
-  </div>
-</aside>
+  <button class="btn-sair" onclick="sair()">Sair</button>
+</div>
 
-<main class="main">
+<div class="link-banner" id="link-banner" style="display:none">
+  <div>
+    <div class="link-banner-txt">Seu link de agendamento</div>
+    <div class="link-banner-url" id="link-url">—</div>
+  </div>
+  <div class="link-banner-btns">
+    <button class="mini-btn" onclick="copiarLink()">📋 Copiar</button>
+    <button class="mini-btn" onclick="abrirLink()">🔗</button>
+  </div>
+</div>
+
+<div class="content">
+
   <!-- DASHBOARD -->
   <div class="page ativa" id="pg-dashboard">
-    <div class="page-titulo">Dashboard</div>
-    <div class="page-sub" id="data-hoje"></div>
-    <div class="stats">
+    <div class="stats-grid">
       <div class="stat teal"><div class="stat-lbl">Total</div><div class="stat-val" id="s-total">—</div></div>
       <div class="stat laranja"><div class="stat-lbl">Pendentes</div><div class="stat-val" id="s-pend">—</div></div>
       <div class="stat verde"><div class="stat-lbl">Confirmados</div><div class="stat-val" id="s-conf">—</div></div>
-      <div class="stat azul"><div class="stat-lbl">Hoje</div><div class="stat-val" id="s-hoje">—</div></div>
-      <div class="stat teal"><div class="stat-lbl">Este mês</div><div class="stat-val" id="s-mes">—</div></div>
+      <div class="stat azul stat-full"><div class="stat-lbl">Agendamentos hoje</div><div class="stat-val" id="s-hoje">—</div></div>
     </div>
+
+    <!-- QR Code card -->
     <div class="card">
-      <div class="card-titulo">🔗 Seu link de agendamento</div>
-      
-      <!-- Link bonito visual -->
-      <div style="background:linear-gradient(135deg,var(--teal) 0%,#0a7c72 100%);border-radius:14px;padding:24px;margin-bottom:16px;position:relative;overflow:hidden">
-        <div style="position:absolute;top:-20px;right:-20px;width:100px;height:100px;background:rgba(255,255,255,0.08);border-radius:50%"></div>
-        <div style="position:absolute;bottom:-30px;left:-10px;width:120px;height:120px;background:rgba(255,255,255,0.05);border-radius:50%"></div>
-        <div style="position:relative">
-          <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.7);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px">Seu link exclusivo</div>
-          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-            <div style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);border-radius:10px;padding:10px 16px;font-size:15px;font-weight:700;color:white;flex:1;word-break:break-all" id="link-url">—</div>
-            <button class="btn-copiar" style="background:white;color:var(--teal);flex-shrink:0" onclick="copiarLink()">📋 Copiar</button>
-          </div>
-          <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">
-            <button onclick="abrirLink()" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);border-radius:8px;padding:7px 14px;color:white;font-size:12px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s" onmouseover="this.style.background='rgba(255,255,255,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.15)'">
-              🌐 Abrir página
-            </button>
-            <button onclick="gerarQR()" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);border-radius:8px;padding:7px 14px;color:white;font-size:12px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s" onmouseover="this.style.background='rgba(255,255,255,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.15)'">
-              📱 Ver QR Code
-            </button>
-          </div>
-        </div>
+      <div class="card-titulo">📱 QR Code do seu negócio</div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:12px">Imprima e cole no seu estabelecimento para facilitar os agendamentos!</p>
+      <button class="btn-verde" onclick="mostrarQR()">📱 Gerar QR Code</button>
+      <div id="qr-wrap" style="display:none" class="qr-wrap">
+        <img id="qr-img" src="" style="width:160px;height:160px;border-radius:10px"/>
+        <div style="font-size:12px;color:var(--muted);margin-top:10px;font-weight:600">Escaneie para agendar!</div>
       </div>
-
-      <!-- QR Code (oculto por padrão) -->
-      <div id="qr-wrap" style="display:none;text-align:center;padding:20px;background:var(--bg);border-radius:12px;margin-bottom:16px">
-        <div style="font-size:13px;font-weight:700;color:var(--muted);margin-bottom:12px">Escaneie com o celular</div>
-        <img id="qr-img" src="" alt="QR Code" style="width:180px;height:180px;border-radius:10px"/>
-        <div style="font-size:12px;color:var(--muted);margin-top:10px">Compartilhe este QR Code no seu estabelecimento!</div>
-      </div>
-
-      <p style="font-size:13px;color:var(--muted)">💡 Compartilhe pelo WhatsApp, Instagram, cole na bio ou imprima o QR Code para seu estabelecimento!</p>
     </div>
   </div>
 
   <!-- AGENDAMENTOS -->
   <div class="page" id="pg-agendamentos">
-    <div class="page-titulo">Agendamentos</div>
-    <div class="page-sub">Gerencie todos os seus horários</div>
-    <div class="card">
-      <div class="filtros">
-        <button class="filtro-btn ativo" onclick="filtrar('')">Todos</button>
-        <button class="filtro-btn" onclick="filtrar('pendente')">Pendentes</button>
-        <button class="filtro-btn" onclick="filtrar('confirmado')">Confirmados</button>
-        <button class="filtro-btn" onclick="filtrar('cancelado')">Cancelados</button>
-        <button class="filtro-btn" onclick="filtrar('concluido')">Concluídos</button>
-      </div>
-      <div class="tabela-wrap">
-        <table><thead><tr><th>Cliente</th><th>Serviço</th><th>Data</th><th>Horário</th><th>Status</th><th>Ações</th></tr></thead>
-        <tbody id="tabela-ag"></tbody></table>
-      </div>
+    <div class="filtros">
+      <button class="filtro-btn ativo" onclick="filtrar('',this)">Todos</button>
+      <button class="filtro-btn" onclick="filtrar('pendente',this)">⏳ Pendentes</button>
+      <button class="filtro-btn" onclick="filtrar('confirmado',this)">✅ Confirmados</button>
+      <button class="filtro-btn" onclick="filtrar('cancelado',this)">❌ Cancelados</button>
+      <button class="filtro-btn" onclick="filtrar('concluido',this)">🔵 Concluídos</button>
     </div>
+    <div id="lista-ag"></div>
   </div>
 
   <!-- HOJE -->
   <div class="page" id="pg-hoje">
-    <div class="page-titulo">Agenda de Hoje</div>
-    <div class="page-sub" id="hoje-data-sub"></div>
+    <div class="card" style="margin-bottom:12px;background:var(--teal);border-color:var(--teal)">
+      <div style="color:white;font-size:13px;font-weight:700;opacity:0.85">Agenda de hoje</div>
+      <div style="color:white;font-size:16px;font-weight:800" id="hoje-data-txt"></div>
+    </div>
     <div id="hoje-lista"></div>
   </div>
 
   <!-- BLOQUEIOS -->
   <div class="page" id="pg-bloqueios">
-    <div class="page-titulo">Bloquear Horários</div>
-    <div class="page-sub">Impeça agendamentos em datas ou horários específicos</div>
-    <div class="card" style="margin-bottom:20px">
-      <div class="card-titulo">Novo bloqueio</div>
-      <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
-        <div><label style="display:block;font-size:12px;font-weight:600;color:var(--dark);margin-bottom:5px">Data</label><input type="date" id="blq-data" class="m-input" style="width:auto"/></div>
-        <div><label style="display:block;font-size:12px;font-weight:600;color:var(--dark);margin-bottom:5px">Horário</label>
-          <select id="blq-hr" class="m-select" style="width:auto">
-            <option value="todos">— Dia inteiro —</option>
+    <div class="card">
+      <div class="card-titulo">🔒 Novo bloqueio</div>
+      <div class="blq-row">
+        <div><label class="cfg-label">Data</label><input type="date" id="blq-data" class="blq-input"/></div>
+        <div>
+          <label class="cfg-label">Horário</label>
+          <select id="blq-hr" class="blq-select">
+            <option value="todos">Dia inteiro</option>
             <option>08:00</option><option>09:00</option><option>10:00</option><option>11:00</option>
             <option>14:00</option><option>15:00</option><option>16:00</option><option>17:00</option>
           </select>
         </div>
-        <div style="flex:1;min-width:160px"><label style="display:block;font-size:12px;font-weight:600;color:var(--dark);margin-bottom:5px">Motivo (opcional)</label><input type="text" id="blq-motivo" class="m-input" placeholder="Ex: Feriado..."/></div>
-        <button class="btn-copiar" onclick="bloquear()">Bloquear</button>
       </div>
+      <label class="cfg-label">Motivo (opcional)</label>
+      <input type="text" id="blq-motivo" class="blq-input" placeholder="Ex: Feriado, viagem..."/>
+      <button class="btn-verde" onclick="bloquear()">🔒 Bloquear horário</button>
     </div>
-    <div class="card"><div class="card-titulo">Horários bloqueados</div><div id="lista-bloq"></div></div>
+    <div class="card">
+      <div class="card-titulo">📋 Horários bloqueados</div>
+      <div id="lista-bloq"></div>
+    </div>
   </div>
 
   <!-- CONFIG -->
   <div class="page" id="pg-config">
-    <div class="page-titulo">Configurações</div>
-    <div class="page-sub">Personalize seu negócio</div>
-    <div class="card" style="max-width:640px">
-      <div class="cfg-grid">
-        <div class="m-campo cfg-full"><label class="m-label">Nome do negócio</label><input class="m-input" type="text" id="cfg-nome"/></div>
-        <div class="m-campo cfg-full"><label class="m-label">Descrição para os clientes (opcional)</label><textarea class="m-textarea" id="cfg-desc"></textarea></div>
-        <div class="m-campo"><label class="m-label">Telefone / WhatsApp</label><input class="m-input" type="text" id="cfg-tel"/></div>
-        <div class="m-campo"><label class="m-label">Cor principal do seu site</label><input class="m-input" type="color" id="cfg-cor" style="padding:4px 8px;height:42px"/></div>
-        <div class="m-campo cfg-full"><label class="m-label">Horários disponíveis (separados por vírgula)</label><input class="m-input" type="text" id="cfg-horarios" placeholder="08:00,09:00,10:00..."/></div>
+    <div class="card">
+      <div class="cfg-section">
+        <div class="cfg-section-titulo">🏢 Informações do negócio</div>
+        <label class="cfg-label">Nome do negócio</label>
+        <input class="cfg-input" type="text" id="cfg-nome"/>
+        <label class="cfg-label">Descrição para os clientes</label>
+        <textarea class="cfg-textarea" id="cfg-desc" placeholder="Ex: Barbearia especializada em cortes modernos..."></textarea>
+        <label class="cfg-label">Telefone / WhatsApp</label>
+        <input class="cfg-input" type="tel" id="cfg-tel" placeholder="(21) 99999-9999"/>
+        <label class="cfg-label">Cor principal</label>
+        <input class="cfg-input" type="color" id="cfg-cor" style="padding:8px;height:52px"/>
+        <label class="cfg-label">Horários disponíveis</label>
+        <input class="cfg-input" type="text" id="cfg-horarios" placeholder="08:00,09:00,10:00..."/>
       </div>
 
-      <!-- Seção de e-mail -->
-      <div style="border-top:2px solid var(--borda);margin-top:24px;padding-top:24px">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
-          <span style="font-size:18px">📧</span>
-          <div>
-            <div style="font-size:15px;font-weight:700;color:var(--dark)">E-mail para confirmações</div>
-            <div style="font-size:12px;color:var(--muted)">Seus clientes receberão confirmações de agendamento pelo seu e-mail</div>
-          </div>
-        </div>
-        <div style="background:#fff7ed;border:1.5px solid #fed7aa;border-radius:10px;padding:14px;margin:16px 0">
-          <p style="margin:0;font-size:13px;color:#92400e;font-weight:600">
-            ⚠️ Use um Gmail. Acesse <strong>myaccount.google.com/apppasswords</strong> para gerar a senha de app.
-          </p>
-        </div>
-        <div class="cfg-grid">
-          <div class="m-campo"><label class="m-label">Seu Gmail</label><input class="m-input" type="email" id="cfg-email-neg" placeholder="seuemail@gmail.com"/></div>
-          <div class="m-campo"><label class="m-label">Senha de app do Gmail</label><input class="m-input" type="password" id="cfg-email-senha" placeholder="xxxx xxxx xxxx xxxx"/></div>
-        </div>
-        <div id="email-status" style="display:none;padding:10px 14px;border-radius:8px;font-size:13px;font-weight:600;margin-bottom:12px"></div>
-        <button onclick="testarEmail()" style="background:none;border:1.5px solid var(--teal);color:var(--teal);border-radius:8px;padding:8px 18px;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:16px;transition:all 0.2s" onmouseover="this.style.background='var(--teal-lt)'" onmouseout="this.style.background='none'">
-          📤 Testar envio de e-mail
-        </button>
+      <div class="cfg-section">
+        <div class="cfg-section-titulo">📧 E-mail para confirmações</div>
+        <div class="aviso-email">⚠️ Use um Gmail. Crie uma senha de app em <strong>myaccount.google.com/apppasswords</strong></div>
+        <label class="cfg-label">Seu Gmail</label>
+        <input class="cfg-input" type="email" id="cfg-email-neg" placeholder="seuemail@gmail.com"/>
+        <label class="cfg-label">Senha de app</label>
+        <input class="cfg-input" type="password" id="cfg-email-senha" placeholder="xxxx xxxx xxxx xxxx"/>
+        <button class="btn-verde" style="background:#1d4ed8;margin-bottom:12px" onclick="testarEmail()">📤 Testar e-mail</button>
+        <div id="email-status" style="display:none;padding:12px;border-radius:10px;font-size:13px;font-weight:700"></div>
       </div>
 
-      <button class="btn-copiar" style="margin-top:8px;width:100%;padding:14px" onclick="salvarConfig()">💾 Salvar todas as configurações</button>
+      <button class="btn-verde" onclick="salvarConfig()">💾 Salvar configurações</button>
     </div>
   </div>
-</main>
+
+</div>
+
+<!-- BOTTOM TABS -->
+<div class="bottom-tabs">
+  <button class="tab ativo" onclick="pg('dashboard',this)"><div class="tab-ico">📊</div><div class="tab-lbl">Início</div></button>
+  <button class="tab" onclick="pg('agendamentos',this)"><div class="tab-ico">📅</div><div class="tab-lbl">Agenda</div></button>
+  <button class="tab" onclick="pg('hoje',this)"><div class="tab-ico">📆</div><div class="tab-lbl">Hoje</div></button>
+  <button class="tab" onclick="pg('bloqueios',this)"><div class="tab-ico">🔒</div><div class="tab-lbl">Bloqueios</div></button>
+  <button class="tab" onclick="pg('config',this)"><div class="tab-ico">⚙️</div><div class="tab-lbl">Config</div></button>
+</div>
 
 <!-- MODAL STATUS -->
 <div class="overlay" id="modal-overlay">
   <div class="modal">
+    <div class="modal-handle"></div>
     <div class="modal-titulo">Atualizar agendamento</div>
     <input type="hidden" id="modal-id"/>
-    <div class="m-campo"><label class="m-label">Cliente</label><div id="modal-cliente" style="font-size:15px;font-weight:600;color:var(--dark)"></div></div>
-    <div class="m-campo"><label class="m-label">Status</label>
-      <select class="m-select" id="modal-status">
-        <option value="pendente">⏳ Pendente</option>
-        <option value="confirmado">✅ Confirmado</option>
-        <option value="cancelado">❌ Cancelado</option>
-        <option value="concluido">🔵 Concluído</option>
-      </select>
-    </div>
-    <div class="m-campo"><label class="m-label">Observações internas</label><textarea class="m-textarea" id="modal-obs" placeholder="Notas para uso interno..."></textarea></div>
+    <div id="modal-cliente" style="font-size:16px;font-weight:700;color:var(--dark);margin-bottom:16px"></div>
+    <label class="m-label">Status</label>
+    <select class="m-select" id="modal-status">
+      <option value="pendente">⏳ Pendente</option>
+      <option value="confirmado">✅ Confirmado</option>
+      <option value="cancelado">❌ Cancelado</option>
+      <option value="concluido">🔵 Concluído</option>
+    </select>
+    <label class="m-label">Observações internas</label>
+    <textarea class="m-textarea" id="modal-obs" placeholder="Notas para uso interno..."></textarea>
     <div class="modal-footer">
       <button class="m-btn m-btn-out" onclick="fecharModal()">Cancelar</button>
       <button class="m-btn m-btn-teal" onclick="salvarStatus()">Salvar</button>
@@ -282,323 +351,273 @@
 </div>
 
 <script>
-let usuario = null;
-let filtroAtual = '';
+let usuario=null,filtroAtual='';
 
-async function init() {
-  try {
-    const r = await fetch('/auth/me', { credentials:'include' });
-    if (!r.ok) { location.href = '/login'; return; }
-    usuario = await r.json();
-    document.getElementById('sb-nome').textContent = usuario.nome_negocio;
-    document.getElementById('sb-nicho').textContent = usuario.nicho;
-    const link = location.origin + '/agendar/' + usuario.slug;
-    document.getElementById('link-url').textContent = link;
-    document.getElementById('link-txt-sb').textContent = link.replace(location.origin,'');
-    document.getElementById('data-hoje').textContent = new Date().toLocaleDateString('pt-BR',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-    document.getElementById('hoje-data-sub').textContent = new Date().toLocaleDateString('pt-BR',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+async function init(){
+  try{
+    const r=await fetch('/auth/me',{credentials:'include'});
+    if(!r.ok){location.href='/login';return;}
+    usuario=await r.json();
+    const inicial=usuario.nome_negocio.charAt(0).toUpperCase();
+    document.getElementById('h-avatar').textContent=inicial;
+    document.getElementById('h-nome').textContent=usuario.nome_negocio;
+    document.getElementById('h-nicho').textContent=usuario.nicho;
+    const link=location.origin+'/agendar/'+usuario.slug;
+    document.getElementById('link-url').textContent=link;
+    document.getElementById('link-banner').style.display='flex';
+    document.getElementById('hoje-data-txt').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'});
     carregarDash();
-    carregarConfig();
-  } catch(e) { location.href = '/login'; }
+  }catch(e){location.href='/login';}
 }
 
-function pg(nome) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('ativa'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('ativo'));
+function pg(nome,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('ativa'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('ativo'));
   document.getElementById('pg-'+nome).classList.add('ativa');
-  event.currentTarget.classList.add('ativo');
-  if (nome==='dashboard') carregarDash();
-  if (nome==='agendamentos') carregarAg();
-  if (nome==='hoje') carregarHoje();
-  if (nome==='bloqueios') carregarBloq();
-  if (nome==='config') carregarConfig();
+  if(el) el.classList.add('ativo');
+  if(nome==='dashboard') carregarDash();
+  if(nome==='agendamentos') carregarAg();
+  if(nome==='hoje') carregarHoje();
+  if(nome==='bloqueios') carregarBloq();
+  if(nome==='config') carregarConfig();
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
-async function carregarDash() {
-  try {
-    const r = await fetch('/negocio/painel', { credentials:'include' });
-    const d = await r.json();
-    document.getElementById('s-total').textContent = d.stats.total;
-    document.getElementById('s-pend').textContent  = d.stats.pendentes;
-    document.getElementById('s-conf').textContent  = d.stats.confirmados;
-    document.getElementById('s-hoje').textContent  = d.stats.hoje;
-    document.getElementById('s-mes').textContent   = d.stats.mes;
-  } catch(e){}
+async function carregarDash(){
+  try{
+    const r=await fetch('/negocio/painel',{credentials:'include'});
+    const d=await r.json();
+    document.getElementById('s-total').textContent=d.stats.total;
+    document.getElementById('s-pend').textContent=d.stats.pendentes;
+    document.getElementById('s-conf').textContent=d.stats.confirmados;
+    document.getElementById('s-hoje').textContent=d.stats.hoje;
+  }catch(e){}
 }
 
-async function carregarAg(status=filtroAtual) {
-  filtroAtual = status;
-  try {
-    const r = await fetch('/negocio/agendamentos'+(status?'?status='+status:''), { credentials:'include' });
-    const d = await r.json();
-    const tb = document.getElementById('tabela-ag');
-    if (!d.agendamentos.length) { tb.innerHTML = '<tr><td colspan="6"><div class="empty"><div class="ico">📭</div>Nenhum agendamento encontrado</div></td></tr>'; return; }
-    tb.innerHTML = d.agendamentos.map(a => {
-      const [ano,mes,dia] = a.data.split('-');
-      const urgencia = calcUrgencia(a.data, a.horario);
-      const rowCls = urgencia === 'vermelho' ? 'row-urgente' : urgencia === 'amarelo' ? 'row-atencao' : '';
-      const urgBadge = urgencia === 'vermelho'
-        ? '<span class="urgencia-badge urg-vermelho">🔴 Menos de 1h</span>'
-        : urgencia === 'amarelo'
-        ? '<span class="urgencia-badge urg-amarelo">🟡 Menos de 3h</span>'
-        : '';
-      const wppBtn = a.telefone ? `<button class="btn-wpp" onclick="enviarWpp('${a.telefone}','${a.nome}','${a.data}','${a.horario}')">📱 WhatsApp</button>` : '';
-      return `<tr class="${rowCls}">
-        <td><div style="font-weight:600">${a.nome}${urgBadge}</div><div style="font-size:12px;color:var(--muted)">${a.telefone}</div></td>
-        <td style="font-size:12px">${a.servico||'—'}</td>
-        <td>${dia}/${mes}/${ano}</td>
-        <td><strong>${a.horario}</strong></td>
-        <td><span class="badge b-${a.status}">${badgeTxt(a.status)}</span></td>
-        <td><div style="display:flex;gap:6px;flex-wrap:wrap">
-          ${wppBtn}
-          <button class="ac-btn" onclick="abrirModal('${a.id}','${a.nome}','${a.status}',\`${(a.obs||'')}\`)">Editar</button>
-          <button class="ac-btn del" onclick="excluir('${a.id}')">Excluir</button>
-        </div></td>
-      </tr>`;
+function calcUrg(data,horario){
+  const agora=new Date();
+  const dt=new Date(data+'T'+horario+':00');
+  const diff=(dt-agora)/60000;
+  if(diff<=0) return 'none';
+  if(diff<=60) return 'r';
+  if(diff<=180) return 'a';
+  return 'none';
+}
+
+function badgeTxt(s){return{pendente:'⏳ Pendente',confirmado:'✅ Confirmado',cancelado:'❌ Cancelado',concluido:'🔵 Concluído'}[s]||s;}
+
+function wppBtn(tel,nome,data,horario){
+  if(!tel) return '';
+  return `<button class="btn-wpp" onclick="enviarWpp('${tel}','${nome}','${data}','${horario}')">📱 WhatsApp</button>`;
+}
+
+function enviarWpp(tel,nome,data,horario){
+  let num=tel.replace(/\D/g,'');
+  if(num.length<=11) num='55'+num;
+  const [ano,mes,dia]=data.split('-');
+  const neg=usuario?.nome_negocio||'nosso estabelecimento';
+  const msg=encodeURIComponent(`Olá ${nome}! 😊\n\nPassando para lembrar que você tem um agendamento em *${neg}* marcado para *hoje às ${horario}* (${dia}/${mes}/${ano}).\n\nQualquer dúvida estamos à disposição! 🗓️`);
+  window.open(`https://wa.me/${num}?text=${msg}`,'_blank');
+}
+
+async function carregarAg(status=filtroAtual){
+  filtroAtual=status;
+  try{
+    const r=await fetch('/negocio/agendamentos'+(status?'?status='+status:''),{credentials:'include'});
+    const d=await r.json();
+    const el=document.getElementById('lista-ag');
+    if(!d.agendamentos.length){el.innerHTML='<div class="empty"><div class="empty-ico">📭</div><div class="empty-txt">Nenhum agendamento encontrado</div></div>';return;}
+    el.innerHTML=d.agendamentos.map(a=>{
+      const [ano,mes,dia]=a.data.split('-');
+      const urg=calcUrg(a.data,a.horario);
+      const urgTag=urg==='r'?'<span class="urg-tag urg-r">🔴 &lt;1h</span>':urg==='a'?'<span class="urg-tag urg-a">🟡 &lt;3h</span>':'';
+      return `<div class="ag-card${urg==='r'?' urgente':urg==='a'?' atencao':''}">
+        <div class="ag-top">
+          <div>
+            <div class="ag-nome">${a.nome}${urgTag}</div>
+            <div class="ag-tel">${a.telefone}${a.servico?' • '+a.servico:''}</div>
+          </div>
+          <div style="text-align:right">
+            <div class="ag-data">${dia}/${mes} às ${a.horario}</div>
+            <span class="badge b-${a.status}" style="margin-top:4px">${badgeTxt(a.status)}</span>
+          </div>
+        </div>
+        <div class="ag-actions">
+          ${wppBtn(a.telefone,a.nome,a.data,a.horario)}
+          <button class="ac-btn" onclick="abrirModal('${a.id}','${a.nome}','${a.status}',\`${(a.obs||'')}\`)">✏️ Editar</button>
+          <button class="ac-btn" style="color:var(--vermelho);border-color:var(--vermelho)" onclick="excluir('${a.id}')">🗑️</button>
+        </div>
+      </div>`;
     }).join('');
-  } catch(e){}
+  }catch(e){}
 }
 
-function filtrar(s) {
-  document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('ativo'));
-  event.currentTarget.classList.add('ativo');
+function filtrar(s,el){
+  document.querySelectorAll('.filtro-btn').forEach(b=>b.classList.remove('ativo'));
+  if(el) el.classList.add('ativo');
   carregarAg(s);
 }
 
-async function carregarHoje() {
-  try {
-    const r = await fetch('/negocio/agendamentos/hoje', { credentials:'include' });
-    const d = await r.json();
-    const el = document.getElementById('hoje-lista');
-    if (!d.agendamentos.length) { el.innerHTML='<div class="card"><div class="empty"><div class="ico">📭</div>Nenhuma consulta hoje</div></div>'; return; }
-    el.innerHTML = '<div style="display:flex;flex-direction:column;gap:12px">' +
-      d.agendamentos.map(a => {
-        const urgencia = calcUrgencia(a.data, a.horario);
-        const bordaCor = urgencia==='vermelho' ? '#dc2626' : urgencia==='amarelo' ? '#f59e0b' : 'var(--borda)';
-        const bgCor    = urgencia==='vermelho' ? '#fff1f1' : urgencia==='amarelo' ? '#fffbeb' : 'var(--branco)';
-        const urgLabel = urgencia==='vermelho'
-          ? '<span class="urgencia-badge urg-vermelho" style="margin-left:8px">🔴 MENOS DE 1H</span>'
-          : urgencia==='amarelo'
-          ? '<span class="urgencia-badge urg-amarelo" style="margin-left:8px">🟡 Menos de 3h</span>'
-          : '';
-        const wppBtn = a.telefone
-          ? `<button class="btn-wpp" onclick="enviarWpp('${a.telefone}','${a.nome}','${a.data}','${a.horario}')">📱 WhatsApp</button>`
-          : '';
-        return `
-          <div class="card" style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;border-color:${bordaCor};background:${bgCor}">
-            <div style="font-size:28px;font-weight:800;color:${urgencia==='vermelho'?'var(--vermelho)':urgencia==='amarelo'?'#b45309':'var(--teal)'};min-width:65px">${a.horario}</div>
-            <div style="flex:1;min-width:180px">
-              <div style="font-weight:700;margin-bottom:2px">${a.nome}${urgLabel}</div>
-              <div style="font-size:12px;color:var(--muted)">${a.telefone}${a.servico?' • '+a.servico:''}</div>
-            </div>
+async function carregarHoje(){
+  try{
+    const r=await fetch('/negocio/agendamentos/hoje',{credentials:'include'});
+    const d=await r.json();
+    const el=document.getElementById('hoje-lista');
+    if(!d.agendamentos.length){el.innerHTML='<div class="empty"><div class="empty-ico">☀️</div><div class="empty-txt">Nenhuma consulta hoje</div></div>';return;}
+    el.innerHTML=d.agendamentos.map(a=>{
+      const urg=calcUrg(a.data,a.horario);
+      return `<div class="hoje-card${urg==='r'?' urgente':urg==='a'?' atencao':''}">
+        <div class="hoje-hora${urg==='r'?' urg-r':urg==='a'?' urg-a':''}">${a.horario}</div>
+        <div class="hoje-info">
+          <div class="hoje-nome">${a.nome}</div>
+          <div class="hoje-sub">${a.telefone}${a.servico?' • '+a.servico:''}</div>
+          <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
             <span class="badge b-${a.status}">${badgeTxt(a.status)}</span>
-            <div style="display:flex;gap:8px;flex-wrap:wrap">
-              ${wppBtn}
-              <button class="ac-btn" onclick="abrirModal('${a.id}','${a.nome}','${a.status}',\`${a.obs||''}\`)">Atualizar</button>
-            </div>
-          </div>`;
-      }).join('') + '</div>';
-  } catch(e){}
+            ${wppBtn(a.telefone,a.nome,a.data,a.horario)}
+            <button class="ac-btn" onclick="abrirModal('${a.id}','${a.nome}','${a.status}',\`${a.obs||''}\`)">✏️</button>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  }catch(e){}
 }
 
-async function carregarBloq() {
-  try {
-    const r = await fetch('/negocio/bloqueados', { credentials:'include' });
-    const d = await r.json();
-    const el = document.getElementById('lista-bloq');
-    if (!d.bloqueados.length) { el.innerHTML='<p style="color:var(--muted);font-size:14px">Nenhum horário bloqueado.</p>'; return; }
-    el.innerHTML = '<table style="width:100%;border-collapse:collapse"><thead><tr><th style="text-align:left;padding:8px 12px;font-size:11px;color:var(--muted);text-transform:uppercase;border-bottom:1.5px solid var(--borda)">Data</th><th style="text-align:left;padding:8px 12px;font-size:11px;color:var(--muted);text-transform:uppercase;border-bottom:1.5px solid var(--borda)">Horário</th><th style="text-align:left;padding:8px 12px;font-size:11px;color:var(--muted);text-transform:uppercase;border-bottom:1.5px solid var(--borda)">Motivo</th><th style="border-bottom:1.5px solid var(--borda)"></th></tr></thead><tbody>' +
-      d.bloqueados.map(b => {
-        const [ano,mes,dia]=b.data.split('-');
-        return `<tr><td style="padding:10px 12px;font-size:13px;border-bottom:1px solid var(--borda)">${dia}/${mes}/${ano}</td><td style="padding:10px 12px;font-size:13px;border-bottom:1px solid var(--borda)">${b.horario}</td><td style="padding:10px 12px;font-size:13px;color:var(--muted);border-bottom:1px solid var(--borda)">${b.motivo||'—'}</td><td style="padding:10px 12px;border-bottom:1px solid var(--borda)"><button class="ac-btn del" onclick="removerBloq('${b.id}')">Remover</button></td></tr>`;
-      }).join('') + '</tbody></table>';
-  } catch(e){}
+async function carregarBloq(){
+  try{
+    const r=await fetch('/negocio/bloqueados',{credentials:'include'});
+    const d=await r.json();
+    const el=document.getElementById('lista-bloq');
+    if(!d.bloqueados.length){el.innerHTML='<p style="color:var(--muted);font-size:14px;font-weight:600">Nenhum horário bloqueado.</p>';return;}
+    el.innerHTML=d.bloqueados.map(b=>{
+      const [ano,mes,dia]=b.data.split('-');
+      return `<div class="blq-item">
+        <div>
+          <div style="font-weight:700;font-size:14px">${dia}/${mes}/${ano} às ${b.horario}</div>
+          ${b.motivo?`<div style="font-size:12px;color:var(--muted)">${b.motivo}</div>`:''}
+        </div>
+        <button class="ac-btn" style="color:var(--vermelho);border-color:var(--vermelho)" onclick="removerBloq('${b.id}')">Remover</button>
+      </div>`;
+    }).join('');
+  }catch(e){}
 }
 
-async function bloquear() {
+async function bloquear(){
   const data=document.getElementById('blq-data').value;
   const hr=document.getElementById('blq-hr').value;
   const motivo=document.getElementById('blq-motivo').value;
-  if (!data) { toast('Selecione uma data','err'); return; }
-  try {
+  if(!data){toast('Selecione uma data','err');return;}
+  try{
     await fetch('/negocio/bloquear',{method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({data,horario:hr,motivo})});
-    toast('Bloqueado com sucesso!','ok');
-    carregarBloq();
-  } catch(e){ toast('Erro ao bloquear','err'); }
+    toast('Bloqueado!','ok');carregarBloq();
+  }catch(e){toast('Erro','err');}
 }
 
-async function removerBloq(id) {
-  try {
+async function removerBloq(id){
+  try{
     await fetch('/negocio/bloqueados/'+id,{method:'DELETE',credentials:'include'});
-    toast('Removido','ok'); carregarBloq();
-  } catch(e){}
+    toast('Removido','ok');carregarBloq();
+  }catch(e){}
 }
 
-async function carregarConfig() {
-  try {
-    const r = await fetch('/negocio/config',{credentials:'include'});
-    const d = await r.json();
-    document.getElementById('cfg-nome').value     = usuario?.nome_negocio||'';
-    document.getElementById('cfg-desc').value     = d.descricao||'';
-    document.getElementById('cfg-tel').value      = d.telefone||'';
-    document.getElementById('cfg-cor').value      = d.cor||'#0d9488';
-    document.getElementById('cfg-horarios').value = d.horarios||'';
-    document.getElementById('cfg-email-neg').value   = d.email_negocio||'';
-    document.getElementById('cfg-email-senha').value = d.email_senha ? '••••••••••••' : '';
-  } catch(e){}
+async function carregarConfig(){
+  try{
+    const r=await fetch('/negocio/config',{credentials:'include'});
+    const d=await r.json();
+    document.getElementById('cfg-nome').value=usuario?.nome_negocio||'';
+    document.getElementById('cfg-desc').value=d.descricao||'';
+    document.getElementById('cfg-tel').value=d.telefone||'';
+    document.getElementById('cfg-cor').value=d.cor||'#0d9488';
+    document.getElementById('cfg-horarios').value=d.horarios||'';
+    document.getElementById('cfg-email-neg').value=d.email_negocio||'';
+    document.getElementById('cfg-email-senha').value=d.email_senha?'••••••••••••':'';
+  }catch(e){}
 }
 
-async function salvarConfig() {
-  try {
-    const emailSenha = document.getElementById('cfg-email-senha').value;
-    const payload = {
-      nome_negocio:  document.getElementById('cfg-nome').value,
-      descricao:     document.getElementById('cfg-desc').value,
-      telefone:      document.getElementById('cfg-tel').value,
-      cor:           document.getElementById('cfg-cor').value,
-      horarios:      document.getElementById('cfg-horarios').value,
-      email_negocio: document.getElementById('cfg-email-neg').value,
-    };
-    // Só envia a senha se foi alterada (não for os pontinhos)
-    if (emailSenha && !emailSenha.startsWith('•')) {
-      payload.email_senha = emailSenha;
-    }
-    const r = await fetch('/negocio/config',{method:'PATCH',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-    if (!r.ok) throw new Error();
+async function salvarConfig(){
+  const emailSenha=document.getElementById('cfg-email-senha').value;
+  const payload={
+    nome_negocio:document.getElementById('cfg-nome').value,
+    descricao:document.getElementById('cfg-desc').value,
+    telefone:document.getElementById('cfg-tel').value,
+    cor:document.getElementById('cfg-cor').value,
+    horarios:document.getElementById('cfg-horarios').value,
+    email_negocio:document.getElementById('cfg-email-neg').value,
+  };
+  if(emailSenha&&!emailSenha.startsWith('•')) payload.email_senha=emailSenha;
+  try{
+    await fetch('/negocio/config',{method:'PATCH',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
     toast('Configurações salvas!','ok');
-    const me = await fetch('/auth/me',{credentials:'include'});
-    usuario = await me.json();
-    document.getElementById('sb-nome').textContent = usuario.nome_negocio;
-  } catch(e){ toast('Erro ao salvar','err'); }
+    const me=await fetch('/auth/me',{credentials:'include'});
+    usuario=await me.json();
+    document.getElementById('h-nome').textContent=usuario.nome_negocio;
+  }catch(e){toast('Erro ao salvar','err');}
 }
 
-async function testarEmail() {
-  const email = document.getElementById('cfg-email-neg').value;
-  const senha = document.getElementById('cfg-email-senha').value;
-  const status = document.getElementById('email-status');
-  if (!email || !senha || senha.startsWith('•')) {
-    status.style.display='block';
-    status.style.background='#fff7ed';status.style.border='1.5px solid #fed7aa';status.style.color='#92400e';
-    status.textContent='⚠️ Preencha o e-mail e a senha de app antes de testar.';
-    return;
-  }
-  status.style.display='block';
-  status.style.background='#eff6ff';status.style.border='1.5px solid #bfdbfe';status.style.color='#1d4ed8';
-  status.textContent='📤 Enviando e-mail de teste...';
-  try {
-    const r = await fetch('/negocio/testar-email',{method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,senha})});
-    const d = await r.json();
-    if (d.sucesso) {
-      status.style.background='#f0fdf4';status.style.border='1.5px solid #bbf7d0';status.style.color='#15803d';
-      status.textContent='✅ E-mail de teste enviado com sucesso! Verifique sua caixa de entrada.';
-    } else {
-      status.style.background='#fef2f2';status.style.border='1.5px solid #fecaca';status.style.color='#dc2626';
-      status.textContent='❌ Erro: ' + (d.erro || 'Verifique as credenciais e tente novamente.');
-    }
-  } catch(e) {
-    status.style.background='#fef2f2';status.style.border='1.5px solid #fecaca';status.style.color='#dc2626';
-    status.textContent='❌ Erro de conexão. Tente novamente.';
-  }
+async function testarEmail(){
+  const email=document.getElementById('cfg-email-neg').value;
+  const senha=document.getElementById('cfg-email-senha').value;
+  const st=document.getElementById('email-status');
+  if(!email||!senha||senha.startsWith('•')){st.style.display='block';st.style.background='#fff7ed';st.style.color='#92400e';st.textContent='⚠️ Preencha e-mail e senha antes de testar.';return;}
+  st.style.display='block';st.style.background='#eff6ff';st.style.color='#1d4ed8';st.textContent='📤 Enviando teste...';
+  try{
+    const r=await fetch('/negocio/testar-email',{method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,senha})});
+    const d=await r.json();
+    if(d.sucesso){st.style.background='#f0fdf4';st.style.color='#15803d';st.textContent='✅ E-mail enviado! Verifique sua caixa de entrada.';}
+    else{st.style.background='#fef2f2';st.style.color='#dc2626';st.textContent='❌ '+d.erro;}
+  }catch(e){st.style.background='#fef2f2';st.style.color='#dc2626';st.textContent='❌ Erro de conexão.';}
 }
 
-function abrirModal(id,nome,status,obs) {
+function abrirModal(id,nome,status,obs){
   document.getElementById('modal-id').value=id;
-  document.getElementById('modal-cliente').textContent=nome;
+  document.getElementById('modal-cliente').textContent='👤 '+nome;
   document.getElementById('modal-status').value=status;
   document.getElementById('modal-obs').value=obs;
   document.getElementById('modal-overlay').classList.add('aberto');
 }
+function fecharModal(){document.getElementById('modal-overlay').classList.remove('aberto');}
 
-function fecharModal() { document.getElementById('modal-overlay').classList.remove('aberto'); }
-
-async function salvarStatus() {
+async function salvarStatus(){
   const id=document.getElementById('modal-id').value;
   const status=document.getElementById('modal-status').value;
   const obs=document.getElementById('modal-obs').value;
-  try {
+  try{
     await fetch('/negocio/agendamentos/'+id+'/status',{method:'PATCH',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({status,obs})});
-    fecharModal(); toast('Atualizado!','ok'); carregarAg();
-  } catch(e){ toast('Erro','err'); }
+    fecharModal();toast('Atualizado!','ok');carregarAg();
+  }catch(e){toast('Erro','err');}
 }
 
-async function excluir(id) {
-  if (!confirm('Excluir este agendamento?')) return;
-  try {
+async function excluir(id){
+  if(!confirm('Excluir este agendamento?')) return;
+  try{
     await fetch('/negocio/agendamentos/'+id,{method:'DELETE',credentials:'include'});
-    toast('Excluído','ok'); carregarAg();
-  } catch(e){}
+    toast('Excluído','ok');carregarAg();
+  }catch(e){}
 }
 
-function copiarLink() {
-  const link = location.origin+'/agendar/'+usuario?.slug;
-  navigator.clipboard.writeText(link).then(()=>toast('Link copiado!','ok'));
+function copiarLink(){
+  navigator.clipboard.writeText(location.origin+'/agendar/'+usuario?.slug).then(()=>toast('Link copiado!','ok'));
+}
+function abrirLink(){window.open(location.origin+'/agendar/'+usuario?.slug,'_blank');}
+
+function mostrarQR(){
+  const wrap=document.getElementById('qr-wrap');
+  const img=document.getElementById('qr-img');
+  const link=location.origin+'/agendar/'+usuario?.slug;
+  img.src=`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(link)}&color=0d9488&bgcolor=ffffff`;
+  wrap.style.display=wrap.style.display==='none'?'block':'none';
 }
 
-function abrirLink() {
-  window.open(location.origin + '/agendar/' + usuario?.slug, '_blank');
-}
-
-function gerarQR() {
-  const wrap = document.getElementById('qr-wrap');
-  const img  = document.getElementById('qr-img');
-  const link = location.origin + '/agendar/' + usuario?.slug;
-  img.src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(link)}&color=0d9488&bgcolor=ffffff`;
-  wrap.style.display = wrap.style.display === 'none' ? 'block' : 'none';
-}
-
-async function sair() {
+async function sair(){
   await fetch('/auth/logout',{method:'POST',credentials:'include'});
   location.href='/';
 }
 
-function badgeTxt(s) {
-  return {pendente:'⏳ Pendente',confirmado:'✅ Confirmado',cancelado:'❌ Cancelado',concluido:'🔵 Concluído'}[s]||s;
+function toast(msg,tipo='ok'){
+  const t=document.createElement('div');t.className='toast '+tipo;t.textContent=msg;
+  document.body.appendChild(t);setTimeout(()=>t.remove(),3000);
 }
 
-// Calcula urgência com base na data e horário do agendamento
-function calcUrgencia(data, horario) {
-  try {
-    const agora  = new Date();
-    const dtAg   = new Date(data + 'T' + horario + ':00');
-    const diffMs = dtAg - agora;
-    const diffMin = diffMs / 60000;
-    if (diffMin <= 0) return 'none';         // já passou
-    if (diffMin <= 60)  return 'vermelho';   // menos de 1h
-    if (diffMin <= 180) return 'amarelo';    // menos de 3h
-    return 'none';
-  } catch(e) { return 'none'; }
-}
-
-// Abre WhatsApp com mensagem pronta
-function enviarWpp(telefone, nome, data, horario) {
-  // Formata o número (remove tudo que não for dígito)
-  let num = telefone.replace(/\D/g, '');
-  // Adiciona código do Brasil se não tiver
-  if (num.length === 11) num = '55' + num;
-  else if (num.length === 10) num = '55' + num;
-
-  const [ano,mes,dia] = data.split('-');
-  const dataFmt = `${dia}/${mes}/${ano}`;
-
-  const negocio = usuario?.nome_negocio || 'nosso estabelecimento';
-
-  const msg = encodeURIComponent(
-    `Olá ${nome}! 😊\n\n` +
-    `Passando para lembrar que você tem um agendamento em *${negocio}* marcado para *hoje às ${horario}* (${dataFmt}).\n\n` +
-    `Qualquer dúvida estamos à disposição! Até logo! 🗓️`
-  );
-
-  window.open(`https://wa.me/${num}?text=${msg}`, '_blank');
-}
-
-function toast(msg,tipo='ok') {
-  const t=document.createElement('div');
-  t.className='toast '+tipo; t.textContent=msg;
-  document.body.appendChild(t);
-  setTimeout(()=>t.remove(),3000);
-}
-
-document.getElementById('modal-overlay').addEventListener('click',function(e){if(e.target===this)fecharModal()});
+document.getElementById('modal-overlay').addEventListener('click',function(e){if(e.target===this)fecharModal();});
 init();
 </script>
 </body>
