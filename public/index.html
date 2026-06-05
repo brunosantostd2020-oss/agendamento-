@@ -7,854 +7,198 @@
   <title>AgendaOK — Agendamento que funciona de verdade</title>
   <meta name="description" content="Plataforma de agendamento online para barbearias, clínicas, salões e qualquer negócio que trabalha com horários."/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --preto: #0a0a0a;
-      --branco: #fafaf9;
-      --cinza: #f5f4f0;
-      --cinza2: #e8e6e1;
-      --cinza3: #6b6860;
-      --verde: #1a7a5e;
-      --verde-lt: #e8f4f0;
-      --texto: #1c1b18;
-      --radius: 4px;
-    }
-
-    html { scroll-behavior: smooth; }
-
-    body {
-      font-family: 'DM Sans', sans-serif;
-      background: var(--branco);
-      color: var(--texto);
-      overflow-x: hidden;
-    }
-
-    /* ── HEADER ── */
-    header {
-      border-bottom: 1px solid var(--cinza2);
-      padding: 0 48px;
-      height: 60px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      background: var(--branco);
-    }
-
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      text-decoration: none;
-    }
-
-    .logo-mark {
-      width: 28px;
-      height: 28px;
-      background: var(--preto);
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .logo-mark svg {
-      width: 14px;
-      height: 14px;
-      fill: var(--branco);
-    }
-
-    .logo-txt {
-      font-family: 'Syne', sans-serif;
-      font-size: 16px;
-      font-weight: 800;
-      color: var(--preto);
-      letter-spacing: -0.3px;
-    }
-
-    nav {
-      display: flex;
-      align-items: center;
-      gap: 28px;
-    }
-
-    nav a {
-      font-size: 14px;
-      font-weight: 400;
-      color: var(--cinza3);
-      text-decoration: none;
-      transition: color 0.15s;
-    }
-
-    nav a:hover { color: var(--preto); }
-
-    .nav-right {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .btn-link {
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--cinza3);
-      text-decoration: none;
-      padding: 7px 14px;
-      transition: color 0.15s;
-    }
-
-    .btn-link:hover { color: var(--preto); }
-
-    .btn-cta {
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--branco);
-      background: var(--preto);
-      border: none;
-      border-radius: var(--radius);
-      padding: 9px 20px;
-      cursor: pointer;
-      text-decoration: none;
-      transition: background 0.15s;
-      font-family: 'DM Sans', sans-serif;
-      display: inline-block;
-    }
-
-    .btn-cta:hover { background: #2a2a2a; }
-
-    /* ── HERO ── */
-    .hero {
-      padding: 120px 48px 100px;
-      max-width: 1100px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 80px;
-      align-items: center;
-    }
-
-    .hero-left {}
-
-    .hero-tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--cinza3);
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      margin-bottom: 28px;
-    }
-
-    .hero-tag-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--verde);
-    }
-
-    h1 {
-      font-family: 'Syne', sans-serif;
-      font-size: clamp(40px, 4.5vw, 60px);
-      font-weight: 800;
-      line-height: 1.05;
-      letter-spacing: -0.03em;
-      color: var(--preto);
-      margin-bottom: 24px;
-    }
-
-    .hero-sub {
-      font-size: 17px;
-      font-weight: 300;
-      color: var(--cinza3);
-      line-height: 1.7;
-      max-width: 400px;
-      margin-bottom: 40px;
-    }
-
-    .hero-actions {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-    }
-
-    .btn-hero-primary {
-      background: var(--preto);
-      color: var(--branco);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 15px;
-      font-weight: 500;
-      padding: 14px 28px;
-      border-radius: var(--radius);
-      text-decoration: none;
-      border: none;
-      cursor: pointer;
-      transition: all 0.15s;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .btn-hero-primary:hover {
-      background: #2a2a2a;
-      transform: translateY(-1px);
-    }
-
-    .btn-hero-sec {
-      font-size: 14px;
-      color: var(--cinza3);
-      text-decoration: none;
-      font-weight: 400;
-      transition: color 0.15s;
-    }
-
-    .btn-hero-sec:hover { color: var(--preto); }
-
-    .hero-nota {
-      font-size: 12px;
-      color: var(--cinza3);
-      margin-top: 16px;
-      font-weight: 300;
-    }
-
-    /* ── DASHBOARD PREVIEW ── */
-    .hero-right {
-      position: relative;
-    }
-
-    .dash-preview {
-      background: var(--preto);
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 40px 80px rgba(0,0,0,0.18);
-    }
-
-    .dash-bar {
-      background: #161616;
-      padding: 12px 16px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      border-bottom: 1px solid #222;
-    }
-
-    .dash-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-    }
-
-    .dash-url {
-      margin-left: 8px;
-      font-size: 11px;
-      color: #555;
-      font-family: monospace;
-    }
-
-    .dash-body {
-      padding: 20px;
-    }
-
-    .dash-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 20px;
-    }
-
-    .dash-titulo {
-      font-family: 'Syne', sans-serif;
-      font-size: 14px;
-      font-weight: 700;
-      color: #fafaf9;
-    }
-
-    .dash-badge {
-      background: #1a7a5e;
-      color: #e8f4f0;
-      font-size: 10px;
-      font-weight: 500;
-      padding: 3px 10px;
-      border-radius: 999px;
-    }
-
-    .dash-stats {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 16px;
-    }
-
-    .dash-stat {
-      background: #1a1a1a;
-      border-radius: 6px;
-      padding: 14px;
-      border: 1px solid #222;
-    }
-
-    .dash-stat-lbl {
-      font-size: 10px;
-      color: #555;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      margin-bottom: 8px;
-    }
-
-    .dash-stat-val {
-      font-family: 'Syne', sans-serif;
-      font-size: 26px;
-      font-weight: 700;
-      color: #fafaf9;
-    }
-
-    .dash-stat-val.verde { color: #4ade80; }
-    .dash-stat-val.amarelo { color: #fbbf24; }
-
-    .dash-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .dash-item {
-      background: #1a1a1a;
-      border-radius: 6px;
-      padding: 12px 14px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border: 1px solid #222;
-    }
-
-    .dash-item-left {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .dash-avatar {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      background: #2a2a2a;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 11px;
-      color: #888;
-      font-weight: 700;
-    }
-
-    .dash-item-nome {
-      font-size: 12px;
-      color: #d4d4d4;
-      font-weight: 500;
-    }
-
-    .dash-item-hora {
-      font-size: 10px;
-      color: #555;
-    }
-
-    .dash-pill {
-      font-size: 10px;
-      padding: 3px 8px;
-      border-radius: 999px;
-      font-weight: 500;
-    }
-
-    .dash-pill.ok { background: rgba(74,222,128,0.1); color: #4ade80; }
-    .dash-pill.pend { background: rgba(251,191,36,0.1); color: #fbbf24; }
-
-    .dash-wpp {
-      background: #1a2e1a;
-      border: 1px solid #2a4a2a;
-      border-radius: 999px;
-      padding: 3px 10px;
-      font-size: 10px;
-      color: #4ade80;
-      font-weight: 500;
-    }
-
-    /* ── FAIXA ── */
-    .faixa {
-      border-top: 1px solid var(--cinza2);
-      border-bottom: 1px solid var(--cinza2);
-      padding: 18px 48px;
-      display: flex;
-      align-items: center;
-      gap: 48px;
-      overflow: hidden;
-    }
-
-    .faixa-label {
-      font-size: 11px;
-      color: var(--cinza3);
-      font-weight: 500;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-
-    .faixa-items {
-      display: flex;
-      gap: 32px;
-      flex-wrap: wrap;
-    }
-
-    .faixa-item {
-      font-size: 14px;
-      color: var(--cinza3);
-      font-weight: 300;
-      white-space: nowrap;
-    }
-
-    /* ── COMO FUNCIONA ── */
-    .como {
-      padding: 100px 48px;
-      max-width: 1100px;
-      margin: 0 auto;
-    }
-
-    .section-label {
-      font-size: 11px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--cinza3);
-      font-weight: 500;
-      margin-bottom: 16px;
-    }
-
-    .section-titulo {
-      font-family: 'Syne', sans-serif;
-      font-size: clamp(28px, 3vw, 40px);
-      font-weight: 800;
-      color: var(--preto);
-      line-height: 1.1;
-      letter-spacing: -0.02em;
-      margin-bottom: 60px;
-    }
-
-    .passos-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 0;
-      border: 1px solid var(--cinza2);
-      border-radius: 6px;
-      overflow: hidden;
-    }
-
-    .passo {
-      padding: 36px 28px;
-      border-right: 1px solid var(--cinza2);
-      transition: background 0.15s;
-    }
-
-    .passo:last-child { border-right: none; }
-    .passo:hover { background: var(--cinza); }
-
-    .passo-n {
-      font-family: 'Syne', sans-serif;
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--cinza3);
-      letter-spacing: 0.1em;
-      margin-bottom: 20px;
-    }
-
-    .passo-titulo {
-      font-family: 'Syne', sans-serif;
-      font-size: 17px;
-      font-weight: 700;
-      color: var(--preto);
-      margin-bottom: 12px;
-      line-height: 1.3;
-    }
-
-    .passo-desc {
-      font-size: 14px;
-      color: var(--cinza3);
-      line-height: 1.65;
-      font-weight: 300;
-    }
-
-    /* ── RECURSOS ── */
-    .recursos {
-      background: var(--cinza);
-      border-top: 1px solid var(--cinza2);
-      border-bottom: 1px solid var(--cinza2);
-      padding: 100px 48px;
-    }
-
-    .recursos-inner {
-      max-width: 1100px;
-      margin: 0 auto;
-    }
-
-    .recursos-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1px;
-      background: var(--cinza2);
-      border: 1px solid var(--cinza2);
-      border-radius: 6px;
-      overflow: hidden;
-      margin-top: 48px;
-    }
-
-    .rec {
-      background: var(--cinza);
-      padding: 32px 28px;
-      transition: background 0.15s;
-    }
-
-    .rec:hover { background: var(--branco); }
-
-    .rec-num {
-      font-family: 'Syne', sans-serif;
-      font-size: 11px;
-      color: var(--cinza3);
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      margin-bottom: 16px;
-    }
-
-    .rec-titulo {
-      font-family: 'Syne', sans-serif;
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--preto);
-      margin-bottom: 10px;
-    }
-
-    .rec-desc {
-      font-size: 14px;
-      color: var(--cinza3);
-      line-height: 1.65;
-      font-weight: 300;
-    }
-
-    /* ── NICHOS ── */
-    .nichos {
-      padding: 100px 48px;
-      max-width: 1100px;
-      margin: 0 auto;
-    }
-
-    .nichos-grid {
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 1px;
-      background: var(--cinza2);
-      border: 1px solid var(--cinza2);
-      border-radius: 6px;
-      overflow: hidden;
-      margin-top: 48px;
-    }
-
-    .nicho {
-      background: var(--branco);
-      padding: 28px 20px;
-      transition: background 0.15s;
-      cursor: default;
-    }
-
-    .nicho:hover { background: var(--cinza); }
-
-    .nicho-ico {
-      font-size: 24px;
-      margin-bottom: 10px;
-      display: block;
-    }
-
-    .nicho-nome {
-      font-family: 'Syne', sans-serif;
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--preto);
-      margin-bottom: 6px;
-    }
-
-    .nicho-desc {
-      font-size: 12px;
-      color: var(--cinza3);
-      line-height: 1.5;
-      font-weight: 300;
-    }
-
-    /* ── PRECO ── */
-    .preco-section {
-      background: var(--preto);
-      padding: 100px 48px;
-    }
-
-    .preco-inner {
-      max-width: 900px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 80px;
-      align-items: start;
-    }
-
-    .preco-left .section-label { color: #555; }
-
-    .preco-left .section-titulo { color: var(--branco); margin-bottom: 24px; }
-
-    .preco-sub {
-      font-size: 16px;
-      color: #888;
-      line-height: 1.7;
-      font-weight: 300;
-      margin-bottom: 32px;
-    }
-
-    .preco-card {
-      background: var(--branco);
-      border-radius: 8px;
-      padding: 36px;
-    }
-
-    .preco-valor {
-      font-family: 'Syne', sans-serif;
-      font-size: 52px;
-      font-weight: 800;
-      color: var(--preto);
-      line-height: 1;
-      margin-bottom: 4px;
-      letter-spacing: -0.03em;
-    }
-
-    .preco-valor span {
-      font-size: 18px;
-      font-weight: 400;
-      color: var(--cinza3);
-    }
-
-    .preco-periodo {
-      font-size: 13px;
-      color: var(--cinza3);
-      margin-bottom: 28px;
-      font-weight: 300;
-    }
-
-    .preco-divisor {
-      height: 1px;
-      background: var(--cinza2);
-      margin-bottom: 24px;
-    }
-
-    .preco-lista {
-      list-style: none;
-      margin-bottom: 28px;
-    }
-
-    .preco-lista li {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 14px;
-      color: var(--cinza3);
-      padding: 9px 0;
-      border-bottom: 1px solid var(--cinza);
-      font-weight: 300;
-    }
-
-    .preco-lista li:last-child { border-bottom: none; }
-
-    .chk {
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      background: var(--verde-lt);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      font-size: 10px;
-      color: var(--verde);
-      font-weight: 700;
-    }
-
-    .btn-preco {
-      width: 100%;
-      background: var(--preto);
-      color: var(--branco);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 15px;
-      font-weight: 500;
-      padding: 14px;
-      border-radius: var(--radius);
-      border: none;
-      cursor: pointer;
-      text-align: center;
-      text-decoration: none;
-      display: block;
-      transition: background 0.15s;
-    }
-
-    .btn-preco:hover { background: #2a2a2a; }
-
-    .preco-trial {
-      font-size: 12px;
-      color: var(--cinza3);
-      text-align: center;
-      margin-top: 12px;
-    }
-
-    /* ── CTA FINAL ── */
-    .cta {
-      padding: 120px 48px;
-      text-align: center;
-      max-width: 700px;
-      margin: 0 auto;
-    }
-
-    .cta h2 {
-      font-family: 'Syne', sans-serif;
-      font-size: clamp(32px, 4vw, 52px);
-      font-weight: 800;
-      color: var(--preto);
-      line-height: 1.08;
-      letter-spacing: -0.03em;
-      margin-bottom: 20px;
-    }
-
-    .cta-sub {
-      font-size: 16px;
-      color: var(--cinza3);
-      font-weight: 300;
-      margin-bottom: 40px;
-      line-height: 1.6;
-    }
-
-    .cta-btns {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 20px;
-    }
-
-    /* ── FOOTER ── */
-    footer {
-      border-top: 1px solid var(--cinza2);
-      padding: 28px 48px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 16px;
-    }
-
-    .footer-logo {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      text-decoration: none;
-    }
-
-    .footer-copy {
-      font-size: 13px;
-      color: var(--cinza3);
-      font-weight: 300;
-    }
-
-    .footer-links {
-      display: flex;
-      gap: 24px;
-    }
-
-    .footer-links a {
-      font-size: 13px;
-      color: var(--cinza3);
-      text-decoration: none;
-      font-weight: 300;
-      transition: color 0.15s;
-    }
-
-    .footer-links a:hover { color: var(--preto); }
-
-    /* ── MOBILE ── */
-    @media (max-width: 900px) {
-      header { padding: 0 20px; }
-      nav { display: none; }
-      .hero { grid-template-columns: 1fr; gap: 48px; padding: 72px 20px 60px; }
-      .hero-right { display: none; }
-      .faixa { padding: 16px 20px; }
-      .como { padding: 72px 20px; }
-      .passos-grid { grid-template-columns: 1fr 1fr; }
-      .passo { border-bottom: 1px solid var(--cinza2); }
-      .recursos { padding: 72px 20px; }
-      .recursos-grid { grid-template-columns: 1fr; }
-      .nichos { padding: 72px 20px; }
-      .nichos-grid { grid-template-columns: repeat(3, 1fr); }
-      .preco-section { padding: 72px 20px; }
-      .preco-inner { grid-template-columns: 1fr; gap: 40px; }
-      .cta { padding: 72px 20px; }
-      footer { padding: 24px 20px; flex-direction: column; align-items: flex-start; gap: 12px; }
-    }
-
-    @media (max-width: 500px) {
-      .nichos-grid { grid-template-columns: repeat(2, 1fr); }
-      .passos-grid { grid-template-columns: 1fr; }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --preto:#0a0a0a;--branco:#fafaf9;--cinza:#f5f4f0;
+      --cinza2:#e8e6e1;--cinza3:#6b6860;--texto:#1c1b18;
+      --verde:#1a7a5e;--verde-lt:#e8f4f0;--radius:3px;
+    }
+    html{scroll-behavior:smooth}
+    body{font-family:'Inter',sans-serif;background:var(--branco);color:var(--texto);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+
+    header{border-bottom:1px solid var(--cinza2);padding:0 48px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;background:var(--branco)}
+    .logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+    .logo-mark{width:28px;height:28px;background:var(--preto);border-radius:5px;display:flex;align-items:center;justify-content:center}
+    .logo-mark svg{width:14px;height:14px;fill:var(--branco)}
+    .logo-txt{font-size:16px;font-weight:800;color:var(--preto);letter-spacing:-0.3px}
+    nav{display:flex;align-items:center;gap:28px}
+    nav a{font-size:14px;font-weight:400;color:var(--cinza3);text-decoration:none;transition:color 0.15s}
+    nav a:hover{color:var(--preto)}
+    .nav-right{display:flex;align-items:center;gap:10px}
+    .btn-ghost{font-size:14px;font-weight:500;color:var(--cinza3);text-decoration:none;padding:7px 14px;transition:color 0.15s}
+    .btn-ghost:hover{color:var(--preto)}
+    .btn-wpp{font-size:14px;font-weight:600;color:var(--branco);background:#16a34a;border:none;border-radius:var(--radius);padding:9px 20px;cursor:pointer;text-decoration:none;transition:all 0.15s;display:inline-flex;align-items:center;gap:7px;font-family:'Inter',sans-serif}
+    .btn-wpp:hover{background:#15803d;transform:translateY(-1px)}
+
+    /* HERO */
+    .hero{padding:100px 48px 0;max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;border-bottom:1px solid var(--cinza2);padding-bottom:0}
+    .hero-left{padding-bottom:80px}
+    .hero-tag{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:600;color:var(--cinza3);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:28px}
+    .hero-tag-dot{width:6px;height:6px;border-radius:50%;background:#16a34a}
+    h1{font-size:clamp(38px,4.5vw,58px);font-weight:900;line-height:1.05;letter-spacing:-0.04em;color:var(--preto);margin-bottom:20px}
+    .hero-sub{font-size:17px;font-weight:300;color:var(--cinza3);line-height:1.7;max-width:400px;margin-bottom:36px}
+    .hero-actions{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+    .btn-hero{background:var(--preto);color:var(--branco);font-family:'Inter',sans-serif;font-size:15px;font-weight:600;padding:14px 28px;border-radius:var(--radius);text-decoration:none;border:none;cursor:pointer;transition:all 0.15s;display:inline-flex;align-items:center;gap:8px}
+    .btn-hero:hover{background:#2a2a2a;transform:translateY(-1px)}
+    .btn-hero-wpp{background:#16a34a;color:var(--branco);font-family:'Inter',sans-serif;font-size:15px;font-weight:600;padding:14px 28px;border-radius:var(--radius);text-decoration:none;border:none;cursor:pointer;transition:all 0.15s;display:inline-flex;align-items:center;gap:8px}
+    .btn-hero-wpp:hover{background:#15803d;transform:translateY(-1px)}
+    .hero-nota{font-size:12px;color:var(--cinza3);margin-top:14px;font-weight:400}
+    .hero-right{align-self:flex-end}
+
+    /* DASHBOARD PREVIEW */
+    .dash{background:var(--preto);border-radius:8px 8px 0 0;overflow:hidden;box-shadow:0 -20px 60px rgba(0,0,0,0.15)}
+    .dash-bar{background:#161616;padding:12px 16px;display:flex;align-items:center;gap:6px;border-bottom:1px solid #222}
+    .dash-dot{width:10px;height:10px;border-radius:50%}
+    .dash-url{margin-left:8px;font-size:11px;color:#555;font-family:monospace}
+    .dash-body{padding:18px}
+    .dash-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+    .dash-titulo{font-size:13px;font-weight:700;color:#fafaf9;letter-spacing:-0.2px}
+    .dash-online{background:#162b16;border:1px solid #2a4a2a;border-radius:999px;padding:3px 10px;font-size:10px;color:#4ade80;font-weight:500}
+    .dash-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+    .dash-stat{background:#1a1a1a;border-radius:4px;padding:12px;border:1px solid #222}
+    .dash-stat-l{font-size:9px;color:#555;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px}
+    .dash-stat-v{font-size:24px;font-weight:900;color:#fafaf9;letter-spacing:-0.5px}
+    .dash-stat-v.g{color:#4ade80}.dash-stat-v.y{color:#fbbf24}.dash-stat-v.b{color:#60a5fa}
+    .dash-list{display:flex;flex-direction:column;gap:6px}
+    .dash-item{background:#1a1a1a;border-radius:4px;padding:11px 13px;display:flex;align-items:center;justify-content:space-between;border:1px solid #222}
+    .dash-av{width:26px;height:26px;border-radius:50%;background:#2a2a2a;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#888;margin-right:10px;flex-shrink:0}
+    .dash-info-nome{font-size:12px;color:#d4d4d4;font-weight:500}
+    .dash-info-hora{font-size:10px;color:#555}
+    .dash-right{display:flex;gap:6px;align-items:center}
+    .dash-pill{font-size:9px;padding:3px 8px;border-radius:999px;font-weight:600}
+    .dash-pill.ok{background:rgba(74,222,128,0.1);color:#4ade80;border:1px solid rgba(74,222,128,0.2)}
+    .dash-pill.pend{background:rgba(251,191,36,0.1);color:#fbbf24;border:1px solid rgba(251,191,36,0.2)}
+    .dash-wpp{background:#162b16;border:1px solid #2a4a2a;border-radius:999px;padding:3px 9px;font-size:9px;color:#4ade80;font-weight:600}
+
+    /* FAIXA */
+    .faixa{border-top:1px solid var(--cinza2);border-bottom:1px solid var(--cinza2);padding:16px 48px;display:flex;align-items:center;gap:40px;overflow:hidden}
+    .faixa-lbl{font-size:10px;color:var(--cinza3);font-weight:600;letter-spacing:0.08em;text-transform:uppercase;white-space:nowrap;flex-shrink:0}
+    .faixa-items{display:flex;gap:28px;flex-wrap:wrap}
+    .faixa-item{font-size:13px;color:var(--cinza3);font-weight:300;white-space:nowrap}
+
+    /* SEÇÕES */
+    section{padding:80px 48px}
+    .sec-lbl{font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--cinza3);font-weight:600;margin-bottom:14px}
+    .sec-titulo{font-size:clamp(26px,3vw,40px);font-weight:800;color:var(--preto);line-height:1.1;letter-spacing:-0.03em;margin-bottom:48px}
+
+    /* COMO */
+    .como{background:var(--cinza);border-top:1px solid var(--cinza2);border-bottom:1px solid var(--cinza2)}
+    .passos{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:1px solid var(--cinza2);border-radius:3px;overflow:hidden;max-width:1000px}
+    .passo{padding:32px 24px;border-right:1px solid var(--cinza2);background:var(--cinza);transition:background 0.15s}
+    .passo:last-child{border-right:none}
+    .passo:hover{background:var(--branco)}
+    .passo-n{font-size:10px;font-weight:700;color:var(--cinza3);letter-spacing:0.1em;margin-bottom:16px}
+    .passo-titulo{font-size:15px;font-weight:700;color:var(--preto);margin-bottom:10px;letter-spacing:-0.2px}
+    .passo-desc{font-size:13px;color:var(--cinza3);line-height:1.65;font-weight:300}
+
+    /* RECURSOS */
+    .recursos-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--cinza2);border:1px solid var(--cinza2);border-radius:3px;overflow:hidden;max-width:1000px;margin-top:0}
+    .rec{background:var(--cinza);padding:28px 24px;transition:background 0.15s}
+    .rec:hover{background:var(--branco)}
+    .rec-n{font-size:10px;font-weight:700;color:var(--cinza3);letter-spacing:0.1em;margin-bottom:12px}
+    .rec-titulo{font-size:14px;font-weight:700;color:var(--preto);margin-bottom:8px;letter-spacing:-0.1px}
+    .rec-desc{font-size:13px;color:var(--cinza3);line-height:1.65;font-weight:300}
+
+    /* NICHOS */
+    .nichos-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:1px;background:var(--cinza2);border:1px solid var(--cinza2);border-radius:3px;overflow:hidden;max-width:1000px}
+    .nicho{background:var(--branco);padding:24px 16px;transition:background 0.15s;cursor:default}
+    .nicho:hover{background:var(--cinza)}
+    .nicho-ico{font-size:20px;margin-bottom:8px;display:block}
+    .nicho-nome{font-size:12px;font-weight:700;color:var(--preto);margin-bottom:4px;letter-spacing:-0.1px}
+    .nicho-desc{font-size:11px;color:var(--cinza3);line-height:1.5;font-weight:300}
+
+    /* CTA CONTATO */
+    .cta-section{background:var(--preto);padding:100px 48px}
+    .cta-inner{max-width:900px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
+    .cta-left .sec-lbl{color:#555}
+    .cta-titulo{font-size:clamp(28px,3.5vw,46px);font-weight:900;color:var(--branco);line-height:1.08;letter-spacing:-0.04em;margin-bottom:16px}
+    .cta-sub{font-size:16px;color:#666;font-weight:300;line-height:1.7;margin-bottom:0}
+    .cta-card{background:#111;border:1px solid #222;border-radius:6px;padding:32px}
+    .cta-card-titulo{font-size:13px;font-weight:600;color:#888;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:20px}
+    .cta-wpp-btn{display:flex;align-items:center;gap:14px;background:#16a34a;border-radius:var(--radius);padding:18px 20px;text-decoration:none;transition:all 0.15s;width:100%;margin-bottom:14px}
+    .cta-wpp-btn:hover{background:#15803d;transform:translateY(-1px)}
+    .cta-wpp-ico{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:22px}
+    .cta-wpp-txt{color:var(--branco)}
+    .cta-wpp-label{font-size:11px;font-weight:600;opacity:0.7;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:2px}
+    .cta-wpp-num{font-size:18px;font-weight:800;letter-spacing:-0.3px}
+    .cta-trial{font-size:12px;color:#555;text-align:center;padding-top:14px;border-top:1px solid #222}
+    .cta-trial strong{color:#888}
+    .cta-depoimento{margin-top:28px;border-left:2px solid #222;padding-left:20px}
+    .cta-dep-txt{font-size:14px;color:#888;font-weight:300;line-height:1.7;font-style:italic;margin-bottom:10px}
+    .cta-dep-autor{font-size:11px;color:#555}
+
+    /* FOOTER */
+    footer{border-top:1px solid var(--cinza2);padding:28px 48px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
+    .footer-logo{display:flex;align-items:center;gap:8px;text-decoration:none}
+    .footer-copy{font-size:13px;color:var(--cinza3);font-weight:300}
+    .footer-links{display:flex;gap:24px}
+    .footer-links a{font-size:13px;color:var(--cinza3);text-decoration:none;font-weight:300;transition:color 0.15s}
+    .footer-links a:hover{color:var(--preto)}
+
+    /* MOBILE */
+    @media(max-width:900px){
+      header{padding:0 20px}nav{display:none}
+      .hero{grid-template-columns:1fr;gap:0;padding:72px 20px 0}
+      .hero-left{padding-bottom:48px}
+      .hero-right{display:none}
+      .faixa{padding:14px 20px}
+      section{padding:64px 20px}
+      .passos{grid-template-columns:1fr 1fr}
+      .passo{border-bottom:1px solid var(--cinza2)}
+      .recursos-grid{grid-template-columns:1fr}
+      .nichos-grid{grid-template-columns:repeat(3,1fr)}
+      .cta-section{padding:72px 20px}
+      .cta-inner{grid-template-columns:1fr;gap:40px}
+      footer{padding:24px 20px;flex-direction:column;align-items:flex-start}
+    }
+    @media(max-width:500px){
+      .nichos-grid{grid-template-columns:repeat(2,1fr)}
+      .passos{grid-template-columns:1fr}
     }
   </style>
 </head>
 <body>
 
-<!-- HEADER -->
 <header>
   <a class="logo" href="/">
-    <div class="logo-mark">
-      <svg viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12" rx="2"/><line x1="5" y1="6" x2="11" y2="6" stroke="#fafaf9" stroke-width="1.5" stroke-linecap="round"/><line x1="5" y1="9" x2="9" y2="9" stroke="#fafaf9" stroke-width="1.5" stroke-linecap="round"/></svg>
-    </div>
+    <div class="logo-mark"><svg viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12" rx="2"/><line x1="5" y1="6" x2="11" y2="6" stroke="#fafaf9" stroke-width="1.5" stroke-linecap="round"/><line x1="5" y1="9" x2="9" y2="9" stroke="#fafaf9" stroke-width="1.5" stroke-linecap="round"/></svg></div>
     <span class="logo-txt">AgendaOK</span>
   </a>
   <nav>
     <a href="#como">Como funciona</a>
     <a href="#recursos">Recursos</a>
     <a href="#nichos">Para quem</a>
-    <a href="#preco">Preço</a>
+    <a href="#contato">Contato</a>
   </nav>
   <div class="nav-right">
-    <a href="/login" class="btn-link">Entrar</a>
-    <a href="/cadastro" class="btn-cta">Começar grátis</a>
+    <a href="/login" class="btn-ghost">Entrar</a>
+    <a href="https://wa.me/5532998111297?text=Olá! Quero conhecer o AgendaOK." target="_blank" class="btn-wpp">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.121.555 4.112 1.528 5.836L0 24l6.336-1.508A11.946 11.946 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.003-1.368l-.36-.213-3.76.895.952-3.655-.234-.374A9.786 9.786 0 012.182 12C2.182 6.592 6.592 2.182 12 2.182S21.818 6.592 21.818 12 17.408 21.818 12 21.818z"/></svg>
+      Falar no WhatsApp
+    </a>
   </div>
 </header>
 
 <!-- HERO -->
-<section style="border-bottom: 1px solid var(--cinza2);">
+<div style="border-bottom:1px solid var(--cinza2)">
   <div class="hero">
     <div class="hero-left">
-      <div class="hero-tag">
-        <div class="hero-tag-dot"></div>
-        14 dias grátis — sem cartão
-      </div>
+      <div class="hero-tag"><div class="hero-tag-dot"></div>7 dias grátis para testar</div>
       <h1>Agendamento<br/>que funciona<br/>de verdade.</h1>
-      <p class="hero-sub">
-        Seus clientes agendam pelo celular em menos de dois minutos.
-        Você gerencia tudo pelo painel, sem planilha, sem caderno, sem confusão.
-      </p>
+      <p class="hero-sub">Seus clientes agendam pelo celular em segundos. Você gerencia tudo pelo painel, sem planilha, sem caderno.</p>
       <div class="hero-actions">
-        <a href="/cadastro" class="btn-hero-primary">
-          Criar conta grátis
-          <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <a href="/cadastro" class="btn-hero">Criar conta grátis →</a>
+        <a href="https://wa.me/5532998111297?text=Olá! Quero conhecer o AgendaOK." target="_blank" class="btn-hero-wpp">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.121.555 4.112 1.528 5.836L0 24l6.336-1.508A11.946 11.946 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.003-1.368l-.36-.213-3.76.895.952-3.655-.234-.374A9.786 9.786 0 012.182 12C2.182 6.592 6.592 2.182 12 2.182S21.818 6.592 21.818 12 17.408 21.818 12 21.818z"/></svg>
+          Falar com a equipe
         </a>
-        <a href="#como" class="btn-hero-sec">Ver como funciona →</a>
       </div>
-      <p class="hero-nota">Funciona para barbearias, clínicas, salões, psicólogos e mais.</p>
+      <p class="hero-nota">Para continuar após o teste, entre em contato via WhatsApp.</p>
     </div>
-
     <div class="hero-right">
-      <div class="dash-preview">
+      <div class="dash">
         <div class="dash-bar">
           <div class="dash-dot" style="background:#ff5f57"></div>
           <div class="dash-dot" style="background:#febc2e"></div>
@@ -862,231 +206,141 @@
           <span class="dash-url">agendaok.app/barbearia-silva</span>
         </div>
         <div class="dash-body">
-          <div class="dash-header">
-            <span class="dash-titulo">Agenda de hoje</span>
-            <span class="dash-badge">● Online</span>
-          </div>
+          <div class="dash-h"><span class="dash-titulo">Hoje</span><span class="dash-online">● Online</span></div>
           <div class="dash-stats">
-            <div class="dash-stat">
-              <div class="dash-stat-lbl">Agendamentos</div>
-              <div class="dash-stat-val">14</div>
-            </div>
-            <div class="dash-stat">
-              <div class="dash-stat-lbl">Confirmados</div>
-              <div class="dash-stat-val verde">11</div>
-            </div>
-            <div class="dash-stat">
-              <div class="dash-stat-lbl">Pendentes</div>
-              <div class="dash-stat-val amarelo">3</div>
-            </div>
-            <div class="dash-stat">
-              <div class="dash-stat-lbl">Este mês</div>
-              <div class="dash-stat-val">248</div>
-            </div>
+            <div class="dash-stat"><div class="dash-stat-l">Total</div><div class="dash-stat-v">14</div></div>
+            <div class="dash-stat"><div class="dash-stat-l">Confirmados</div><div class="dash-stat-v g">11</div></div>
+            <div class="dash-stat"><div class="dash-stat-l">Pendentes</div><div class="dash-stat-v y">3</div></div>
+            <div class="dash-stat"><div class="dash-stat-l">Faturamento</div><div class="dash-stat-v b">R$840</div></div>
           </div>
           <div class="dash-list">
             <div class="dash-item">
-              <div class="dash-item-left">
-                <div class="dash-avatar">RS</div>
-                <div>
-                  <div class="dash-item-nome">Rafael Santos</div>
-                  <div class="dash-item-hora">14:00 — Corte + Barba</div>
-                </div>
+              <div style="display:flex;align-items:center">
+                <div class="dash-av">RS</div>
+                <div><div class="dash-info-nome">Rafael Santos</div><div class="dash-info-hora">14:00 · Corte + Barba · R$60</div></div>
               </div>
-              <div style="display:flex;gap:6px;align-items:center">
-                <span class="dash-pill ok">Confirmado</span>
-                <span class="dash-wpp">WhatsApp</span>
-              </div>
+              <div class="dash-right"><span class="dash-pill ok">Confirmado</span><span class="dash-wpp">WhatsApp</span></div>
             </div>
             <div class="dash-item">
-              <div class="dash-item-left">
-                <div class="dash-avatar">MO</div>
-                <div>
-                  <div class="dash-item-nome">Marcos Oliveira</div>
-                  <div class="dash-item-hora">15:00 — Corte</div>
-                </div>
+              <div style="display:flex;align-items:center">
+                <div class="dash-av">MO</div>
+                <div><div class="dash-info-nome">Marcos Oliveira</div><div class="dash-info-hora">15:00 · Corte · R$40</div></div>
               </div>
-              <div style="display:flex;gap:6px;align-items:center">
-                <span class="dash-pill pend">Pendente</span>
-                <span class="dash-wpp">WhatsApp</span>
-              </div>
-            </div>
-            <div class="dash-item">
-              <div class="dash-item-left">
-                <div class="dash-avatar">JL</div>
-                <div>
-                  <div class="dash-item-nome">João Lima</div>
-                  <div class="dash-item-hora">16:00 — Barba</div>
-                </div>
-              </div>
-              <div style="display:flex;gap:6px;align-items:center">
-                <span class="dash-pill ok">Confirmado</span>
-                <span class="dash-wpp">WhatsApp</span>
-              </div>
+              <div class="dash-right"><span class="dash-pill pend">Pendente</span><span class="dash-wpp">WhatsApp</span></div>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-</section>
+</div>
 
-<!-- FAIXA -->
 <div class="faixa">
-  <span class="faixa-label">Para quem usa</span>
+  <span class="faixa-lbl">Para quem usa</span>
   <div class="faixa-items">
-    <span class="faixa-item">Barbearias</span>
-    <span class="faixa-item">Salões de beleza</span>
-    <span class="faixa-item">Clínicas médicas</span>
-    <span class="faixa-item">Psicólogos</span>
-    <span class="faixa-item">Advogados</span>
-    <span class="faixa-item">Nutricionistas</span>
-    <span class="faixa-item">Personal trainers</span>
-    <span class="faixa-item">Estética</span>
+    <span class="faixa-item">Barbearias</span><span class="faixa-item">Salões de beleza</span>
+    <span class="faixa-item">Clínicas médicas</span><span class="faixa-item">Psicólogos</span>
+    <span class="faixa-item">Advogados</span><span class="faixa-item">Nutricionistas</span>
+    <span class="faixa-item">Personal trainers</span><span class="faixa-item">Estética</span>
     <span class="faixa-item">Tatuadores</span>
-    <span class="faixa-item">Fisioterapeutas</span>
   </div>
 </div>
 
 <!-- COMO FUNCIONA -->
 <section class="como" id="como">
-  <div class="section-label">Como funciona</div>
-  <div class="section-titulo">Pronto em menos<br/>de cinco minutos.</div>
-  <div class="passos-grid">
-    <div class="passo">
-      <div class="passo-n">01</div>
-      <div class="passo-titulo">Crie sua conta</div>
-      <div class="passo-desc">Informe o nome do negócio, escolha o nicho e configure seus horários disponíveis.</div>
-    </div>
-    <div class="passo">
-      <div class="passo-n">02</div>
-      <div class="passo-titulo">Cadastre seus serviços</div>
-      <div class="passo-desc">Adicione os serviços com nome, preço e duração. Seus clientes escolhem na hora de agendar.</div>
-    </div>
-    <div class="passo">
-      <div class="passo-n">03</div>
-      <div class="passo-titulo">Compartilhe seu link</div>
-      <div class="passo-desc">Envie pelo WhatsApp, cole na bio do Instagram ou imprima o QR Code para o estabelecimento.</div>
-    </div>
-    <div class="passo">
-      <div class="passo-n">04</div>
-      <div class="passo-titulo">Gerencie pelo painel</div>
-      <div class="passo-desc">Confirme agendamentos, envie lembretes e acompanhe tudo pelo celular em tempo real.</div>
-    </div>
+  <div class="sec-lbl">Como funciona</div>
+  <div class="sec-titulo">Pronto em menos de 5 minutos.</div>
+  <div class="passos">
+    <div class="passo"><div class="passo-n">01</div><div class="passo-titulo">Crie sua conta</div><div class="passo-desc">Informe o nome do negócio, escolha o nicho e configure seus horários.</div></div>
+    <div class="passo"><div class="passo-n">02</div><div class="passo-titulo">Cadastre seus serviços</div><div class="passo-desc">Adicione serviços com nome, preço e duração. Seus clientes escolhem na hora.</div></div>
+    <div class="passo"><div class="passo-n">03</div><div class="passo-titulo">Compartilhe seu link</div><div class="passo-desc">Envie pelo WhatsApp, cole na bio ou imprima o QR Code para o estabelecimento.</div></div>
+    <div class="passo"><div class="passo-n">04</div><div class="passo-titulo">Gerencie pelo painel</div><div class="passo-desc">Confirme agendamentos, envie lembretes e acompanhe tudo em tempo real.</div></div>
   </div>
 </section>
 
 <!-- RECURSOS -->
-<section class="recursos" id="recursos">
-  <div class="recursos-inner">
-    <div class="section-label">Recursos</div>
-    <div class="section-titulo">Tudo que você precisa.<br/>Nada que atrapalha.</div>
-    <div class="recursos-grid">
-      <div class="rec"><div class="rec-num">01</div><div class="rec-titulo">Página pública por negócio</div><div class="rec-desc">Cada cliente tem sua própria página com cores, identidade e link exclusivo para compartilhar.</div></div>
-      <div class="rec"><div class="rec-num">02</div><div class="rec-titulo">Lembrete via WhatsApp</div><div class="rec-desc">Envie a mensagem de confirmação com um clique direto no WhatsApp do cliente, com os dados completos.</div></div>
-      <div class="rec"><div class="rec-num">03</div><div class="rec-titulo">E-mail automático</div><div class="rec-desc">Confirmação enviada automaticamente ao cliente com link para cancelar se precisar.</div></div>
-      <div class="rec"><div class="rec-num">04</div><div class="rec-titulo">Avaliação pós-atendimento</div><div class="rec-desc">Após o atendimento, o cliente recebe um link para avaliar. Você vê as notas e comentários no painel.</div></div>
-      <div class="rec"><div class="rec-num">05</div><div class="rec-titulo">Lista de espera</div><div class="rec-desc">Horário lotado? O cliente entra na lista e recebe aviso automático quando uma vaga abre.</div></div>
-      <div class="rec"><div class="rec-num">06</div><div class="rec-titulo">Relatório mensal</div><div class="rec-desc">Todo mês você recebe por e-mail: total de atendimentos, faturamento, serviços mais pedidos e avaliação média.</div></div>
-      <div class="rec"><div class="rec-num">07</div><div class="rec-titulo">QR Code exclusivo</div><div class="rec-desc">Gere o QR Code e cole no balcão, na vitrine ou nos materiais do negócio para facilitar os agendamentos.</div></div>
-      <div class="rec"><div class="rec-num">08</div><div class="rec-titulo">Cancelamento pelo cliente</div><div class="rec-desc">O cliente cancela pelo link sem precisar ligar. A vaga abre automaticamente para novos agendamentos.</div></div>
-      <div class="rec"><div class="rec-num">09</div><div class="rec-titulo">Histórico de atendimentos</div><div class="rec-desc">O cliente consulta todos os agendamentos anteriores pelo e-mail, sem precisar de login.</div></div>
-    </div>
+<section id="recursos">
+  <div class="sec-lbl">Recursos</div>
+  <div class="sec-titulo">Tudo que você precisa.<br/>Nada que atrapalha.</div>
+  <div class="recursos-grid">
+    <div class="rec"><div class="rec-n">01</div><div class="rec-titulo">Página pública exclusiva</div><div class="rec-desc">Cada negócio tem sua própria página com cores e identidade visual. Link exclusivo para compartilhar.</div></div>
+    <div class="rec"><div class="rec-n">02</div><div class="rec-titulo">Lembrete via WhatsApp</div><div class="rec-desc">Envie mensagem de confirmação com um clique. Texto profissional com todos os dados do agendamento.</div></div>
+    <div class="rec"><div class="rec-n">03</div><div class="rec-titulo">E-mail automático</div><div class="rec-desc">Confirmação enviada automaticamente ao cliente com link para cancelar se precisar.</div></div>
+    <div class="rec"><div class="rec-n">04</div><div class="rec-titulo">Avaliações pós-atendimento</div><div class="rec-desc">Cliente avalia o serviço após o atendimento. Você acompanha as notas e comentários no painel.</div></div>
+    <div class="rec"><div class="rec-n">05</div><div class="rec-titulo">Lista de espera</div><div class="rec-desc">Horário lotado? Cliente entra na lista e recebe aviso automático quando uma vaga abre.</div></div>
+    <div class="rec"><div class="rec-n">06</div><div class="rec-titulo">Cancelamento pelo cliente</div><div class="rec-desc">Cliente cancela pelo link do e-mail sem precisar ligar. A vaga abre automaticamente.</div></div>
+    <div class="rec"><div class="rec-n">07</div><div class="rec-titulo">Dashboard completo</div><div class="rec-desc">Estatísticas em tempo real, filtros por status, agenda do dia e faturamento estimado.</div></div>
+    <div class="rec"><div class="rec-n">08</div><div class="rec-titulo">Bloqueio de horários</div><div class="rec-desc">Bloqueie dias, horários, folgas e férias. Clientes não conseguem agendar nos períodos bloqueados.</div></div>
+    <div class="rec"><div class="rec-n">09</div><div class="rec-titulo">QR Code & histórico</div><div class="rec-desc">QR Code exclusivo para imprimir. Clientes consultam histórico de atendimentos pelo e-mail.</div></div>
   </div>
 </section>
 
 <!-- NICHOS -->
-<section class="nichos" id="nichos">
-  <div class="section-label">Para quem é</div>
-  <div class="section-titulo">Feito para quem trabalha<br/>com horários marcados.</div>
+<section style="background:var(--cinza);border-top:1px solid var(--cinza2);border-bottom:1px solid var(--cinza2)" id="nichos">
+  <div class="sec-lbl">Para quem é</div>
+  <div class="sec-titulo">Feito para quem trabalha<br/>com horários marcados.</div>
   <div class="nichos-grid">
-    <div class="nicho"><span class="nicho-ico">✂️</span><div class="nicho-nome">Barbearias</div><div class="nicho-desc">Cortes, barba e acabamentos sem ligar para confirmar.</div></div>
-    <div class="nicho"><span class="nicho-ico">💇</span><div class="nicho-nome">Salões</div><div class="nicho-desc">Cabelo, unhas, sobrancelha. Vários profissionais em um painel.</div></div>
-    <div class="nicho"><span class="nicho-ico">🏥</span><div class="nicho-nome">Clínicas</div><div class="nicho-desc">Consultas organizadas com confirmação automática.</div></div>
-    <div class="nicho"><span class="nicho-ico">🦷</span><div class="nicho-nome">Odontologia</div><div class="nicho-desc">Reduz faltas com lembretes antes do horário.</div></div>
-    <div class="nicho"><span class="nicho-ico">⚖️</span><div class="nicho-nome">Advocacia</div><div class="nicho-desc">Consultas jurídicas com seriedade e sigilo.</div></div>
-    <div class="nicho"><span class="nicho-ico">🧠</span><div class="nicho-nome">Psicologia</div><div class="nicho-desc">Sessões agendadas com privacidade e discrição.</div></div>
-    <div class="nicho"><span class="nicho-ico">💅</span><div class="nicho-nome">Estética</div><div class="nicho-desc">Limpeza, depilação, massagem. Agenda cheia.</div></div>
-    <div class="nicho"><span class="nicho-ico">💪</span><div class="nicho-nome">Personal</div><div class="nicho-desc">Treinos e avaliações com agenda organizada.</div></div>
-    <div class="nicho"><span class="nicho-ico">🥗</span><div class="nicho-nome">Nutrição</div><div class="nicho-desc">Consultas e retornos com histórico do cliente.</div></div>
-    <div class="nicho"><span class="nicho-ico">🦴</span><div class="nicho-nome">Fisioterapia</div><div class="nicho-desc">Sessões de reabilitação com controle de presença.</div></div>
-    <div class="nicho"><span class="nicho-ico">🎨</span><div class="nicho-nome">Tatuagem</div><div class="nicho-desc">Sessões com coleta de informações no agendamento.</div></div>
-    <div class="nicho"><span class="nicho-ico">🏢</span><div class="nicho-nome">Outros</div><div class="nicho-desc">Qualquer profissional que trabalha com horários.</div></div>
+    <div class="nicho"><span class="nicho-ico">✂️</span><div class="nicho-nome">Barbearias</div><div class="nicho-desc">Cortes e serviços sem precisar ligar.</div></div>
+    <div class="nicho"><span class="nicho-ico">💇</span><div class="nicho-nome">Salões</div><div class="nicho-desc">Vários profissionais, um painel.</div></div>
+    <div class="nicho"><span class="nicho-ico">🏥</span><div class="nicho-nome">Clínicas</div><div class="nicho-desc">Consultas com confirmação automática.</div></div>
+    <div class="nicho"><span class="nicho-ico">🦷</span><div class="nicho-nome">Odontologia</div><div class="nicho-desc">Reduz faltas com lembretes.</div></div>
+    <div class="nicho"><span class="nicho-ico">⚖️</span><div class="nicho-nome">Advocacia</div><div class="nicho-desc">Consultas com seriedade e sigilo.</div></div>
+    <div class="nicho"><span class="nicho-ico">🧠</span><div class="nicho-nome">Psicologia</div><div class="nicho-desc">Sessões com privacidade total.</div></div>
+    <div class="nicho"><span class="nicho-ico">💅</span><div class="nicho-nome">Estética</div><div class="nicho-desc">Agenda cheia sem esforço.</div></div>
+    <div class="nicho"><span class="nicho-ico">💪</span><div class="nicho-nome">Personal</div><div class="nicho-desc">Treinos e avaliações organizados.</div></div>
+    <div class="nicho"><span class="nicho-ico">🥗</span><div class="nicho-nome">Nutrição</div><div class="nicho-desc">Retornos e consultas agendados.</div></div>
+    <div class="nicho"><span class="nicho-ico">🦴</span><div class="nicho-nome">Fisioterapia</div><div class="nicho-desc">Sessões com controle de presença.</div></div>
+    <div class="nicho"><span class="nicho-ico">🎨</span><div class="nicho-nome">Tatuagem</div><div class="nicho-desc">Sessões com informações prévias.</div></div>
+    <div class="nicho"><span class="nicho-ico">🏢</span><div class="nicho-nome">Outros</div><div class="nicho-desc">Qualquer profissional com horários.</div></div>
   </div>
 </section>
 
-<!-- PREÇO -->
-<section class="preco-section" id="preco">
-  <div class="preco-inner">
-    <div class="preco-left">
-      <div class="section-label">Preço</div>
-      <div class="section-titulo">Um valor.<br/>Tudo incluso.</div>
-      <p class="preco-sub">
-        Sem planos confusos, sem taxas escondidas, sem surpresa no boleto. 
-        Um valor fixo mensal com acesso a todos os recursos.
-      </p>
-      <div style="font-size:14px;color:#555;font-weight:300;line-height:1.7">
-        "Antes eu controlava tudo no caderno. Hoje minha agenda está no celular e meus clientes agendam sozinhos." <br/>
-        <span style="color:#888;font-size:13px;margin-top:8px;display:block">— Ana Carvalho, Studio de Estética</span>
+<!-- CTA CONTATO -->
+<section class="cta-section" id="contato">
+  <div class="cta-inner">
+    <div class="cta-left">
+      <div class="sec-lbl" style="color:#555">Quero usar o AgendaOK</div>
+      <div class="cta-titulo">Comece hoje.<br/>Teste por 7 dias,<br/>sem compromisso.</div>
+      <p class="cta-sub">Crie sua conta agora e comece a receber agendamentos. Para continuar após o período de teste, entre em contato com nossa equipe pelo WhatsApp.</p>
+      <div class="cta-depoimento">
+        <div class="cta-dep-txt">"Antes eu controlava tudo no caderno. Hoje minha agenda está no celular e meus clientes agendam sozinhos."</div>
+        <div class="cta-dep-autor">Ana Carvalho — Studio de Estética, Rio de Janeiro</div>
       </div>
     </div>
     <div>
-      <div class="preco-card">
-        <div class="preco-valor">R$149<span>/mês</span></div>
-        <div class="preco-periodo">Plano único · Cancele quando quiser</div>
-        <div class="preco-divisor"></div>
-        <ul class="preco-lista">
-          <li><span class="chk">✓</span>Página pública de agendamento</li>
-          <li><span class="chk">✓</span>Agendamentos ilimitados</li>
-          <li><span class="chk">✓</span>Serviços com preço e duração</li>
-          <li><span class="chk">✓</span>Lembrete via WhatsApp</li>
-          <li><span class="chk">✓</span>E-mail automático de confirmação</li>
-          <li><span class="chk">✓</span>Cancelamento pelo cliente</li>
-          <li><span class="chk">✓</span>Avaliações pós-atendimento</li>
-          <li><span class="chk">✓</span>Lista de espera automática</li>
-          <li><span class="chk">✓</span>Relatório mensal por e-mail</li>
-          <li><span class="chk">✓</span>QR Code exclusivo</li>
-          <li><span class="chk">✓</span>Suporte incluído</li>
-        </ul>
-        <a href="/cadastro" class="btn-preco">Começar 14 dias grátis</a>
-        <p class="preco-trial">Sem cartão de crédito necessário.</p>
+      <div class="cta-card">
+        <div class="cta-card-titulo">Fale com nossa equipe</div>
+        <a href="https://wa.me/5532998111297?text=Olá! Quero conhecer o AgendaOK e saber sobre os planos." target="_blank" class="cta-wpp-btn">
+          <div class="cta-wpp-ico">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.121.555 4.112 1.528 5.836L0 24l6.336-1.508A11.946 11.946 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.003-1.368l-.36-.213-3.76.895.952-3.655-.234-.374A9.786 9.786 0 012.182 12C2.182 6.592 6.592 2.182 12 2.182S21.818 6.592 21.818 12 17.408 21.818 12 21.818z"/></svg>
+          </div>
+          <div class="cta-wpp-txt">
+            <div class="cta-wpp-label">WhatsApp</div>
+            <div class="cta-wpp-num">(32) 99811-1297</div>
+          </div>
+        </a>
+        <a href="/cadastro" style="display:block;text-align:center;padding:13px;border:1px solid #222;border-radius:var(--radius);color:#888;font-size:14px;font-weight:500;text-decoration:none;transition:all 0.15s" onmouseover="this.style.borderColor='#444';this.style.color='#fafaf9'" onmouseout="this.style.borderColor='#222';this.style.color='#888'">
+          Criar conta e testar grátis
+        </a>
+        <div class="cta-trial">Teste grátis por <strong>7 dias</strong>. Sem cartão de crédito.</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- CTA FINAL -->
-<section>
-  <div class="cta">
-    <h2>Sua agenda organizada<br/>a partir de hoje.</h2>
-    <p class="cta-sub">Crie sua conta em dois minutos e comece a receber agendamentos ainda hoje. Sem burocracia.</p>
-    <div class="cta-btns">
-      <a href="/cadastro" class="btn-hero-primary">
-        Criar conta grátis
-        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </a>
-      <a href="/login" class="btn-hero-sec">Já tenho conta</a>
-    </div>
-  </div>
-</section>
-
-<!-- FOOTER -->
 <footer>
   <a class="footer-logo" href="/">
-    <div class="logo-mark">
-      <svg viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12" rx="2"/><line x1="5" y1="6" x2="11" y2="6" stroke="#fafaf9" stroke-width="1.5" stroke-linecap="round"/><line x1="5" y1="9" x2="9" y2="9" stroke="#fafaf9" stroke-width="1.5" stroke-linecap="round"/></svg>
-    </div>
+    <div class="logo-mark"><svg viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12" rx="2"/><line x1="5" y1="6" x2="11" y2="6" stroke="#fafaf9" stroke-width="1.5" stroke-linecap="round"/><line x1="5" y1="9" x2="9" y2="9" stroke="#fafaf9" stroke-width="1.5" stroke-linecap="round"/></svg></div>
     <span class="logo-txt">AgendaOK</span>
   </a>
   <span class="footer-copy">© 2025 AgendaOK</span>
   <div class="footer-links">
     <a href="#como">Como funciona</a>
     <a href="#recursos">Recursos</a>
-    <a href="#preco">Preço</a>
+    <a href="#contato">Contato</a>
     <a href="/login">Entrar</a>
     <a href="/cadastro">Criar conta</a>
   </div>
 </footer>
-
 </body>
 </html>

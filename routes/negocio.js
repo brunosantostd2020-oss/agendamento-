@@ -14,13 +14,20 @@ router.get('/painel', requireAuth, async (req, res) => {
     const hoje     = new Date().toISOString().split('T')[0];
     const mesAtual = hoje.slice(0, 7);
 
-    const total      = (await pool.query('SELECT COUNT(*) FROM agendamentos WHERE negocio_id=$1', [u.id])).rows[0].count;
-    const pendentes  = (await pool.query(`SELECT COUNT(*) FROM agendamentos WHERE negocio_id=$1 AND status='pendente'`, [u.id])).rows[0].count;
-    const confirmados= (await pool.query(`SELECT COUNT(*) FROM agendamentos WHERE negocio_id=$1 AND status='confirmado'`, [u.id])).rows[0].count;
-    const hojeCount  = (await pool.query('SELECT COUNT(*) FROM agendamentos WHERE negocio_id=$1 AND data=$2', [u.id, hoje])).rows[0].count;
-    const mesCount   = (await pool.query('SELECT COUNT(*) FROM agendamentos WHERE negocio_id=$1 AND data LIKE $2', [u.id, mesAtual+'%'])).rows[0].count;
+    const total      = +(await pool.query('SELECT COUNT(*) FROM agendamentos WHERE negocio_id=$1', [u.id])).rows[0].count;
+    const pendentes  = +(await pool.query(`SELECT COUNT(*) FROM agendamentos WHERE negocio_id=$1 AND status='pendente'`, [u.id])).rows[0].count;
+    const confirmados= +(await pool.query(`SELECT COUNT(*) FROM agendamentos WHERE negocio_id=$1 AND status='confirmado'`, [u.id])).rows[0].count;
+    const concluidos = +(await pool.query(`SELECT COUNT(*) FROM agendamentos WHERE negocio_id=$1 AND status='concluido'`, [u.id])).rows[0].count;
+    const hojeCount  = +(await pool.query('SELECT COUNT(*) FROM agendamentos WHERE negocio_id=$1 AND data=$2', [u.id, hoje])).rows[0].count;
 
-    res.json({ usuario: u, stats: { total: +total, pendentes: +pendentes, confirmados: +confirmados, hoje: +hojeCount, mes: +mesCount } });
+    // Faturamento do mês (apenas concluídos com preço)
+    const fatR = await pool.query(
+      `SELECT COALESCE(SUM(preco_servico),0) as total FROM agendamentos WHERE negocio_id=$1 AND status='concluido' AND data LIKE $2 AND preco_servico IS NOT NULL`,
+      [u.id, mesAtual + '%']
+    );
+    const faturamento = parseFloat(fatR.rows[0].total) || null;
+
+    res.json({ usuario: u, stats: { total, pendentes, confirmados, concluidos, hoje: hojeCount, faturamento } });
   } catch(e) { res.status(500).json({ erro: e.message }); }
 });
 
