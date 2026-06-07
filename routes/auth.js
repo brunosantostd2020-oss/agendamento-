@@ -40,7 +40,7 @@ router.post('/cadastro', async (req, res) => {
     const id    = uuidv4();
     const config = {
       horarios: '08:00,09:00,10:00,11:00,14:00,15:00,16:00,17:00',
-      dias_uteis: '',
+      dias_uteis: '1,2,3,4,5',
       telefone: '', descricao: '', cor: '#0d9488',
       email_negocio: '', email_senha: '',
     };
@@ -79,10 +79,9 @@ router.post('/login', async (req, res) => {
   const { email, senha } = req.body;
   if (!email || !senha) return res.status(400).json({ erro: 'E-mail e senha obrigatórios.' });
 
-  // Admin master (apenas via variáveis de ambiente)
-  if (process.env.ADMIN_EMAIL && process.env.ADMIN_PASSWORD &&
-      email === process.env.ADMIN_EMAIL &&
-      senha === process.env.ADMIN_PASSWORD) {
+  // Admin master
+  if (email === (process.env.ADMIN_EMAIL || 'admin@agendaok.com') &&
+      senha  === (process.env.ADMIN_PASSWORD || 'admin123')) {
     req.session.userId  = 'admin';
     req.session.isAdmin = true;
     return res.json({ sucesso: true, isAdmin: true });

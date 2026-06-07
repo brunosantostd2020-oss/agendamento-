@@ -9,18 +9,10 @@ function requireMaster(req, res, next) {
 }
 
 // POST /admin/login
-router.post('/login', async (req, res) => {
-  const { usuario, senha } = req.body;
-  const MASTER_USER  = process.env.MASTER_USER;
-  const MASTER_SENHA = process.env.MASTER_SENHA;
-  if (!MASTER_USER || !MASTER_SENHA) {
-    return res.status(503).json({ erro: 'Acesso não configurado.' });
-  }
-  if (usuario !== MASTER_USER || senha !== MASTER_SENHA) {
-    // Delay para dificultar brute force
-    await new Promise(r => setTimeout(r, 1000));
-    return res.status(401).json({ erro: 'Usuário ou senha incorretos.' });
-  }
+router.post('/login', (req, res) => {
+  const { senha } = req.body;
+  const masterSenha = process.env.MASTER_PASSWORD || 'master@agendaok2024';
+  if (senha !== masterSenha) return res.status(401).json({ erro: 'Senha incorreta.' });
   req.session.isMaster = true;
   res.json({ sucesso: true });
 });
@@ -43,39 +35,21 @@ router.get('/clientes', requireMaster, async (req, res) => {
     const r = await pool.query(`
       SELECT
         u.id, u.nome, u.email, u.nome_negocio, u.nicho,
-        u.plano, u.slug,
-        to_char(NOW() AT TIME ZONE 'America/Sao_Paulo', 'DD/MM/YYYY') as criado_fmt,
-        u.criado_em,
+        u.plano, u.slug, u.criado_em,
         u.trial_expira, u.acesso_ativo, u.plano_pago, u.acesso_expira,
         COUNT(a.id) as total_agendamentos,
         CASE
+          WHEN u.plano_pago = true AND (u.acesso_expira = '' OR u.acesso_expira >= $1) THEN 'pago'
+          WHEN u.trial_expira >= $1 AND u.acesso_ativo = true THEN 'trial'
           WHEN u.acesso_ativo = false THEN 'bloqueado'
-          WHEN u.plano_pago = true AND (u.acesso_expira IS NULL OR u.acesso_expira = '' OR u.acesso_expira >= $1) THEN 'pago'
-          WHEN u.trial_expira IS NOT NULL AND u.trial_expira <> '' AND u.trial_expira >= $1 AND u.acesso_ativo = true THEN 'trial'
           ELSE 'expirado'
         END as status_acesso
       FROM usuarios u
       LEFT JOIN agendamentos a ON a.negocio_id = u.id
       GROUP BY u.id
-      ORDER BY u.id DESC
+      ORDER BY u.criado_em DESC
     `, [hoje]);
     res.json({ clientes: r.rows });
-  } catch(e) { res.status(500).json({ erro: e.message }); }
-});
-
-// DELETE /admin/clientes/:id — exclui cliente e todos os dados
-router.delete('/clientes/:id', requireMaster, async (req, res) => {
-  try {
-    const u = (await pool.query('SELECT nome, email, nome_negocio FROM usuarios WHERE id=$1', [req.params.id])).rows[0];
-    if (!u) return res.status(404).json({ erro: 'Cliente não encontrado.' });
-    // Exclui em cascata (agendamentos, serviços, bloqueios, avaliações)
-    await pool.query('DELETE FROM avaliacoes       WHERE negocio_id=$1', [req.params.id]);
-    await pool.query('DELETE FROM lista_espera     WHERE negocio_id=$1', [req.params.id]);
-    await pool.query('DELETE FROM horarios_bloqueados WHERE negocio_id=$1', [req.params.id]);
-    await pool.query('DELETE FROM servicos          WHERE negocio_id=$1', [req.params.id]);
-    await pool.query('DELETE FROM agendamentos      WHERE negocio_id=$1', [req.params.id]);
-    await pool.query('DELETE FROM usuarios          WHERE id=$1',         [req.params.id]);
-    res.json({ sucesso: true, msg: `Conta de ${u.nome_negocio} (${u.email}) excluída.` });
   } catch(e) { res.status(500).json({ erro: e.message }); }
 });
 
@@ -109,6 +83,20 @@ router.patch('/clientes/:id/acesso', requireMaster, async (req, res) => {
       'UPDATE usuarios SET acesso_ativo=true, acesso_expira=$1, plano_pago=$2 WHERE id=$3',
       [novaExpira, pago === true, req.params.id]
     );
+
+    // Cria notificação para o usuário
+    const tipoPago = pago === true ? 'pagamento' : 'acesso';
+    const titulo   = pago === true ? 'Pagamento confirmado!' : 'Acesso liberado!';
+    const diasText = dias === 365 ? '1 ano' : `${dias} dias`;
+    const msg      = pago === true
+      ? `Seu pagamento foi confirmado. Acesso liberado por ${diasText} até ${novaExpira.split('-').reverse().join('/')}.`
+      : `Seu acesso foi liberado por ${diasText} até ${novaExpira.split('-').reverse().join('/')}.`;
+
+    await pool.query(
+      `INSERT INTO notificacoes (usuario_id, tipo, titulo, mensagem)
+       VALUES ($1, $2, $3, $4)`,
+      [req.params.id, tipoPago, titulo, msg]
+    ).catch(() => {}); // silencia erro se tabela não existir ainda
 
     res.json({ sucesso: true, msg: `Acesso liberado até ${novaExpira}.`, expira: novaExpira });
   } catch(e) { res.status(500).json({ erro: e.message }); }

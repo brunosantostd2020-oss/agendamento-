@@ -467,9 +467,11 @@ function var_cor(){
 }
 
 function v1(){
-  const nome=g('nome'),tel=g('telefone');
-  if(!nome){toast('Informe seu nome completo','err');return false;}
-  if(!tel||tel.replace(/\D/g,'').length<10){toast('Informe um WhatsApp válido','err');return false;}
+  const nome=g('nome');
+  const tel=document.getElementById('telefone').value.trim();
+  const telDigitos=tel.replace(/\D/g,'');
+  if(!nome||nome.length<2){toast('Informe seu nome completo','err');return false;}
+  if(!tel||telDigitos.length<8){toast('Informe seu WhatsApp','err');return false;}
   return true;
 }
 function v3(){
@@ -477,7 +479,10 @@ function v3(){
   if(!E.horario){toast('Selecione um horário','err');return false;}
   return true;
 }
-function g(id){return document.getElementById(id).value.trim();}
+function g(id){
+  const el=document.getElementById(id);
+  return el?el.value.trim():'';
+}
 
 function renderCal(){
   document.getElementById('cal-mes').textContent=MESES[E.mes]+' '+E.ano;
@@ -539,8 +544,10 @@ function renderRes(){
   const[ano,mes,dia]=E.data.split('-');
   const dt=new Date(E.data+'T12:00:00');
   const dias=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
-  let html=`<div class="res-linha"><span class="res-k">Nome</span><span class="res-v">${g('nome')}</span></div>
-    <div class="res-linha"><span class="res-k">WhatsApp</span><span class="res-v">${g('telefone')}</span></div>`;
+  const nomeVal=document.getElementById('nome').value.trim();
+  const telVal=document.getElementById('telefone').value.trim();
+  let html=`<div class="res-linha"><span class="res-k">Nome</span><span class="res-v">${nomeVal}</span></div>
+    <div class="res-linha"><span class="res-k">WhatsApp</span><span class="res-v">${telVal}</span></div>`;
   if(E.srvNome)html+=`<div class="res-linha"><span class="res-k">Serviço</span><span class="res-v">${E.srvNome}</span></div>`;
   if(E.srvPreco)html+=`<div class="res-linha"><span class="res-k">Valor</span><span class="res-v res-preco">R$${parseFloat(E.srvPreco).toFixed(2).replace('.',',')}</span></div>`;
   if(E.srvDur)html+=`<div class="res-linha"><span class="res-k">Duração</span><span class="res-v">${E.srvDur} minutos</span></div>`;
@@ -553,7 +560,7 @@ async function confirmar(){
   const btn=document.getElementById('btn-prox');
   btn.disabled=true;btn.textContent='Enviando...';
   try{
-    const r=await fetch('/p/'+slug+'/agendar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nome:g('nome'),email:'',telefone:g('telefone'),servico:E.srvNome,servico_id:E.srvId,preco_servico:E.srvPreco,obs:g('obs'),data:E.data,horario:E.horario})});
+    const r=await fetch('/p/'+slug+'/agendar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nome:document.getElementById('nome').value.trim(),email:'',telefone:document.getElementById('telefone').value.trim(),servico:E.srvNome,servico_id:E.srvId,preco_servico:E.srvPreco,obs:g('obs'),data:E.data,horario:E.horario})});
     const d=await r.json();
     if(!r.ok)throw new Error(d.erro||'Erro');
     ir(5);

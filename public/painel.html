@@ -194,6 +194,43 @@
     .toggle-track{background:var(--borda);border:none;border-radius:999px;width:42px;height:24px;cursor:pointer;position:relative;transition:background 0.2s;flex-shrink:0}
     .toggle-knob{position:absolute;top:3px;left:3px;width:18px;height:18px;background:#fff;border-radius:50%;transition:transform 0.2s;display:block}
     .urg-tag{display:inline-flex;padding:2px 7px;border-radius:999px;font-size:9px;font-weight:700;margin-left:6px;vertical-align:middle}
+
+    /* SINO */
+    .bell-wrap{position:relative}
+    .bell-btn{width:32px;height:32px;border-radius:var(--r);background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;-webkit-tap-highlight-color:transparent;position:relative}
+    .bell-btn:active{opacity:.7}
+    .bell-count{position:absolute;top:-4px;right:-4px;min-width:16px;height:16px;border-radius:999px;background:var(--vm);color:#fff;font-size:9px;font-weight:800;display:none;align-items:center;justify-content:center;padding:0 4px;border:2px solid var(--nicho)}
+    .bell-count.show{display:flex}
+    .notif-dropdown{
+      display:none;position:fixed;top:calc(var(--st) + 58px);right:12px;
+      width:calc(100vw - 24px);max-width:380px;
+      background:var(--card);border:1px solid var(--borda);border-radius:var(--r);
+      box-shadow:0 8px 32px rgba(0,0,0,0.3);z-index:200;overflow:hidden;
+      animation:fadeDown .2s ease;
+    }
+    .notif-dropdown.open{display:block}
+    @keyframes fadeDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+    .nd-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--borda)}
+    .nd-titulo{font-size:13px;font-weight:700;color:var(--preto);letter-spacing:-.1px}
+    .nd-clear{font-size:11px;color:var(--muted);cursor:pointer;font-weight:500;-webkit-tap-highlight-color:transparent}
+    .nd-clear:active{opacity:.6}
+    .nd-lista{max-height:340px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+    .nd-item{padding:13px 16px;border-bottom:1px solid var(--borda);cursor:pointer;transition:background .15s;-webkit-tap-highlight-color:transparent}
+    .nd-item:last-child{border-bottom:none}
+    .nd-item:hover{background:var(--cinza)}
+    .nd-item.nao-lida{background:color-mix(in srgb,var(--azul) 5%,var(--card))}
+    [data-theme="dark"] .nd-item.nao-lida{background:rgba(59,130,246,.07)}
+    .nd-item-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:3px}
+    .nd-item-titulo{font-size:13px;font-weight:700;color:var(--preto);letter-spacing:-.1px;flex:1}
+    .nd-item-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:3px}
+    .nd-item-dot.pagamento{background:var(--verde)}
+    .nd-item-dot.acesso{background:var(--azul)}
+    .nd-item-dot.info{background:var(--muted)}
+    .nd-item-msg{font-size:12px;color:var(--muted);font-weight:400;line-height:1.5}
+    .nd-item-hora{font-size:10px;color:var(--muted);font-weight:400;margin-top:4px}
+    .nd-empty{text-align:center;padding:32px 20px;font-size:13px;color:var(--muted);font-weight:400}
+    .nd-footer{padding:10px 16px;border-top:1px solid var(--borda);text-align:center}
+    .nd-footer span{font-size:11px;color:var(--muted);font-weight:500}
     .urg-r{background:#fef2f2;color:var(--vermelho);border:1px solid #fecaca}
     .urg-y{background:#fff7ed;color:var(--laranja);border:1px solid #fed7aa}
   </style>
@@ -447,6 +484,90 @@ const STATUS_INFO={
 
 let U=null, dark=false, srvId=null, filtro='';
 
+// ── NOTIFICAÇÕES ──
+let notifAberto = false;
+
+async function carregarNotifs() {
+  try {
+    const r = await fetch('/negocio/notificacoes', { credentials: 'include' });
+    const d = await r.json();
+    const count = document.getElementById('bell-count');
+    const lista  = document.getElementById('nd-lista');
+    const footer = document.getElementById('nd-footer-txt');
+
+    if (d.nao_lidas > 0) {
+      count.textContent = d.nao_lidas > 9 ? '9+' : d.nao_lidas;
+      count.classList.add('show');
+    } else {
+      count.classList.remove('show');
+    }
+
+    if (!d.notificacoes || !d.notificacoes.length) {
+      lista.innerHTML = '<div class="nd-empty">Nenhuma notificação</div>';
+      footer.textContent = '';
+      return;
+    }
+
+    footer.textContent = d.notificacoes.length + ' notificação(ões)';
+
+    lista.innerHTML = d.notificacoes.map(n => {
+      const dt = new Date(n.criado_em);
+      const agora = new Date();
+      const diffMin = Math.floor((agora - dt) / 60000);
+      let horaFmt;
+      if (diffMin < 1)        horaFmt = 'Agora mesmo';
+      else if (diffMin < 60)  horaFmt = `${diffMin} min atrás`;
+      else if (diffMin < 1440) horaFmt = `${Math.floor(diffMin/60)}h atrás`;
+      else horaFmt = dt.toLocaleDateString('pt-BR', { day:'2-digit', month:'2-digit', year:'2-digit' });
+
+      return `<div class="nd-item${n.lida ? '' : ' nao-lida'}" onclick="marcarLida('${n.id}',this)">
+        <div class="nd-item-top">
+          <span class="nd-item-titulo">${n.titulo}</span>
+          <span class="nd-item-dot ${n.tipo}"></span>
+        </div>
+        <div class="nd-item-msg">${n.mensagem}</div>
+        <div class="nd-item-hora">${horaFmt}</div>
+      </div>`;
+    }).join('');
+  } catch(e) {}
+}
+
+async function toggleNotif() {
+  notifAberto = !notifAberto;
+  const dd = document.getElementById('notif-dropdown');
+  dd.classList.toggle('open', notifAberto);
+  if (notifAberto) {
+    await carregarNotifs();
+    // Marca todas como lidas após 2s
+    setTimeout(async () => {
+      await fetch('/negocio/notificacoes/lidas', { method: 'PATCH', credentials: 'include' });
+      document.getElementById('bell-count').classList.remove('show');
+    }, 2000);
+  }
+}
+
+async function marcarLida(id, el) {
+  el.classList.remove('nao-lida');
+  await fetch(`/negocio/notificacoes/${id}/lida`, { method: 'PATCH', credentials: 'include' }).catch(()=>{});
+}
+
+async function limparNotifs() {
+  try {
+    await fetch('/negocio/notificacoes', { method: 'DELETE', credentials: 'include' });
+    document.getElementById('nd-lista').innerHTML = '<div class="nd-empty">Nenhuma notificação</div>';
+    document.getElementById('bell-count').classList.remove('show');
+    document.getElementById('nd-footer-txt').textContent = '';
+  } catch(e) {}
+}
+
+// Fecha dropdown ao clicar fora
+document.addEventListener('click', (e) => {
+  if (notifAberto && !e.target.closest('.bell-wrap')) {
+    notifAberto = false;
+    document.getElementById('notif-dropdown').classList.remove('open');
+  }
+});
+
 // ── DARK MODE ──
 function toggleDark(){
   dark=!dark;
@@ -495,7 +616,9 @@ async function init(){
 
     carregarDash();
     checkNotif();
+    carregarNotifs();
     setInterval(checkNotif,60000);
+    setInterval(carregarNotifs,120000); // Verifica notifs a cada 2 min
   }catch(e){location.href='/login';}
 }
 

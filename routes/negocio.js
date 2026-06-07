@@ -59,7 +59,7 @@ router.get('/agendamentos/hoje', requireAuth, async (req, res) => {
 // PATCH /negocio/agendamentos/:id/status
 router.patch('/agendamentos/:id/status', requireAuth, async (req, res) => {
   const { status, obs } = req.body;
-  const statusValidos = ['pendente','confirmado','cancelado','concluido','reagendado'];
+  const statusValidos = ['pendente','confirmado','cancelado','concluido'];
   if (!statusValidos.includes(status)) return res.status(400).json({ erro: 'Status inválido.' });
   try {
     const agora = new Date().toLocaleString('pt-BR');
@@ -162,3 +162,47 @@ router.delete('/bloqueados/:id', requireAuth, async (req, res) => {
 });
 
 module.exports = router;
+
+// ── NOTIFICAÇÕES ──────────────────────────────────────────────
+
+// GET /negocio/notificacoes
+router.get('/notificacoes', requireAuth, async (req, res) => {
+  try {
+    const r = await pool.query(
+      'SELECT * FROM notificacoes WHERE usuario_id=$1 ORDER BY criado_em DESC LIMIT 30',
+      [req.session.userId]
+    );
+    const naoLidas = r.rows.filter(n => !n.lida).length;
+    res.json({ notificacoes: r.rows, nao_lidas: naoLidas });
+  } catch(e) { res.status(500).json({ erro: e.message }); }
+});
+
+// PATCH /negocio/notificacoes/lidas — marca todas como lidas
+router.patch('/notificacoes/lidas', requireAuth, async (req, res) => {
+  try {
+    await pool.query(
+      'UPDATE notificacoes SET lida=true WHERE usuario_id=$1',
+      [req.session.userId]
+    );
+    res.json({ sucesso: true });
+  } catch(e) { res.status(500).json({ erro: e.message }); }
+});
+
+// PATCH /negocio/notificacoes/:id/lida — marca uma como lida
+router.patch('/notificacoes/:id/lida', requireAuth, async (req, res) => {
+  try {
+    await pool.query(
+      'UPDATE notificacoes SET lida=true WHERE id=$1 AND usuario_id=$2',
+      [req.params.id, req.session.userId]
+    );
+    res.json({ sucesso: true });
+  } catch(e) { res.status(500).json({ erro: e.message }); }
+});
+
+// DELETE /negocio/notificacoes — limpa todas
+router.delete('/notificacoes', requireAuth, async (req, res) => {
+  try {
+    await pool.query('DELETE FROM notificacoes WHERE usuario_id=$1', [req.session.userId]);
+    res.json({ sucesso: true });
+  } catch(e) { res.status(500).json({ erro: e.message }); }
+});
