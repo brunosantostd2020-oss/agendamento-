@@ -38,6 +38,7 @@ app.use('/admin',    require('./routes/admin'));
 
 app.get('/cadastro',          (req, res) => res.sendFile(path.join(__dirname, 'public', 'cadastro.html')));
 app.get('/login',             (req, res) => res.sendFile(path.join(__dirname, 'public', 'login.html')));
+app.get('/recuperar-senha',   (req, res) => res.sendFile(path.join(__dirname, 'public', 'login.html')));
 app.get('/painel',            (req, res) => res.sendFile(path.join(__dirname, 'public', 'painel.html')));
 app.get('/agendar/:slug',     (req, res) => res.sendFile(path.join(__dirname, 'public', 'agendar.html')));
 app.get('/cancelar/:token',   (req, res) => res.sendFile(path.join(__dirname, 'public', 'cancelar.html')));

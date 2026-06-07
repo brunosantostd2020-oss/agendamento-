@@ -264,11 +264,12 @@ label{display:block;font-size:13px;font-weight:600;color:#334155;margin-bottom:8
       <div class="field">
         <div class="field-row">
           <label for="senha">Senha</label>
+          <a href="/recuperar-senha" class="muted-link">Esqueci minha senha</a>
         </div>
         <div class="input-wrap">
           <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
           <input type="password" id="senha" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')entrar()"/>
-          <button type="button" class="ghost-btn" id="toggle-pw">
+          <button type="button" class="ghost-btn" id="toggle-pw" aria-label="Mostrar senha">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" id="eye-ico">
               <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/>
               <circle cx="12" cy="12" r="3"/>
@@ -306,10 +307,20 @@ label{display:block;font-size:13px;font-weight:600;color:#334155;margin-bottom:8
 </div>
 
 <script>
-// Toggle senha
-document.getElementById('toggle-pw').addEventListener('click', function() {
-  const inp = document.getElementById('senha');
-  inp.type = inp.type === 'password' ? 'text' : 'password';
+// Toggle senha — troca ícone entre olho aberto e fechado
+const togglePw  = document.getElementById('toggle-pw');
+const eyeIco    = document.getElementById('eye-ico');
+
+const EYE_OPEN   = '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/>';
+const EYE_CLOSED = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>';
+
+togglePw.addEventListener('click', function () {
+  const inp     = document.getElementById('senha');
+  const visible = inp.type === 'text';
+  inp.type      = visible ? 'password' : 'text';
+  eyeIco.innerHTML = visible ? EYE_OPEN : EYE_CLOSED;
+  togglePw.setAttribute('aria-label', visible ? 'Mostrar senha' : 'Ocultar senha');
+  inp.focus();
 });
 
 async function entrar() {
@@ -322,11 +333,13 @@ async function entrar() {
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     erro.textContent = 'Informe um e-mail válido.';
     erro.classList.add('show');
+    document.getElementById('email').focus();
     return;
   }
   if (!senha || senha.length < 6) {
     erro.textContent = 'A senha deve ter pelo menos 6 caracteres.';
     erro.classList.add('show');
+    document.getElementById('senha').focus();
     return;
   }
 
@@ -345,7 +358,12 @@ async function entrar() {
       erro.classList.add('show');
       return;
     }
-    window.location.replace('/painel');
+    // Admin vai para /master, usuário normal vai para /painel
+    if (d.isAdmin) {
+      window.location.replace('/master');
+    } else {
+      window.location.replace('/painel');
+    }
   } catch(e) {
     erro.textContent = 'Erro de conexão. Tente novamente.';
     erro.classList.add('show');
