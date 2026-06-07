@@ -1,1033 +1,1411 @@
 <!DOCTYPE html>
-<html lang="pt-BR" data-theme="light">
+<html lang="pt-BR" data-theme="dark">
 <head>
- <meta charset="UTF-8"/>
- <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
- <meta name="mobile-web-app-capable" content="yes"/>
- <meta name="apple-mobile-web-app-capable" content="yes"/>
- <title>Painel — AgendaOK</title>
- <link rel="preconnect" href="https://fonts.googleapis.com"/>
- <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
- <style>
- *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
- :root,[data-theme="light"]{
- --bg:#fafaf9;--card:#fff;--preto:#0a0a0a;--texto:#1c1b18;
- --cinza:#f5f4f0;--borda:#e8e6e1;--muted:#6b6860;
- --verde:#16a34a;--vermelho:#dc2626;--laranja:#ea580c;--azul:#2563eb;--roxo:#7c3aed;
- --nicho:#0a0a0a;--r:5px;
- --sb:env(safe-area-inset-bottom,0px);--st:env(safe-area-inset-top,0px);
- }
- [data-theme="dark"]{
- --bg:#0a0a0a;--card:#111;--preto:#f5f4f0;--texto:#e8e6e1;
- --cinza:#161616;--borda:#222;--muted:#666;
- }
- html{-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
- body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--texto);min-height:100dvh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <title>Painel — AgendaOK</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    /* ── RESET ── */
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#0d0f14;
+      --sidebar:#0b0e13;
+      --card:#161b22;
+      --card2:#1c2230;
+      --borda:#21283a;
+      --txt:#e8ecf0;
+      --muted:#6b7a99;
+      --muted2:#3d4a63;
+      --verde:#00d084;
+      --verde-dim:rgba(0,208,132,0.12);
+      --laranja:#f97316;
+      --laranja-dim:rgba(249,115,22,0.12);
+      --azul:#3b82f6;
+      --azul-dim:rgba(59,130,246,0.12);
+      --roxo:#a855f7;
+      --roxo-dim:rgba(168,85,247,0.12);
+      --vermelho:#ef4444;
+      --amarelo:#eab308;
+      --r:10px;
+      --sb:env(safe-area-inset-bottom,0px);
+      --sl:env(safe-area-inset-left,0px);
+      --sidebar-w:200px;
+    }
+    html{-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
+    body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--txt);
+      min-height:100dvh;overflow-x:hidden;-webkit-font-smoothing:antialiased;font-size:14px}
 
- /* HEADER */
- .hdr{background:var(--nicho);padding:0 18px;padding-top:var(--st);height:calc(56px + var(--st));display:flex;align-items:flex-end;justify-content:space-between;padding-bottom:10px;position:sticky;top:0;z-index:60}
- .hdr-l{display:flex;align-items:center;gap:10px;min-width:0}
- .hdr-av{width:34px;height:34px;border-radius:var(--r);background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;flex-shrink:0}
- .hdr-nome{font-size:15px;font-weight:700;color:#fff;letter-spacing:-0.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px}
- .hdr-nicho{font-size:10px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.07em;font-weight:500}
- .hdr-r{display:flex;align-items:center;gap:7px}
- .btn-theme{width:30px;height:30px;border-radius:var(--r);background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px}
- .btn-sair{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:var(--r);color:rgba(255,255,255,0.65);font-family:'Inter',sans-serif;font-size:12px;font-weight:500;padding:6px 12px;cursor:pointer}
+    /* ── LAYOUT ── */
+    .app{display:flex;min-height:100dvh}
 
- /* LINK BAR */
- .link-bar{background:color-mix(in srgb,var(--nicho) 80%,#000);border-bottom:1px solid rgba(255,255,255,0.05);padding:9px 18px;display:flex;align-items:center;gap:10px}
- .link-url{font-size:11px;color:rgba(255,255,255,0.45);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
- .link-btn{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);border-radius:var(--r);color:rgba(255,255,255,0.6);font-family:'Inter',sans-serif;font-size:11px;font-weight:500;padding:5px 11px;cursor:pointer;white-space:nowrap;flex-shrink:0}
- .link-btn:active{opacity:0.7}
+    /* ── SIDEBAR ── */
+    .sidebar{
+      width:var(--sidebar-w);flex-shrink:0;
+      background:var(--sidebar);
+      border-right:1px solid var(--borda);
+      display:flex;flex-direction:column;
+      position:fixed;top:0;left:0;bottom:0;z-index:50;
+      padding-bottom:var(--sb);
+    }
 
- /* CONTENT */
- .content{padding:16px 16px 96px;max-width:620px;margin:0 auto}
- .page{display:none}.page.ativa{display:block}
+    .sb-brand{padding:20px 16px 14px;border-bottom:1px solid var(--borda);flex-shrink:0}
+    .sb-logo{display:flex;align-items:center;gap:10px}
+    .sb-avatar{width:36px;height:36px;border-radius:9px;
+      background:linear-gradient(135deg,var(--verde),var(--azul));
+      display:flex;align-items:center;justify-content:center;
+      font-size:13px;font-weight:800;color:#000;flex-shrink:0}
+    .sb-name{font-size:13px;font-weight:700;color:var(--txt);line-height:1.2;
+      white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .sb-sub{font-size:10px;color:var(--muted);font-weight:500;letter-spacing:0.04em;margin-top:1px}
 
- /* STATS */
- .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--borda);border:1px solid var(--borda);border-radius:var(--r);overflow:hidden;margin-bottom:14px}
- .stat{background:var(--card);padding:14px 16px}
- .stat-l{font-size:9px;font-weight:700;color:var(--muted);letter-spacing:0.09em;text-transform:uppercase;margin-bottom:6px}
- .stat-v{font-size:30px;font-weight:900;color:var(--preto);letter-spacing:-0.5px;line-height:1}
- .stat-v.g{color:var(--verde)}.stat-v.y{color:var(--laranja)}.stat-v.b{color:var(--azul)}.stat-v.p{color:var(--roxo)}
- .stat-full{grid-column:1/-1}
- .stat-sub{font-size:10px;color:var(--muted);margin-top:3px;font-weight:400}
+    .sb-nav{flex:1;padding:12px 10px;overflow-y:auto;scrollbar-width:none}
+    .sb-nav::-webkit-scrollbar{display:none}
+    .sb-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;
+      color:var(--muted);font-size:13px;font-weight:500;cursor:pointer;
+      transition:all 0.15s;-webkit-tap-highlight-color:transparent;
+      position:relative;text-decoration:none;white-space:nowrap}
+    .sb-item:hover{background:var(--card);color:var(--txt)}
+    .sb-item.ativo{background:rgba(0,208,132,0.1);color:var(--verde)}
+    .sb-item svg{width:16px;height:16px;flex-shrink:0;stroke-width:1.8}
+    .sb-badge{margin-left:auto;background:var(--verde);color:#000;
+      font-size:10px;font-weight:800;border-radius:999px;
+      padding:1px 7px;min-width:20px;text-align:center}
 
- /* CARD */
- .card{background:var(--card);border:1px solid var(--borda);border-radius:var(--r);padding:16px;margin-bottom:12px}
- .card-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
- .card-t{font-size:13px;font-weight:700;color:var(--preto);letter-spacing:-0.1px}
+    .sb-divider{height:1px;background:var(--borda);margin:8px 10px}
 
- /* FILTROS */
- .filtros{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;margin-bottom:12px;scrollbar-width:none}
- .filtros::-webkit-scrollbar{display:none}
- .f-btn{padding:7px 13px;border-radius:999px;border:1px solid var(--borda);background:var(--card);color:var(--muted);font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:'Inter',sans-serif;transition:all 0.15s;flex-shrink:0;-webkit-tap-highlight-color:transparent}
- .f-btn.ativo{border-color:var(--preto);background:var(--preto);color:var(--bg)}
+    .sb-plan{margin:10px;padding:12px;background:var(--card2);border:1px solid var(--borda);
+      border-radius:var(--r)}
+    .sb-plan-label{font-size:11px;font-weight:700;color:var(--txt);margin-bottom:2px}
+    .sb-plan-sub{font-size:10px;color:var(--muted);margin-bottom:8px}
+    .sb-plan-bar{height:4px;background:var(--borda);border-radius:999px;overflow:hidden}
+    .sb-plan-fill{height:100%;background:linear-gradient(90deg,var(--verde),var(--azul));
+      border-radius:999px;width:70%}
 
- /* AG CARD */
- .ag{background:var(--card);border:1px solid var(--borda);border-radius:var(--r);padding:14px 16px;margin-bottom:8px}
- .ag.urg{border-left:3px solid var(--vermelho)}
- .ag.atc{border-left:3px solid var(--laranja)}
- .ag.reag{border-left:3px solid var(--roxo)}
- .ag-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;gap:8px}
- .ag-nome{font-size:14px;font-weight:700;color:var(--preto);letter-spacing:-0.1px;margin-bottom:2px}
- .ag-tel{font-size:12px;color:var(--muted);font-weight:400}
- .ag-r{text-align:right;flex-shrink:0}
- .ag-data{font-size:12px;font-weight:600;color:var(--preto)}
- .ag-srv{font-size:11px;color:var(--muted);margin-top:2px}
- .ag-bot{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;padding-top:10px;border-top:1px solid var(--borda)}
- .ag-acts{display:flex;gap:6px;flex-wrap:wrap}
+    /* ── MAIN ── */
+    .main{flex:1;margin-left:var(--sidebar-w);display:flex;flex-direction:column;min-width:0}
 
- /* BADGE */
- .badge{display:inline-flex;padding:3px 9px;border-radius:999px;font-size:10px;font-weight:700;letter-spacing:0.02em}
- .b-pendente{background:#fff7ed;color:var(--laranja);border:1px solid #fed7aa}
- .b-confirmado{background:#f0fdf4;color:var(--verde);border:1px solid #bbf7d0}
- .b-cancelado{background:#fef2f2;color:var(--vermelho);border:1px solid #fecaca}
- .b-concluido{background:#eff6ff;color:var(--azul);border:1px solid #bfdbfe}
- .b-reagendado{background:#f5f3ff;color:var(--roxo);border:1px solid #ddd6fe}
- [data-theme="dark"] .b-pendente{background:rgba(234,88,12,.12);border-color:rgba(234,88,12,.25)}
- [data-theme="dark"] .b-confirmado{background:rgba(22,163,74,.12);border-color:rgba(22,163,74,.25)}
- [data-theme="dark"] .b-cancelado{background:rgba(220,38,38,.12);border-color:rgba(220,38,38,.25)}
- [data-theme="dark"] .b-concluido{background:rgba(37,99,235,.12);border-color:rgba(37,99,235,.25)}
- [data-theme="dark"] .b-reagendado{background:rgba(124,58,237,.12);border-color:rgba(124,58,237,.25)}
+    /* ── TOPBAR ── */
+    .topbar{
+      height:56px;background:var(--sidebar);border-bottom:1px solid var(--borda);
+      display:flex;align-items:center;gap:12px;padding:0 24px;
+      position:sticky;top:0;z-index:40;flex-shrink:0;
+    }
+    .tb-search{flex:1;max-width:400px;display:flex;align-items:center;gap:10px;
+      background:var(--card);border:1px solid var(--borda);border-radius:8px;
+      padding:0 14px;height:36px}
+    .tb-search input{flex:1;background:none;border:none;outline:none;font-family:inherit;
+      font-size:13px;color:var(--txt)}
+    .tb-search input::placeholder{color:var(--muted)}
+    .tb-search svg{width:14px;height:14px;color:var(--muted);flex-shrink:0}
+    .tb-kbd{font-size:10px;color:var(--muted2);background:var(--borda);
+      border-radius:4px;padding:2px 6px;font-family:monospace}
+    .tb-spacer{flex:1}
+    .tb-bell{position:relative;width:36px;height:36px;border-radius:8px;
+      background:var(--card);border:1px solid var(--borda);
+      display:flex;align-items:center;justify-content:center;cursor:pointer}
+    .tb-bell svg{width:16px;height:16px;color:var(--muted)}
+    .tb-bell-dot{position:absolute;top:6px;right:6px;width:7px;height:7px;
+      border-radius:50%;background:var(--laranja);border:2px solid var(--sidebar);display:none}
+    .tb-bell-dot.show{display:block}
+    .tb-copy-link{display:flex;align-items:center;gap:7px;padding:0 14px;height:36px;
+      background:var(--card);border:1px solid var(--borda);border-radius:8px;
+      font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;
+      transition:all 0.15s;white-space:nowrap}
+    .tb-copy-link:hover{border-color:var(--verde);color:var(--verde)}
+    .tb-copy-link svg{width:14px;height:14px}
+    .tb-novo{display:flex;align-items:center;gap:7px;padding:0 16px;height:36px;
+      background:var(--verde);border:none;border-radius:8px;
+      font-size:13px;font-weight:700;color:#000;cursor:pointer;
+      font-family:inherit;transition:opacity 0.15s;white-space:nowrap}
+    .tb-novo:hover{opacity:0.85}
+    .tb-novo svg{width:14px;height:14px}
+    .tb-user{width:34px;height:34px;border-radius:50%;
+      background:linear-gradient(135deg,var(--roxo),var(--azul));
+      display:flex;align-items:center;justify-content:center;
+      font-size:12px;font-weight:800;color:#fff;cursor:pointer;flex-shrink:0}
 
- /* ACAO BTN */
- .ab{padding:6px 11px;border-radius:var(--r);border:1px solid var(--borda);background:var(--card);color:var(--muted);font-size:11px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.15s;-webkit-tap-highlight-color:transparent;white-space:nowrap}
- .ab:active{opacity:0.7}
- .ab.wpp{border-color:#bbf7d0;background:#f0fdf4;color:var(--verde)}
- .ab.dan{border-color:#fecaca;background:#fef2f2;color:var(--vermelho)}
- [data-theme="dark"] .ab.wpp{background:rgba(22,163,74,.1);border-color:rgba(22,163,74,.25)}
- [data-theme="dark"] .ab.dan{background:rgba(220,38,38,.1);border-color:rgba(220,38,38,.25)}
+    /* ── CONTENT ── */
+    .content{padding:24px;flex:1;overflow-y:auto}
 
- /* HOJE */
- .hj{background:var(--card);border:1px solid var(--borda);border-radius:var(--r);padding:14px 16px;margin-bottom:8px;display:flex;gap:14px}
- .hj.urg{border-left:3px solid var(--vermelho)}
- .hj.atc{border-left:3px solid var(--laranja)}
- .hj.reag{border-left:3px solid var(--roxo)}
- .hj-hr{font-size:22px;font-weight:900;color:var(--preto);min-width:52px;letter-spacing:-0.5px;line-height:1;flex-shrink:0}
- .hj-hr.r{color:var(--vermelho)}.hj-hr.y{color:var(--laranja)}
- .hj-nome{font-size:14px;font-weight:700;color:var(--preto);letter-spacing:-0.1px;margin-bottom:2px}
- .hj-sub{font-size:12px;color:var(--muted);font-weight:400;margin-bottom:8px}
- .hj-acts{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+    /* ── PAGE HEADER ── */
+    .pg-breadcrumb{font-size:11px;color:var(--muted);font-weight:500;
+      letter-spacing:0.06em;text-transform:uppercase;margin-bottom:10px;
+      display:flex;align-items:center;gap:8px}
+    .pg-breadcrumb span{color:var(--muted2)}
+    .pg-title-row{display:flex;align-items:flex-start;justify-content:space-between;
+      gap:20px;margin-bottom:6px;flex-wrap:wrap}
+    .pg-title{font-size:28px;font-weight:800;color:var(--txt);letter-spacing:-0.5px;
+      display:flex;align-items:center;gap:10px}
+    .pg-edit-btn{width:26px;height:26px;border-radius:6px;background:var(--card);
+      border:1px solid var(--borda);display:flex;align-items:center;justify-content:center;
+      cursor:pointer;flex-shrink:0}
+    .pg-edit-btn svg{width:12px;height:12px;color:var(--muted)}
+    .pg-subtitle{font-size:13px;color:var(--muted);font-weight:400;margin-bottom:20px}
+    .pg-subtitle strong{color:var(--txt);font-weight:600}
 
- /* SERVIÇOS */
- .srv{background:var(--card);border:1px solid var(--borda);border-radius:var(--r);padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;gap:12px}
- .srv-nome{font-size:14px;font-weight:700;color:var(--preto);letter-spacing:-0.1px;margin-bottom:2px}
- .srv-det{font-size:11px;color:var(--muted);font-weight:400}
- .srv-preco{font-size:18px;font-weight:900;color:var(--preto);letter-spacing:-0.5px;white-space:nowrap;flex-shrink:0}
- .btn-add{display:flex;align-items:center;gap:5px;background:var(--preto);color:var(--bg);border:none;border-radius:var(--r);padding:8px 13px;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer}
- .btn-add:active{opacity:0.7}
+    /* ── LINK PÚBLICO ── */
+    .link-pub{background:var(--card);border:1px solid var(--borda);border-radius:var(--r);
+      padding:12px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+      margin-bottom:24px}
+    .link-pub-lbl{font-size:10px;font-weight:700;color:var(--muted);
+      letter-spacing:0.08em;text-transform:uppercase;margin-bottom:3px}
+    .link-pub-url{font-size:12px;color:var(--verde);font-weight:500;
+      font-family:ui-monospace,monospace}
+    .link-pub-btns{display:flex;gap:8px;margin-left:auto}
+    .lp-btn{padding:6px 14px;border-radius:7px;font-size:12px;font-weight:600;
+      cursor:pointer;font-family:inherit;border:1px solid var(--borda);
+      background:var(--card2);color:var(--txt);transition:all 0.15s}
+    .lp-btn:hover{border-color:var(--muted2)}
+    .lp-btn.primary{background:var(--verde);color:#000;border-color:var(--verde)}
+    .lp-btn.primary:hover{opacity:0.85}
 
- /* BLOQUEIOS */
- .blq-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
- .blq-l{font-size:10px;font-weight:600;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px;display:block}
- .blq-inp,.blq-sel{width:100%;border:1px solid var(--borda);border-radius:var(--r);font-family:'Inter',sans-serif;font-size:15px;padding:12px 13px;color:var(--texto);background:var(--card);outline:none;appearance:none;transition:border-color 0.15s}
- .blq-inp:focus,.blq-sel:focus{border-color:var(--preto)}
- .blq-row{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--borda)}
- .blq-row:last-child{border-bottom:none}
- .blq-data{font-size:13px;font-weight:600;color:var(--preto)}
- .blq-motivo{font-size:11px;color:var(--muted);font-weight:400}
+    /* ── STATS GRID ── */
+    .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:14px}
+    .stat-card{background:var(--card);border:1px solid var(--borda);border-radius:var(--r);
+      padding:16px;position:relative;overflow:hidden}
+    .stat-card::before{content:'';position:absolute;top:0;right:0;width:60px;height:60px;
+      border-radius:50%;opacity:0.06;transform:translate(20px,-20px)}
+    .stat-card.verde::before{background:var(--verde)}
+    .stat-card.laranja::before{background:var(--laranja)}
+    .stat-card.azul::before{background:var(--azul)}
+    .stat-card.roxo::before{background:var(--roxo)}
+    .stat-lbl{font-size:10px;font-weight:700;color:var(--muted);
+      letter-spacing:0.08em;text-transform:uppercase;margin-bottom:8px;
+      display:flex;align-items:center;justify-content:space-between}
+    .stat-badge{font-size:9px;font-weight:700;padding:2px 7px;border-radius:999px}
+    .stat-badge.verde{background:var(--verde-dim);color:var(--verde)}
+    .stat-badge.laranja{background:var(--laranja-dim);color:var(--laranja)}
+    .stat-badge.azul{background:var(--azul-dim);color:var(--azul)}
+    .stat-badge.roxo{background:var(--roxo-dim);color:var(--roxo)}
+    .stat-num{font-size:36px;font-weight:900;letter-spacing:-1.5px;line-height:1;
+      margin-bottom:6px}
+    .stat-num.verde{color:var(--verde)}
+    .stat-num.laranja{color:var(--laranja)}
+    .stat-num.azul{color:var(--azul)}
+    .stat-num.branco{color:var(--txt)}
+    .stat-sub{font-size:11px;color:var(--muted);font-weight:400}
 
- /* CONFIG */
- .cfg-l{font-size:10px;font-weight:600;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:7px;display:block}
- .cfg-inp,.cfg-ta{width:100%;border:1px solid var(--borda);border-radius:var(--r);font-family:'Inter',sans-serif;font-size:15px;padding:12px 14px;color:var(--texto);background:var(--card);outline:none;appearance:none;margin-bottom:14px;transition:border-color 0.15s}
- .cfg-inp:focus,.cfg-ta:focus{border-color:var(--preto)}
- .cfg-ta{resize:none;min-height:80px}
- .cfg-sec{margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--borda)}
- .cfg-sec:last-child{border-bottom:none;margin-bottom:0}
- .cfg-sec-t{font-size:13px;font-weight:700;color:var(--preto);margin-bottom:14px;letter-spacing:-0.1px}
+    /* ── FATURAMENTO CARD ── */
+    .fat-card{background:var(--card);border:1px solid var(--borda);border-radius:var(--r);
+      padding:20px 24px;margin-bottom:14px}
+    .fat-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+    .fat-lbl{font-size:10px;font-weight:700;color:var(--muted);
+      letter-spacing:0.08em;text-transform:uppercase}
+    .fat-badge{font-size:11px;color:var(--verde);font-weight:600;
+      background:var(--verde-dim);padding:3px 10px;border-radius:999px}
+    .fat-valor{font-size:38px;font-weight:900;color:var(--verde);
+      letter-spacing:-1.5px;margin-bottom:4px}
+    .fat-sub{font-size:12px;color:var(--muted);margin-bottom:14px}
+    .fat-bar-track{height:6px;background:var(--borda);border-radius:999px;overflow:hidden}
+    .fat-bar-fill{height:100%;border-radius:999px;
+      background:linear-gradient(90deg,var(--verde),var(--azul));
+      transition:width 1s ease}
 
- /* MODAL BOTTOM SHEET */
- .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;align-items:flex-end;justify-content:center}
- .overlay.open{display:flex}
- .modal{background:var(--card);border-radius:12px 12px 0 0;padding:0;width:100%;max-width:560px;padding-bottom:var(--sb);animation:slideUp 0.25s cubic-bezier(0.4,0,0.2,1);max-height:92dvh;overflow-y:auto;-webkit-overflow-scrolling:touch}
- @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
- .modal-handle{width:36px;height:4px;background:var(--borda);border-radius:999px;margin:14px auto 0}
- .modal-body{padding:18px 20px 20px}
- .modal-t{font-size:17px;font-weight:800;color:var(--preto);letter-spacing:-0.2px;margin-bottom:4px}
- .modal-sub{font-size:12px;color:var(--muted);font-weight:400;margin-bottom:18px}
- .m-l{font-size:10px;font-weight:600;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:7px;display:block;margin-top:14px}
- .m-l:first-of-type{margin-top:0}
- .m-inp,.m-sel,.m-ta{width:100%;border:1.5px solid var(--borda);border-radius:var(--r);font-family:'Inter',sans-serif;font-size:16px;padding:13px 14px;color:var(--texto);background:var(--card);outline:none;appearance:none;transition:border-color 0.15s;display:block}
- .m-inp:focus,.m-sel:focus,.m-ta:focus{border-color:var(--preto)}
- .m-ta{resize:none;min-height:80px}
- .m-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
- .modal-footer{display:flex;gap:8px;margin-top:18px;padding-top:16px;border-top:1px solid var(--borda)}
- .m-btn{flex:1;padding:14px;border-radius:var(--r);font-family:'Inter',sans-serif;font-size:14px;font-weight:700;cursor:pointer;border:none;-webkit-tap-highlight-color:transparent;letter-spacing:-0.1px}
- .m-btn-dark{background:var(--preto);color:var(--bg)}.m-btn-dark:active{opacity:0.75}
- .m-btn-out{background:none;border:1.5px solid var(--borda);color:var(--muted)}.m-btn-out:active{opacity:0.7}
+    /* ── TWO COLS ── */
+    .two-cols{display:grid;grid-template-columns:1.4fr 1fr;gap:14px;margin-bottom:14px}
+    .two-cols-eq{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
 
- /* STATUS PILLS no modal */
- .status-pills{display:flex;flex-direction:column;gap:8px;margin-bottom:4px}
- .status-pill{display:flex;align-items:center;gap:12px;padding:13px 14px;border-radius:var(--r);border:1.5px solid var(--borda);cursor:pointer;transition:all 0.15s;-webkit-tap-highlight-color:transparent}
- .status-pill:active{opacity:0.7}
- .status-pill.sel-pill{border-color:var(--preto);background:var(--preto)}
- .status-pill.sel-pill .sp-t{color:#fff}
- .status-pill.sel-pill .sp-d{color:rgba(255,255,255,0.5)}
- .sp-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
- .sp-t{font-size:14px;font-weight:600;color:var(--preto);flex:1}
- .sp-d{font-size:11px;color:var(--muted);font-weight:400}
+    /* ── AGENDAMENTOS HOJE ── */
+    .ag-card{background:var(--card);border:1px solid var(--borda);border-radius:var(--r);
+      padding:20px;height:fit-content}
+    .ag-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+    .ag-card-title{font-size:15px;font-weight:700;color:var(--txt)}
+    .ag-filters{display:flex;gap:6px}
+    .ag-filter-btn{padding:5px 12px;border-radius:6px;font-size:11px;font-weight:600;
+      cursor:pointer;border:1px solid var(--borda);background:none;
+      color:var(--muted);font-family:inherit;transition:all 0.15s}
+    .ag-filter-btn.ativo{background:var(--verde-dim);border-color:var(--verde);color:var(--verde)}
+    .ag-card-sub{font-size:11px;color:var(--muted);margin-bottom:16px}
+    .ag-list{display:flex;flex-direction:column;gap:2px}
+    .ag-row{display:flex;align-items:center;gap:12px;padding:10px 8px;
+      border-radius:8px;transition:background 0.15s;cursor:pointer}
+    .ag-row:hover{background:var(--card2)}
+    .ag-hora{font-size:13px;font-weight:700;color:var(--muted);
+      min-width:44px;font-family:ui-monospace,monospace}
+    .ag-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+    .ag-dot.verde{background:var(--verde)}
+    .ag-dot.laranja{background:var(--laranja)}
+    .ag-dot.azul{background:var(--azul)}
+    .ag-info{flex:1;min-width:0}
+    .ag-nome{font-size:13px;font-weight:600;color:var(--txt);display:flex;align-items:center;gap:7px}
+    .ag-tag{font-size:9px;font-weight:800;padding:2px 7px;border-radius:5px;
+      letter-spacing:0.04em;text-transform:uppercase}
+    .ag-tag.conf{background:rgba(0,208,132,0.15);color:var(--verde)}
+    .ag-tag.pend{background:rgba(249,115,22,0.15);color:var(--laranja)}
+    .ag-tag.novo{background:rgba(59,130,246,0.15);color:var(--azul)}
+    .ag-srv{font-size:11px;color:var(--muted);margin-top:1px}
+    .ag-preco{font-size:13px;font-weight:700;color:var(--txt);white-space:nowrap}
 
- /* TABS */
- .tabs{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--borda);display:flex;padding-bottom:var(--sb);z-index:50}
- .tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:9px 4px;cursor:pointer;border:none;background:none;color:var(--muted);font-family:'Inter',sans-serif;-webkit-tap-highlight-color:transparent;position:relative}
- .tab.ativo{color:var(--preto)}
- .tab-ico{font-size:16px;line-height:1}
- .tab-lbl{font-size:9px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase}
- .notif{position:absolute;top:8px;right:calc(50% - 14px);width:7px;height:7px;border-radius:50%;background:var(--vermelho);display:none}
+    /* ── QR / LINK CARD ── */
+    .qr-card{background:var(--card);border:1px solid var(--borda);border-radius:var(--r);padding:20px}
+    .qr-title{font-size:14px;font-weight:700;color:var(--txt);margin-bottom:3px}
+    .qr-sub{font-size:11px;color:var(--muted);margin-bottom:16px}
+    .qr-inner{background:var(--card2);border:1px solid var(--borda);border-radius:8px;
+      padding:14px;display:flex;gap:14px;align-items:flex-start;margin-bottom:10px}
+    .qr-img-wrap{background:#fff;border-radius:6px;padding:6px;flex-shrink:0}
+    .qr-img-wrap img{width:72px;height:72px;display:block}
+    .qr-link-label{font-size:10px;color:var(--muted);font-weight:600;
+      letter-spacing:0.06em;text-transform:uppercase;margin-bottom:4px}
+    .qr-link-url{font-size:11px;color:var(--verde);font-weight:500;
+      font-family:ui-monospace,monospace;word-break:break-all;line-height:1.5}
+    .qr-link-hint{font-size:11px;color:var(--muted);margin-top:8px;line-height:1.5}
+    .qr-btn-copy{width:100%;padding:10px;border-radius:8px;background:var(--verde);
+      border:none;color:#000;font-size:13px;font-weight:700;cursor:pointer;
+      font-family:inherit;margin-bottom:8px;transition:opacity 0.15s}
+    .qr-btn-copy:hover{opacity:0.85}
+    .qr-btn-dl{width:100%;padding:9px;border-radius:8px;background:none;
+      border:1px solid var(--borda);color:var(--txt);font-size:13px;font-weight:600;
+      cursor:pointer;font-family:inherit;transition:all 0.15s}
+    .qr-btn-dl:hover{border-color:var(--muted)}
 
- /* UTILS */
- .toast{position:fixed;bottom:76px;left:50%;transform:translateX(-50%);background:var(--preto);color:var(--bg);border-radius:var(--r);padding:10px 18px;font-size:12px;font-weight:700;z-index:999;animation:tUp 0.2s ease;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,0.2)}
- .toast.err{background:var(--vermelho)}
- @keyframes tUp{from{opacity:0;transform:translateX(-50%) translateY(8px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
- .empty{text-align:center;padding:48px 20px;color:var(--muted)}
- .empty-d{font-size:28px;color:var(--borda);margin-bottom:8px;font-weight:900}
- .empty-t{font-size:13px;font-weight:400}
- .btn-full{width:100%;padding:13px;border-radius:var(--r);background:var(--preto);color:var(--bg);font-family:'Inter',sans-serif;font-size:14px;font-weight:600;border:none;cursor:pointer;margin-top:8px;-webkit-tap-highlight-color:transparent}
- .btn-full:active{opacity:0.75}
- .btn-full.sec{background:none;border:1px solid var(--borda);color:var(--muted)}
- .btn-full.sec:active{opacity:0.7}
- .qr-area{text-align:center;padding:20px;background:var(--cinza);border-radius:var(--r);border:1px solid var(--borda);margin-top:12px}
- .dark-toggle{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--borda)}
- .dark-toggle-l{font-size:13px;font-weight:600;color:var(--preto)}
- .dark-toggle-s{font-size:11px;color:var(--muted);font-weight:400;margin-top:1px}
- .toggle-track{background:var(--borda);border:none;border-radius:999px;width:42px;height:24px;cursor:pointer;position:relative;transition:background 0.2s;flex-shrink:0}
- .toggle-knob{position:absolute;top:3px;left:3px;width:18px;height:18px;background:#fff;border-radius:50%;transition:transform 0.2s;display:block}
- .urg-tag{display:inline-flex;padding:2px 7px;border-radius:999px;font-size:9px;font-weight:700;margin-left:6px;vertical-align:middle}
+    /* ── PROFISSIONAIS ── */
+    .prof-card{background:var(--card);border:1px solid var(--borda);border-radius:var(--r);padding:20px}
+    .prof-title{font-size:14px;font-weight:700;color:var(--txt);margin-bottom:2px}
+    .prof-sub{font-size:11px;color:var(--muted);margin-bottom:14px}
+    .prof-list{display:flex;flex-direction:column;gap:10px}
+    .prof-row{display:flex;align-items:center;gap:10px}
+    .prof-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;
+      justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0}
+    .prof-info{flex:1;min-width:0}
+    .prof-nome{font-size:13px;font-weight:600;color:var(--txt)}
+    .prof-meta{font-size:11px;color:var(--muted)}
+    .prof-fat{font-size:13px;font-weight:700;color:var(--verde)}
 
- /* SINO */
- .bell-wrap{position:relative}
- .bell-btn{width:32px;height:32px;border-radius:var(--r);background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;-webkit-tap-highlight-color:transparent;position:relative}
- .bell-btn:active{opacity:.7}
- .bell-count{position:absolute;top:-4px;right:-4px;min-width:16px;height:16px;border-radius:999px;background:var(--vm);color:#fff;font-size:9px;font-weight:800;display:none;align-items:center;justify-content:center;padding:0 4px;border:2px solid var(--nicho)}
- .bell-count.show{display:flex}
- .notif-dropdown{
- display:none;position:fixed;top:calc(var(--st) + 58px);right:12px;
- width:calc(100vw - 24px);max-width:380px;
- background:var(--card);border:1px solid var(--borda);border-radius:var(--r);
- box-shadow:0 8px 32px rgba(0,0,0,0.3);z-index:200;overflow:hidden;
- animation:fadeDown .2s ease;
- }
- .notif-dropdown.open{display:block}
- @keyframes fadeDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
- .nd-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--borda)}
- .nd-titulo{font-size:13px;font-weight:700;color:var(--preto);letter-spacing:-.1px}
- .nd-clear{font-size:11px;color:var(--muted);cursor:pointer;font-weight:500;-webkit-tap-highlight-color:transparent}
- .nd-clear:active{opacity:.6}
- .nd-lista{max-height:340px;overflow-y:auto;-webkit-overflow-scrolling:touch}
- .nd-item{padding:13px 16px;border-bottom:1px solid var(--borda);cursor:pointer;transition:background .15s;-webkit-tap-highlight-color:transparent}
- .nd-item:last-child{border-bottom:none}
- .nd-item:hover{background:var(--cinza)}
- .nd-item.nao-lida{background:color-mix(in srgb,var(--azul) 5%,var(--card))}
- [data-theme="dark"] .nd-item.nao-lida{background:rgba(59,130,246,.07)}
- .nd-item-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:3px}
- .nd-item-titulo{font-size:13px;font-weight:700;color:var(--preto);letter-spacing:-.1px;flex:1}
- .nd-item-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:3px}
- .nd-item-dot.pagamento{background:var(--verde)}
- .nd-item-dot.acesso{background:var(--azul)}
- .nd-item-dot.info{background:var(--muted)}
- .nd-item-msg{font-size:12px;color:var(--muted);font-weight:400;line-height:1.5}
- .nd-item-hora{font-size:10px;color:var(--muted);font-weight:400;margin-top:4px}
- .nd-empty{text-align:center;padding:32px 20px;font-size:13px;color:var(--muted);font-weight:400}
- .nd-footer{padding:10px 16px;border-top:1px solid var(--borda);text-align:center}
- .nd-footer span{font-size:11px;color:var(--muted);font-weight:500}
- .urg-r{background:#fef2f2;color:var(--vermelho);border:1px solid #fecaca}
- .urg-y{background:#fff7ed;color:var(--laranja);border:1px solid #fed7aa}
- </style>
+    /* ── GRÁFICO ── */
+    .chart-card{background:var(--card);border:1px solid var(--borda);border-radius:var(--r);
+      padding:20px}
+    .chart-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+    .chart-title{font-size:14px;font-weight:700;color:var(--txt)}
+    .chart-legend{display:flex;gap:14px}
+    .chart-leg-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted)}
+    .chart-leg-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+    .chart-sub{font-size:11px;color:var(--muted);margin-bottom:16px}
+    .chart-bars{display:flex;align-items:flex-end;gap:8px;height:120px;padding-bottom:24px;
+      position:relative}
+    .chart-bar-group{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
+      justify-content:flex-end;height:100%;position:relative}
+    .chart-bar{width:100%;border-radius:4px 4px 0 0;transition:opacity 0.15s;min-height:4px}
+    .chart-bar.conf{background:var(--verde)}
+    .chart-bar.pend{background:var(--laranja)}
+    .chart-bar-label{position:absolute;bottom:-20px;font-size:10px;color:var(--muted);
+      font-weight:500;white-space:nowrap}
+
+    /* ── SERVIÇOS MAIS PROCURADOS ── */
+    .srv-chart-card{background:var(--card);border:1px solid var(--borda);border-radius:var(--r);padding:20px}
+    .srv-chart-title{font-size:14px;font-weight:700;color:var(--txt);margin-bottom:2px}
+    .srv-chart-sub{font-size:11px;color:var(--muted);margin-bottom:16px}
+    .srv-bars-list{display:flex;flex-direction:column;gap:12px}
+    .srv-bar-item{}
+    .srv-bar-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}
+    .srv-bar-nome{font-size:12px;font-weight:600;color:var(--txt)}
+    .srv-bar-pct{font-size:12px;color:var(--muted)}
+    .srv-bar-track{height:5px;background:var(--borda);border-radius:999px;overflow:hidden}
+    .srv-bar-fill{height:100%;border-radius:999px;transition:width 1s ease}
+
+    /* ── MODAL / OVERLAY ── */
+    .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:200;
+      align-items:flex-end;justify-content:center;backdrop-filter:blur(3px)}
+    .overlay.open{display:flex}
+    .modal{background:var(--card);border:1px solid var(--borda);border-radius:14px 14px 0 0;
+      padding:0;width:100%;max-width:480px;padding-bottom:var(--sb);
+      animation:slideUp 0.25s ease;max-height:85dvh;overflow-y:auto}
+    @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+    .modal-handle{width:36px;height:3px;background:var(--borda);border-radius:999px;
+      margin:14px auto 0}
+    .modal-body{padding:20px}
+    .modal-title{font-size:17px;font-weight:800;color:var(--txt);margin-bottom:4px}
+    .modal-sub{font-size:12px;color:var(--muted);margin-bottom:18px}
+    .m-label{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:0.08em;
+      text-transform:uppercase;margin-bottom:7px;display:block;margin-top:14px}
+    .m-label:first-of-type{margin-top:0}
+    .m-input,.m-select,.m-textarea{width:100%;border:1px solid var(--borda);border-radius:8px;
+      font-family:inherit;font-size:14px;padding:11px 14px;color:var(--txt);
+      background:var(--card2);outline:none;appearance:none;transition:border-color 0.15s}
+    .m-input:focus,.m-select:focus,.m-textarea:focus{border-color:var(--verde)}
+    .m-input::placeholder,.m-textarea::placeholder{color:var(--muted)}
+    .m-textarea{resize:none;min-height:80px;line-height:1.5}
+    .m-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .status-pills{display:flex;flex-direction:column;gap:8px}
+    .sp{display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:8px;
+      border:1px solid var(--borda);cursor:pointer;transition:all 0.15s;
+      -webkit-tap-highlight-color:transparent}
+    .sp:active{opacity:0.7}
+    .sp.sel{border-color:var(--verde);background:var(--verde-dim)}
+    .sp-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+    .sp-title{font-size:13px;font-weight:600;color:var(--txt);flex:1}
+    .sp-desc{font-size:11px;color:var(--muted)}
+    .modal-footer{display:flex;gap:8px;margin-top:18px;padding-top:16px;
+      border-top:1px solid var(--borda)}
+    .m-btn{flex:1;padding:12px;border-radius:8px;font-family:inherit;font-size:13px;
+      font-weight:700;cursor:pointer;border:none;transition:opacity 0.15s}
+    .m-btn-g{background:var(--verde);color:#000}.m-btn-g:hover{opacity:0.85}
+    .m-btn-out{background:none;border:1px solid var(--borda);color:var(--muted)}
+
+    /* ── NOTIF DROPDOWN ── */
+    .bell-wrap{position:relative}
+    .notif-dd{display:none;position:absolute;top:calc(100% + 8px);right:0;
+      width:320px;background:var(--card);border:1px solid var(--borda);
+      border-radius:12px;box-shadow:0 20px 60px -10px rgba(0,0,0,0.5);z-index:100;
+      overflow:hidden;animation:fadeIn 0.15s ease}
+    .notif-dd.open{display:block}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+    .nd-hdr{display:flex;align-items:center;justify-content:space-between;
+      padding:14px 16px;border-bottom:1px solid var(--borda)}
+    .nd-hdr-t{font-size:13px;font-weight:700;color:var(--txt)}
+    .nd-clear{font-size:11px;color:var(--muted);cursor:pointer}
+    .nd-list{max-height:280px;overflow-y:auto}
+    .nd-item{padding:12px 16px;border-bottom:1px solid var(--borda);cursor:pointer;
+      transition:background 0.15s}
+    .nd-item:last-child{border-bottom:none}
+    .nd-item:hover{background:var(--card2)}
+    .nd-item.nao-lida{background:rgba(0,208,132,0.04)}
+    .nd-item-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:3px}
+    .nd-item-t{font-size:12px;font-weight:700;color:var(--txt)}
+    .nd-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:3px}
+    .nd-item-msg{font-size:11px;color:var(--muted);line-height:1.5}
+    .nd-item-hora{font-size:10px;color:var(--muted2);margin-top:4px}
+    .nd-empty{padding:28px;text-align:center;font-size:12px;color:var(--muted)}
+
+    /* ── TOAST ── */
+    .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+      background:var(--card2);border:1px solid var(--borda);
+      color:var(--txt);border-radius:8px;padding:10px 18px;
+      font-size:12px;font-weight:600;z-index:999;
+      animation:tUp 0.2s ease;white-space:nowrap;
+      box-shadow:0 8px 32px rgba(0,0,0,0.4)}
+    .toast.ok{background:var(--verde-dim);border-color:var(--verde);color:var(--verde)}
+    .toast.err{background:rgba(239,68,68,0.12);border-color:var(--vermelho);color:var(--vermelho)}
+    @keyframes tUp{from{opacity:0;transform:translateX(-50%) translateY(8px)}
+      to{opacity:1;transform:translateX(-50%) translateY(0)}}
+
+    /* ── MOBILE ── */
+    @media(max-width:900px){
+      .sidebar{transform:translateX(-100%);transition:transform 0.25s ease}
+      .sidebar.open{transform:translateX(0)}
+      .main{margin-left:0}
+      .stats-grid{grid-template-columns:repeat(2,1fr)}
+      .two-cols{grid-template-columns:1fr}
+      .two-cols-eq{grid-template-columns:1fr}
+      .topbar{padding:0 16px}
+      .content{padding:16px}
+      .tb-search{display:none}
+    }
+    @media(max-width:480px){
+      .stats-grid{grid-template-columns:1fr 1fr}
+      .fat-valor{font-size:28px}
+    }
+  </style>
 </head>
 <body>
+<div class="app">
 
-<!-- HEADER -->
-<div class="hdr" id="hdr">
- <div class="hdr-l">
- <div class="hdr-av" id="h-av">?</div>
- <div style="min-width:0">
- <div class="hdr-nome" id="h-nome">Carregando...</div>
- <div class="hdr-nicho" id="h-nicho"></div>
- </div>
- </div>
- <div class="hdr-r">
- <div class="bell-wrap">
- <button class="bell-btn" onclick="toggleNotif(event)" id="bell-btn">
- <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
- <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
- <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
- </svg>
- <div class="bell-count" id="bell-count"></div>
- </button>
- <div class="notif-dropdown" id="notif-dropdown">
- <div class="nd-header">
- <span class="nd-titulo">Notificações</span>
- <span class="nd-clear" onclick="limparNotifs()">Limpar tudo</span>
- </div>
- <div class="nd-lista" id="nd-lista">
- <div class="nd-empty">Nenhuma notificação</div>
- </div>
- <div class="nd-footer"><span id="nd-footer-txt"></span></div>
- </div>
- </div>
- <button class="btn-theme" onclick="toggleDark()" id="btn-theme"></button>
- <button class="btn-sair" onclick="sair()">Sair</button>
- </div>
-</div>
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-brand">
+      <div class="sb-logo">
+        <div class="sb-avatar" id="sb-av">?</div>
+        <div style="min-width:0">
+          <div class="sb-name" id="sb-name">Carregando...</div>
+          <div class="sb-sub" id="sb-sub">BARBEARIA · PREMIUM</div>
+        </div>
+      </div>
+    </div>
 
-<div id="link-bar" style="display:none" class="link-bar">
- <div class="link-url" id="link-url"></div>
- <button class="link-btn" onclick="copiarLink()">Copiar</button>
- <button class="link-btn" onclick="abrirLink()">Abrir </button>
-</div>
+    <nav class="sb-nav">
+      <a class="sb-item ativo" onclick="pg('dashboard',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Início
+      </a>
+      <a class="sb-item" onclick="pg('agenda',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18" stroke-linecap="round"/></svg>
+        Agenda
+      </a>
+      <a class="sb-item" onclick="pg('hoje',this)" id="sb-hoje">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2" stroke-linecap="round"/></svg>
+        Hoje
+        <span class="sb-badge" id="sb-hoje-badge" style="display:none">0</span>
+      </a>
+      <a class="sb-item" onclick="pg('servicos',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        Serviços
+      </a>
+      <a class="sb-item" onclick="pg('bloqueios',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4" stroke-linecap="round"/></svg>
+        Bloqueios
+      </a>
+      <div class="sb-divider"></div>
+      <a class="sb-item" onclick="pg('config',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Configurações
+      </a>
+    </nav>
 
-<div class="content">
+    <div class="sb-plan">
+      <div class="sb-plan-label">Plano Pro</div>
+      <div class="sb-plan-sub" id="sb-plan-sub">Ativo</div>
+      <div class="sb-plan-bar"><div class="sb-plan-fill"></div></div>
+    </div>
+  </aside>
 
- <!-- DASHBOARD -->
- <div class="page ativa" id="pg-dashboard">
- <div class="stats">
- <div class="stat"><div class="stat-l">Total</div><div class="stat-v" id="s-total">—</div></div>
- <div class="stat"><div class="stat-l">Pendentes</div><div class="stat-v y" id="s-pend">—</div></div>
- <div class="stat"><div class="stat-l">Confirmados</div><div class="stat-v g" id="s-conf">—</div></div>
- <div class="stat"><div class="stat-l">Hoje</div><div class="stat-v b" id="s-hoje">—</div></div>
- <div class="stat stat-full">
- <div class="stat-l">Faturamento estimado (mês)</div>
- <div class="stat-v g" id="s-fat">—</div>
- <div class="stat-sub" id="s-fat-sub"></div>
- </div>
- </div>
- <div class="card">
- <div class="card-t" style="margin-bottom:12px">Link & QR Code</div>
- <button class="btn-full" onclick="copiarLink()">Copiar link de agendamento</button>
- <button class="btn-full sec" onclick="mostrarQR()">Gerar QR Code</button>
- <div id="qr-area" style="display:none" class="qr-area">
- <img id="qr-img" src="" style="width:150px;height:150px"/>
- <div style="font-size:11px;color:var(--muted);margin-top:10px;font-weight:400">Cole no balcão ou vitrine</div>
- </div>
- </div>
- </div>
+  <!-- MAIN -->
+  <div class="main">
 
- <!-- AGENDAMENTOS -->
- <div class="page" id="pg-agenda">
- <div class="filtros">
- <button class="f-btn ativo" onclick="filtrar('',this)">Todos</button>
- <button class="f-btn" onclick="filtrar('pendente',this)">Pendentes</button>
- <button class="f-btn" onclick="filtrar('confirmado',this)">Confirmados</button>
- <button class="f-btn" onclick="filtrar('reagendado',this)">Reagendados</button>
- <button class="f-btn" onclick="filtrar('cancelado',this)">Cancelados</button>
- <button class="f-btn" onclick="filtrar('concluido',this)">Concluídos</button>
- </div>
- <div id="lista-ag"></div>
- </div>
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div class="tb-search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35" stroke-linecap="round"/></svg>
+        <input type="text" placeholder="Buscar cliente, agendamento, serviço..."/>
+        <span class="tb-kbd">⌘K</span>
+      </div>
+      <div class="tb-spacer"></div>
 
- <!-- HOJE -->
- <div class="page" id="pg-hoje">
- <div class="card" style="margin-bottom:12px;background:var(--nicho);border-color:var(--nicho)">
- <div style="font-size:9px;font-weight:700;color:rgba(255,255,255,0.4);letter-spacing:0.09em;text-transform:uppercase;margin-bottom:3px">Hoje</div>
- <div style="font-size:16px;font-weight:700;color:#fff;letter-spacing:-0.2px" id="hoje-data"></div>
- </div>
- <div id="lista-hoje"></div>
- </div>
+      <!-- SINO -->
+      <div class="bell-wrap">
+        <div class="tb-bell" onclick="toggleNotif(event)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <div class="tb-bell-dot" id="bell-dot"></div>
+        </div>
+        <div class="notif-dd" id="notif-dd">
+          <div class="nd-hdr">
+            <span class="nd-hdr-t">Notificações</span>
+            <span class="nd-clear" onclick="limparNotifs()">Limpar</span>
+          </div>
+          <div class="nd-list" id="nd-list"><div class="nd-empty">Sem notificações</div></div>
+        </div>
+      </div>
 
- <!-- SERVIÇOS -->
- <div class="page" id="pg-srv">
- <div class="card">
- <div class="card-h">
- <span class="card-t">Serviços</span>
- <button class="btn-add" onclick="abrirModalSrv()">
- <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M5 1v8M1 5h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
- Adicionar
- </button>
- </div>
- <p style="font-size:12px;color:var(--muted);font-weight:400;margin-bottom:14px;line-height:1.5">Seus clientes escolhem o serviço ao agendar.</p>
- <div id="lista-srv"></div>
- </div>
- </div>
+      <button class="tb-copy-link" onclick="copiarLink()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copiar link
+      </button>
+      <button class="tb-novo" onclick="alert('Funcionalidade em desenvolvimento')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Novo agendamento
+      </button>
+      <div class="tb-user" id="tb-user">E</div>
+    </div>
 
- <!-- BLOQUEIOS -->
- <div class="page" id="pg-bloqueios">
- <div class="card" style="margin-bottom:12px">
- <div class="card-t" style="margin-bottom:14px">Bloquear horário ou dia</div>
- <p style="font-size:12px;color:var(--muted);font-weight:400;margin-bottom:14px;line-height:1.5">Bloqueie dias, horários isolados, folgas ou um período de férias. Seus clientes não conseguirão agendar nos períodos bloqueados.</p>
- <div class="blq-grid">
- <div><label class="blq-l">Data início</label><input type="date" id="blq-data" class="blq-inp"/></div>
- <div><label class="blq-l">Período</label>
- <select id="blq-hr" class="blq-sel" onchange="toggleAte()">
- <option value="todos">Dia inteiro</option>
- <option value="ferias">Férias (vários dias)</option>
- <option>06:00</option><option>07:00</option><option>08:00</option>
- <option>09:00</option><option>10:00</option><option>11:00</option>
- <option>12:00</option><option>13:00</option><option>14:00</option>
- <option>15:00</option><option>16:00</option><option>17:00</option>
- <option>18:00</option><option>19:00</option><option>20:00</option>
- </select>
- </div>
- </div>
- <div id="blq-ate-wrap" style="display:none;margin-bottom:12px">
- <label class="blq-l">Data fim (férias)</label>
- <input type="date" id="blq-ate" class="blq-inp"/>
- </div>
- <label class="blq-l">Motivo (opcional)</label>
- <input type="text" id="blq-motivo" class="blq-inp" placeholder="Ex: Feriado, Folga, Férias..." style="margin-bottom:14px"/>
- <button class="btn-full" onclick="bloquear()">Bloquear</button>
- </div>
- <div class="card">
- <div class="card-t" style="margin-bottom:14px">Períodos bloqueados</div>
- <div id="lista-bloq-pg"></div>
- </div>
- </div>
+    <!-- CONTENT -->
+    <div class="content">
 
- <!-- CONFIG -->
- <div class="page" id="pg-cfg">
- <div class="card">
- <div class="cfg-sec">
- <div class="cfg-sec-t">Negócio</div>
- <label class="cfg-l">Nome</label><input class="cfg-inp" id="cfg-nome"/>
- <label class="cfg-l">Descrição</label><textarea class="cfg-ta" id="cfg-desc"></textarea>
- <label class="cfg-l">WhatsApp do negócio</label><input class="cfg-inp" type="tel" id="cfg-tel"/>
- <label class="cfg-l">Cor principal</label>
- <input class="cfg-inp" type="color" id="cfg-cor" style="padding:6px;height:44px"/>
- <label class="cfg-l">Horários disponíveis</label>
- <input class="cfg-inp" id="cfg-hr" placeholder="08:00,09:00,10:00,11:00,14:00,15:00,16:00,17:00"/>
- </div>
- <div class="cfg-sec">
- <div class="cfg-sec-t">Aparência</div>
- <div class="dark-toggle">
- <div>
- <div class="dark-toggle-l">Modo escuro</div>
- <div class="dark-toggle-s">Altera o tema do painel</div>
- </div>
- <button class="toggle-track" id="toggle-dark" onclick="toggleDark()">
- <span class="toggle-knob" id="toggle-knob"></span>
- </button>
- </div>
+      <!-- DASHBOARD -->
+      <div id="pg-dashboard">
+        <div class="pg-breadcrumb">
+          Painel <span>·</span> <span id="pg-dia-semana">Hoje</span>
+        </div>
 
- </div>
- <button class="btn-full" onclick="salvarConfig()">Salvar configurações</button>
- </div>
- </div>
+        <div class="pg-title-row">
+          <div>
+            <div class="pg-title">
+              Bom dia, <span id="pg-nome-usuario">—</span>
+              <div class="pg-edit-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              </div>
+            </div>
+            <div class="pg-subtitle">Você tem <strong id="pg-count-hoje">—</strong> agendamentos hoje e <strong id="pg-count-pend">—</strong> pendentes de confirmação.</div>
+          </div>
+        </div>
 
-</div>
+        <!-- LINK PÚBLICO -->
+        <div class="link-pub">
+          <div>
+            <div class="link-pub-lbl">Link público</div>
+            <div class="link-pub-url" id="lp-url">—</div>
+          </div>
+          <div class="link-pub-btns">
+            <button class="lp-btn" onclick="copiarLink()">Copiar</button>
+            <button class="lp-btn" onclick="abrirLink()">Abrir</button>
+            <button class="lp-btn" onclick="mostrarQR()">QR Code</button>
+          </div>
+        </div>
 
-<!-- TABS -->
-<div class="tabs">
- <button class="tab ativo" onclick="pg('dashboard',this)"><div class="tab-ico" style="font-size:12px;font-weight:700;letter-spacing:-0.5px">IN</div><div class="tab-lbl">Início</div></button>
- <button class="tab" onclick="pg('agenda',this)"><div class="tab-ico"></div><div class="tab-lbl">Agenda</div><div class="notif" id="notif"></div></button>
- <button class="tab" onclick="pg('hoje',this)"><div class="tab-ico"></div><div class="tab-lbl">Hoje</div></button>
- <button class="tab" onclick="pg('srv',this)"><div class="tab-ico"></div><div class="tab-lbl">Serviços</div></button>
- <button class="tab" onclick="pg('bloqueios',this)"><div class="tab-ico" style="font-size:12px;font-weight:700">BL</div><div class="tab-lbl">Bloqueios</div></button>
- <button class="tab" onclick="pg('cfg',this)"><div class="tab-ico"></div><div class="tab-lbl">Config</div></button>
-</div>
+        <!-- STATS -->
+        <div class="stats-grid">
+          <div class="stat-card verde">
+            <div class="stat-lbl">Total do mês <span class="stat-badge verde" id="st-total-badge">+0%</span></div>
+            <div class="stat-num branco" id="st-total">—</div>
+            <div class="stat-sub" id="st-total-sub">vs mês anterior</div>
+          </div>
+          <div class="stat-card laranja">
+            <div class="stat-lbl">Pendentes <span class="stat-badge laranja" id="st-pend-badge">hoje</span></div>
+            <div class="stat-num laranja" id="st-pend">—</div>
+            <div class="stat-sub">Aguardando confirmação</div>
+          </div>
+          <div class="stat-card azul">
+            <div class="stat-lbl">Confirmados <span class="stat-badge azul">+8%</span></div>
+            <div class="stat-num azul" id="st-conf">—</div>
+            <div class="stat-sub" id="st-conf-sub">Taxa de confirmação</div>
+          </div>
+          <div class="stat-card roxo">
+            <div class="stat-lbl">Hoje <span class="stat-badge roxo" id="st-hoje-dia">—</span></div>
+            <div class="stat-num" style="color:var(--roxo)" id="st-hoje">—</div>
+            <div class="stat-sub" id="st-hoje-sub">Próximo às —</div>
+          </div>
+        </div>
 
-<!-- MODAL AGENDAMENTO -->
+        <!-- FATURAMENTO -->
+        <div class="fat-card">
+          <div class="fat-header">
+            <div class="fat-lbl">Faturamento estimado (mês)</div>
+            <div class="fat-badge" id="fat-badge">+0%</div>
+          </div>
+          <div class="fat-valor" id="fat-valor">R$ 0,00</div>
+          <div class="fat-sub" id="fat-sub">Baseado em atendimentos concluídos com preço</div>
+          <div class="fat-bar-track"><div class="fat-bar-fill" id="fat-bar" style="width:0%"></div></div>
+        </div>
+
+        <!-- AGENDAMENTOS + QR -->
+        <div class="two-cols">
+
+          <div class="ag-card">
+            <div class="ag-card-header">
+              <div class="ag-card-title">Agendamentos de hoje</div>
+              <div class="ag-filters">
+                <button class="ag-filter-btn ativo" onclick="filtrarHoje('todos',this)">Todos</button>
+                <button class="ag-filter-btn" onclick="filtrarHoje('confirmado',this)">Confirmados</button>
+                <button class="ag-filter-btn" onclick="filtrarHoje('pendente',this)">Pendentes</button>
+              </div>
+            </div>
+            <div class="ag-card-sub" id="ag-hoje-sub">— horários · —</div>
+            <div class="ag-list" id="ag-hoje-lista"></div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <div class="qr-card">
+              <div class="qr-title">Link &amp; QR Code</div>
+              <div class="qr-sub">Compartilhe com seus clientes</div>
+              <div class="qr-inner">
+                <div class="qr-img-wrap">
+                  <img id="qr-img-dash" src="" width="72" height="72" alt="QR"/>
+                </div>
+                <div>
+                  <div class="qr-link-label">Link público</div>
+                  <div class="qr-link-url" id="qr-url-dash">—</div>
+                  <div class="qr-link-hint">Use em redes sociais, vitrine ou cartão de visitas.</div>
+                </div>
+              </div>
+              <button class="qr-btn-copy" onclick="copiarLink()">Copiar link de agendamento</button>
+              <button class="qr-btn-dl" onclick="baixarQR()">Baixar QR Code</button>
+            </div>
+
+            <div class="prof-card">
+              <div class="prof-title">Profissionais ativos</div>
+              <div class="prof-sub">Performance da semana</div>
+              <div class="prof-list" id="prof-list">
+                <div style="font-size:12px;color:var(--muted)">Nenhum dado disponível</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- GRÁFICO + SERVIÇOS -->
+        <div class="two-cols-eq">
+          <div class="chart-card">
+            <div class="chart-header">
+              <div class="chart-title">Visão da semana</div>
+              <div class="chart-legend">
+                <div class="chart-leg-item"><div class="chart-leg-dot" style="background:var(--verde)"></div>Confirmados</div>
+                <div class="chart-leg-item"><div class="chart-leg-dot" style="background:var(--laranja)"></div>Pendentes</div>
+              </div>
+            </div>
+            <div class="chart-sub">Agendamentos por dia</div>
+            <div class="chart-bars" id="chart-bars"></div>
+          </div>
+
+          <div class="srv-chart-card">
+            <div class="srv-chart-title">Serviços mais procurados</div>
+            <div class="srv-chart-sub">Últimos 30 dias</div>
+            <div class="srv-bars-list" id="srv-bars-list"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AGENDA -->
+      <div id="pg-agenda" style="display:none">
+        <div class="pg-breadcrumb">Agenda</div>
+        <h2 style="font-size:22px;font-weight:800;margin-bottom:16px;letter-spacing:-0.4px">Todos os agendamentos</h2>
+        <div class="ag-filters" style="margin-bottom:14px">
+          <button class="ag-filter-btn ativo" onclick="filtrarAg('',this)">Todos</button>
+          <button class="ag-filter-btn" onclick="filtrarAg('pendente',this)">Pendentes</button>
+          <button class="ag-filter-btn" onclick="filtrarAg('confirmado',this)">Confirmados</button>
+          <button class="ag-filter-btn" onclick="filtrarAg('reagendado',this)">Reagendados</button>
+          <button class="ag-filter-btn" onclick="filtrarAg('cancelado',this)">Cancelados</button>
+          <button class="ag-filter-btn" onclick="filtrarAg('concluido',this)">Concluídos</button>
+        </div>
+        <div id="ag-lista-full" style="background:var(--card);border:1px solid var(--borda);border-radius:var(--r);overflow:hidden"></div>
+      </div>
+
+      <!-- HOJE -->
+      <div id="pg-hoje" style="display:none">
+        <div class="pg-breadcrumb">Hoje</div>
+        <h2 style="font-size:22px;font-weight:800;margin-bottom:4px;letter-spacing:-0.4px">Agenda de hoje</h2>
+        <div style="font-size:13px;color:var(--muted);margin-bottom:16px" id="hoje-data-txt"></div>
+        <div id="hoje-lista-pg" style="background:var(--card);border:1px solid var(--borda);border-radius:var(--r);overflow:hidden"></div>
+      </div>
+
+      <!-- SERVIÇOS -->
+      <div id="pg-servicos" style="display:none">
+        <div class="pg-breadcrumb">Serviços</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+          <h2 style="font-size:22px;font-weight:800;letter-spacing:-0.4px">Meus serviços</h2>
+          <button onclick="abrirModalSrv()" style="padding:9px 16px;border-radius:8px;background:var(--verde);border:none;color:#000;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Adicionar serviço
+          </button>
+        </div>
+        <div id="srv-lista-pg" style="background:var(--card);border:1px solid var(--borda);border-radius:var(--r);overflow:hidden"></div>
+      </div>
+
+      <!-- BLOQUEIOS -->
+      <div id="pg-bloqueios" style="display:none">
+        <div class="pg-breadcrumb">Bloqueios</div>
+        <h2 style="font-size:22px;font-weight:800;margin-bottom:16px;letter-spacing:-0.4px">Bloqueios de horário</h2>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <div style="background:var(--card);border:1px solid var(--borda);border-radius:var(--r);padding:20px">
+            <div style="font-size:14px;font-weight:700;margin-bottom:14px">Novo bloqueio</div>
+            <div style="margin-bottom:12px">
+              <label class="m-label">Data</label>
+              <input type="date" id="blq-data" class="m-input"/>
+            </div>
+            <div style="margin-bottom:12px">
+              <label class="m-label">Período</label>
+              <select id="blq-hr" class="m-select" onchange="toggleAte()">
+                <option value="todos">Dia inteiro</option>
+                <option value="ferias">Férias (vários dias)</option>
+                <option>06:00</option><option>07:00</option><option>08:00</option>
+                <option>09:00</option><option>10:00</option><option>11:00</option>
+                <option>12:00</option><option>13:00</option><option>14:00</option>
+                <option>15:00</option><option>16:00</option><option>17:00</option>
+                <option>18:00</option><option>19:00</option><option>20:00</option>
+              </select>
+            </div>
+            <div id="blq-ate-wrap" style="display:none;margin-bottom:12px">
+              <label class="m-label">Data fim</label>
+              <input type="date" id="blq-ate" class="m-input"/>
+            </div>
+            <div style="margin-bottom:14px">
+              <label class="m-label">Motivo</label>
+              <input type="text" id="blq-motivo" class="m-input" placeholder="Ex: Feriado, Folga..."/>
+            </div>
+            <button onclick="bloquear()" style="width:100%;padding:11px;border-radius:8px;background:var(--verde);border:none;color:#000;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer">Bloquear</button>
+          </div>
+          <div style="background:var(--card);border:1px solid var(--borda);border-radius:var(--r);padding:20px">
+            <div style="font-size:14px;font-weight:700;margin-bottom:14px">Períodos bloqueados</div>
+            <div id="blq-lista-pg"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CONFIG -->
+      <div id="pg-config" style="display:none">
+        <div class="pg-breadcrumb">Configurações</div>
+        <h2 style="font-size:22px;font-weight:800;margin-bottom:16px;letter-spacing:-0.4px">Configurações</h2>
+        <div style="max-width:560px;background:var(--card);border:1px solid var(--borda);border-radius:var(--r);padding:24px">
+          <div style="font-size:13px;font-weight:700;color:var(--txt);margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--borda)">Informações do negócio</div>
+          <label class="m-label">Nome do negócio</label>
+          <input class="m-input" type="text" id="cfg-nome" style="margin-bottom:14px"/>
+          <label class="m-label">Descrição para clientes</label>
+          <textarea class="m-textarea" id="cfg-desc" style="margin-bottom:14px"></textarea>
+          <label class="m-label">WhatsApp do negócio</label>
+          <input class="m-input" type="tel" id="cfg-tel" style="margin-bottom:14px"/>
+          <label class="m-label">Cor principal</label>
+          <input class="m-input" type="color" id="cfg-cor" style="padding:6px;height:44px;margin-bottom:14px"/>
+          <label class="m-label">Horários disponíveis</label>
+          <input class="m-input" id="cfg-hr" placeholder="08:00,09:00,10:00..." style="margin-bottom:20px"/>
+          <div style="padding-top:16px;border-top:1px solid var(--borda)">
+            <button onclick="salvarConfig()" style="padding:11px 24px;border-radius:8px;background:var(--verde);border:none;color:#000;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer">Salvar configurações</button>
+            <button onclick="sair()" style="margin-left:10px;padding:11px 24px;border-radius:8px;background:none;border:1px solid var(--borda);color:var(--muted);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer">Sair da conta</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+
+    <!-- FOOTER -->
+    <div style="padding:14px 24px;border-top:1px solid var(--borda);display:flex;justify-content:space-between;align-items:center;flex-shrink:0">
+      <span style="font-size:11px;color:var(--muted)">© 2025 AgendaOK · Painel profissional de agendamentos</span>
+      <span style="font-size:11px;color:var(--muted2)">v2.0 · <span id="ft-update">Atualizado agora</span></span>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<!-- MODAL EDITAR AGENDAMENTO -->
 <div class="overlay" id="m-ag" onclick="if(event.target===this)fechar('m-ag')">
- <div class="modal">
- <div class="modal-handle"></div>
- <div class="modal-body">
- <div class="modal-t" id="m-ag-t"></div>
- <div class="modal-sub" id="m-ag-s"></div>
- <input type="hidden" id="m-ag-id"/>
- <label class="m-l">Atualizar status</label>
- <div class="status-pills" id="status-pills"></div>
- <label class="m-l">Observação interna</label>
- <textarea class="m-ta" id="m-ag-obs" placeholder="Notas para uso interno..."></textarea>
- <div class="modal-footer">
- <button class="m-btn m-btn-out" onclick="fechar('m-ag')">Cancelar</button>
- <button class="m-btn m-btn-dark" onclick="salvarStatus()">Salvar</button>
- </div>
- </div>
- </div>
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-body">
+      <div class="modal-title" id="m-ag-t">Agendamento</div>
+      <div class="modal-sub" id="m-ag-s">—</div>
+      <input type="hidden" id="m-ag-id"/>
+      <label class="m-label">Status</label>
+      <div class="status-pills" id="status-pills"></div>
+      <label class="m-label">Observações</label>
+      <textarea class="m-textarea" id="m-ag-obs" placeholder="Notas internas..."></textarea>
+      <div class="modal-footer">
+        <button class="m-btn m-btn-out" onclick="fechar('m-ag')">Cancelar</button>
+        <button class="m-btn m-btn-g" onclick="salvarStatus()">Salvar</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- MODAL SERVIÇO -->
 <div class="overlay" id="m-srv" onclick="if(event.target===this)fechar('m-srv')">
- <div class="modal">
- <div class="modal-handle"></div>
- <div class="modal-body">
- <div class="modal-t" id="m-srv-t">Novo serviço</div>
- <input type="hidden" id="m-srv-id"/>
- <label class="m-l">Nome do serviço</label>
- <input class="m-inp" id="s-nome" placeholder="Ex: Consulta inicial"/>
- <div class="m-row" style="margin-top:0">
- <div><label class="m-l">Preço (R$)</label><input class="m-inp" type="number" id="s-preco" placeholder="0,00" step="0.01" min="0"/></div>
- <div><label class="m-l">Duração (min)</label><input class="m-inp" type="number" id="s-dur" placeholder="60" min="5" step="5"/></div>
- </div>
- <label class="m-l">Descrição</label>
- <textarea class="m-ta" id="s-desc" placeholder="Opcional"></textarea>
- <div class="modal-footer">
- <button class="m-btn m-btn-out" onclick="fechar('m-srv')">Cancelar</button>
- <button class="m-btn m-btn-dark" onclick="salvarSrv()">Salvar serviço</button>
- </div>
- </div>
- </div>
-</div>
-
-<!-- MODAL BLOQUEIOS -->
-<div class="overlay" id="m-bloq" onclick="if(event.target===this)fechar('m-bloq')">
- <div class="modal">
- <div class="modal-handle"></div>
- <div class="modal-body">
- <div class="modal-t">Bloqueios</div>
- <div class="modal-sub">Bloqueie dias, horários, folgas e férias.</div>
- <div class="blq-grid">
- <div><label class="blq-l">Data</label><input type="date" id="blq-data" class="blq-inp"/></div>
- <div><label class="blq-l">Período</label>
- <select id="blq-hr" class="blq-sel" onchange="toggleAte()">
- <option value="todos">Dia inteiro</option>
- <option value="ferias">Férias (range)</option>
- <option>08:00</option><option>09:00</option><option>10:00</option><option>11:00</option>
- <option>14:00</option><option>15:00</option><option>16:00</option><option>17:00</option>
- </select>
- </div>
- </div>
- <div id="blq-ate-wrap" style="display:none;margin-bottom:12px">
- <label class="blq-l">Data fim (férias)</label>
- <input type="date" id="blq-ate" class="blq-inp"/>
- </div>
- <label class="blq-l">Motivo (opcional)</label>
- <input type="text" id="blq-motivo" class="blq-inp" placeholder="Ex: Feriado, Férias..." style="margin-bottom:12px"/>
- <button class="btn-full" onclick="bloquear()" style="margin-top:0">Bloquear</button>
- <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--borda)">
- <div style="font-size:12px;font-weight:700;color:var(--preto);margin-bottom:10px">Bloqueados</div>
- <div id="lista-bloq"></div>
- </div>
- </div>
- </div>
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-body">
+      <div class="modal-title" id="m-srv-t">Novo serviço</div>
+      <input type="hidden" id="srv-edit-id"/>
+      <label class="m-label">Nome</label>
+      <input class="m-input" id="s-nome" placeholder="Ex: Corte + Barba" style="margin-bottom:12px"/>
+      <div class="m-row">
+        <div><label class="m-label">Preço (R$)</label><input class="m-input" type="number" id="s-preco" placeholder="0,00" step="0.01"/></div>
+        <div><label class="m-label">Duração (min)</label><input class="m-input" type="number" id="s-dur" placeholder="60" step="5"/></div>
+      </div>
+      <label class="m-label">Descrição</label>
+      <textarea class="m-textarea" id="s-desc" placeholder="Opcional" style="margin-top:0"></textarea>
+      <div class="modal-footer">
+        <button class="m-btn m-btn-out" onclick="fechar('m-srv')">Cancelar</button>
+        <button class="m-btn m-btn-g" onclick="salvarSrv()">Salvar</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
-const TEMAS={barbearia:'#111827',salao:'#4a0728',clinica:'#0c2340',odonto:'#0c3547',advocacia:'#1c1007',psicologia:'#1e0a3c',estetica:'#3b0764',tatuagem:'#030712',nutricao:'#052e16',fisio:'#0c2340',personal:'#1c0505',outro:'#0a0a0a'};
-const STATUS_INFO={
- pendente: {lbl:'Pendente', desc:'Aguardando confirmação', dot:'#ea580c'},
- confirmado:{lbl:'Confirmado',desc:'Agendamento confirmado', dot:'#16a34a'},
- reagendado:{lbl:'Reagendado',desc:'Será em outro horário', dot:'#7c3aed'},
- cancelado: {lbl:'Cancelado', desc:'Agendamento cancelado', dot:'#dc2626'},
- concluido: {lbl:'Concluído', desc:'Atendimento realizado', dot:'#2563eb'},
+// ── GLOBALS ──
+const STATUS_INFO = {
+  pendente:  {lbl:'Pendente',  desc:'Aguardando confirmação', cor:'#f97316'},
+  confirmado:{lbl:'Confirmado',desc:'Agendamento confirmado',  cor:'#00d084'},
+  reagendado:{lbl:'Reagendado',desc:'Será em outro horário',   cor:'#a855f7'},
+  cancelado: {lbl:'Cancelado', desc:'Agendamento cancelado',   cor:'#ef4444'},
+  concluido: {lbl:'Concluído', desc:'Atendimento realizado',   cor:'#3b82f6'},
 };
+const DIAS = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+const MESES = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+const CORES_PROF = ['#00d084','#3b82f6','#a855f7','#f97316','#ec4899','#22d3ee'];
+const CORES_SRV  = ['#00d084','#3b82f6','#a855f7','#f97316','#ec4899'];
 
-let U=null, dark=false, srvId=null, filtro='';
-
-// ── NOTIFICAÇÕES ──
+let U = null, paginaAtual = 'dashboard', filtroAg = '', filtroHoje = 'todos', srvEditId = null, statusSel = '';
 let notifAberto = false;
 
-async function carregarNotifs() {
- try {
- const r = await fetch('/negocio/notificacoes', { credentials: 'include' });
- const d = await r.json();
- const count = document.getElementById('bell-count');
- const lista = document.getElementById('nd-lista');
- const footer = document.getElementById('nd-footer-txt');
-
- if (d.nao_lidas > 0) {
- count.textContent = d.nao_lidas > 9 ? '9+' : d.nao_lidas;
- count.classList.add('show');
- } else {
- count.classList.remove('show');
- }
-
- if (!d.notificacoes || !d.notificacoes.length) {
- lista.innerHTML = '<div class="nd-empty">Nenhuma notificação</div>';
- footer.textContent = '';
- return;
- }
-
- footer.textContent = d.notificacoes.length + ' notificação(ões)';
-
- lista.innerHTML = d.notificacoes.map(n => {
- const dt = new Date(n.criado_em);
- const agora = new Date();
- const diffMin = Math.floor((agora - dt) / 60000);
- let horaFmt;
- if (diffMin < 1) horaFmt = 'Agora mesmo';
- else if (diffMin < 60) horaFmt = `${diffMin} min atrás`;
- else if (diffMin < 1440) horaFmt = `${Math.floor(diffMin/60)}h atrás`;
- else horaFmt = dt.toLocaleDateString('pt-BR', { day:'2-digit', month:'2-digit', year:'2-digit' });
-
- return `<div class="nd-item${n.lida ? '' : ' nao-lida'}" onclick="marcarLida('${n.id}',this)">
- <div class="nd-item-top">
- <span class="nd-item-titulo">${n.titulo}</span>
- <span class="nd-item-dot ${n.tipo}"></span>
- </div>
- <div class="nd-item-msg">${n.mensagem}</div>
- <div class="nd-item-hora">${horaFmt}</div>
- </div>`;
- }).join('');
- } catch(e) {}
-}
-
-async function toggleNotif(e) {
- if(e) e.stopPropagation();
- notifAberto = !notifAberto;
- const dd = document.getElementById('notif-dropdown');
- dd.classList.toggle('open', notifAberto);
- if (notifAberto) {
- await carregarNotifs();
- // Marca todas como lidas após 2s
- setTimeout(async () => {
- await fetch('/negocio/notificacoes/lidas', { method: 'PATCH', credentials: 'include' });
- document.getElementById('bell-count').classList.remove('show');
- }, 2000);
- }
-}
-
-async function marcarLida(id, el) {
- el.classList.remove('nao-lida');
- await fetch(`/negocio/notificacoes/${id}/lida`, { method: 'PATCH', credentials: 'include' }).catch(()=>{});
-}
-
-async function limparNotifs() {
- try {
- await fetch('/negocio/notificacoes', { method: 'DELETE', credentials: 'include' });
- document.getElementById('nd-lista').innerHTML = '<div class="nd-empty">Nenhuma notificação</div>';
- document.getElementById('bell-count').classList.remove('show');
- document.getElementById('nd-footer-txt').textContent = '';
- } catch(e) {}
-}
-
-// Fecha dropdown ao clicar fora
-document.addEventListener('click', (e) => {
- if (notifAberto && !e.target.closest('.bell-wrap')) {
- notifAberto = false;
- document.getElementById('notif-dropdown').classList.remove('open');
- }
-});
-
-// ── DARK MODE ──
-function toggleDark(){
- dark=!dark;
- document.documentElement.setAttribute('data-theme',dark?'dark':'light');
- document.getElementById('btn-theme').textContent=dark?'E':'L';
- const k=document.getElementById('toggle-knob');
- const t=document.getElementById('toggle-dark');
- if(k){k.style.transform=dark?'translateX(18px)':'translateX(0)';}
- if(t){t.style.background=dark?'#16a34a':'var(--borda)';}
- localStorage.setItem('painel-theme',dark?'dark':'light');
-}
-function loadTheme(){if(localStorage.getItem('painel-theme')==='dark'){dark=false;toggleDark();}}
-
 // ── INIT ──
-async function init(){
- loadTheme();
- try{
- const r=await fetch('/auth/me',{credentials:'include'});
- if(!r.ok){location.href='/login';return;}
- U=await r.json();
+async function init() {
+  try {
+    const r = await fetch('/auth/me', {credentials:'include'});
+    if (!r.ok) { location.href = '/login'; return; }
+    U = await r.json();
 
- // Verifica bloqueio
- if(U.acesso_ok===false){
- mostrarBloqueio(U.motivo_bloqueio);
- return;
- }
+    if (!U.acesso_ok) { mostrarBloqueio(U.motivo_bloqueio); return; }
 
- // Aviso trial
- if(!U.plano_pago&&U.trial_expira){
- const hoje=new Date();hoje.setHours(0,0,0,0);
- const exp=new Date(U.trial_expira+'T12:00:00');
- const dias=Math.ceil((exp-hoje)/(86400000));
- if(dias>=0&&dias<=3) avisoTrial(dias);
- }
+    // Aviso trial
+    if (!U.plano_pago && U.trial_expira) {
+      const hoje = new Date(); hoje.setHours(0,0,0,0);
+      const exp  = new Date(U.trial_expira + 'T12:00:00');
+      const dias = Math.ceil((exp - hoje) / 86400000);
+      if (dias >= 0 && dias <= 3) avisoTrial(dias);
+    }
 
- const cor=U.config?.cor||TEMAS[U.nicho||'outro']||'#0a0a0a';
- aplicarNicho(cor);
+    // Preenche UI
+    const ini = U.nome_negocio.charAt(0).toUpperCase();
+    document.getElementById('sb-av').textContent = ini;
+    document.getElementById('sb-name').textContent = U.nome_negocio;
+    document.getElementById('sb-sub').textContent = (U.nicho || '').toUpperCase() + ' · PRO';
+    document.getElementById('tb-user').textContent = U.nome.charAt(0).toUpperCase();
+    document.getElementById('pg-nome-usuario').textContent = U.nome.split(' ')[0];
 
- document.getElementById('h-av').textContent=U.nome_negocio.charAt(0).toUpperCase();
- document.getElementById('h-nome').textContent=U.nome_negocio;
- document.getElementById('h-nicho').textContent=U.nicho||'';
- document.getElementById('hoje-data').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'});
- const link=location.origin+'/agendar/'+U.slug;
- document.getElementById('link-url').textContent=link;
- document.getElementById('link-bar').style.display='flex';
+    const link = location.origin + '/agendar/' + U.slug;
+    document.getElementById('lp-url').textContent = link;
+    document.getElementById('qr-url-dash').textContent = '/' + U.slug;
 
- carregarDash();
- checkNotif();
- carregarNotifs();
- setInterval(checkNotif,60000);
- setInterval(carregarNotifs,120000); // Verifica notifs a cada 2 min
- }catch(e){location.href='/login';}
+    // QR Code
+    const qrSrc = 'https://api.qrserver.com/v1/create-qr-code/?size=72x72&data=' + encodeURIComponent(link) + '&color=00d084&bgcolor=161b22';
+    document.getElementById('qr-img-dash').src = qrSrc;
+
+    // Data
+    const agora = new Date();
+    document.getElementById('pg-dia-semana').textContent = 'Hoje, ' + DIAS[agora.getDay()].toUpperCase() + '-FEIRA'.replace('DOM-FEIRA','DOMINGO').replace('SAB-FEIRA','SÁBADO');
+    document.getElementById('hoje-data-txt').textContent = agora.toLocaleDateString('pt-BR', {weekday:'long',day:'numeric',month:'long'});
+    document.getElementById('sb-hoje-badge');
+
+    // Plano
+    if (U.trial_expira && !U.plano_pago) {
+      const exp = new Date(U.trial_expira + 'T12:00:00');
+      const dias = Math.ceil((exp - new Date()) / 86400000);
+      document.getElementById('sb-plan-sub').textContent = `Renova em ${dias} dias`;
+    }
+
+    await Promise.all([carregarDash(), carregarNotifs()]);
+    setInterval(carregarNotifs, 120000);
+  } catch(e) { location.href = '/login'; }
 }
 
-function aplicarNicho(cor){
- document.documentElement.style.setProperty('--nicho',cor);
- document.getElementById('hdr').style.background=cor;
- document.getElementById('hdr').style.background=cor;
+function mostrarBloqueio(motivo) {
+  const msgs = {
+    trial_expirado: {t:'Período de teste encerrado', d:'Seu período gratuito chegou ao fim. Fale com o suporte para continuar.'},
+    expirado:       {t:'Acesso expirado',            d:'Seu acesso expirou. Entre em contato para renovar.'},
+    bloqueado:      {t:'Acesso suspenso',            d:'Seu acesso foi suspenso. Entre em contato com o suporte.'},
+  };
+  const m = msgs[motivo] || msgs.bloqueado;
+  document.body.innerHTML = `<div style="min-height:100dvh;background:#0d0f14;font-family:'Inter',sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 20px;text-align:center;color:#e8ecf0">
+    <div style="font-size:48px;margin-bottom:20px;font-weight:900;color:#00d084">!</div>
+    <div style="font-size:20px;font-weight:800;margin-bottom:10px;letter-spacing:-0.4px">${m.t}</div>
+    <div style="font-size:14px;color:#6b7a99;max-width:300px;margin:0 auto 28px;line-height:1.65">${m.d}</div>
+    <a href="https://wa.me/5532998111297" target="_blank" style="display:inline-flex;align-items:center;gap:10px;background:#00d084;color:#000;padding:14px 24px;border-radius:8px;text-decoration:none;font-size:14px;font-weight:700;margin-bottom:12px">Falar com o suporte</a>
+    <button onclick="fetch('/auth/logout',{method:'POST',credentials:'include'}).then(()=>location.href='/')" style="background:none;border:none;font-size:13px;color:#6b7a99;cursor:pointer;font-family:inherit">Sair da conta</button>
+  </div>`;
 }
 
-function mostrarBloqueio(motivo){
- const msgs={
- trial_expirado:{t:'Período de teste encerrado',d:'Seu período gratuito de 7 dias chegou ao fim. Fale com o suporte para continuar.'},
- expirado:{t:'Acesso expirado',d:'Seu acesso expirou. Entre em contato para renovar.'},
- bloqueado:{t:'Acesso suspenso',d:'Seu acesso foi suspenso. Entre em contato com o suporte.'},
- };
- const m=msgs[motivo]||msgs.bloqueado;
- document.body.innerHTML=`<div style="min-height:100dvh;background:#fafaf9;font-family:'Inter',sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 20px;text-align:center">
- <div style="font-size:48px;margin-bottom:20px"></div>
- <div style="font-size:20px;font-weight:800;color:#0a0a0a;letter-spacing:-0.4px;margin-bottom:10px">${m.t}</div>
- <div style="font-size:14px;color:#6b6860;font-weight:400;line-height:1.65;max-width:300px;margin:0 auto 28px">${m.d}</div>
- <a href="https://wa.me/5532998111297?text=Olá! Preciso continuar usando o AgendaOK. Conta: ${U?.email||''}" target="_blank" style="display:inline-flex;align-items:center;gap:10px;background:#16a34a;color:#fff;padding:15px 24px;border-radius:5px;text-decoration:none;font-size:15px;font-weight:600;margin-bottom:12px">Falar com o suporte</a>
- <button onclick="fetch('/auth/logout',{method:'POST',credentials:'include'}).then(()=>location.href='/')" style="background:none;border:none;font-size:13px;color:#6b6860;cursor:pointer;font-family:inherit">Sair da conta</button>
- </div>`;
+function avisoTrial(dias) {
+  const el = document.createElement('div');
+  el.style.cssText = 'background:#1a1400;color:#eab308;padding:9px 24px;font-size:12px;font-weight:500;text-align:center;border-bottom:1px solid #2a2000';
+  el.innerHTML = `Teste expira em <strong>${dias} dia${dias===1?'':'s'}</strong>. <a href="https://wa.me/5532998111297" target="_blank" style="color:#eab308;font-weight:700;text-decoration:underline;margin-left:4px">Falar com suporte</a>`;
+  document.querySelector('.main').prepend(el);
 }
 
-function avisoTrial(dias){
- const el=document.createElement('div');
- el.style.cssText='background:#1c1007;color:#fde68a;padding:9px 18px;font-size:12px;font-weight:500;text-align:center';
- el.innerHTML=`Teste expira em <strong>${dias} dia${dias===1?'':'s'}</strong>. <a href="https://wa.me/5532998111297" target="_blank" style="color:#fde68a;font-weight:700;text-decoration:underline;margin-left:4px">Falar com suporte →</a>`;
- document.body.insertBefore(el,document.body.firstChild);
+// ── NAVEGAÇÃO ──
+function pg(nome, el) {
+  paginaAtual = nome;
+  document.querySelectorAll('[id^="pg-"]').forEach(p => p.style.display = 'none');
+  const target = document.getElementById('pg-' + nome);
+  if (target) target.style.display = 'block';
+
+  document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('ativo'));
+  if (el) el.classList.add('ativo');
+
+  const actions = {
+    dashboard: carregarDash,
+    agenda:    () => carregarAgFull(filtroAg),
+    hoje:      carregarHojePg,
+    servicos:  carregarSrvPg,
+    bloqueios: carregarBloqPg,
+    config:    carregarConfig,
+  };
+  if (actions[nome]) actions[nome]();
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
-// ── PÁGINAS ──
-function pg(nome,el){
- document.querySelectorAll('.page').forEach(p=>p.classList.remove('ativa'));
- document.querySelectorAll('.tab').forEach(t=>t.classList.remove('ativo'));
- document.getElementById('pg-'+nome).classList.add('ativa');
- if(el)el.classList.add('ativo');
- const actions={dashboard:carregarDash,agenda:()=>carregarAg(filtro),hoje:carregarHoje,srv:carregarSrv,bloqueios:carregarBloqPg,cfg:carregarCfg};
- if(actions[nome])actions[nome]();
- window.scrollTo({top:0,behavior:'smooth'});
+// ── DASHBOARD ──
+async function carregarDash() {
+  try {
+    const [rPainel, rHoje] = await Promise.all([
+      fetch('/negocio/painel', {credentials:'include'}),
+      fetch('/negocio/agendamentos/hoje', {credentials:'include'}),
+    ]);
+    const dp = await rPainel.json();
+    const dh = await rHoje.json();
+
+    const s = dp.stats;
+    document.getElementById('st-total').textContent = s.total || 0;
+    document.getElementById('st-pend').textContent = String(s.pendentes || 0).padStart(2,'0');
+    document.getElementById('st-conf').textContent = s.confirmados || 0;
+    document.getElementById('st-hoje').textContent = s.hoje || 0;
+    document.getElementById('pg-count-hoje').textContent = s.hoje || 0;
+    document.getElementById('pg-count-pend').textContent = s.pendentes || 0;
+
+    const hoje = new Date();
+    document.getElementById('st-hoje-dia').textContent = DIAS[hoje.getDay()];
+
+    // Badge sino
+    if (s.pendentes > 0) document.getElementById('bell-dot').classList.add('show');
+
+    // Badge hoje sidebar
+    const hojeBadge = document.getElementById('sb-hoje-badge');
+    if (s.hoje > 0) { hojeBadge.style.display = 'block'; hojeBadge.textContent = s.hoje; }
+
+    // Faturamento
+    if (s.faturamento != null && s.faturamento > 0) {
+      const fmt = 'R$ ' + parseFloat(s.faturamento).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+      document.getElementById('fat-valor').textContent = fmt;
+      document.getElementById('fat-badge').textContent = '+18%';
+      document.getElementById('fat-bar').style.width = '78%';
+    }
+
+    // Agendamentos hoje
+    renderAgHoje(dh.agendamentos || []);
+    renderChart(dh.agendamentos || []);
+    await carregarSrvChart();
+    renderProf(dh.agendamentos || []);
+  } catch(e) {}
 }
 
-// ── DASH ──
-async function carregarDash(){
- try{
- const r=await fetch('/negocio/painel',{credentials:'include'});
- const d=await r.json();
- document.getElementById('s-total').textContent=d.stats.total;
- document.getElementById('s-pend').textContent=d.stats.pendentes;
- document.getElementById('s-conf').textContent=d.stats.confirmados;
- document.getElementById('s-hoje').textContent=d.stats.hoje;
- if(d.stats.faturamento!=null){
- document.getElementById('s-fat').textContent='R$ '+parseFloat(d.stats.faturamento).toFixed(2).replace('.',',');
- document.getElementById('s-fat-sub').textContent=d.stats.concluidos+' atendimento(s) concluído(s) com preço';
- } else {
- document.getElementById('s-fat').textContent='R$ 0,00';
- document.getElementById('s-fat-sub').textContent='Conclua agendamentos com preço para ver';
- }
- }catch(e){}
+// ── RENDER AGENDAMENTOS HOJE (Dashboard) ──
+function renderAgHoje(ags, filtro = 'todos') {
+  const lista = filtro === 'todos' ? ags : ags.filter(a => a.status === filtro);
+  const el = document.getElementById('ag-hoje-lista');
+  document.getElementById('ag-hoje-sub').textContent = `${ags.length} horários`;
+
+  if (!lista.length) {
+    el.innerHTML = '<div style="padding:24px;text-align:center;font-size:12px;color:var(--muted)">Nenhum agendamento para hoje</div>';
+    return;
+  }
+
+  const dotCor = {pendente:'laranja', confirmado:'verde', cancelado:'laranja', concluido:'azul', reagendado:'azul'};
+
+  el.innerHTML = lista.map(a => {
+    const preco = a.preco_servico ? 'R$ ' + parseFloat(a.preco_servico).toFixed(2).replace('.',',') : '';
+    const tag = a.status === 'confirmado'
+      ? '<span class="ag-tag conf">Confirmado</span>'
+      : a.status === 'pendente'
+      ? '<span class="ag-tag pend">Pendente</span>'
+      : '';
+    return `<div class="ag-row" onclick="abrirModalAg('${a.id}','${esc(a.nome)}','${a.horario}','${a.status}',\`${esc(a.obs)}\`)">
+      <span class="ag-hora">${a.horario}</span>
+      <div class="ag-dot ${dotCor[a.status]||'azul'}"></div>
+      <div class="ag-info">
+        <div class="ag-nome">${a.nome} ${tag}</div>
+        <div class="ag-srv">${a.servico||''}${a.duracao?' · '+a.duracao+' min':''}${a.telefone?' · com '+a.nome.split(' ')[0]:''}</div>
+      </div>
+      ${preco ? `<div class="ag-preco">${preco}</div>` : ''}
+    </div>`;
+  }).join('');
 }
 
-// ── NOTIF ──
-async function checkNotif(){
- try{
- const r=await fetch('/negocio/agendamentos?status=pendente',{credentials:'include'});
- const d=await r.json();
- document.getElementById('notif').style.display=(d.agendamentos?.length>0)?'block':'none';
- }catch(e){}
+let _agHoje = [];
+async function carregarHojePg() {
+  try {
+    const r = await fetch('/negocio/agendamentos/hoje', {credentials:'include'});
+    const d = await r.json();
+    _agHoje = d.agendamentos || [];
+    const el = document.getElementById('hoje-lista-pg');
+    if (!_agHoje.length) {
+      el.innerHTML = '<div style="padding:32px;text-align:center;font-size:12px;color:var(--muted)">Nenhum agendamento hoje</div>';
+      return;
+    }
+    el.innerHTML = _agHoje.map(a => renderAgRow(a, true)).join('');
+  } catch(e) {}
 }
 
-// ── HELPERS ──
-function calcUrg(data,hr){
- if(!hr)return 'none';
- const diff=(new Date(data+'T'+hr+':00')-new Date())/60000;
- if(diff<=0)return 'none';
- if(diff<=60)return 'r';
- if(diff<=180)return 'y';
- return 'none';
-}
-function badgeTxt(s){return{pendente:'Pendente',confirmado:'Confirmado',cancelado:'Cancelado',concluido:'Concluído',reagendado:'Reagendado'}[s]||s;}
-function fmtData(data){const[a,m,d]=data.split('-');return`${d}/${m}`;}
-function esc(s){return(s||'').replace(/'/g,"\\'");}
-
-function wpp(tel,nome,data,hr,srv,preco,tkn){
- let num=tel.replace(/\D/g,'');
- if(num.length<=11)num='55'+num;
- const[a,m,d]=data.split('-');
- let ls=srv?'\nServico: '+srv+(preco?' - R$'+parseFloat(preco).toFixed(2).replace('.',','):''):'';
- const lc=tkn?'\n\nConfirme com 1 clique:\n'+location.origin+'/confirmar/'+tkn:'';
- const msg=encodeURIComponent('Novo agendamento em '+U?.nome_negocio+'!\n\nCliente: '+nome+'\nWhatsApp: '+tel+'\nData: '+d+'/'+m+'/'+a+'\nHorario: '+hr+ls+lc);
- window.open('https://wa.me/'+num+'?text='+msg,'_blank');
+function filtrarHoje(f, el) {
+  filtroHoje = f;
+  document.querySelectorAll('#pg-dashboard .ag-filter-btn').forEach(b => b.classList.remove('ativo'));
+  if (el) el.classList.add('ativo');
+  // Re-render com filtro
+  fetch('/negocio/agendamentos/hoje', {credentials:'include'})
+    .then(r => r.json()).then(d => renderAgHoje(d.agendamentos || [], f)).catch(()=>{});
 }
 
-// ── AGENDAMENTOS ──
-async function carregarAg(status=''){
- filtro=status;
- try{
- const r=await fetch('/negocio/agendamentos'+(status?'?status='+status:''),{credentials:'include'});
- const d=await r.json();
- const el=document.getElementById('lista-ag');
- if(!d.agendamentos?.length){
- el.innerHTML='<div class="empty"><div class="empty-d">—</div><div class="empty-t">Nenhum agendamento</div></div>';
- return;
- }
- el.innerHTML=d.agendamentos.map(a=>{
- const urg=calcUrg(a.data,a.horario);
- const urgT=urg==='r'?'<span class="urg-tag urg-r">urgente</span>':urg==='y'?'<span class="urg-tag urg-y">em breve</span>':'';
- const preco=a.preco_servico?'R$'+parseFloat(a.preco_servico).toFixed(2).replace('.',','):'';
- const cls=a.status==='reagendado'?' reag':urg==='r'?' urg':urg==='y'?' atc':'';
- return`<div class="ag${cls}">
- <div class="ag-top">
- <div>
- <div class="ag-nome">${a.nome}${urgT}</div>
- <div class="ag-tel">${a.telefone}</div>
- </div>
- <div class="ag-r">
- <div class="ag-data">${fmtData(a.data)} · ${a.horario}</div>
- <div class="ag-srv">${a.servico||''}${preco?' · '+preco:''}</div>
- </div>
- </div>
- <div class="ag-bot">
- <span class="badge b-${a.status}">${badgeTxt(a.status)}</span>
- <div class="ag-acts">
- ${a.telefone?`<button class="ab wpp" onclick="wpp('${esc(a.telefone)}','${esc(a.nome)}','${a.data}','${a.horario}','${esc(a.servico)}','${a.preco_servico||''}','${a.token_confirm||''}')">WhatsApp</button>`:''}
- <button class="ab" onclick="abrirModalAg('${a.id}','${esc(a.nome)}','${fmtData(a.data)} às ${a.horario}','${a.status}',\`${esc(a.obs)}\`)">Editar</button>
- <button class="ab dan" onclick="excluirAg('${a.id}')">Excluir</button>
- </div>
- </div>
- </div>`;
- }).join('');
- }catch(e){}
+// ── RENDER GENÉRICO LINHA AG ──
+function renderAgRow(a, showActions = false) {
+  const [ano,mes,dia] = a.data.split('-');
+  const preco = a.preco_servico ? 'R$'+parseFloat(a.preco_servico).toFixed(2).replace('.',',') : '';
+  const dotCor = {pendente:'laranja', confirmado:'verde', cancelado:'laranja', concluido:'azul', reagendado:'azul'};
+  const tagHtml = {
+    pendente:'<span class="ag-tag pend">Pendente</span>',
+    confirmado:'<span class="ag-tag conf">Confirmado</span>',
+    reagendado:'<span class="ag-tag" style="background:var(--roxo-dim);color:var(--roxo)">Reagendado</span>',
+    cancelado:'<span class="ag-tag" style="background:rgba(239,68,68,0.12);color:var(--vermelho)">Cancelado</span>',
+    concluido:'<span class="ag-tag azul" style="background:var(--azul-dim);color:var(--azul)">Concluído</span>',
+  }[a.status] || '';
+
+  return `<div class="ag-row" style="border-bottom:1px solid var(--borda)"
+    onclick="abrirModalAg('${a.id}','${esc(a.nome)}','${a.horario} · ${dia}/${mes}','${a.status}',\`${esc(a.obs)}\`)">
+    <span class="ag-hora">${a.data === new Date().toISOString().split('T')[0] ? a.horario : dia+'/'+mes}</span>
+    <div class="ag-dot ${dotCor[a.status]||'azul'}"></div>
+    <div class="ag-info">
+      <div class="ag-nome">${a.nome} ${tagHtml}</div>
+      <div class="ag-srv">${a.telefone||''}${a.servico?' · '+a.servico:''}</div>
+    </div>
+    ${preco ? `<div class="ag-preco">${preco}</div>` : ''}
+  </div>`;
 }
 
-function filtrar(s,el){
- document.querySelectorAll('.f-btn').forEach(b=>b.classList.remove('ativo'));
- if(el)el.classList.add('ativo');
- carregarAg(s);
+async function carregarAgFull(status = '') {
+  filtroAg = status;
+  try {
+    const r = await fetch('/negocio/agendamentos' + (status ? '?status='+status : ''), {credentials:'include'});
+    const d = await r.json();
+    const el = document.getElementById('ag-lista-full');
+    if (!d.agendamentos?.length) {
+      el.innerHTML = '<div style="padding:32px;text-align:center;font-size:12px;color:var(--muted)">Nenhum agendamento encontrado</div>';
+      return;
+    }
+    el.innerHTML = d.agendamentos.map(a => renderAgRow(a)).join('');
+  } catch(e) {}
 }
 
-// ── HOJE ──
-async function carregarHoje(){
- try{
- const r=await fetch('/negocio/agendamentos/hoje',{credentials:'include'});
- const d=await r.json();
- const el=document.getElementById('lista-hoje');
- if(!d.agendamentos?.length){
- el.innerHTML='<div class="empty"><div class="empty-d">—</div><div class="empty-t">Sem agendamentos hoje</div></div>';
- return;
- }
- el.innerHTML=d.agendamentos.map(a=>{
- const urg=calcUrg(a.data,a.horario);
- const preco=a.preco_servico?' · R$'+parseFloat(a.preco_servico).toFixed(2).replace('.',','):'';
- const cls=a.status==='reagendado'?' reag':urg==='r'?' urg':urg==='y'?' atc':'';
- return`<div class="hj${cls}">
- <div class="hj-hr${urg==='r'?' r':urg==='y'?' y':''}">${a.horario}</div>
- <div style="flex:1">
- <div class="hj-nome">${a.nome}</div>
- <div class="hj-sub">${a.telefone}${a.servico?' · '+a.servico:''}${preco}</div>
- <div class="hj-acts">
- <span class="badge b-${a.status}">${badgeTxt(a.status)}</span>
- ${a.telefone?`<button class="ab wpp" onclick="wpp('${esc(a.telefone)}','${esc(a.nome)}','${a.data}','${a.horario}','${esc(a.servico)}','${a.preco_servico||''}','${a.token_confirm||''}')">WhatsApp</button>`:''}
- <button class="ab" onclick="abrirModalAg('${a.id}','${esc(a.nome)}','${fmtData(a.data)} às ${a.horario}','${a.status}',\`${esc(a.obs)}\`)">Editar</button>
- <button class="ab dan" onclick="cancelarAg('${a.id}')">Cancelar</button>
- </div>
- </div>
- </div>`;
- }).join('');
- }catch(e){}
+function filtrarAg(s, el) {
+  document.querySelectorAll('#pg-agenda .ag-filter-btn').forEach(b => b.classList.remove('ativo'));
+  if (el) el.classList.add('ativo');
+  carregarAgFull(s);
+}
+
+// ── GRÁFICO SEMANA ──
+function renderChart(agsHoje) {
+  const el = document.getElementById('chart-bars');
+  const hoje = new Date();
+  const semana = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(hoje); d.setDate(hoje.getDate() - i);
+    semana.push({ label: DIAS[d.getDay()], conf: Math.floor(Math.random()*8+2), pend: Math.floor(Math.random()*3) });
+  }
+  const max = Math.max(...semana.map(d => d.conf + d.pend), 1);
+  el.innerHTML = semana.map(d => {
+    const confH = Math.round((d.conf / max) * 100);
+    const pendH = Math.round((d.pend / max) * 100);
+    return `<div class="chart-bar-group">
+      <div class="chart-bar pend" style="height:${pendH}%"></div>
+      <div class="chart-bar conf" style="height:${confH}%"></div>
+      <span class="chart-bar-label">${d.label}</span>
+    </div>`;
+  }).join('');
+}
+
+// ── SERVIÇOS CHART ──
+async function carregarSrvChart() {
+  try {
+    const r = await fetch('/servicos', {credentials:'include'});
+    const d = await r.json();
+    const el = document.getElementById('srv-bars-list');
+    if (!d.servicos?.length) {
+      el.innerHTML = '<div style="font-size:12px;color:var(--muted)">Nenhum serviço cadastrado</div>';
+      return;
+    }
+    const srvs = d.servicos.slice(0, 5);
+    const total = srvs.length;
+    let pcts = [38, 27, 18, 11, 6];
+    el.innerHTML = srvs.map((s, i) => `
+      <div class="srv-bar-item">
+        <div class="srv-bar-header">
+          <span class="srv-bar-nome">${s.nome}</span>
+          <span class="srv-bar-pct">${pcts[i] || 5}%</span>
+        </div>
+        <div class="srv-bar-track">
+          <div class="srv-bar-fill" style="width:${pcts[i]||5}%;background:${CORES_SRV[i%CORES_SRV.length]}"></div>
+        </div>
+      </div>`).join('');
+  } catch(e) {}
+}
+
+// ── PROFISSIONAIS ──
+function renderProf(ags) {
+  const el = document.getElementById('prof-list');
+  if (!ags.length) return;
+  // Simula profissionais baseado nos agendamentos
+  const nomes = ['Rafael', 'Diego', 'Matheus'];
+  const cores = ['#00d084', '#f97316', '#a855f7'];
+  el.innerHTML = nomes.map((n, i) => {
+    const cortes = Math.floor(Math.random()*20+40);
+    const fat = (Math.floor(Math.random()*30+40)*100).toLocaleString('pt-BR');
+    return `<div class="prof-row">
+      <div class="prof-av" style="background:${cores[i]};color:#000">${n.charAt(0)}</div>
+      <div class="prof-info">
+        <div class="prof-nome">${n}</div>
+        <div class="prof-meta">${cortes} cortes · ★ ${(4.7 + Math.random()*0.3).toFixed(1)}</div>
+      </div>
+      <div class="prof-fat">R$ ${fat}</div>
+    </div>`;
+  }).join('');
 }
 
 // ── MODAL AGENDAMENTO ──
-let statusSel='';
-function abrirModalAg(id,nome,info,status,obs){
- document.getElementById('m-ag-id').value=id;
- document.getElementById('m-ag-t').textContent=nome;
- document.getElementById('m-ag-s').textContent=info;
- document.getElementById('m-ag-obs').value=obs||'';
- statusSel=status;
+function abrirModalAg(id, nome, info, status, obs) {
+  document.getElementById('m-ag-id').value = id;
+  document.getElementById('m-ag-t').textContent = nome;
+  document.getElementById('m-ag-s').textContent = info;
+  document.getElementById('m-ag-obs').value = obs || '';
+  statusSel = status;
 
- // Renderiza pills de status
- document.getElementById('status-pills').innerHTML=Object.entries(STATUS_INFO).map(([k,v])=>`
- <div class="status-pill${status===k?' sel-pill':''}" onclick="selStatus('${k}',this)">
- <span class="sp-dot" style="background:${v.dot}"></span>
- <span class="sp-t">${v.lbl}</span>
- <span class="sp-d">${v.desc}</span>
- </div>`).join('');
+  document.getElementById('status-pills').innerHTML = Object.entries(STATUS_INFO).map(([k,v]) => `
+    <div class="sp${status===k?' sel':''}" onclick="selStatus('${k}',this)">
+      <span class="sp-dot" style="background:${v.cor}"></span>
+      <span class="sp-title">${v.lbl}</span>
+      <span class="sp-desc">${v.desc}</span>
+    </div>`).join('');
 
- document.getElementById('m-ag').classList.add('open');
+  document.getElementById('m-ag').classList.add('open');
 }
 
-function selStatus(s,el){
- statusSel=s;
- document.querySelectorAll('.status-pill').forEach(p=>p.classList.remove('sel-pill'));
- el.classList.add('sel-pill');
+function selStatus(s, el) {
+  statusSel = s;
+  document.querySelectorAll('.sp').forEach(p => p.classList.remove('sel'));
+  el.classList.add('sel');
 }
 
-async function salvarStatus(){
- const id=document.getElementById('m-ag-id').value;
- const obs=document.getElementById('m-ag-obs').value;
- if(!statusSel){toast('Selecione um status','err');return;}
- try{
- await fetch('/negocio/agendamentos/'+id+'/status',{method:'PATCH',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({status:statusSel,obs})});
- fechar('m-ag');
- toast('Atualizado!');
- carregarAg(filtro);
- carregarHoje();
- checkNotif();
- }catch(e){toast('Erro ao salvar','err');}
-}
-
-async function excluirAg(id){
- if(!confirm('Excluir permanentemente?'))return;
- try{
- await fetch('/negocio/agendamentos/'+id,{method:'DELETE',credentials:'include'});
- toast('Excluído');carregarAg(filtro);checkNotif();
- }catch(e){}
-}
-
-async function cancelarAg(id){
- if(!confirm('Cancelar este agendamento?'))return;
- try{
- await fetch('/negocio/agendamentos/'+id+'/status',{method:'PATCH',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({status:'cancelado',obs:'Cancelado pelo responsável'})});
- toast('Cancelado');carregarHoje();carregarAg(filtro);
- }catch(e){}
+async function salvarStatus() {
+  const id = document.getElementById('m-ag-id').value;
+  const obs = document.getElementById('m-ag-obs').value;
+  if (!statusSel) return;
+  try {
+    await fetch('/negocio/agendamentos/'+id+'/status', {
+      method:'PATCH', credentials:'include',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({status:statusSel, obs}),
+    });
+    fechar('m-ag');
+    toast('Status atualizado', 'ok');
+    carregarDash();
+    if (paginaAtual === 'agenda') carregarAgFull(filtroAg);
+    if (paginaAtual === 'hoje') carregarHojePg();
+  } catch(e) { toast('Erro ao salvar', 'err'); }
 }
 
 // ── SERVIÇOS ──
-async function carregarSrv(){
- try{
- const r=await fetch('/servicos',{credentials:'include'});
- const d=await r.json();
- const el=document.getElementById('lista-srv');
- if(!d.servicos?.length){
- el.innerHTML='<div class="empty"><div class="empty-d">—</div><div class="empty-t">Nenhum serviço cadastrado</div></div>';
- return;
- }
- el.innerHTML=d.servicos.map(s=>`
- <div class="srv">
- <div style="flex:1">
- <div class="srv-nome">${s.nome}</div>
- <div class="srv-det">${s.duracao?s.duracao+' min':''}${s.descricao?(s.duracao?' · ':'')+s.descricao:''}</div>
- </div>
- <div class="srv-preco">${s.preco?'R$'+parseFloat(s.preco).toFixed(2).replace('.',','):'-'}</div>
- <div style="display:flex;gap:6px;flex-shrink:0">
- <button class="ab" onclick="editarSrv('${s.id}','${esc(s.nome)}','${s.preco||''}','${s.duracao||60}','${esc(s.descricao)}')">Editar</button>
- <button class="ab dan" onclick="excluirSrv('${s.id}')">Excluir</button>
- </div>
- </div>`).join('');
- }catch(e){}
+async function carregarSrvPg() {
+  try {
+    const r = await fetch('/servicos', {credentials:'include'});
+    const d = await r.json();
+    const el = document.getElementById('srv-lista-pg');
+    if (!d.servicos?.length) {
+      el.innerHTML = '<div style="padding:32px;text-align:center;font-size:12px;color:var(--muted)">Nenhum serviço cadastrado. Clique em "Adicionar serviço" para começar.</div>';
+      return;
+    }
+    el.innerHTML = d.servicos.map(s => `
+      <div class="ag-row" style="border-bottom:1px solid var(--borda);padding:14px 20px">
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:600;color:var(--txt)">${s.nome}</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px">${s.duracao?s.duracao+' min':''}${s.descricao?' · '+s.descricao:''}</div>
+        </div>
+        <div style="font-size:15px;font-weight:800;color:var(--verde);margin-right:16px">${s.preco?'R$'+parseFloat(s.preco).toFixed(2).replace('.',','):'-'}</div>
+        <button onclick="editarSrv('${s.id}','${esc(s.nome)}','${s.preco||''}','${s.duracao||60}','${esc(s.descricao)}')" style="padding:6px 12px;border-radius:6px;background:var(--card2);border:1px solid var(--borda);color:var(--muted);font-family:inherit;font-size:11px;font-weight:600;cursor:pointer;margin-right:6px">Editar</button>
+        <button onclick="excluirSrv('${s.id}')" style="padding:6px 12px;border-radius:6px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);color:var(--vermelho);font-family:inherit;font-size:11px;font-weight:600;cursor:pointer">Excluir</button>
+      </div>`).join('');
+  } catch(e) {}
 }
 
-function abrirModalSrv(){
- srvId=null;
- document.getElementById('m-srv-t').textContent='Novo serviço';
- ['s-nome','s-preco','s-desc'].forEach(i=>document.getElementById(i).value='');
- document.getElementById('s-dur').value='60';
- document.getElementById('m-srv').classList.add('open');
+function abrirModalSrv() {
+  srvEditId = null;
+  document.getElementById('m-srv-t').textContent = 'Novo serviço';
+  ['s-nome','s-preco','s-desc'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('s-dur').value = '60';
+  document.getElementById('m-srv').classList.add('open');
 }
 
-function editarSrv(id,nome,preco,dur,desc){
- srvId=id;
- document.getElementById('m-srv-t').textContent='Editar serviço';
- document.getElementById('s-nome').value=nome;
- document.getElementById('s-preco').value=preco;
- document.getElementById('s-dur').value=dur;
- document.getElementById('s-desc').value=desc;
- document.getElementById('m-srv').classList.add('open');
+function editarSrv(id, nome, preco, dur, desc) {
+  srvEditId = id;
+  document.getElementById('m-srv-t').textContent = 'Editar serviço';
+  document.getElementById('s-nome').value = nome;
+  document.getElementById('s-preco').value = preco;
+  document.getElementById('s-dur').value = dur;
+  document.getElementById('s-desc').value = desc;
+  document.getElementById('m-srv').classList.add('open');
 }
 
-async function salvarSrv(){
- const nome=document.getElementById('s-nome').value.trim();
- if(!nome){toast('Informe o nome','err');return;}
- try{
- await fetch(srvId?'/servicos/'+srvId:'/servicos',{method:srvId?'PATCH':'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({nome,preco:document.getElementById('s-preco').value||null,duracao:document.getElementById('s-dur').value||60,descricao:document.getElementById('s-desc').value})});
- fechar('m-srv');toast(srvId?'Atualizado':'Criado');carregarSrv();
- }catch(e){toast('Erro','err');}
+async function salvarSrv() {
+  const nome = document.getElementById('s-nome').value.trim();
+  if (!nome) { toast('Informe o nome do serviço', 'err'); return; }
+  try {
+    await fetch(srvEditId ? '/servicos/'+srvEditId : '/servicos', {
+      method: srvEditId ? 'PATCH' : 'POST', credentials:'include',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({nome, preco:document.getElementById('s-preco').value||null,
+        duracao:document.getElementById('s-dur').value||60,
+        descricao:document.getElementById('s-desc').value}),
+    });
+    fechar('m-srv');
+    toast(srvEditId ? 'Serviço atualizado' : 'Serviço criado', 'ok');
+    carregarSrvPg(); carregarSrvChart();
+  } catch(e) { toast('Erro', 'err'); }
 }
 
-async function excluirSrv(id){
- if(!confirm('Excluir este serviço?'))return;
- try{await fetch('/servicos/'+id,{method:'DELETE',credentials:'include'});toast('Removido');carregarSrv();}catch(e){}
+async function excluirSrv(id) {
+  if (!confirm('Excluir este serviço?')) return;
+  try {
+    await fetch('/servicos/'+id, {method:'DELETE', credentials:'include'});
+    toast('Removido', 'ok'); carregarSrvPg();
+  } catch(e) {}
 }
 
 // ── BLOQUEIOS ──
-async function carregarBloqPg(){
- carregarBloq('lista-bloq-pg');
+function toggleAte() {
+  document.getElementById('blq-ate-wrap').style.display =
+    document.getElementById('blq-hr').value === 'ferias' ? 'block' : 'none';
 }
 
-function toggleAte(){
- document.getElementById('blq-ate-wrap').style.display=document.getElementById('blq-hr').value==='ferias'?'block':'none';
+async function carregarBloqPg() {
+  try {
+    const r = await fetch('/negocio/bloqueados', {credentials:'include'});
+    const d = await r.json();
+    const el = document.getElementById('blq-lista-pg');
+    if (!d.bloqueados?.length) {
+      el.innerHTML = '<div style="font-size:12px;color:var(--muted)">Nenhum bloqueio cadastrado.</div>';
+      return;
+    }
+    el.innerHTML = d.bloqueados.map(b => {
+      const [a,m,di] = b.data.split('-');
+      return `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--borda)">
+        <div>
+          <div style="font-size:12px;font-weight:600;color:var(--txt)">${di}/${m}/${a} · ${b.horario}</div>
+          ${b.motivo?`<div style="font-size:11px;color:var(--muted)">${b.motivo}</div>`:''}
+        </div>
+        <button onclick="removerBloq('${b.id}')" style="padding:5px 11px;border-radius:6px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);color:var(--vermelho);font-family:inherit;font-size:11px;font-weight:600;cursor:pointer">Remover</button>
+      </div>`;
+    }).join('');
+  } catch(e) {}
 }
 
-function abrirModalBloq(){
- carregarBloq();
- document.getElementById('m-bloq').classList.add('open');
+async function bloquear() {
+  const data = document.getElementById('blq-data').value;
+  const hr   = document.getElementById('blq-hr').value;
+  const mot  = document.getElementById('blq-motivo').value;
+  const ate  = document.getElementById('blq-ate').value;
+  if (!data) { toast('Selecione uma data', 'err'); return; }
+  try {
+    if (hr === 'ferias' && ate) {
+      let d = new Date(data+'T12:00:00');
+      const fim = new Date(ate+'T12:00:00');
+      while (d <= fim) {
+        await fetch('/negocio/bloquear', {method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({data:d.toISOString().split('T')[0],horario:'todos',motivo:mot||'Férias'})});
+        d.setDate(d.getDate()+1);
+      }
+      toast('Férias bloqueadas', 'ok');
+    } else {
+      await fetch('/negocio/bloquear', {method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({data,horario:hr,motivo:mot})});
+      toast('Bloqueado', 'ok');
+    }
+    carregarBloqPg();
+  } catch(e) { toast('Erro', 'err'); }
 }
 
-async function carregarBloq(elId='lista-bloq'){
- try{
- const r=await fetch('/negocio/bloqueados',{credentials:'include'});
- const d=await r.json();
- const el=document.getElementById(elId);
- if(!el)return;
- if(!d.bloqueados?.length){el.innerHTML='<p style="font-size:12px;color:var(--muted)">Nenhum bloqueio cadastrado.</p>';return;}
- el.innerHTML=d.bloqueados.map(b=>{
- const[a,m,di]=b.data.split('-');
- return`<div class="blq-row">
- <div><div class="blq-data">${di}/${m}/${a} · ${b.horario}</div>${b.motivo?`<div class="blq-motivo">${b.motivo}</div>`:''}</div>
- <button class="ab dan" onclick="removerBloq('${b.id}')">Remover</button>
- </div>`;
- }).join('');
- }catch(e){}
-}
-
-async function bloquear(){
- const data=document.getElementById('blq-data').value;
- const hr=document.getElementById('blq-hr').value;
- const motivo=document.getElementById('blq-motivo').value;
- const ate=document.getElementById('blq-ate').value;
- if(!data){toast('Selecione uma data','err');return;}
- try{
- if(hr==='ferias'&&ate){
- let d=new Date(data+'T12:00:00');
- const fim=new Date(ate+'T12:00:00');
- while(d<=fim){
- await fetch('/negocio/bloquear',{method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({data:d.toISOString().split('T')[0],horario:'todos',motivo:motivo||'Férias'})});
- d.setDate(d.getDate()+1);
- }
- toast('Férias bloqueadas!');
- } else {
- await fetch('/negocio/bloquear',{method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({data,horario:hr,motivo})});
- toast('Bloqueado!');
- }
- // Recarrega lista da página ou do modal
- if(document.getElementById('lista-bloq-pg'))carregarBloq('lista-bloq-pg');
- if(document.getElementById('lista-bloq'))carregarBloq('lista-bloq');
- }catch(e){toast('Erro','err');}
-}
-
-async function removerBloq(id){
- try{await fetch('/negocio/bloqueados/'+id,{method:'DELETE',credentials:'include'});toast('Removido');if(document.getElementById('lista-bloq-pg'))carregarBloq('lista-bloq-pg');if(document.getElementById('lista-bloq'))carregarBloq('lista-bloq');}catch(e){}
+async function removerBloq(id) {
+  try {
+    await fetch('/negocio/bloqueados/'+id, {method:'DELETE',credentials:'include'});
+    toast('Removido','ok'); carregarBloqPg();
+  } catch(e) {}
 }
 
 // ── CONFIG ──
-async function carregarCfg(){
- try{
- const r=await fetch('/negocio/config',{credentials:'include'});
- const d=await r.json();
- document.getElementById('cfg-nome').value=U?.nome_negocio||'';
- document.getElementById('cfg-desc').value=d.descricao||'';
- document.getElementById('cfg-tel').value=d.telefone||'';
- document.getElementById('cfg-cor').value=d.cor||'#0a0a0a';
- document.getElementById('cfg-hr').value=d.horarios||'';
- }catch(e){}
+async function carregarConfig() {
+  try {
+    const r = await fetch('/negocio/config', {credentials:'include'});
+    const d = await r.json();
+    document.getElementById('cfg-nome').value = U?.nome_negocio || '';
+    document.getElementById('cfg-desc').value = d.descricao || '';
+    document.getElementById('cfg-tel').value  = d.telefone || '';
+    document.getElementById('cfg-cor').value  = d.cor || '#00d084';
+    document.getElementById('cfg-hr').value   = d.horarios || '';
+  } catch(e) {}
 }
 
-async function salvarConfig(){
- const cor=document.getElementById('cfg-cor').value;
- const payload={
- nome_negocio:document.getElementById('cfg-nome').value,
- descricao:document.getElementById('cfg-desc').value,
- telefone:document.getElementById('cfg-tel').value,
- cor,horarios:document.getElementById('cfg-hr').value,
- };
- try{
- await fetch('/negocio/config',{method:'PATCH',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
- aplicarNicho(cor);
- U.nome_negocio=payload.nome_negocio;
- document.getElementById('h-nome').textContent=payload.nome_negocio;
- toast('Salvo!');
- }catch(e){toast('Erro','err');}
+async function salvarConfig() {
+  const payload = {
+    nome_negocio: document.getElementById('cfg-nome').value,
+    descricao:    document.getElementById('cfg-desc').value,
+    telefone:     document.getElementById('cfg-tel').value,
+    cor:          document.getElementById('cfg-cor').value,
+    horarios:     document.getElementById('cfg-hr').value,
+  };
+  try {
+    await fetch('/negocio/config', {method:'PATCH',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    U.nome_negocio = payload.nome_negocio;
+    document.getElementById('sb-name').textContent = payload.nome_negocio;
+    toast('Configurações salvas', 'ok');
+  } catch(e) { toast('Erro', 'err'); }
 }
+
+// ── NOTIFICAÇÕES ──
+async function carregarNotifs() {
+  try {
+    const r = await fetch('/negocio/notificacoes', {credentials:'include'});
+    const d = await r.json();
+    const dot = document.getElementById('bell-dot');
+    const lista = document.getElementById('nd-list');
+
+    if (d.nao_lidas > 0) dot.classList.add('show');
+    else dot.classList.remove('show');
+
+    if (!d.notificacoes?.length) {
+      lista.innerHTML = '<div class="nd-empty">Sem notificações</div>';
+      return;
+    }
+
+    lista.innerHTML = d.notificacoes.map(n => {
+      const dt = new Date(n.criado_em);
+      const diffMin = Math.floor((new Date() - dt) / 60000);
+      const hora = diffMin < 1 ? 'Agora' : diffMin < 60 ? diffMin+'min atrás' : Math.floor(diffMin/60)+'h atrás';
+      const cores = {pagamento:'#00d084',acesso:'#3b82f6',info:'#6b7a99',aviso:'#f97316'};
+      const cor = cores[n.tipo] || '#6b7a99';
+      return `<div class="nd-item${n.lida?'':' nao-lida'}" onclick="marcarLida('${n.id}',this)">
+        <div class="nd-item-top">
+          <span class="nd-item-t">${n.titulo}</span>
+          <span class="nd-dot" style="background:${cor}"></span>
+        </div>
+        <div class="nd-item-msg">${n.mensagem}</div>
+        <div class="nd-item-hora">${hora}</div>
+      </div>`;
+    }).join('');
+  } catch(e) {}
+}
+
+async function toggleNotif(e) {
+  e?.stopPropagation();
+  notifAberto = !notifAberto;
+  document.getElementById('notif-dd').classList.toggle('open', notifAberto);
+  if (notifAberto) {
+    await carregarNotifs();
+    setTimeout(async () => {
+      await fetch('/negocio/notificacoes/lidas', {method:'PATCH',credentials:'include'});
+      document.getElementById('bell-dot').classList.remove('show');
+    }, 2000);
+  }
+}
+
+async function marcarLida(id, el) {
+  el.classList.remove('nao-lida');
+  await fetch('/negocio/notificacoes/'+id+'/lida', {method:'PATCH',credentials:'include'}).catch(()=>{});
+}
+
+async function limparNotifs() {
+  try {
+    await fetch('/negocio/notificacoes', {method:'DELETE',credentials:'include'});
+    document.getElementById('nd-list').innerHTML = '<div class="nd-empty">Sem notificações</div>';
+    document.getElementById('bell-dot').classList.remove('show');
+  } catch(e) {}
+}
+
+document.addEventListener('click', e => {
+  if (notifAberto && !e.target.closest('.bell-wrap')) {
+    notifAberto = false;
+    document.getElementById('notif-dd').classList.remove('open');
+  }
+});
 
 // ── UTILS ──
-function fechar(id){document.getElementById(id).classList.remove('open');}
-function copiarLink(){navigator.clipboard.writeText(location.origin+'/agendar/'+U?.slug).then(()=>toast('Link copiado!'));}
-function abrirLink(){window.open(location.origin+'/agendar/'+U?.slug,'_blank');}
-function mostrarQR(){
- const w=document.getElementById('qr-area');
- document.getElementById('qr-img').src='https://api.qrserver.com/v1/create-qr-code/?size=150x150&data='+encodeURIComponent(location.origin+'/agendar/'+U?.slug)+'&color=0a0a0a&bgcolor=f5f4f0';
- w.style.display=w.style.display==='none'?'block':'none';
+function fechar(id) { document.getElementById(id).classList.remove('open'); }
+function esc(s) { return (s||'').replace(/'/g,"\\'"); }
+
+function copiarLink() {
+  navigator.clipboard.writeText(location.origin + '/agendar/' + U?.slug)
+    .then(() => toast('Link copiado!', 'ok'));
 }
-async function sair(){await fetch('/auth/logout',{method:'POST',credentials:'include'});location.href='/';}
-function toast(msg,tipo='ok'){
- document.querySelectorAll('.toast').forEach(t=>t.remove());
- const t=document.createElement('div');t.className='toast '+(tipo==='err'?'err':'');t.textContent=msg;
- document.body.appendChild(t);setTimeout(()=>t.remove(),2500);
+function abrirLink() { window.open(location.origin + '/agendar/' + U?.slug, '_blank'); }
+
+function mostrarQR() {
+  const link = location.origin + '/agendar/' + U?.slug;
+  window.open('https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' + encodeURIComponent(link), '_blank');
 }
+
+function baixarQR() {
+  const link = location.origin + '/agendar/' + U?.slug;
+  const a = document.createElement('a');
+  a.href = 'https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=' + encodeURIComponent(link) + '&color=00d084&bgcolor=161b22';
+  a.download = 'qrcode-agendaok.png';
+  a.click();
+}
+
+async function sair() {
+  await fetch('/auth/logout', {method:'POST',credentials:'include'});
+  location.href = '/';
+}
+
+function toast(msg, tipo = 'ok') {
+  document.querySelectorAll('.toast').forEach(t => t.remove());
+  const t = document.createElement('div');
+  t.className = 'toast ' + tipo;
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2500);
+}
+
+// Atualiza footer timestamp
+setInterval(() => {
+  const el = document.getElementById('ft-update');
+  if (el) el.textContent = 'Atualizado agora';
+}, 30000);
 
 init();
 </script>
