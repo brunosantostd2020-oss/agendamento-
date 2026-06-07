@@ -1,102 +1,102 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
-  <meta name="theme-color" content="#0a0a0a"/>
-  <title>Entrar — AgendaOK</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
-  <style>
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    :root{--preto:#0a0a0a;--branco:#fff;--bg:#fafaf9;--cinza:#f5f4f0;--cinza2:#e8e6e1;--muted:#6b6860;--texto:#1c1b18;--vermelho:#dc2626;--r:6px;--sb:env(safe-area-inset-bottom,0px);--st:env(safe-area-inset-top,0px)}
-    html{-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
-    body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--texto);min-height:100dvh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased}
+ <meta charset="UTF-8"/>
+ <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+ <meta name="theme-color" content="#0a0a0a"/>
+ <title>Entrar — AgendaOK</title>
+ <link rel="preconnect" href="https://fonts.googleapis.com"/>
+ <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+ <style>
+ *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+ :root{--preto:#0a0a0a;--branco:#fff;--bg:#fafaf9;--cinza:#f5f4f0;--cinza2:#e8e6e1;--muted:#6b6860;--texto:#1c1b18;--vermelho:#dc2626;--r:6px;--sb:env(safe-area-inset-bottom,0px);--st:env(safe-area-inset-top,0px)}
+ html{-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
+ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--texto);min-height:100dvh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased}
 
-    /* HEADER */
-    .hdr{border-bottom:1px solid var(--cinza2);padding:0 20px;padding-top:var(--st);height:calc(56px + var(--st));display:flex;align-items:flex-end;justify-content:space-between;padding-bottom:10px;background:var(--branco)}
-    .logo{display:flex;align-items:center;gap:9px;text-decoration:none}
-    .logo-m{width:26px;height:26px;background:var(--preto);border-radius:5px;display:flex;align-items:center;justify-content:center}
-    .logo-m svg{width:13px;height:13px;fill:var(--branco)}
-    .logo-t{font-size:15px;font-weight:800;color:var(--preto);letter-spacing:-0.3px}
-    .hdr-link{font-size:13px;color:var(--muted);text-decoration:none;font-weight:400}
+ /* HEADER */
+ .hdr{border-bottom:1px solid var(--cinza2);padding:0 20px;padding-top:var(--st);height:calc(56px + var(--st));display:flex;align-items:flex-end;justify-content:space-between;padding-bottom:10px;background:var(--branco)}
+ .logo{display:flex;align-items:center;gap:9px;text-decoration:none}
+ .logo-m{width:26px;height:26px;background:var(--preto);border-radius:5px;display:flex;align-items:center;justify-content:center}
+ .logo-m svg{width:13px;height:13px;fill:var(--branco)}
+ .logo-t{font-size:15px;font-weight:800;color:var(--preto);letter-spacing:-0.3px}
+ .hdr-link{font-size:13px;color:var(--muted);text-decoration:none;font-weight:400}
 
-    /* HERO COMPACTO MOBILE */
-    .hero{background:var(--preto);padding:32px 20px 28px;text-align:center}
-    .hero-titulo{font-size:22px;font-weight:800;color:#fff;letter-spacing:-0.4px;margin-bottom:6px}
-    .hero-sub{font-size:13px;color:rgba(255,255,255,0.4);font-weight:400}
+ /* HERO COMPACTO MOBILE */
+ .hero{background:var(--preto);padding:32px 20px 28px;text-align:center}
+ .hero-titulo{font-size:22px;font-weight:800;color:#fff;letter-spacing:-0.4px;margin-bottom:6px}
+ .hero-sub{font-size:13px;color:rgba(255,255,255,0.4);font-weight:400}
 
-    /* FORM */
-    .form-wrap{flex:1;padding:28px 20px;max-width:480px;width:100%;margin:0 auto;display:flex;flex-direction:column}
-    .campo{margin-bottom:18px}
-    .campo label{display:block;font-size:11px;font-weight:600;color:var(--muted);letter-spacing:0.07em;text-transform:uppercase;margin-bottom:8px}
-    .campo input{width:100%;border:1.5px solid var(--cinza2);border-radius:var(--r);font-family:'Inter',sans-serif;font-size:17px;font-weight:400;padding:15px 16px;color:var(--texto);background:var(--branco);outline:none;transition:border-color 0.15s;-webkit-appearance:none;appearance:none}
-    .campo input:focus{border-color:var(--preto)}
-    .campo input::placeholder{color:#c5c3be}
-    .erro{background:#fef2f2;border:1px solid #fecaca;border-radius:var(--r);padding:12px 14px;font-size:13px;color:var(--vermelho);font-weight:500;margin-bottom:14px;display:none;line-height:1.4}
-    .erro.show{display:block}
-    .btn-entrar{width:100%;padding:17px;border-radius:var(--r);background:var(--preto);color:var(--branco);font-family:'Inter',sans-serif;font-size:16px;font-weight:600;border:none;cursor:pointer;letter-spacing:-0.1px;-webkit-tap-highlight-color:transparent;transition:opacity 0.15s}
-    .btn-entrar:active{opacity:0.75}
-    .btn-entrar:disabled{opacity:0.35}
-    .divisor{display:flex;align-items:center;gap:14px;margin:20px 0}
-    .div-linha{flex:1;height:1px;background:var(--cinza2)}
-    .div-txt{font-size:11px;color:var(--muted)}
-    .link-cad{text-align:center;font-size:14px;color:var(--muted);font-weight:400}
-    .link-cad a{color:var(--preto);font-weight:600;text-decoration:none;border-bottom:1px solid var(--cinza2)}
-    .spacer{flex:1}
+ /* FORM */
+ .form-wrap{flex:1;padding:28px 20px;max-width:480px;width:100%;margin:0 auto;display:flex;flex-direction:column}
+ .campo{margin-bottom:18px}
+ .campo label{display:block;font-size:11px;font-weight:600;color:var(--muted);letter-spacing:0.07em;text-transform:uppercase;margin-bottom:8px}
+ .campo input{width:100%;border:1.5px solid var(--cinza2);border-radius:var(--r);font-family:'Inter',sans-serif;font-size:17px;font-weight:400;padding:15px 16px;color:var(--texto);background:var(--branco);outline:none;transition:border-color 0.15s;-webkit-appearance:none;appearance:none}
+ .campo input:focus{border-color:var(--preto)}
+ .campo input::placeholder{color:#c5c3be}
+ .erro{background:#fef2f2;border:1px solid #fecaca;border-radius:var(--r);padding:12px 14px;font-size:13px;color:var(--vermelho);font-weight:500;margin-bottom:14px;display:none;line-height:1.4}
+ .erro.show{display:block}
+ .btn-entrar{width:100%;padding:17px;border-radius:var(--r);background:var(--preto);color:var(--branco);font-family:'Inter',sans-serif;font-size:16px;font-weight:600;border:none;cursor:pointer;letter-spacing:-0.1px;-webkit-tap-highlight-color:transparent;transition:opacity 0.15s}
+ .btn-entrar:active{opacity:0.75}
+ .btn-entrar:disabled{opacity:0.35}
+ .divisor{display:flex;align-items:center;gap:14px;margin:20px 0}
+ .div-linha{flex:1;height:1px;background:var(--cinza2)}
+ .div-txt{font-size:11px;color:var(--muted)}
+ .link-cad{text-align:center;font-size:14px;color:var(--muted);font-weight:400}
+ .link-cad a{color:var(--preto);font-weight:600;text-decoration:none;border-bottom:1px solid var(--cinza2)}
+ .spacer{flex:1}
 
-    /* SAFE AREA BOTTOM */
-    .bottom-space{height:calc(20px + var(--sb))}
-  </style>
+ /* SAFE AREA BOTTOM */
+ .bottom-space{height:calc(20px + var(--sb))}
+ </style>
 </head>
 <body>
 
 <div class="hdr">
-  <a class="logo" href="/">
-    <div class="logo-m"><svg viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12" rx="2"/><line x1="5" y1="6" x2="11" y2="6" stroke="#fafaf9" stroke-width="1.5" stroke-linecap="round"/><line x1="5" y1="9" x2="9" y2="9" stroke="#fafaf9" stroke-width="1.5" stroke-linecap="round"/></svg></div>
-    <span class="logo-t">AgendaOK</span>
-  </a>
-  <a href="/cadastro" class="hdr-link">Criar conta →</a>
+ <a class="logo" href="/">
+ <div class="logo-m"><svg viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12" rx="2"/><line x1="5" y1="6" x2="11" y2="6" stroke="#fafaf9" stroke-width="1.5" stroke-linecap="round"/><line x1="5" y1="9" x2="9" y2="9" stroke="#fafaf9" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+ <span class="logo-t">AgendaOK</span>
+ </a>
+ <a href="/cadastro" class="hdr-link">Criar conta →</a>
 </div>
 
 <div class="hero">
-  <div class="hero-titulo">Bem-vindo de volta.</div>
-  <div class="hero-sub">Acesse seu painel de agendamentos</div>
+ <div class="hero-titulo">Bem-vindo de volta.</div>
+ <div class="hero-sub">Acesse seu painel de agendamentos</div>
 </div>
 
 <div class="form-wrap">
-  <div style="height:28px"></div>
-  <div class="erro" id="erro"></div>
-  <div class="campo">
-    <label>E-mail</label>
-    <input type="email" id="email" placeholder="seu@email.com" autocomplete="email" inputmode="email" autocorrect="off" autocapitalize="none" onkeydown="if(event.key==='Enter')document.getElementById('senha').focus()"/>
-  </div>
-  <div class="campo">
-    <label>Senha</label>
-    <input type="password" id="senha" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')entrar()"/>
-  </div>
-  <button class="btn-entrar" id="btn" onclick="entrar()">Entrar</button>
-  <div class="divisor"><div class="div-linha"></div><span class="div-txt">ou</span><div class="div-linha"></div></div>
-  <div class="link-cad">Não tem conta? <a href="/cadastro">Criar conta grátis</a></div>
-  <div class="spacer"></div>
-  <div class="bottom-space"></div>
+ <div style="height:28px"></div>
+ <div class="erro" id="erro"></div>
+ <div class="campo">
+ <label>E-mail</label>
+ <input type="email" id="email" placeholder="seu@email.com" autocomplete="email" inputmode="email" autocorrect="off" autocapitalize="none" onkeydown="if(event.key==='Enter')document.getElementById('senha').focus()"/>
+ </div>
+ <div class="campo">
+ <label>Senha</label>
+ <input type="password" id="senha" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')entrar()"/>
+ </div>
+ <button class="btn-entrar" id="btn" onclick="entrar()">Entrar</button>
+ <div class="divisor"><div class="div-linha"></div><span class="div-txt">ou</span><div class="div-linha"></div></div>
+ <div class="link-cad">Não tem conta? <a href="/cadastro">Criar conta grátis</a></div>
+ <div class="spacer"></div>
+ <div class="bottom-space"></div>
 </div>
 
 <script>
 async function entrar(){
-  const email=document.getElementById('email').value.trim();
-  const senha=document.getElementById('senha').value;
-  const erro=document.getElementById('erro');
-  const btn=document.getElementById('btn');
-  erro.classList.remove('show');
-  if(!email||!senha){erro.textContent='Preencha e-mail e senha.';erro.classList.add('show');return;}
-  btn.disabled=true;btn.textContent='Entrando...';
-  try{
-    const r=await fetch('/auth/login',{method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,senha})});
-    const d=await r.json();
-    if(!r.ok){erro.textContent=d.erro||'Erro ao entrar.';erro.classList.add('show');btn.disabled=false;btn.textContent='Entrar';return;}
-    window.location.replace('/painel');
-  }catch(e){erro.textContent='Erro de conexão. Tente novamente.';erro.classList.add('show');btn.disabled=false;btn.textContent='Entrar';}
+ const email=document.getElementById('email').value.trim();
+ const senha=document.getElementById('senha').value;
+ const erro=document.getElementById('erro');
+ const btn=document.getElementById('btn');
+ erro.classList.remove('show');
+ if(!email||!senha){erro.textContent='Preencha e-mail e senha.';erro.classList.add('show');return;}
+ btn.disabled=true;btn.textContent='Entrando...';
+ try{
+ const r=await fetch('/auth/login',{method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,senha})});
+ const d=await r.json();
+ if(!r.ok){erro.textContent=d.erro||'Erro ao entrar.';erro.classList.add('show');btn.disabled=false;btn.textContent='Entrar';return;}
+ window.location.replace('/painel');
+ }catch(e){erro.textContent='Erro de conexão. Tente novamente.';erro.classList.add('show');btn.disabled=false;btn.textContent='Entrar';}
 }
 </script>
 </body>

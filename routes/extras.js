@@ -327,7 +327,7 @@ async function enviarRelatorioMensal() {
   </div>
 </div>`,
         });
-        console.log(`✅ Relatorio enviado para ${u.email}`);
+        console.log(` Relatorio enviado para ${u.email}`);
       } catch(e) { console.error(`Relatorio ${u.email}:`, e.message); }
     }
   } catch(e) { console.error('Relatorio mensal:', e.message); }

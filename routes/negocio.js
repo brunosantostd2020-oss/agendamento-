@@ -113,9 +113,9 @@ router.post('/testar-email', requireAuth, async (req, res) => {
     await t.sendMail({
       from: `"${u.nome_negocio} via AgendaOK" <${email}>`,
       to: email,
-      subject: '✅ Teste de e-mail — AgendaOK',
+      subject: ' Teste de e-mail — AgendaOK',
       html: `<div style="font-family:Arial;padding:32px;background:#f0fdf4;border-radius:12px;border:2px solid #bbf7d0;max-width:500px;margin:0 auto">
-        <h2 style="color:#15803d">✅ E-mail configurado com sucesso!</h2>
+        <h2 style="color:#15803d"> E-mail configurado com sucesso!</h2>
         <p style="color:#334155">Seus clientes receberão as confirmações de agendamento por este endereço.</p>
         <p style="color:#64748b;font-size:13px">— AgendaOK</p>
       </div>`,

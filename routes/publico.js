@@ -79,7 +79,7 @@ router.get('/:slug/horarios', async (req, res) => {
 
 router.post('/:slug/agendar', async (req, res) => {
   const { nome, email, telefone, servico, servico_id, preco_servico, data, horario, obs } = req.body;
-  if (!nome || !email || !telefone || !data || !horario)
+  if (!nome || !telefone || !data || !horario)
     return res.status(400).json({ erro: 'Preencha todos os campos obrigatórios.' });
   try {
     const r = await pool.query('SELECT * FROM usuarios WHERE slug=$1 AND ativo=true', [req.params.slug]);

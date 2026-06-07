@@ -116,4 +116,20 @@ router.get('/stats', requireMaster, async (req, res) => {
   } catch(e) { res.status(500).json({ erro: e.message }); }
 });
 
+// POST /admin/clientes/:id/notificar — envia notificação manual
+router.post('/clientes/:id/notificar', requireMaster, async (req, res) => {
+  const { titulo, mensagem, tipo } = req.body;
+  if (!titulo || !mensagem) return res.status(400).json({ erro: 'Título e mensagem são obrigatórios.' });
+  try {
+    const u = (await pool.query('SELECT nome, email, nome_negocio FROM usuarios WHERE id=$1', [req.params.id])).rows[0];
+    if (!u) return res.status(404).json({ erro: 'Usuário não encontrado.' });
+    await pool.query(
+      `INSERT INTO notificacoes (usuario_id, tipo, titulo, mensagem)
+       VALUES ($1, $2, $3, $4)`,
+      [req.params.id, tipo || 'info', titulo.trim(), mensagem.trim()]
+    );
+    res.json({ sucesso: true, msg: `Notificação enviada para ${u.nome_negocio}.` });
+  } catch(e) { res.status(500).json({ erro: e.message }); }
+});
+
 module.exports = router;
