@@ -331,6 +331,10 @@ function renderLista(){
  <div style="font-size:11px;color:var(--muted)">/${c.slug}</div>
  <div class="cli-acts">
  <button class="ac-btn verde" onclick="abrirModalAcesso('${c.id}','${esc(c.nome_negocio)}','${esc(c.email)}','${c.status_acesso}','${c.trial_expira||''}','${c.acesso_expira||''}')">Liberar acesso</button>
+ <button class="ac-btn azul" onclick="abrirNotifModal('${c.id}','${esc(c.nome_negocio)}')">
+   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+   Enviar mensagem
+ </button>
  ${c.acesso_ativo?`<button class="ac-btn danger" onclick="bloquearCliente('${c.id}','${esc(c.nome_negocio)}')">Bloquear</button>`:`<button class="ac-btn verde" onclick="liberarRapido('${c.id}')">Desbloquear</button>`}
  </div>
  </div>
@@ -405,7 +409,7 @@ function toast(msg,tipo='ok'){
 
 document.getElementById('master-senha').addEventListener('keydown',e=>{if(e.key==='Enter')fazerLogin();});
 // ── NOTIFICAÇÃO MANUAL ──
-function abrirNotif(id, nome) {
+function abrirNotifModal(id, nome) {
  document.getElementById('n-id').value = id;
  document.getElementById('n-dest').textContent = 'Para: ' + nome;
  document.getElementById('n-titulo').value = '';

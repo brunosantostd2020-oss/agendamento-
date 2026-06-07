@@ -1,102 +1,358 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
- <meta charset="UTF-8"/>
- <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
- <meta name="theme-color" content="#0a0a0a"/>
- <title>Entrar — AgendaOK</title>
- <link rel="preconnect" href="https://fonts.googleapis.com"/>
- <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
- <style>
- *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
- :root{--preto:#0a0a0a;--branco:#fff;--bg:#fafaf9;--cinza:#f5f4f0;--cinza2:#e8e6e1;--muted:#6b6860;--texto:#1c1b18;--vermelho:#dc2626;--r:6px;--sb:env(safe-area-inset-bottom,0px);--st:env(safe-area-inset-top,0px)}
- html{-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
- body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--texto);min-height:100dvh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased}
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+<meta name="theme-color" content="#0b0b12"/>
+<title>Entrar — AgendaOK</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#0b0b12;--surface:#fff;--text:#0f172a;--muted:#64748b;
+  --border:#e6e8ee;--primary:#6d28d9;--primary-2:#9333ea;
+  --accent:#22d3ee;--pink:#ec4899;--danger:#dc2626;
+  --shadow:0 30px 60px -20px rgba(15,23,42,.18),0 8px 24px -12px rgba(15,23,42,.12);
+  --radius:18px;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;color:var(--text);
+  background:#f6f7fb;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
 
- /* HEADER */
- .hdr{border-bottom:1px solid var(--cinza2);padding:0 20px;padding-top:var(--st);height:calc(56px + var(--st));display:flex;align-items:flex-end;justify-content:space-between;padding-bottom:10px;background:var(--branco)}
- .logo{display:flex;align-items:center;gap:9px;text-decoration:none}
- .logo-m{width:26px;height:26px;background:var(--preto);border-radius:5px;display:flex;align-items:center;justify-content:center}
- .logo-m svg{width:13px;height:13px;fill:var(--branco)}
- .logo-t{font-size:15px;font-weight:800;color:var(--preto);letter-spacing:-0.3px}
- .hdr-link{font-size:13px;color:var(--muted);text-decoration:none;font-weight:400}
+/* LAYOUT */
+.page{min-height:100dvh;display:grid;grid-template-columns:1.05fr 1fr}
 
- /* HERO COMPACTO MOBILE */
- .hero{background:var(--preto);padding:32px 20px 28px;text-align:center}
- .hero-titulo{font-size:22px;font-weight:800;color:#fff;letter-spacing:-0.4px;margin-bottom:6px}
- .hero-sub{font-size:13px;color:rgba(255,255,255,0.4);font-weight:400}
+/* ESQUERDA */
+.brand-side{position:relative;overflow:hidden;color:#fff;padding:36px 56px;
+  display:flex;flex-direction:column;
+  background:radial-gradient(120% 80% at 0% 0%,#1a1230 0%,transparent 60%),
+    radial-gradient(100% 80% at 100% 100%,#2a0f3a 0%,transparent 60%),
+    linear-gradient(160deg,#0b0b12 0%,#14091f 60%,#1c0a2e 100%)}
+.brand-bg{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.blob{position:absolute;border-radius:50%;filter:blur(70px);opacity:.55;
+  mix-blend-mode:screen;animation:float 14s ease-in-out infinite}
+.blob-1{width:520px;height:520px;left:-160px;top:-120px;
+  background:radial-gradient(circle,#7c3aed,transparent 60%)}
+.blob-2{width:420px;height:420px;right:-120px;top:30%;
+  background:radial-gradient(circle,#22d3ee,transparent 60%);animation-delay:-4s}
+.blob-3{width:480px;height:480px;left:20%;bottom:-180px;
+  background:radial-gradient(circle,#ec4899,transparent 60%);animation-delay:-8s}
+.grid-overlay{position:absolute;inset:0;
+  background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);
+  background-size:42px 42px;
+  mask-image:radial-gradient(ellipse at 50% 50%,#000 30%,transparent 75%)}
+@keyframes float{0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(0,-30px,0) scale(1.05)}}
 
- /* FORM */
- .form-wrap{flex:1;padding:28px 20px;max-width:480px;width:100%;margin:0 auto;display:flex;flex-direction:column}
- .campo{margin-bottom:18px}
- .campo label{display:block;font-size:11px;font-weight:600;color:var(--muted);letter-spacing:0.07em;text-transform:uppercase;margin-bottom:8px}
- .campo input{width:100%;border:1.5px solid var(--cinza2);border-radius:var(--r);font-family:'Inter',sans-serif;font-size:17px;font-weight:400;padding:15px 16px;color:var(--texto);background:var(--branco);outline:none;transition:border-color 0.15s;-webkit-appearance:none;appearance:none}
- .campo input:focus{border-color:var(--preto)}
- .campo input::placeholder{color:#c5c3be}
- .erro{background:#fef2f2;border:1px solid #fecaca;border-radius:var(--r);padding:12px 14px;font-size:13px;color:var(--vermelho);font-weight:500;margin-bottom:14px;display:none;line-height:1.4}
- .erro.show{display:block}
- .btn-entrar{width:100%;padding:17px;border-radius:var(--r);background:var(--preto);color:var(--branco);font-family:'Inter',sans-serif;font-size:16px;font-weight:600;border:none;cursor:pointer;letter-spacing:-0.1px;-webkit-tap-highlight-color:transparent;transition:opacity 0.15s}
- .btn-entrar:active{opacity:0.75}
- .btn-entrar:disabled{opacity:0.35}
- .divisor{display:flex;align-items:center;gap:14px;margin:20px 0}
- .div-linha{flex:1;height:1px;background:var(--cinza2)}
- .div-txt{font-size:11px;color:var(--muted)}
- .link-cad{text-align:center;font-size:14px;color:var(--muted);font-weight:400}
- .link-cad a{color:var(--preto);font-weight:600;text-decoration:none;border-bottom:1px solid var(--cinza2)}
- .spacer{flex:1}
+.brand-header,.brand-content,.brand-footer{position:relative;z-index:1}
+.logo{display:inline-flex;align-items:center;gap:12px;color:#fff;font-weight:800;letter-spacing:-.01em}
+.logo-mark{width:38px;height:38px;border-radius:11px;
+  background:linear-gradient(135deg,#a855f7,#22d3ee);
+  display:grid;place-items:center;color:#0b0b12;
+  box-shadow:0 10px 30px -10px rgba(168,85,247,.7)}
+.logo-mark svg{width:20px;height:20px}
+.logo-text{font-size:20px}
 
- /* SAFE AREA BOTTOM */
- .bottom-space{height:calc(20px + var(--sb))}
- </style>
+.brand-content{margin:auto 0;max-width:520px}
+.pill{display:inline-block;padding:7px 12px;border-radius:999px;
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);
+  font-size:13px;letter-spacing:.02em;color:#e9d5ff;margin-bottom:24px}
+.brand-content h1{font-size:clamp(34px,4vw,52px);line-height:1.05;
+  letter-spacing:-.02em;margin:0 0 18px;font-weight:800}
+.grad{background:linear-gradient(90deg,#c4b5fd 0%,#22d3ee 60%,#f0abfc 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.brand-content p{color:#cbd5e1;font-size:17px;line-height:1.6;margin:0 0 28px;max-width:480px}
+
+.feature-list{list-style:none;padding:0;margin:0;display:grid;gap:14px}
+.feature-list li{display:flex;gap:14px;align-items:flex-start;
+  padding:14px 16px;border-radius:14px;
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
+  backdrop-filter:blur(8px)}
+.feature-list strong{display:block;color:#fff;font-size:15px}
+.feature-list small{color:#a5b4cf;font-size:13px}
+.check{flex:0 0 26px;height:26px;border-radius:8px;
+  background:linear-gradient(135deg,#a855f7,#22d3ee);
+  color:#0b0b12;font-weight:800;display:grid;place-items:center;font-size:14px}
+
+.brand-footer{margin-top:28px;display:flex;align-items:center;gap:14px;color:#a5b4cf}
+.avatars{display:flex}
+.avatars span{width:30px;height:30px;border-radius:50%;
+  background:var(--c);border:2px solid #14091f;margin-left:-8px}
+.avatars span:first-child{margin-left:0}
+
+/* DIREITA */
+.form-side{position:relative;display:flex;flex-direction:column;padding:36px 48px;
+  background:radial-gradient(800px 400px at 100% -10%,#ede9fe 0%,transparent 60%),
+    radial-gradient(700px 500px at -10% 110%,#cffafe 0%,transparent 60%),#f6f7fb}
+.top-link{align-self:flex-end;color:var(--muted);font-size:14px;
+  padding:8px 14px;border-radius:999px;border:1px solid var(--border);
+  background:#fff;transition:.2s}
+.top-link strong{color:var(--primary)}
+.top-link:hover{border-color:#d4b8ff;box-shadow:0 6px 16px -8px rgba(109,40,217,.3)}
+
+.form-card{width:100%;max-width:460px;margin:auto;
+  background:#fff;border-radius:var(--radius);padding:36px;
+  box-shadow:var(--shadow);border:1px solid #eef0f6}
+
+.form-head h2{margin:0 0 6px;font-size:28px;letter-spacing:-.02em}
+.form-head p{margin:0 0 26px;color:var(--muted);font-size:15px}
+
+.alert{background:#fef2f2;color:var(--danger);border:1px solid #fecaca;
+  padding:10px 14px;border-radius:12px;font-size:14px;margin-bottom:16px;display:none}
+.alert.show{display:block}
+
+.field{margin-bottom:16px}
+.field-row{display:flex;justify-content:space-between;align-items:center}
+label{display:block;font-size:13px;font-weight:600;color:#334155;margin-bottom:8px}
+.muted-link{font-size:13px;color:var(--primary);font-weight:600}
+.muted-link:hover{text-decoration:underline}
+
+.input-wrap{position:relative;display:flex;align-items:center;
+  background:#fff;border:1.5px solid var(--border);border-radius:12px;transition:.2s}
+.input-wrap:focus-within{border-color:var(--primary);box-shadow:0 0 0 4px rgba(109,40,217,.12)}
+.input-wrap .ico{width:18px;height:18px;color:#94a3b8;margin-left:14px;flex:0 0 18px}
+.input-wrap input{flex:1;border:0;outline:0;background:transparent;
+  padding:14px 14px 14px 12px;font-size:15px;font-family:inherit;color:var(--text);
+  -webkit-appearance:none}
+.input-wrap input::placeholder{color:#cbd5e1}
+.ghost-btn{background:transparent;border:0;cursor:pointer;color:#94a3b8;
+  padding:0 14px;height:100%;display:grid;place-items:center}
+.ghost-btn:hover{color:var(--primary)}
+.ghost-btn svg{width:20px;height:20px}
+
+.remember{display:flex;align-items:center;gap:10px;font-size:14px;color:#475569;
+  margin:4px 0 22px;cursor:pointer;user-select:none}
+.remember input{appearance:none;-webkit-appearance:none;width:18px;height:18px;border-radius:6px;
+  border:1.5px solid #cbd5e1;display:grid;place-items:center;cursor:pointer;transition:.15s}
+.remember input:checked{background:linear-gradient(135deg,var(--primary),var(--primary-2));
+  border-color:var(--primary)}
+.remember input:checked::after{content:"";width:5px;height:9px;border:solid #fff;
+  border-width:0 2px 2px 0;transform:rotate(45deg) translate(-1px,-1px)}
+
+.btn-primary{width:100%;border:0;cursor:pointer;
+  background:linear-gradient(135deg,#6d28d9 0%,#9333ea 50%,#ec4899 100%);
+  background-size:200% 200%;color:#fff;font-weight:700;font-size:15px;
+  letter-spacing:.01em;padding:14px 18px;border-radius:12px;
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  box-shadow:0 14px 30px -10px rgba(147,51,234,.55);
+  transition:transform .15s ease,box-shadow .2s ease;font-family:inherit}
+.btn-primary:hover{background-position:100% 0;transform:translateY(-1px);
+  box-shadow:0 18px 36px -10px rgba(236,72,153,.5)}
+.btn-primary:active{transform:translateY(0)}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+.spinner{width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,.4);
+  border-top-color:#fff;display:none;animation:spin .8s linear infinite}
+.loading .btn-lbl{opacity:.7}
+.loading .spinner{display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.divider{display:flex;align-items:center;gap:14px;margin:22px 0;
+  color:#94a3b8;font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+.divider::before,.divider::after{content:"";flex:1;height:1px;
+  background:linear-gradient(90deg,transparent,#e2e8f0,transparent)}
+
+.social{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.social-btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  background:#fff;border:1.5px solid var(--border);border-radius:12px;
+  padding:12px;font-size:14px;font-weight:600;color:#0f172a;
+  cursor:pointer;transition:.15s;font-family:inherit}
+.social-btn:hover{border-color:#a855f7;transform:translateY(-1px);
+  box-shadow:0 8px 18px -10px rgba(109,40,217,.4)}
+.social-btn svg{width:18px;height:18px}
+
+.legal{margin:22px 0 0;text-align:center;font-size:12px;color:var(--muted)}
+.legal a{color:var(--primary);font-weight:600}
+.legal a:hover{text-decoration:underline}
+
+/* RESPONSIVE */
+@media(max-width:980px){
+  .page{grid-template-columns:1fr}
+  .brand-side{padding:28px 24px;min-height:auto}
+  .brand-content{margin:24px 0}
+  .feature-list{display:none}
+  .form-side{padding:24px 20px}
+  .top-link{align-self:flex-end}
+  .form-card{padding:28px 22px}
+}
+@media(max-width:480px){
+  .social{grid-template-columns:1fr}
+  .form-head h2{font-size:24px}
+}
+</style>
 </head>
 <body>
+<div class="page">
 
-<div class="hdr">
- <a class="logo" href="/">
- <div class="logo-m"><svg viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12" rx="2"/><line x1="5" y1="6" x2="11" y2="6" stroke="#fafaf9" stroke-width="1.5" stroke-linecap="round"/><line x1="5" y1="9" x2="9" y2="9" stroke="#fafaf9" stroke-width="1.5" stroke-linecap="round"/></svg></div>
- <span class="logo-t">AgendaOK</span>
- </a>
- <a href="/cadastro" class="hdr-link">Criar conta →</a>
-</div>
+  <!-- ESQUERDA -->
+  <aside class="brand-side">
+    <div class="brand-bg">
+      <div class="blob blob-1"></div>
+      <div class="blob blob-2"></div>
+      <div class="blob blob-3"></div>
+      <div class="grid-overlay"></div>
+    </div>
+    <header class="brand-header">
+      <a class="logo" href="/">
+        <span class="logo-mark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="17" rx="4"/>
+            <path d="M8 2v4M16 2v4M3 10h18" stroke-linecap="round"/>
+            <circle cx="8.5" cy="14.5" r="1.2" fill="currentColor" stroke="none"/>
+            <circle cx="12" cy="14.5" r="1.2" fill="currentColor" stroke="none"/>
+            <circle cx="15.5" cy="14.5" r="1.2" fill="currentColor" stroke="none"/>
+          </svg>
+        </span>
+        <span class="logo-text">AgendaOK</span>
+      </a>
+    </header>
 
-<div class="hero">
- <div class="hero-titulo">Bem-vindo de volta.</div>
- <div class="hero-sub">Acesse seu painel de agendamentos</div>
-</div>
+    <div class="brand-content">
+      <span class="pill">Plataforma de agendamentos</span>
+      <h1>Organize sua agenda.<br/><span class="grad">Encante seus clientes.</span></h1>
+      <p>Receba reservas 24 horas por dia, envie lembretes automáticos e acompanhe tudo num só painel.</p>
+      <ul class="feature-list">
+        <li>
+          <span class="check">✓</span>
+          <div><strong>Agendamentos online</strong><small>Sua agenda aberta sem fricção</small></div>
+        </li>
+        <li>
+          <span class="check">✓</span>
+          <div><strong>Lembretes automáticos</strong><small>Reduza faltas em até 70%</small></div>
+        </li>
+        <li>
+          <span class="check">✓</span>
+          <div><strong>Painel completo</strong><small>Métricas, clientes e relatórios</small></div>
+        </li>
+      </ul>
+    </div>
 
-<div class="form-wrap">
- <div style="height:28px"></div>
- <div class="erro" id="erro"></div>
- <div class="campo">
- <label>E-mail</label>
- <input type="email" id="email" placeholder="seu@email.com" autocomplete="email" inputmode="email" autocorrect="off" autocapitalize="none" onkeydown="if(event.key==='Enter')document.getElementById('senha').focus()"/>
- </div>
- <div class="campo">
- <label>Senha</label>
- <input type="password" id="senha" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')entrar()"/>
- </div>
- <button class="btn-entrar" id="btn" onclick="entrar()">Entrar</button>
- <div class="divisor"><div class="div-linha"></div><span class="div-txt">ou</span><div class="div-linha"></div></div>
- <div class="link-cad">Não tem conta? <a href="/cadastro">Criar conta grátis</a></div>
- <div class="spacer"></div>
- <div class="bottom-space"></div>
+    <footer class="brand-footer">
+      <div class="avatars">
+        <span style="--c:#f97316"></span>
+        <span style="--c:#22d3ee"></span>
+        <span style="--c:#a78bfa"></span>
+        <span style="--c:#f472b6"></span>
+      </div>
+      <small>+12.000 profissionais usam o AgendaOK</small>
+    </footer>
+  </aside>
+
+  <!-- DIREITA -->
+  <main class="form-side">
+    <a href="/cadastro" class="top-link">Não tem conta? <strong>Criar conta →</strong></a>
+
+    <section class="form-card">
+      <div class="form-head">
+        <h2>Bem-vindo de volta</h2>
+        <p>Acesse seu painel de agendamentos.</p>
+      </div>
+
+      <div class="alert" id="erro"></div>
+
+      <div class="field">
+        <label for="email">E-mail</label>
+        <div class="input-wrap">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" stroke-linecap="round"/></svg>
+          <input type="email" id="email" placeholder="seu@email.com" autocomplete="email" inputmode="email" autocorrect="off" autocapitalize="none" onkeydown="if(event.key==='Enter')document.getElementById('senha').focus()"/>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-row">
+          <label for="senha">Senha</label>
+        </div>
+        <div class="input-wrap">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+          <input type="password" id="senha" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')entrar()"/>
+          <button type="button" class="ghost-btn" id="toggle-pw">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" id="eye-ico">
+              <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <label class="remember">
+        <input type="checkbox" id="lembrar"/>
+        <span>Lembrar-me neste dispositivo</span>
+      </label>
+
+      <button class="btn-primary" id="btn-entrar" onclick="entrar()">
+        <span class="btn-lbl">Entrar</span>
+        <span class="spinner"></span>
+      </button>
+
+      <div class="divider"><span>ou continue com</span></div>
+
+      <div class="social">
+        <button type="button" class="social-btn">
+          <svg viewBox="0 0 24 24" width="18" height="18"><path fill="#EA4335" d="M12 10.2v3.9h5.5c-.2 1.4-1.7 4.1-5.5 4.1-3.3 0-6-2.7-6-6s2.7-6 6-6c1.9 0 3.1.8 3.8 1.5l2.6-2.5C16.7 3.6 14.6 2.6 12 2.6 6.8 2.6 2.6 6.8 2.6 12S6.8 21.4 12 21.4c6.9 0 9.4-4.8 9.4-7.3 0-.5 0-.9-.1-1.3H12Z"/></svg>
+          Google
+        </button>
+        <button type="button" class="social-btn">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M16.4 12.7c0-2.5 2-3.7 2.1-3.8-1.2-1.7-3-2-3.6-2-1.5-.2-3 .9-3.8.9-.8 0-2-.9-3.3-.8-1.7 0-3.3 1-4.1 2.5-1.8 3.1-.5 7.6 1.2 10.1.8 1.2 1.8 2.6 3.2 2.6 1.3-.1 1.8-.8 3.3-.8s2 .8 3.3.8c1.4 0 2.3-1.2 3.1-2.5.7-1 1-2 1-2.1-.1 0-2.4-.9-2.4-3.9Zm-2.5-7.2c.7-.8 1.1-2 1-3.1-1 0-2.2.7-2.9 1.5-.6.7-1.2 1.9-1 3 1.1.1 2.2-.6 2.9-1.4Z"/></svg>
+          Apple
+        </button>
+      </div>
+
+      <p class="legal">Ao entrar você concorda com nossos <a href="#">Termos</a> e <a href="#">Política de Privacidade</a>.</p>
+    </section>
+  </main>
 </div>
 
 <script>
-async function entrar(){
- const email=document.getElementById('email').value.trim();
- const senha=document.getElementById('senha').value;
- const erro=document.getElementById('erro');
- const btn=document.getElementById('btn');
- erro.classList.remove('show');
- if(!email||!senha){erro.textContent='Preencha e-mail e senha.';erro.classList.add('show');return;}
- btn.disabled=true;btn.textContent='Entrando...';
- try{
- const r=await fetch('/auth/login',{method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,senha})});
- const d=await r.json();
- if(!r.ok){erro.textContent=d.erro||'Erro ao entrar.';erro.classList.add('show');btn.disabled=false;btn.textContent='Entrar';return;}
- window.location.replace('/painel');
- }catch(e){erro.textContent='Erro de conexão. Tente novamente.';erro.classList.add('show');btn.disabled=false;btn.textContent='Entrar';}
+// Toggle senha
+document.getElementById('toggle-pw').addEventListener('click', function() {
+  const inp = document.getElementById('senha');
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+});
+
+async function entrar() {
+  const email = document.getElementById('email').value.trim();
+  const senha = document.getElementById('senha').value;
+  const erro  = document.getElementById('erro');
+  const btn   = document.getElementById('btn-entrar');
+  erro.classList.remove('show');
+
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    erro.textContent = 'Informe um e-mail válido.';
+    erro.classList.add('show');
+    return;
+  }
+  if (!senha || senha.length < 6) {
+    erro.textContent = 'A senha deve ter pelo menos 6 caracteres.';
+    erro.classList.add('show');
+    return;
+  }
+
+  btn.classList.add('loading');
+  btn.disabled = true;
+
+  try {
+    const r = await fetch('/auth/login', {
+      method: 'POST', credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, senha }),
+    });
+    const d = await r.json();
+    if (!r.ok) {
+      erro.textContent = d.erro || 'E-mail ou senha incorretos.';
+      erro.classList.add('show');
+      return;
+    }
+    window.location.replace('/painel');
+  } catch(e) {
+    erro.textContent = 'Erro de conexão. Tente novamente.';
+    erro.classList.add('show');
+  } finally {
+    btn.classList.remove('loading');
+    btn.disabled = false;
+  }
 }
 </script>
 </body>
