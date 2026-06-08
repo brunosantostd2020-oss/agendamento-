@@ -2,7 +2,7 @@
 <html lang="pt-BR" id="html-root">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"/>
 <meta name="mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
@@ -48,7 +48,7 @@ html,body{margin:0;padding:0;background:var(--bg);color:var(--text);
   font-family:var(--font);font-size:15px;line-height:1.5;
   -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
   min-height:100dvh}
-body{padding-bottom:calc(110px + var(--sb))}
+body{padding-bottom:calc(110px + var(--sb));overscroll-behavior-y:none}
 
 /* ── HEADER ── */
 .hdr{
@@ -110,7 +110,7 @@ body{padding-bottom:calc(110px + var(--sb))}
 .sl.feito{background:var(--cor)}
 
 /* ── CONTENT ── */
-.content{max-width:720px;margin:0 auto;padding:8px 20px 32px}
+.content{max-width:720px;margin:0 auto;padding:8px 20px 32px;-webkit-overflow-scrolling:touch}
 .sec{display:none;animation:fadeIn .3s ease}
 .sec.ativa{display:block}
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
@@ -152,7 +152,7 @@ body{padding-bottom:calc(110px + var(--sb))}
   padding:16px 18px;display:flex;align-items:center;
   justify-content:space-between;gap:14px;
   cursor:pointer;transition:all .2s ease;font:inherit;color:inherit;
-  -webkit-tap-highlight-color:transparent;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
 }
 .srv-opt:hover{border-color:var(--cor);transform:translateY(-1px);box-shadow:var(--shadow-md)}
 .srv-opt.sel{border-color:var(--cor);background:var(--cor-softer);
@@ -190,6 +190,7 @@ body{padding-bottom:calc(110px + var(--sb))}
   background:transparent;color:var(--text);font-size:14px;font-weight:600;
   display:flex;align-items:center;justify-content:center;
   cursor:pointer;transition:all .15s ease;font-family:inherit;
+  touch-action:manipulation;
 }
 .cal-dia:hover:not(.off):not(.dis){background:var(--cor-softer);color:var(--cor)}
 .cal-dia.off{visibility:hidden}
@@ -212,6 +213,7 @@ body{padding-bottom:calc(110px + var(--sb))}
   padding:13px 8px;border-radius:10px;border:1.5px solid var(--border);
   background:var(--surface);color:var(--text);font-size:14px;font-weight:600;
   cursor:pointer;transition:all .15s ease;font-family:inherit;
+  touch-action:manipulation;
 }
 .hr-btn:hover:not(:disabled){border-color:var(--cor);color:var(--cor)}
 .hr-btn.sel{background:var(--cor);border-color:var(--cor);color:#fff;
@@ -294,6 +296,7 @@ body{padding-bottom:calc(110px + var(--sb))}
   border-radius:var(--radius);cursor:pointer;
   transition:all .2s ease;display:inline-flex;
   align-items:center;justify-content:center;gap:8px;height:52px;
+  touch-action:manipulation;
 }
 .btn-volt{
   background:var(--surface);border:1.5px solid var(--border);

@@ -2,7 +2,7 @@
 <html lang="pt-BR" data-theme="dark">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no.0,viewport-fit=cover"/>
   <meta name="mobile-web-app-capable" content="yes"/>
   <title>Painel — AgendaOK</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
@@ -36,7 +36,8 @@
     }
     html{-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
     body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--txt);
-      min-height:100dvh;overflow-x:hidden;-webkit-font-smoothing:antialiased;font-size:14px}
+      min-height:100dvh;overflow-x:hidden;-webkit-font-smoothing:antialiased;font-size:14px;
+      overscroll-behavior-y:none}
 
     /* ── LAYOUT ── */
     .app{display:flex;min-height:100dvh}
@@ -66,6 +67,7 @@
     .sb-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;
       color:var(--muted);font-size:13px;font-weight:500;cursor:pointer;
       transition:all 0.15s;-webkit-tap-highlight-color:transparent;
+      touch-action:manipulation;
       position:relative;text-decoration:none;white-space:nowrap}
     .sb-item:hover{background:var(--card);color:var(--txt)}
     .sb-item.ativo{background:rgba(0,208,132,0.1);color:var(--verde)}
@@ -97,7 +99,7 @@
       background:var(--card);border:1px solid var(--borda);border-radius:8px;
       padding:0 14px;height:36px}
     .tb-search input{flex:1;background:none;border:none;outline:none;font-family:inherit;
-      font-size:13px;color:var(--txt)}
+      font-size:16px;color:var(--txt)}
     .tb-search input::placeholder{color:var(--muted)}
     .tb-search svg{width:14px;height:14px;color:var(--muted);flex-shrink:0}
     .tb-kbd{font-size:10px;color:var(--muted2);background:var(--borda);
@@ -128,7 +130,7 @@
       font-size:12px;font-weight:800;color:#fff;cursor:pointer;flex-shrink:0}
 
     /* ── CONTENT ── */
-    .content{padding:24px;flex:1;overflow-y:auto}
+    .content{padding:24px;flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
 
     /* ── PAGE HEADER ── */
     .pg-breadcrumb{font-size:11px;color:var(--muted);font-weight:500;
@@ -311,7 +313,8 @@
     .overlay.open{display:flex}
     .modal{background:var(--card);border:1px solid var(--borda);border-radius:14px 14px 0 0;
       padding:0;width:100%;max-width:480px;padding-bottom:var(--sb);
-      animation:slideUp 0.25s ease;max-height:85dvh;overflow-y:auto}
+      animation:slideUp 0.25s ease;max-height:85dvh;overflow-y:auto;
+      overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
     @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
     .modal-handle{width:36px;height:3px;background:var(--borda);border-radius:999px;
       margin:14px auto 0}
@@ -322,7 +325,7 @@
       text-transform:uppercase;margin-bottom:7px;display:block;margin-top:14px}
     .m-label:first-of-type{margin-top:0}
     .m-input,.m-select,.m-textarea{width:100%;border:1px solid var(--borda);border-radius:8px;
-      font-family:inherit;font-size:14px;padding:11px 14px;color:var(--txt);
+      font-family:inherit;font-size:16px;padding:11px 14px;color:var(--txt);
       background:var(--card2);outline:none;appearance:none;transition:border-color 0.15s}
     .m-input:focus,.m-select:focus,.m-textarea:focus{border-color:var(--verde)}
     .m-input::placeholder,.m-textarea::placeholder{color:var(--muted)}
@@ -341,7 +344,8 @@
       border-top:1px solid var(--borda);position:sticky;bottom:0;
       background:var(--card);padding-bottom:4px}
     .m-btn{flex:1;padding:12px;border-radius:8px;font-family:inherit;font-size:13px;
-      font-weight:700;cursor:pointer;border:none;transition:opacity 0.15s}
+      font-weight:700;cursor:pointer;border:none;transition:opacity 0.15s;
+      touch-action:manipulation}
     .m-btn-g{background:var(--verde);color:#000}.m-btn-g:hover{opacity:0.85}
     .m-btn-out{background:none;border:1px solid var(--borda);color:var(--muted)}
 
@@ -445,7 +449,7 @@
       letter-spacing:0.08em;text-transform:uppercase}
     .func-mes-input{background:var(--card2);border:1px solid var(--borda);
       border-radius:8px;color:var(--txt);font-family:inherit;
-      font-size:13px;padding:8px 12px;outline:none;cursor:pointer}
+      font-size:16px;padding:8px 12px;outline:none;cursor:pointer}
     .func-mes-input:focus{border-color:var(--verde)}
     .func-kpis{display:flex;align-items:center;gap:0;flex:1;flex-wrap:wrap}
     .func-kpi{padding:0 20px;flex:1;min-width:100px}
@@ -609,7 +613,7 @@
       padding:6px 4px;cursor:pointer;-webkit-tap-highlight-color:transparent;
       color:var(--muted);font-size:9px;font-weight:600;position:relative;
       letter-spacing:0.03em;transition:color 0.15s;border:none;background:none;
-      font-family:inherit}
+      font-family:inherit;touch-action:manipulation}
     .bn-item.ativo{color:var(--verde)}
     .bn-item svg{width:20px;height:20px;stroke-width:1.8}
     .bn-badge{position:absolute;top:2px;right:calc(50% - 18px);
@@ -1307,7 +1311,7 @@ async function init() {
       document.getElementById('sb-plan-sub').textContent = `Renova em ${dias} dias`;
     }
 
-    const [_dp] = await Promise.all([carregarDash(), carregarNotifs()]);
+    await Promise.all([carregarDash(), carregarNotifs()]);
     setInterval(carregarNotifs, 120000);
 
     // Lembrete: verificar imediatamente e depois a cada 2min
@@ -1325,14 +1329,7 @@ async function init() {
     // Tour de onboarding para novos usuários
     setTimeout(() => obIniciar(false), 800);
 
-    // Atualizar badge do bottom nav (lê do elemento já preenchido)
-    setTimeout(() => {
-      const hojeBadgeBn = document.getElementById('bn-hoje-badge');
-      const hojeSbBadge = document.getElementById('sb-hoje-badge');
-      if (hojeSbBadge && hojeSbBadge.style.display !== 'none') {
-        if (hojeBadgeBn) { hojeBadgeBn.style.display = 'block'; hojeBadgeBn.textContent = hojeSbBadge.textContent; }
-      }
-    }, 1000);
+    // Badge do bottom nav atualizado pelo carregarDash
   } catch(e) { location.href = '/login'; }
 }
 
@@ -1412,6 +1409,12 @@ async function carregarDash() {
     // Badge hoje sidebar
     const hojeBadge = document.getElementById('sb-hoje-badge');
     if (s.hoje > 0) { hojeBadge.style.display = 'block'; hojeBadge.textContent = s.hoje; }
+    // Badge hoje bottom-nav mobile
+    const bnHojeBadge = document.getElementById('bn-hoje-badge');
+    if (bnHojeBadge) {
+      if (s.hoje > 0) { bnHojeBadge.style.display = 'block'; bnHojeBadge.textContent = s.hoje; }
+      else { bnHojeBadge.style.display = 'none'; }
+    }
 
     // Faturamento
     if (s.faturamento != null && s.faturamento > 0) {
@@ -2162,18 +2165,6 @@ async function abrirComissao(id, nome) {
   } catch(e) { toast('Erro ao carregar comissão','err'); }
 }
 
-// ── INIT FUNCIONÁRIOS ──
-// Adicionar na função pg()
-const _pgActionsOrig = {
-  dashboard: carregarDash,
-  agenda:    () => carregarAgFull(filtroAg),
-  hoje:      carregarHojePg,
-  servicos:  carregarSrvPg,
-  bloqueios: carregarBloqPg,
-  config:    carregarConfig,
-  funcionarios: carregarFuncionarios,
-};
-
 // ── ONBOARDING TOUR ────────────────────────────────────────────
 const OB_KEY = 'agendaok_tour_v1';
 
@@ -2418,6 +2409,8 @@ function toggleSidebar() {
   const aberto = sb.classList.toggle('open');
   ov.classList.toggle('show', aberto);
   document.body.style.overflow = aberto ? 'hidden' : '';
+  document.body.style.position = aberto ? 'fixed' : '';
+  document.body.style.width = aberto ? '100%' : '';
 }
 
 // ── BOTTOM NAV ──
