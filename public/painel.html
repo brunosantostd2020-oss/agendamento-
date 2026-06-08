@@ -1265,6 +1265,7 @@ async function init() {
     const r = await fetch('/auth/me', {credentials:'include'});
     if (!r.ok) { location.href = '/login'; return; }
     U = await r.json();
+    if (!U || !U.logado) { location.href = '/login'; return; }
 
     if (!U.acesso_ok) { mostrarBloqueio(U.motivo_bloqueio); return; }
 
@@ -1276,15 +1277,16 @@ async function init() {
       if (dias >= 0 && dias <= 3) avisoTrial(dias);
     }
 
-    // Preenche UI
-    const ini = U.nome_negocio.charAt(0).toUpperCase();
-    document.getElementById('sb-av').textContent = ini;
-    document.getElementById('sb-name').textContent = U.nome_negocio;
+    // Preenche UI — com proteção contra null
+    const setEl = (id, val) => { const e = document.getElementById(id); if(e) e.textContent = val; };
+    const ini = (U.nome_negocio || '?').charAt(0).toUpperCase();
+    setEl('sb-av', ini);
+    setEl('sb-name', U.nome_negocio || '');
     const tbTitleMob = document.getElementById('tb-title-mobile');
-    if (tbTitleMob) tbTitleMob.textContent = U.nome_negocio;
-    document.getElementById('sb-sub').textContent = (U.nicho || '').toUpperCase() + ' · PRO';
-    document.getElementById('tb-user').textContent = U.nome.charAt(0).toUpperCase();
-    document.getElementById('pg-nome-usuario').textContent = U.nome.split(' ')[0];
+    if (tbTitleMob) tbTitleMob.textContent = U.nome_negocio || '';
+    setEl('sb-sub', (U.nicho || '').toUpperCase() + ' · PRO');
+    setEl('tb-user', (U.nome || '?').charAt(0).toUpperCase());
+    setEl('pg-nome-usuario', (U.nome || '').split(' ')[0]);
 
     const link = location.origin + '/agendar/' + U.slug;
     document.getElementById('lp-url').textContent = link;
@@ -1311,7 +1313,7 @@ async function init() {
       document.getElementById('sb-plan-sub').textContent = `Renova em ${dias} dias`;
     }
 
-    await Promise.all([carregarDash(), carregarNotifs()]);
+    await Promise.allSettled([carregarDash(), carregarNotifs()]);
     setInterval(carregarNotifs, 120000);
 
     // Lembrete: verificar imediatamente e depois a cada 2min
@@ -1327,10 +1329,14 @@ async function init() {
     }, 3000);
 
     // Tour de onboarding para novos usuários
-    setTimeout(() => obIniciar(false), 800);
+    setTimeout(() => obIniciar(false), 1500);
 
     // Badge do bottom nav atualizado pelo carregarDash
-  } catch(e) { location.href = '/login'; }
+  } catch(e) {
+    console.error('Erro no init():', e);
+    // Só redireciona se for erro de autenticação (401)
+    // outros erros não devem expulsar o usuário
+  }
 }
 
 function mostrarBloqueio(motivo) {
@@ -1357,9 +1363,13 @@ function avisoTrial(dias) {
 }
 
 // ── NAVEGAÇÃO ──
+const PAGINAS = ['dashboard','agenda','hoje','servicos','bloqueios','config','funcionarios'];
 function pg(nome, el) {
   paginaAtual = nome;
-  document.querySelectorAll('[id^="pg-"]').forEach(p => p.style.display = 'none');
+  PAGINAS.forEach(p => {
+    const el2 = document.getElementById('pg-' + p);
+    if (el2) el2.style.display = 'none';
+  });
   const target = document.getElementById('pg-' + nome);
   if (target) target.style.display = 'block';
 
@@ -1429,7 +1439,9 @@ async function carregarDash() {
     renderChart(dh.agendamentos || []);
     await carregarSrvChart();
     renderProf(dh.agendamentos || []);
-  } catch(e) {}
+  } catch(e) {
+    console.error('carregarDash erro:', e);
+  }
 }
 
 // ── RENDER AGENDAMENTOS HOJE (Dashboard) ──
@@ -1577,7 +1589,7 @@ async function carregarSrvChart() {
           <div class="srv-bar-fill" style="width:${pcts[i]||5}%;background:${CORES_SRV[i%CORES_SRV.length]}"></div>
         </div>
       </div>`).join('');
-  } catch(e) {}
+  } catch(e) { console.warn('carregarSrvChart:', e.message); }
 }
 
 // ── PROFISSIONAIS ──
@@ -1835,7 +1847,20 @@ async function carregarNotifs() {
     }
 
     lista.innerHTML = d.notificacoes.map(n => {
-      const dt = new Date(n.criado_em);
+      // Suporta ISO (TIMESTAMPTZ) e formato BR legado
+      let dt;
+      try {
+        const raw = n.criado_em || '';
+        if (raw.includes('/')) {
+          // "DD/MM/YYYY HH:MM:SS" -> converter
+          const [datePart, timePart] = raw.split(' ');
+          const [d2,m2,y2] = datePart.split('/');
+          dt = new Date(`${y2}-${m2}-${d2}T${timePart||'00:00:00'}`);
+        } else {
+          dt = new Date(raw);
+        }
+      } catch { dt = new Date(); }
+      if (isNaN(dt)) dt = new Date();
       const diffMin = Math.floor((new Date() - dt) / 60000);
       const hora = diffMin < 1 ? 'Agora' : diffMin < 60 ? diffMin+'min atrás' : Math.floor(diffMin/60)+'h atrás';
       const cores = {pagamento:'#00d084',acesso:'#3b82f6',info:'#6b7a99',aviso:'#f97316'};
@@ -1849,7 +1874,10 @@ async function carregarNotifs() {
         <div class="nd-item-hora">${hora}</div>
       </div>`;
     }).join('');
-  } catch(e) {}
+  } catch(e) {
+    // Tabela notificacoes pode não existir ainda — silencioso
+    console.warn('carregarNotifs:', e.message);
+  }
 }
 
 async function toggleNotif(e) {
@@ -2014,7 +2042,7 @@ async function carregarFuncionarios() {
         </div>
       </div>\`;
     }).join('');
-  } catch(e) { console.error('Funcionários:', e); }
+  } catch(e) { console.warn('carregarFuncionarios:', e.message); }
 }
 
 function toggleFuncDetalhes(id) {
@@ -2294,6 +2322,7 @@ function obMostrarPasso(idx) {
 }
 
 function obPosicionar(p) {
+  try {
   const card = document.getElementById('ob-card');
   const spot = document.getElementById('ob-spotlight');
 
@@ -2366,6 +2395,7 @@ function obPosicionar(p) {
 
   // Scroll para o elemento ficar visível
   el.scrollIntoView({behavior:'smooth', block:'nearest'});
+  } catch(e) { console.warn('obPosicionar:', e.message); }
 }
 
 function obReposicionar() {
@@ -2530,7 +2560,7 @@ async function verificarLembretes() {
         break;
       }
     }
-  } catch(e) {}
+  } catch(e) { console.warn('verificarLembretes:', e.message); }
 }
 
 function mostrarAlerta(ag, tipo) {
