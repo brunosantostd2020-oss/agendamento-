@@ -1464,7 +1464,7 @@ function renderAgHoje(ags, filtro = 'todos') {
       : a.status === 'pendente'
       ? '<span class="ag-tag pend">Pendente</span>'
       : '';
-    return `<div class="ag-row" onclick="abrirModalAg('${a.id}','${esc(a.nome)}','${a.horario}','${a.status}',\`${esc(a.obs)}\`,'${esc(a.telefone||'')}','${esc(a.servico||'')}','${a.data||''}')">
+    return `<div class="ag-row" onclick="abrirModalAg('${a.id}','${esc(a.nome)}','${a.horario}','${a.status}','${esc(a.obs)}','${esc(a.telefone||'')}','${esc(a.servico||'')}','${a.data||''}')">
       <span class="ag-hora">${a.horario}</span>
       <div class="ag-dot ${dotCor[a.status]||'azul'}"></div>
       <div class="ag-info">
@@ -1514,7 +1514,7 @@ function renderAgRow(a, showActions = false) {
   }[a.status] || '';
 
   return `<div class="ag-row" style="border-bottom:1px solid var(--borda)"
-    onclick="abrirModalAg('${a.id}','${esc(a.nome)}','${a.horario} · ${dia}/${mes}','${a.status}',\`${esc(a.obs)}\`,'${esc(a.telefone||'')}','${esc(a.servico||'')}','${a.data||''}')">
+    onclick="abrirModalAg('${a.id}','${esc(a.nome)}','${a.horario} · ${dia}/${mes}','${a.status}','${esc(a.obs)}','${esc(a.telefone||'')}','${esc(a.servico||'')}','${a.data||''}')">
     <span class="ag-hora">${a.data === new Date().toISOString().split('T')[0] ? a.horario : dia+'/'+mes}</span>
     <div class="ag-dot ${dotCor[a.status]||'azul'}"></div>
     <div class="ag-info">
@@ -1995,52 +1995,52 @@ async function carregarFuncionarios() {
       const totalAPagar = r.total_a_pagar;
       const propCom = totalAPagar > 0 ? Math.round((r.comissao_valor/totalAPagar)*100) : 0;
 
-      return \`<div class="func-card" id="fcard-\${f.id}">
-        <div class="func-card-header" onclick="toggleFuncDetalhes('\${f.id}')">
-          <div class="func-avatar" style="background:\${f.cor}">\${f.nome.charAt(0).toUpperCase()}</div>
+      return `<div class="func-card" id="fcard-${f.id}">
+        <div class="func-card-header" onclick="toggleFuncDetalhes('${f.id}')">
+          <div class="func-avatar" style="background:${f.cor}">${f.nome.charAt(0).toUpperCase()}</div>
           <div class="func-info">
-            <div class="func-nome">\${f.nome}\${!f.ativo?'<span class=\"func-badge-inativo\">INATIVO</span>':''}</div>
-            <div class="func-cargo">\${f.cargo||'Sem cargo'}\${f.telefone?' · '+f.telefone:''}</div>
+            <div class="func-nome">${f.nome}${!f.ativo?'<span class=\"func-badge-inativo\">INATIVO</span>':''}</div>
+            <div class="func-cargo">${f.cargo||'Sem cargo'}${f.telefone?' · '+f.telefone:''}</div>
           </div>
           <div class="func-stats">
             <div class="func-stat">
               <div class="func-stat-lbl">Atendimentos</div>
-              <div class="func-stat-val" style="color:var(--azul)">\${r.atendimentos}</div>
+              <div class="func-stat-val" style="color:var(--azul)">${r.atendimentos}</div>
             </div>
             <div class="func-stat">
               <div class="func-stat-lbl">Gerado</div>
-              <div class="func-stat-val" style="color:var(--verde)">\${moedaBR(r.total_bruto)}</div>
+              <div class="func-stat-val" style="color:var(--verde)">${moedaBR(r.total_bruto)}</div>
             </div>
             <div class="func-stat">
               <div class="func-stat-lbl">A pagar</div>
-              <div class="func-stat-val" style="color:var(--txt)">\${moedaBR(totalAPagar)}</div>
+              <div class="func-stat-val" style="color:var(--txt)">${moedaBR(totalAPagar)}</div>
             </div>
           </div>
           <div class="func-actions" onclick="event.stopPropagation()">
-            <button class="func-action-btn green" onclick="abrirComissao('\${f.id}','\${esc(f.nome)}')">Ver comissão</button>
-            <button class="func-action-btn" onclick="editarFunc('\${f.id}')">Editar</button>
-            <button class="func-action-btn red" onclick="excluirFunc('\${f.id}')">Excluir</button>
+            <button class="func-action-btn green" onclick="abrirComissao('${f.id}','${esc(f.nome)}')">Ver comissão</button>
+            <button class="func-action-btn" onclick="editarFunc('${f.id}')">Editar</button>
+            <button class="func-action-btn red" onclick="excluirFunc('${f.id}')">Excluir</button>
           </div>
         </div>
-        <div class="func-com-bar" id="fdet-\${f.id}" style="display:none">
+        <div class="func-com-bar" id="fdet-${f.id}" style="display:none">
           <div class="func-com-item">
             <div class="func-com-item-lbl">Salário fixo</div>
-            <div class="func-com-item-val azul">\${moedaBR(f.salario_fixo)}</div>
+            <div class="func-com-item-val azul">${moedaBR(f.salario_fixo)}</div>
           </div>
           <div class="func-com-item">
-            <div class="func-com-item-lbl">Comissão (\${comissaoPct}%)</div>
-            <div class="func-com-item-val laranja">\${moedaBR(r.comissao_valor)}</div>
+            <div class="func-com-item-lbl">Comissão (${comissaoPct}%)</div>
+            <div class="func-com-item-val laranja">${moedaBR(r.comissao_valor)}</div>
           </div>
           <div class="func-com-item">
             <div class="func-com-item-lbl">Bruto gerado</div>
-            <div class="func-com-item-val verde">\${moedaBR(r.total_bruto)}</div>
+            <div class="func-com-item-val verde">${moedaBR(r.total_bruto)}</div>
           </div>
           <div class="func-com-item" style="border-color:var(--verde);background:var(--verde-dim)">
             <div class="func-com-item-lbl">Total a pagar</div>
-            <div class="func-com-item-val verde">\${moedaBR(totalAPagar)}</div>
+            <div class="func-com-item-val verde">${moedaBR(totalAPagar)}</div>
           </div>
         </div>
-      </div>\`;
+      </div>`;
     }).join('');
   } catch(e) { console.warn('carregarFuncionarios:', e.message); }
 }
@@ -2176,16 +2176,16 @@ async function abrirComissao(id, nome) {
         const [ano2,mes2,dia] = a.data.split('-');
         const preco = parseFloat(a.preco_servico||0);
         const com   = preco * (d.comissao_pct/100);
-        return \`<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--borda)">
+        return `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--borda)">
           <div>
-            <div style="font-size:12px;font-weight:600;color:var(--txt)">\${a.nome}</div>
-            <div style="font-size:11px;color:var(--muted)">\${dia}/\${mes2}/\${ano2} · \${a.horario}\${a.servico?' · '+a.servico:''}</div>
+            <div style="font-size:12px;font-weight:600;color:var(--txt)">${a.nome}</div>
+            <div style="font-size:11px;color:var(--muted)">${dia}/${mes2}/${ano2} · ${a.horario}${a.servico?' · '+a.servico:''}</div>
           </div>
           <div style="text-align:right">
-            <div style="font-size:12px;font-weight:700;color:var(--txt)">\${moedaBR(preco)}</div>
-            <div style="font-size:10px;color:var(--laranja)">com: \${moedaBR(com)}</div>
+            <div style="font-size:12px;font-weight:700;color:var(--txt)">${moedaBR(preco)}</div>
+            <div style="font-size:10px;color:var(--laranja)">com: ${moedaBR(com)}</div>
           </div>
-        </div>\`;
+        </div>`;
       }).join('');
     }
 
