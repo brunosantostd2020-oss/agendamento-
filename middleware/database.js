@@ -56,7 +56,6 @@ async function initDb() {
   }
 }
 
-module.exports = { pool, initDb };
 
 async function initServicos() {
   const client = await pool.connect();
@@ -82,7 +81,6 @@ async function initServicos() {
   }
 }
 
-module.exports = { pool, initDb, initServicos };
 
 async function initColunas() {
   const client = await pool.connect();
@@ -97,7 +95,6 @@ async function initColunas() {
   finally { client.release(); }
 }
 
-module.exports = { pool, initDb, initServicos, initColunas };
 
 async function initExtras() {
   const client = await pool.connect();
@@ -136,6 +133,17 @@ async function initExtras() {
       -- Token de avaliação
       ALTER TABLE agendamentos ADD COLUMN IF NOT EXISTS token_avalia TEXT DEFAULT '';
       ALTER TABLE agendamentos ADD COLUMN IF NOT EXISTS avaliado BOOLEAN DEFAULT false;
+
+      -- Notificações do painel
+      CREATE TABLE IF NOT EXISTS notificacoes (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        usuario_id UUID REFERENCES usuarios(id) ON DELETE CASCADE,
+        tipo TEXT DEFAULT 'info',
+        titulo TEXT NOT NULL,
+        mensagem TEXT DEFAULT '',
+        lida BOOLEAN DEFAULT false,
+        criado_em TIMESTAMPTZ DEFAULT NOW()
+      );
     `);
     console.log('✅ Tabelas extras OK!');
   } catch(e) {
@@ -145,7 +153,6 @@ async function initExtras() {
   }
 }
 
-module.exports = { pool, initDb, initServicos, initColunas, initExtras };
 
 async function initTrial() {
   const client = await pool.connect();
@@ -178,7 +185,6 @@ async function initTrial() {
   }
 }
 
-module.exports = { pool, initDb, initServicos, initColunas, initExtras, initTrial };
 
 async function initTokenConfirm() {
   const client = await pool.connect();
@@ -191,4 +197,51 @@ async function initTokenConfirm() {
   finally { client.release(); }
 }
 
-module.exports = { pool, initDb, initServicos, initColunas, initExtras, initTrial, initTokenConfirm };
+
+async function initPagamento() {
+  const client = await pool.connect();
+  try {
+    await client.query(`
+      ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS mp_subscription_id TEXT DEFAULT '';
+      CREATE TABLE IF NOT EXISTS historico_pagamentos (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        usuario_id UUID REFERENCES usuarios(id) ON DELETE CASCADE,
+        mp_payment_id TEXT DEFAULT '',
+        mp_subscription_id TEXT DEFAULT '',
+        status TEXT DEFAULT '',
+        valor NUMERIC(10,2),
+        criado_em TIMESTAMPTZ DEFAULT NOW()
+      );
+    `);
+    console.log('✅ Tabela pagamento OK!');
+  } catch(e) { console.error('Pagamento:', e.message); }
+  finally { client.release(); }
+}
+
+
+async function initFuncionarios() {
+  const client = await pool.connect();
+  try {
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS funcionarios (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        negocio_id UUID REFERENCES usuarios(id) ON DELETE CASCADE,
+        nome TEXT NOT NULL,
+        cargo TEXT DEFAULT '',
+        telefone TEXT DEFAULT '',
+        email TEXT DEFAULT '',
+        salario_fixo NUMERIC(10,2) DEFAULT 0,
+        comissao_pct NUMERIC(5,2) DEFAULT 0,
+        ativo BOOLEAN DEFAULT true,
+        cor TEXT DEFAULT '#00d084',
+        criado_em TEXT DEFAULT '',
+        atualizado_em TEXT DEFAULT ''
+      );
+      ALTER TABLE agendamentos ADD COLUMN IF NOT EXISTS funcionario_id UUID REFERENCES funcionarios(id) ON DELETE SET NULL;
+    `);
+    console.log('✅ Tabela funcionarios OK!');
+  } catch(e) { console.error('Funcionarios:', e.message); }
+  finally { client.release(); }
+}
+
+module.exports = { pool, initDb, initServicos, initColunas, initExtras, initTrial, initTokenConfirm, initPagamento, initFuncionarios };

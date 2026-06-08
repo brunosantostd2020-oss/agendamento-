@@ -178,9 +178,29 @@ label{display:block;font-size:13px;font-weight:600;color:#334155;margin-bottom:8
   .top-link{align-self:flex-end}
   .form-card{padding:28px 22px}
 }
-@media(max-width:480px){
+/* ── MOBILE FIXES ── */
+@media(max-width:600px){
+  .page{grid-template-columns:1fr;display:flex;flex-direction:column}
+  .brand-side{padding:20px 20px 16px;order:0;flex-shrink:0}
+  .brand-content{margin:10px 0 0}
+  .brand-footer{display:none}
+  .blob{opacity:.3}
+  .form-side{order:1;flex:1;padding:20px 16px 32px;
+    background:#f6f7fb;border-radius:0;
+    padding-bottom:calc(32px + env(safe-area-inset-bottom,0px))}
+  .top-link{display:none}
+  .form-card{padding:24px 18px;border-radius:16px;
+    box-shadow:0 8px 32px -8px rgba(15,23,42,.14)}
+  .form-head h2{font-size:22px}
+  .input-wrap input{font-size:16px} /* evita zoom iOS */
+  .btn-primary{font-size:16px;padding:16px 18px;border-radius:14px;
+    /* garante visibilidade total no mobile */
+    -webkit-appearance:none;touch-action:manipulation}
   .social{grid-template-columns:1fr}
-  .form-head h2{font-size:24px}
+}
+@media(max-width:380px){
+  .form-card{padding:20px 14px}
+  .brand-side{padding:14px 16px 12px}
 }
 </style>
 </head>

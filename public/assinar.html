@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+<meta name="theme-color" content="#0b0b12"/>
+<title>Assinar AgendaOK</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d0f14;--card:#161b22;--borda:#21283a;
+  --txt:#e8ecf0;--muted:#6b7a99;--muted2:#3d4a63;
+  --verde:#00d084;--verde-dim:rgba(0,208,132,.12);
+  --roxo:#a855f7;--azul:#3b82f6;--danger:#ef4444;
+  --sb:env(safe-area-inset-bottom,0px);
+  --st:env(safe-area-inset-top,0px);
+}
+html{-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--txt);
+  min-height:100dvh;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+
+/* ── TOPBAR ── */
+.topbar{padding:calc(var(--st) + 14px) 20px 14px;background:var(--bg);
+  border-bottom:1px solid var(--borda);display:flex;align-items:center;
+  justify-content:space-between;position:sticky;top:0;z-index:10}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--txt)}
+.logo-mark{width:32px;height:32px;border-radius:8px;
+  background:linear-gradient(135deg,var(--verde),var(--azul));
+  display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.logo-mark svg{width:16px;height:16px;fill:#000}
+.logo-text{font-size:16px;font-weight:800;letter-spacing:-.3px}
+.logout-btn{font-size:13px;color:var(--muted);background:none;border:1px solid var(--borda);
+  padding:6px 14px;border-radius:8px;cursor:pointer;font-family:inherit;transition:.15s}
+.logout-btn:hover{border-color:var(--danger);color:var(--danger)}
+
+/* ── CONTEÚDO ── */
+.wrap{max-width:520px;margin:0 auto;padding:28px 20px calc(40px + var(--sb))}
+
+/* ── ALERTA TOPO ── */
+.alert-topo{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.3);
+  border-radius:12px;padding:14px 16px;margin-bottom:24px;
+  display:flex;align-items:flex-start;gap:12px}
+.alert-topo svg{width:18px;height:18px;color:var(--danger);flex-shrink:0;margin-top:1px}
+.alert-topo-t{font-size:14px;font-weight:700;color:var(--danger);margin-bottom:3px}
+.alert-topo-d{font-size:13px;color:var(--muted);line-height:1.5}
+
+/* ── CARD PLANO ── */
+.plano-card{background:var(--card);border:1px solid var(--borda);
+  border-radius:16px;overflow:hidden;margin-bottom:20px}
+.plano-header{background:linear-gradient(135deg,#0a1a14 0%,#0d1c2e 100%);
+  padding:24px 24px 20px;border-bottom:1px solid var(--borda);position:relative;overflow:hidden}
+.plano-header::before{content:'';position:absolute;top:-60px;right:-60px;
+  width:200px;height:200px;border-radius:50%;
+  background:radial-gradient(circle,rgba(0,208,132,.15),transparent 60%);pointer-events:none}
+.plano-badge{display:inline-flex;align-items:center;gap:6px;
+  background:var(--verde-dim);border:1px solid rgba(0,208,132,.3);
+  border-radius:999px;padding:4px 12px;margin-bottom:12px}
+.plano-badge svg{width:12px;height:12px;fill:var(--verde)}
+.plano-badge span{font-size:11px;font-weight:700;color:var(--verde);letter-spacing:.06em;text-transform:uppercase}
+.plano-nome{font-size:22px;font-weight:900;letter-spacing:-.4px;margin-bottom:4px}
+.plano-sub{font-size:13px;color:var(--muted)}
+.plano-preco{margin-top:16px;display:flex;align-items:baseline;gap:4px}
+.plano-cifrao{font-size:18px;font-weight:700;color:var(--verde);line-height:1}
+.plano-valor{font-size:42px;font-weight:900;color:var(--verde);letter-spacing:-.03em;line-height:1}
+.plano-periodo{font-size:14px;color:var(--muted);font-weight:500;margin-left:4px}
+.plano-trial{margin-top:10px;font-size:13px;color:var(--muted)}
+.plano-trial strong{color:var(--verde)}
+
+.plano-features{padding:20px 24px}
+.feat{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--borda)}
+.feat:last-child{border-bottom:0}
+.feat-ico{width:28px;height:28px;border-radius:8px;background:var(--verde-dim);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.feat-ico svg{width:14px;height:14px;stroke:var(--verde);stroke-width:2.5}
+.feat-txt{font-size:14px;font-weight:500;color:var(--txt)}
+.feat-sub{font-size:12px;color:var(--muted);margin-top:1px}
+
+/* ── BOTÃO ASSINAR ── */
+.btn-assinar{width:100%;padding:17px 20px;background:linear-gradient(135deg,var(--verde) 0%,#00b872 100%);
+  color:#000;font-size:16px;font-weight:800;letter-spacing:-.2px;
+  border:none;border-radius:14px;cursor:pointer;font-family:inherit;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  transition:transform .15s,opacity .15s;position:relative;overflow:hidden}
+.btn-assinar:hover{transform:translateY(-2px);opacity:.95}
+.btn-assinar:active{transform:translateY(0)}
+.btn-assinar:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn-assinar svg{width:18px;height:18px;flex-shrink:0}
+
+/* Spinner */
+.spinner{width:18px;height:18px;border:2.5px solid rgba(0,0,0,.3);
+  border-top-color:#000;border-radius:50%;animation:spin .7s linear infinite;display:none}
+.btn-assinar.loading .btn-lbl{opacity:.6}
+.btn-assinar.loading .spinner{display:inline-block}
+.btn-assinar.loading .btn-ico{display:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── SEGURANÇA ── */
+.seguranca{display:flex;align-items:center;justify-content:center;gap:8px;
+  margin-top:14px;font-size:12px;color:var(--muted)}
+.seguranca svg{width:14px;height:14px;stroke:var(--muted)}
+
+/* ── GARANTIA ── */
+.garantia{background:rgba(168,85,247,.06);border:1px solid rgba(168,85,247,.2);
+  border-radius:12px;padding:14px 16px;margin-top:16px;
+  display:flex;align-items:flex-start;gap:12px}
+.garantia svg{width:18px;height:18px;stroke:var(--roxo);flex-shrink:0;margin-top:1px}
+.garantia-t{font-size:13px;font-weight:700;color:var(--roxo);margin-bottom:2px}
+.garantia-d{font-size:12px;color:var(--muted);line-height:1.5}
+
+/* ── ERRO ── */
+.erro-box{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.3);
+  border-radius:12px;padding:12px 16px;margin-top:16px;
+  font-size:13px;color:var(--danger);display:none}
+.erro-box.show{display:block}
+
+/* ── SUCESSO (redireciona) ── */
+.sucesso-overlay{display:none;position:fixed;inset:0;z-index:100;
+  background:var(--bg);flex-direction:column;align-items:center;
+  justify-content:center;text-align:center;padding:32px 20px}
+.sucesso-overlay.show{display:flex}
+.sucesso-icon{width:72px;height:72px;border-radius:50%;
+  background:var(--verde-dim);border:2px solid var(--verde);
+  display:flex;align-items:center;justify-content:center;margin-bottom:20px}
+.sucesso-icon svg{width:32px;height:32px;stroke:var(--verde);stroke-width:2.5}
+
+/* ── MOBILE ── */
+@media(max-width:480px){
+  .plano-header{padding:20px 18px 16px}
+  .plano-features{padding:16px 18px}
+  .plano-valor{font-size:36px}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a class="logo" href="/">
+    <div class="logo-mark">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="4"/><path d="M8 2v4M16 2v4M3 10h18" stroke="#000" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
+    </div>
+    <span class="logo-text">AgendaOK</span>
+  </a>
+  <button class="logout-btn" onclick="sair()">Sair</button>
+</div>
+
+<div class="wrap">
+
+  <!-- Alerta motivo -->
+  <div class="alert-topo" id="alert-topo" style="display:none">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    <div>
+      <div class="alert-topo-t" id="alert-topo-titulo">Acesso necessário</div>
+      <div class="alert-topo-d" id="alert-topo-desc">Para continuar usando o AgendaOK, assine o plano mensal.</div>
+    </div>
+  </div>
+
+  <!-- Card plano -->
+  <div class="plano-card">
+    <div class="plano-header">
+      <div class="plano-badge">
+        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <span>Plano Pro</span>
+      </div>
+      <div class="plano-nome">AgendaOK Premium</div>
+      <div class="plano-sub">Tudo que você precisa para gerir seus agendamentos</div>
+      <div class="plano-preco">
+        <span class="plano-cifrao">R$</span>
+        <span class="plano-valor">69</span>
+        <span class="plano-periodo">,90&thinsp;/&thinsp;mês</span>
+      </div>
+      <div class="plano-trial">Primeiros <strong>7 dias grátis</strong> — cancele quando quiser</div>
+    </div>
+
+    <div class="plano-features">
+      <div class="feat">
+        <div class="feat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M16 2v4M8 2v4M3 10h18" stroke-linecap="round"/></svg></div>
+        <div><div class="feat-txt">Agendamentos ilimitados</div><div class="feat-sub">Sem limite de clientes ou horários</div></div>
+      </div>
+      <div class="feat">
+        <div class="feat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke-linecap="round"/></svg></div>
+        <div><div class="feat-txt">Múltiplos serviços</div><div class="feat-sub">Cadastre todos seus serviços com preços</div></div>
+      </div>
+      <div class="feat">
+        <div class="feat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.14 11.6a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.05 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.09 8.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21 16.92z" stroke-linecap="round"/></svg></div>
+        <div><div class="feat-txt">Link & QR Code público</div><div class="feat-sub">Compartilhe com seus clientes</div></div>
+      </div>
+      <div class="feat">
+        <div class="feat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div><div class="feat-txt">Painel de relatórios</div><div class="feat-sub">Métricas e faturamento em tempo real</div></div>
+      </div>
+      <div class="feat">
+        <div class="feat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0" stroke-linecap="round"/></svg></div>
+        <div><div class="feat-txt">Notificações automáticas</div><div class="feat-sub">Lembretes por e-mail para clientes</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Botão -->
+  <button class="btn-assinar" id="btn-assinar" onclick="assinar()">
+    <span class="spinner"></span>
+    <svg class="btn-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+    <span class="btn-lbl">Assinar por R$&nbsp;69,90/mês</span>
+  </button>
+
+  <div class="seguranca">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4" stroke-linecap="round"/></svg>
+    Pagamento 100% seguro via Mercado Pago
+  </div>
+
+  <div class="garantia">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <div>
+      <div class="garantia-t">Cancele quando quiser</div>
+      <div class="garantia-d">Sem fidelidade, sem taxas de cancelamento. Cancele pelo painel a qualquer momento.</div>
+    </div>
+  </div>
+
+  <div class="erro-box" id="erro-box"></div>
+</div>
+
+<!-- Overlay sucesso (redireciona) -->
+<div class="sucesso-overlay" id="sucesso-overlay">
+  <div class="sucesso-icon">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </div>
+  <div style="font-size:22px;font-weight:900;letter-spacing:-.4px;margin-bottom:8px">Redirecionando...</div>
+  <div style="font-size:14px;color:var(--muted);max-width:300px;line-height:1.6">Você será redirecionado para o checkout seguro do Mercado Pago.</div>
+</div>
+
+<script>
+const MOTIVOS = {
+  trial_expirado: { t:'Período de teste encerrado', d:'Seu período gratuito de 7 dias chegou ao fim. Assine para continuar usando todos os recursos.' },
+  expirado:       { t:'Assinatura expirada',        d:'Sua assinatura expirou. Renove para continuar com acesso completo.' },
+  bloqueado:      { t:'Acesso suspenso',            d:'Seu acesso está suspenso. Regularize sua assinatura para continuar.' },
+};
+
+(async () => {
+  try {
+    const r = await fetch('/auth/me', { credentials: 'include' });
+    const u = await r.json();
+    if (!u.logado) return (location.href = '/login');
+    // Se já tem acesso, volta ao painel
+    if (u.acesso_ok && u.plano_pago) return (location.href = '/painel');
+  } catch(e) {}
+
+  // Exibe motivo se passado via URL
+  const params = new URLSearchParams(location.search);
+  const motivo = params.get('motivo') || 'trial_expirado';
+  const m = MOTIVOS[motivo] || MOTIVOS.trial_expirado;
+  document.getElementById('alert-topo').style.display = 'flex';
+  document.getElementById('alert-topo-titulo').textContent = m.t;
+  document.getElementById('alert-topo-desc').textContent   = m.d;
+})();
+
+async function assinar() {
+  const btn  = document.getElementById('btn-assinar');
+  const erro = document.getElementById('erro-box');
+  erro.classList.remove('show');
+  btn.classList.add('loading');
+  btn.disabled = true;
+
+  try {
+    const r = await fetch('/pagamento/assinar', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    const d = await r.json();
+    if (!r.ok || !d.checkout_url) throw new Error(d.erro || 'Erro ao criar assinatura.');
+
+    // Mostra overlay e redireciona
+    document.getElementById('sucesso-overlay').classList.add('show');
+    setTimeout(() => { location.href = d.checkout_url; }, 800);
+  } catch(e) {
+    btn.classList.remove('loading');
+    btn.disabled = false;
+    erro.textContent = e.message;
+    erro.classList.add('show');
+  }
+}
+
+function sair() {
+  fetch('/auth/logout', { method: 'POST', credentials: 'include' })
+    .finally(() => location.href = '/');
+}
+</script>
+</body>
+</html>

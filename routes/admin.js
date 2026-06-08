@@ -37,6 +37,7 @@ router.get('/clientes', requireMaster, async (req, res) => {
         u.id, u.nome, u.email, u.nome_negocio, u.nicho,
         u.plano, u.slug, u.criado_em,
         u.trial_expira, u.acesso_ativo, u.plano_pago, u.acesso_expira,
+        u.mp_subscription_id,
         COUNT(a.id) as total_agendamentos,
         CASE
           WHEN u.plano_pago = true AND (u.acesso_expira = '' OR u.acesso_expira >= $1) THEN 'pago'
