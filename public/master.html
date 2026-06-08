@@ -417,7 +417,7 @@ function abrirNotifModal(id, nome) {
  document.getElementById('n-tipo').value = 'info';
  document.querySelectorAll('.tipo-btn').forEach(b => b.classList.remove('sel-tipo'));
  document.querySelector('.tipo-btn').classList.add('sel-tipo');
- document.getElementById('m-notif').classList.add('open');
+ document.getElementById('m-notif').classList.add('aberto');
 }
 
 function selTipo(tipo, el) {
@@ -447,6 +447,11 @@ async function enviarNotif() {
 }
 
 verificarSessao();
+
+function fechar(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.remove('aberto');
+}
 </script>
 <!-- MODAL ENVIAR MENSAGEM -->
 <div class="overlay" id="m-notif" onclick="if(event.target===this)fechar('m-notif')">

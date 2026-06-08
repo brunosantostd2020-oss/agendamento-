@@ -2,33 +2,37 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=cover"/>
 <meta name="theme-color" content="#0b0b12"/>
 <title>Entrar — AgendaOK</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
 <style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#0b0b12;--surface:#fff;--text:#0f172a;--muted:#64748b;
-  --border:#e6e8ee;--primary:#6d28d9;--primary-2:#9333ea;
-  --accent:#22d3ee;--pink:#ec4899;--danger:#dc2626;
-  --shadow:0 30px 60px -20px rgba(15,23,42,.18),0 8px 24px -12px rgba(15,23,42,.12);
-  --radius:18px;
+  --primary:#6d28d9;--primary-2:#9333ea;--pink:#ec4899;
+  --danger:#dc2626;--border:#e6e8ee;--muted:#64748b;--text:#0f172a;
+  --shadow:0 20px 50px -12px rgba(15,23,42,.18);
+  --r:14px;
+  --sat:env(safe-area-inset-top,0px);
+  --sab:env(safe-area-inset-bottom,0px);
 }
-*{box-sizing:border-box}
-html,body{height:100%;margin:0}
-body{font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;color:var(--text);
-  background:#f6f7fb;-webkit-font-smoothing:antialiased}
+html{-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
+body{font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;
+  color:var(--text);background:#f1f3f9;-webkit-font-smoothing:antialiased;
+  min-height:100dvh}
 a{color:inherit;text-decoration:none}
 
-/* LAYOUT */
-.page{min-height:100dvh;display:grid;grid-template-columns:1.05fr 1fr}
+/* ── DESKTOP: grid 2 colunas ── */
+.page{min-height:100dvh;display:grid;grid-template-columns:1.1fr 1fr}
 
-/* ESQUERDA */
-.brand-side{position:relative;overflow:hidden;color:#fff;padding:36px 56px;
-  display:flex;flex-direction:column;
-  background:radial-gradient(120% 80% at 0% 0%,#1a1230 0%,transparent 60%),
+/* ══ LADO ESQUERDO (branding) ══ */
+.brand-side{
+  position:relative;overflow:hidden;color:#fff;
+  padding:48px 56px;display:flex;flex-direction:column;
+  background:
+    radial-gradient(120% 80% at 0% 0%,#1a1230 0%,transparent 60%),
     radial-gradient(100% 80% at 100% 100%,#2a0f3a 0%,transparent 60%),
     linear-gradient(160deg,#0b0b12 0%,#14091f 60%,#1c0a2e 100%)}
 .brand-bg{position:absolute;inset:0;overflow:hidden;pointer-events:none}
@@ -41,14 +45,15 @@ a{color:inherit;text-decoration:none}
 .blob-3{width:480px;height:480px;left:20%;bottom:-180px;
   background:radial-gradient(circle,#ec4899,transparent 60%);animation-delay:-8s}
 .grid-overlay{position:absolute;inset:0;
-  background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),
+  background-image:
+    linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),
     linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);
   background-size:42px 42px;
   mask-image:radial-gradient(ellipse at 50% 50%,#000 30%,transparent 75%)}
-@keyframes float{0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(0,-30px,0) scale(1.05)}}
+@keyframes float{0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(0,-28px,0) scale(1.04)}}
 
 .brand-header,.brand-content,.brand-footer{position:relative;z-index:1}
-.logo{display:inline-flex;align-items:center;gap:12px;color:#fff;font-weight:800;letter-spacing:-.01em}
+.logo{display:inline-flex;align-items:center;gap:12px;color:#fff;font-weight:800}
 .logo-mark{width:38px;height:38px;border-radius:11px;
   background:linear-gradient(135deg,#a855f7,#22d3ee);
   display:grid;place-items:center;color:#0b0b12;
@@ -60,134 +65,197 @@ a{color:inherit;text-decoration:none}
 .pill{display:inline-block;padding:7px 12px;border-radius:999px;
   background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);
   font-size:13px;letter-spacing:.02em;color:#e9d5ff;margin-bottom:24px}
-.brand-content h1{font-size:clamp(34px,4vw,52px);line-height:1.05;
+.brand-content h1{font-size:clamp(32px,3.5vw,50px);line-height:1.06;
   letter-spacing:-.02em;margin:0 0 18px;font-weight:800}
 .grad{background:linear-gradient(90deg,#c4b5fd 0%,#22d3ee 60%,#f0abfc 100%);
   -webkit-background-clip:text;background-clip:text;color:transparent}
-.brand-content p{color:#cbd5e1;font-size:17px;line-height:1.6;margin:0 0 28px;max-width:480px}
-
-.feature-list{list-style:none;padding:0;margin:0;display:grid;gap:14px}
+.brand-content p{color:#cbd5e1;font-size:16px;line-height:1.6;margin:0 0 28px}
+.feature-list{list-style:none;padding:0;margin:0;display:grid;gap:12px}
 .feature-list li{display:flex;gap:14px;align-items:flex-start;
   padding:14px 16px;border-radius:14px;
   background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
   backdrop-filter:blur(8px)}
-.feature-list strong{display:block;color:#fff;font-size:15px}
-.feature-list small{color:#a5b4cf;font-size:13px}
-.check{flex:0 0 26px;height:26px;border-radius:8px;
+.feature-list strong{display:block;color:#fff;font-size:14px}
+.feature-list small{color:#a5b4cf;font-size:12px}
+.check{flex:0 0 24px;height:24px;border-radius:7px;
   background:linear-gradient(135deg,#a855f7,#22d3ee);
-  color:#0b0b12;font-weight:800;display:grid;place-items:center;font-size:14px}
-
-.brand-footer{margin-top:28px;display:flex;align-items:center;gap:14px;color:#a5b4cf}
+  color:#0b0b12;font-weight:800;display:grid;place-items:center;font-size:13px}
+.brand-footer{margin-top:28px;display:flex;align-items:center;gap:14px;color:#a5b4cf;font-size:13px}
 .avatars{display:flex}
-.avatars span{width:30px;height:30px;border-radius:50%;
+.avatars span{width:28px;height:28px;border-radius:50%;
   background:var(--c);border:2px solid #14091f;margin-left:-8px}
 .avatars span:first-child{margin-left:0}
 
-/* DIREITA */
-.form-side{position:relative;display:flex;flex-direction:column;padding:36px 48px;
-  background:radial-gradient(800px 400px at 100% -10%,#ede9fe 0%,transparent 60%),
-    radial-gradient(700px 500px at -10% 110%,#cffafe 0%,transparent 60%),#f6f7fb}
-.top-link{align-self:flex-end;color:var(--muted);font-size:14px;
+/* ══ LADO DIREITO (formulário) ══ */
+.form-side{
+  position:relative;display:flex;flex-direction:column;
+  padding:36px 48px;
+  background:
+    radial-gradient(700px 400px at 100% -10%,#ede9fe 0%,transparent 60%),
+    radial-gradient(600px 500px at -10% 110%,#cffafe 0%,transparent 60%),
+    #f1f3f9}
+.top-link{
+  align-self:flex-end;color:var(--muted);font-size:14px;
   padding:8px 14px;border-radius:999px;border:1px solid var(--border);
-  background:#fff;transition:.2s}
+  background:#fff;transition:.2s;white-space:nowrap}
 .top-link strong{color:var(--primary)}
-.top-link:hover{border-color:#d4b8ff;box-shadow:0 6px 16px -8px rgba(109,40,217,.3)}
+.top-link:hover{border-color:#d4b8ff}
 
-.form-card{width:100%;max-width:460px;margin:auto;
-  background:#fff;border-radius:var(--radius);padding:36px;
+.form-card{
+  width:100%;max-width:460px;margin:auto;
+  background:#fff;border-radius:20px;padding:38px;
   box-shadow:var(--shadow);border:1px solid #eef0f6}
-
-.form-head h2{margin:0 0 6px;font-size:28px;letter-spacing:-.02em}
-.form-head p{margin:0 0 26px;color:var(--muted);font-size:15px}
+.form-head h2{margin:0 0 6px;font-size:26px;letter-spacing:-.02em;font-weight:800}
+.form-head p{margin:0 0 24px;color:var(--muted);font-size:14px}
 
 .alert{background:#fef2f2;color:var(--danger);border:1px solid #fecaca;
-  padding:10px 14px;border-radius:12px;font-size:14px;margin-bottom:16px;display:none}
+  padding:10px 14px;border-radius:10px;font-size:14px;margin-bottom:16px;display:none}
 .alert.show{display:block}
 
 .field{margin-bottom:16px}
-.field-row{display:flex;justify-content:space-between;align-items:center}
-label{display:block;font-size:13px;font-weight:600;color:#334155;margin-bottom:8px}
-.muted-link{font-size:13px;color:var(--primary);font-weight:600}
-.muted-link:hover{text-decoration:underline}
-
-.input-wrap{position:relative;display:flex;align-items:center;
+label{display:block;font-size:13px;font-weight:600;color:#334155;margin-bottom:7px}
+.input-wrap{display:flex;align-items:center;
   background:#fff;border:1.5px solid var(--border);border-radius:12px;transition:.2s}
-.input-wrap:focus-within{border-color:var(--primary);box-shadow:0 0 0 4px rgba(109,40,217,.12)}
+.input-wrap:focus-within{border-color:var(--primary);box-shadow:0 0 0 4px rgba(109,40,217,.1)}
 .input-wrap .ico{width:18px;height:18px;color:#94a3b8;margin-left:14px;flex:0 0 18px}
-.input-wrap input{flex:1;border:0;outline:0;background:transparent;
-  padding:14px 14px 14px 12px;font-size:15px;font-family:inherit;color:var(--text);
-  -webkit-appearance:none}
+.input-wrap input{
+  flex:1;border:0;outline:0;background:transparent;
+  padding:14px 14px 14px 12px;
+  font-size:16px; /* ≥16px previne zoom automático iOS/Android */
+  font-family:inherit;color:var(--text);-webkit-appearance:none}
 .input-wrap input::placeholder{color:#cbd5e1}
 .ghost-btn{background:transparent;border:0;cursor:pointer;color:#94a3b8;
-  padding:0 14px;height:100%;display:grid;place-items:center}
-.ghost-btn:hover{color:var(--primary)}
-.ghost-btn svg{width:20px;height:20px}
+  padding:0 14px;height:100%;min-height:48px;display:grid;place-items:center;
+  -webkit-tap-highlight-color:transparent}
+.ghost-btn svg{width:20px;height:20px;pointer-events:none}
 
 .remember{display:flex;align-items:center;gap:10px;font-size:14px;color:#475569;
-  margin:4px 0 22px;cursor:pointer;user-select:none}
-.remember input{appearance:none;-webkit-appearance:none;width:18px;height:18px;border-radius:6px;
-  border:1.5px solid #cbd5e1;display:grid;place-items:center;cursor:pointer;transition:.15s}
-.remember input:checked{background:linear-gradient(135deg,var(--primary),var(--primary-2));
+  margin:4px 0 20px;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent}
+.remember input{
+  appearance:none;-webkit-appearance:none;
+  width:20px;height:20px;flex-shrink:0;border-radius:6px;
+  border:1.5px solid #cbd5e1;display:grid;place-items:center;
+  cursor:pointer;transition:.15s}
+.remember input:checked{
+  background:linear-gradient(135deg,var(--primary),var(--primary-2));
   border-color:var(--primary)}
-.remember input:checked::after{content:"";width:5px;height:9px;border:solid #fff;
+.remember input:checked::after{
+  content:"";width:5px;height:9px;border:solid #fff;
   border-width:0 2px 2px 0;transform:rotate(45deg) translate(-1px,-1px)}
 
-.btn-primary{width:100%;border:0;cursor:pointer;
+/* ── Botão Entrar ── */
+.btn-primary{
+  width:100%;border:0;cursor:pointer;
   background:linear-gradient(135deg,#6d28d9 0%,#9333ea 50%,#ec4899 100%);
-  background-size:200% 200%;color:#fff;font-weight:700;font-size:15px;
-  letter-spacing:.01em;padding:14px 18px;border-radius:12px;
-  display:inline-flex;align-items:center;justify-content:center;gap:10px;
-  box-shadow:0 14px 30px -10px rgba(147,51,234,.55);
-  transition:transform .15s ease,box-shadow .2s ease;font-family:inherit}
-.btn-primary:hover{background-position:100% 0;transform:translateY(-1px);
-  box-shadow:0 18px 36px -10px rgba(236,72,153,.5)}
-.btn-primary:active{transform:translateY(0)}
-.btn-primary:disabled{opacity:.5;cursor:not-allowed;transform:none}
-
-.spinner{width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,.4);
-  border-top-color:#fff;display:none;animation:spin .8s linear infinite}
+  background-size:200% 200%;color:#fff;font-weight:700;font-size:16px;
+  letter-spacing:.01em;
+  padding:16px 18px; /* altura generosa para toque */
+  min-height:54px;
+  border-radius:14px;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  box-shadow:0 14px 30px -10px rgba(147,51,234,.5);
+  transition:transform .15s,box-shadow .2s,opacity .15s;
+  font-family:inherit;
+  -webkit-appearance:none;touch-action:manipulation;
+  position:relative;overflow:hidden}
+.btn-primary:active{transform:scale(.98);opacity:.92}
+.btn-primary:disabled{opacity:.55;cursor:not-allowed;transform:none}
+.spinner{
+  width:18px;height:18px;border-radius:50%;
+  border:2.5px solid rgba(255,255,255,.35);border-top-color:#fff;
+  display:none;animation:spin .8s linear infinite;flex-shrink:0}
 .loading .btn-lbl{opacity:.7}
 .loading .spinner{display:inline-block}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-.divider{display:flex;align-items:center;gap:14px;margin:22px 0;
+.divider{display:flex;align-items:center;gap:12px;margin:20px 0;
   color:#94a3b8;font-size:12px;letter-spacing:.08em;text-transform:uppercase}
 .divider::before,.divider::after{content:"";flex:1;height:1px;
   background:linear-gradient(90deg,transparent,#e2e8f0,transparent)}
 
-.social{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.social-btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;
+.social{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.social-btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
   background:#fff;border:1.5px solid var(--border);border-radius:12px;
-  padding:12px;font-size:14px;font-weight:600;color:#0f172a;
-  cursor:pointer;transition:.15s;font-family:inherit}
-.social-btn:hover{border-color:#a855f7;transform:translateY(-1px);
-  box-shadow:0 8px 18px -10px rgba(109,40,217,.4)}
-.social-btn svg{width:18px;height:18px}
+  padding:12px;font-size:14px;font-weight:600;color:var(--text);
+  cursor:pointer;transition:.15s;font-family:inherit;
+  -webkit-tap-highlight-color:transparent;min-height:46px}
+.social-btn:active{opacity:.8}
 
-.legal{margin:22px 0 0;text-align:center;font-size:12px;color:var(--muted)}
+.legal{margin:20px 0 0;text-align:center;font-size:12px;color:var(--muted)}
 .legal a{color:var(--primary);font-weight:600}
-.legal a:hover{text-decoration:underline}
 
-/* RESPONSIVE */
-@media(max-width:980px){
-  .page{grid-template-columns:1fr}
-  .brand-side{padding:28px 24px;min-height:auto}
-  .brand-content{margin:24px 0}
-  .feature-list{display:none}
-  .form-side{padding:24px 20px}
-  .top-link{align-self:flex-end}
-  .form-card{padding:28px 22px}
-}
-@media(max-width:480px){
-  .social{grid-template-columns:1fr}
+/* ══ MOBILE — única coluna, formulário ocupa a tela toda ══ */
+@media(max-width:768px){
+  /* Oculta completamente o brand-side — economiza toda a altura */
+  .brand-side{display:none}
+
+  /* Formulário ocupa 100% da viewport */
+  .page{grid-template-columns:1fr;min-height:100dvh}
+  .form-side{
+    padding:0;
+    background:#f1f3f9;
+    display:flex;flex-direction:column;
+    min-height:100dvh}
+
+  /* Header compacto com logo + link cadastro */
+  .form-side::before{
+    content:'';display:none} /* sem pseudo */
+
+  .top-link{
+    display:flex;align-self:stretch;
+    justify-content:center;
+    margin:0;border:0;border-radius:0;
+    border-bottom:1px solid var(--border);
+    background:#fff;
+    padding:calc(var(--sat) + 14px) 20px 14px;
+    font-size:14px}
+
+  /* Card preenche o espaço restante */
+  .form-card{
+    flex:1;
+    margin:0;
+    border-radius:0;
+    border:0;
+    box-shadow:none;
+    padding:28px 20px calc(28px + var(--sab));
+    display:flex;flex-direction:column;justify-content:center;
+    max-width:100%}
+
   .form-head h2{font-size:24px}
+  .form-head p{font-size:14px;margin-bottom:22px}
+
+  /* Logo mobile no topo do card */
+  .mobile-logo{
+    display:flex;align-items:center;gap:10px;
+    margin-bottom:28px;
+    padding-bottom:20px;
+    border-bottom:1px solid var(--border)}
+  .mobile-logo-mark{
+    width:36px;height:36px;border-radius:10px;flex-shrink:0;
+    background:linear-gradient(135deg,#a855f7,#22d3ee);
+    display:grid;place-items:center}
+  .mobile-logo-mark svg{width:18px;height:18px;fill:none;stroke:#0b0b12;stroke-width:2}
+  .mobile-logo-text{font-size:18px;font-weight:800;color:var(--text)}
+  .mobile-logo-sub{font-size:12px;color:var(--muted);margin-top:1px}
+}
+
+/* Telas muito pequenas */
+@media(max-width:360px){
+  .form-card{padding:22px 16px calc(22px + var(--sab))}
+  .btn-primary{font-size:15px;min-height:50px}
+}
+
+/* Desktop: oculta logo mobile */
+@media(min-width:769px){
+  .mobile-logo{display:none}
 }
 </style>
 </head>
 <body>
 <div class="page">
 
-  <!-- ESQUERDA -->
+  <!-- ══ ESQUERDA — só aparece no desktop ══ -->
   <aside class="brand-side">
     <div class="brand-bg">
       <div class="blob blob-1"></div>
@@ -209,7 +277,6 @@ label{display:block;font-size:13px;font-weight:600;color:#334155;margin-bottom:8
         <span class="logo-text">AgendaOK</span>
       </a>
     </header>
-
     <div class="brand-content">
       <span class="pill">Plataforma de agendamentos</span>
       <h1>Organize sua agenda.<br/><span class="grad">Encante seus clientes.</span></h1>
@@ -229,7 +296,6 @@ label{display:block;font-size:13px;font-weight:600;color:#334155;margin-bottom:8
         </li>
       </ul>
     </div>
-
     <footer class="brand-footer">
       <div class="avatars">
         <span style="--c:#f97316"></span>
@@ -241,11 +307,26 @@ label{display:block;font-size:13px;font-weight:600;color:#334155;margin-bottom:8
     </footer>
   </aside>
 
-  <!-- DIREITA -->
+  <!-- ══ DIREITA — formulário ══ -->
   <main class="form-side">
-    <a href="/cadastro" class="top-link">Não tem conta? <strong>Criar conta →</strong></a>
+    <a href="/cadastro" class="top-link">Não tem conta? <strong>Criar grátis →</strong></a>
 
     <section class="form-card">
+
+      <!-- Logo visível só no mobile (brand-side está oculto) -->
+      <div class="mobile-logo">
+        <div class="mobile-logo-mark">
+          <svg viewBox="0 0 24 24">
+            <rect x="3" y="4" width="18" height="17" rx="4"/>
+            <path d="M8 2v4M16 2v4M3 10h18" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div>
+          <div class="mobile-logo-text">AgendaOK</div>
+          <div class="mobile-logo-sub">Plataforma de agendamentos</div>
+        </div>
+      </div>
+
       <div class="form-head">
         <h2>Bem-vindo de volta</h2>
         <p>Acesse seu painel de agendamentos.</p>
@@ -256,19 +337,36 @@ label{display:block;font-size:13px;font-weight:600;color:#334155;margin-bottom:8
       <div class="field">
         <label for="email">E-mail</label>
         <div class="input-wrap">
-          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" stroke-linecap="round"/></svg>
-          <input type="email" id="email" placeholder="seu@email.com" autocomplete="email" inputmode="email" autocorrect="off" autocapitalize="none" onkeydown="if(event.key==='Enter')document.getElementById('senha').focus()"/>
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <rect x="2" y="4" width="20" height="16" rx="2"/>
+            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" stroke-linecap="round"/>
+          </svg>
+          <input
+            type="email" id="email"
+            placeholder="seu@email.com"
+            autocomplete="email"
+            inputmode="email"
+            autocorrect="off"
+            autocapitalize="none"
+            enterkeyhint="next"
+            onkeydown="if(event.key==='Enter'){event.preventDefault();document.getElementById('senha').focus()}"/>
         </div>
       </div>
 
       <div class="field">
-        <div class="field-row">
-          <label for="senha">Senha</label>
-        </div>
+        <label for="senha">Senha</label>
         <div class="input-wrap">
-          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
-          <input type="password" id="senha" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')entrar()"/>
-          <button type="button" class="ghost-btn" id="toggle-pw">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <rect x="4" y="10" width="16" height="11" rx="2"/>
+            <path d="M8 10V7a4 4 0 0 1 8 0v3"/>
+          </svg>
+          <input
+            type="password" id="senha"
+            placeholder="••••••••"
+            autocomplete="current-password"
+            enterkeyhint="go"
+            onkeydown="if(event.key==='Enter'){event.preventDefault();entrar()}"/>
+          <button type="button" class="ghost-btn" id="toggle-pw" aria-label="Mostrar senha">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" id="eye-ico">
               <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/>
               <circle cx="12" cy="12" r="3"/>
@@ -282,34 +380,43 @@ label{display:block;font-size:13px;font-weight:600;color:#334155;margin-bottom:8
         <span>Lembrar-me neste dispositivo</span>
       </label>
 
+      <!-- BOTÃO ENTRAR — visível e grande -->
       <button class="btn-primary" id="btn-entrar" onclick="entrar()">
         <span class="btn-lbl">Entrar</span>
         <span class="spinner"></span>
       </button>
 
-      <div class="divider"><span>ou continue com</span></div>
+      <div class="divider"><span>ou acesse com</span></div>
 
       <div class="social">
         <button type="button" class="social-btn">
-          <svg viewBox="0 0 24 24" width="18" height="18"><path fill="#EA4335" d="M12 10.2v3.9h5.5c-.2 1.4-1.7 4.1-5.5 4.1-3.3 0-6-2.7-6-6s2.7-6 6-6c1.9 0 3.1.8 3.8 1.5l2.6-2.5C16.7 3.6 14.6 2.6 12 2.6 6.8 2.6 2.6 6.8 2.6 12S6.8 21.4 12 21.4c6.9 0 9.4-4.8 9.4-7.3 0-.5 0-.9-.1-1.3H12Z"/></svg>
+          <svg viewBox="0 0 24 24" width="18" height="18">
+            <path fill="#EA4335" d="M12 10.2v3.9h5.5c-.2 1.4-1.7 4.1-5.5 4.1-3.3 0-6-2.7-6-6s2.7-6 6-6c1.9 0 3.1.8 3.8 1.5l2.6-2.5C16.7 3.6 14.6 2.6 12 2.6 6.8 2.6 2.6 6.8 2.6 12S6.8 21.4 12 21.4c6.9 0 9.4-4.8 9.4-7.3 0-.5 0-.9-.1-1.3H12Z"/>
+          </svg>
           Google
         </button>
         <button type="button" class="social-btn">
-          <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M16.4 12.7c0-2.5 2-3.7 2.1-3.8-1.2-1.7-3-2-3.6-2-1.5-.2-3 .9-3.8.9-.8 0-2-.9-3.3-.8-1.7 0-3.3 1-4.1 2.5-1.8 3.1-.5 7.6 1.2 10.1.8 1.2 1.8 2.6 3.2 2.6 1.3-.1 1.8-.8 3.3-.8s2 .8 3.3.8c1.4 0 2.3-1.2 3.1-2.5.7-1 1-2 1-2.1-.1 0-2.4-.9-2.4-3.9Zm-2.5-7.2c.7-.8 1.1-2 1-3.1-1 0-2.2.7-2.9 1.5-.6.7-1.2 1.9-1 3 1.1.1 2.2-.6 2.9-1.4Z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+            <path d="M16.4 12.7c0-2.5 2-3.7 2.1-3.8-1.2-1.7-3-2-3.6-2-1.5-.2-3 .9-3.8.9-.8 0-2-.9-3.3-.8-1.7 0-3.3 1-4.1 2.5-1.8 3.1-.5 7.6 1.2 10.1.8 1.2 1.8 2.6 3.2 2.6 1.3-.1 1.8-.8 3.3-.8s2 .8 3.3.8c1.4 0 2.3-1.2 3.1-2.5.7-1 1-2 1-2.1-.1 0-2.4-.9-2.4-3.9Zm-2.5-7.2c.7-.8 1.1-2 1-3.1-1 0-2.2.7-2.9 1.5-.6.7-1.2 1.9-1 3 1.1.1 2.2-.6 2.9-1.4Z"/>
+          </svg>
           Apple
         </button>
       </div>
 
-      <p class="legal">Ao entrar você concorda com nossos <a href="#">Termos</a> e <a href="#">Política de Privacidade</a>.</p>
+      <p class="legal">Ao entrar você concorda com nossos <a href="#">Termos</a> e <a href="#">Privacidade</a>.</p>
     </section>
   </main>
 </div>
 
 <script>
-// Toggle senha
 document.getElementById('toggle-pw').addEventListener('click', function() {
   const inp = document.getElementById('senha');
-  inp.type = inp.type === 'password' ? 'text' : 'password';
+  const ico = document.getElementById('eye-ico');
+  const show = inp.type === 'password';
+  inp.type = show ? 'text' : 'password';
+  ico.innerHTML = show
+    ? '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>'
+    : '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/>';
 });
 
 async function entrar() {
@@ -317,16 +424,19 @@ async function entrar() {
   const senha = document.getElementById('senha').value;
   const erro  = document.getElementById('erro');
   const btn   = document.getElementById('btn-entrar');
+
   erro.classList.remove('show');
 
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     erro.textContent = 'Informe um e-mail válido.';
     erro.classList.add('show');
+    document.getElementById('email').focus();
     return;
   }
   if (!senha || senha.length < 6) {
     erro.textContent = 'A senha deve ter pelo menos 6 caracteres.';
     erro.classList.add('show');
+    document.getElementById('senha').focus();
     return;
   }
 
@@ -335,7 +445,8 @@ async function entrar() {
 
   try {
     const r = await fetch('/auth/login', {
-      method: 'POST', credentials: 'include',
+      method: 'POST',
+      credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, senha }),
     });
@@ -345,9 +456,13 @@ async function entrar() {
       erro.classList.add('show');
       return;
     }
-    window.location.replace('/painel');
+    if (d.isAdmin) {
+      window.location.replace('/master');
+    } else {
+      window.location.replace('/painel');
+    }
   } catch(e) {
-    erro.textContent = 'Erro de conexão. Tente novamente.';
+    erro.textContent = 'Erro de conexão. Verifique sua internet.';
     erro.classList.add('show');
   } finally {
     btn.classList.remove('loading');
