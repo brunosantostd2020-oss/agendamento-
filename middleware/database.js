@@ -192,3 +192,33 @@ async function initTokenConfirm() {
 }
 
 module.exports = { pool, initDb, initServicos, initColunas, initExtras, initTrial, initTokenConfirm };
+
+async function initNotificacoes() {
+  const client = await pool.connect();
+  try {
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS notificacoes (
+        id UUID PRIMARY KEY,
+        usuario_id UUID REFERENCES usuarios(id) ON DELETE CASCADE,
+        tipo TEXT DEFAULT 'info',
+        titulo TEXT NOT NULL,
+        mensagem TEXT NOT NULL,
+        lida BOOLEAN DEFAULT false,
+        criado_em TIMESTAMPTZ DEFAULT NOW()
+      );
+
+      CREATE TABLE IF NOT EXISTS push_subscriptions (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        usuario_id UUID REFERENCES usuarios(id) ON DELETE CASCADE,
+        endpoint TEXT NOT NULL,
+        keys JSONB NOT NULL,
+        criado_em TIMESTAMPTZ DEFAULT NOW(),
+        UNIQUE(endpoint)
+      );
+    `);
+    console.log('✅ Tabelas notificacoes + push_subscriptions OK!');
+  } catch(e) { console.error('Notificacoes init:', e.message); }
+  finally { client.release(); }
+}
+
+module.exports = { pool, initDb, initServicos, initColunas, initExtras, initTrial, initTokenConfirm, initNotificacoes };

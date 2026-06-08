@@ -4,7 +4,7 @@ const session   = require('express-session');
 const pgSession = require('connect-pg-simple')(session);
 const cors      = require('cors');
 const path      = require('path');
-const { pool, initDb, initServicos, initColunas, initExtras, initTrial, initTokenConfirm } = require('./middleware/database');
+const { pool, initDb, initServicos, initColunas, initExtras, initTrial, initTokenConfirm, initNotificacoes } = require('./middleware/database');
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
@@ -54,6 +54,7 @@ initDb()
   .then(() => initExtras())
   .then(() => initTrial())
   .then(() => initTokenConfirm())
+  .then(() => initNotificacoes())
   .then(() => {
     app.listen(PORT, () => console.log(`✅ AgendaOK rodando na porta ${PORT}`));
   });

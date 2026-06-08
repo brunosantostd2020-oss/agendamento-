@@ -385,18 +385,77 @@
     @media(max-width:900px){
       .sidebar{transform:translateX(-100%);transition:transform 0.25s ease}
       .sidebar.open{transform:translateX(0)}
+      .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:49;backdrop-filter:blur(2px)}
+      .sidebar-overlay.show{display:block}
       .main{margin-left:0}
       .stats-grid{grid-template-columns:repeat(2,1fr)}
       .two-cols{grid-template-columns:1fr}
       .two-cols-eq{grid-template-columns:1fr}
-      .topbar{padding:0 16px}
-      .content{padding:16px}
+      .topbar{padding:0 12px}
+      .content{padding:14px 12px 90px}
       .tb-search{display:none}
+      .tb-copy-link{display:none}
+      .tb-novo{display:none}
+      .link-pub-btns{width:100%;margin-left:0;margin-top:10px}
+      .link-pub{flex-direction:column;align-items:flex-start}
+      .bottom-nav{display:grid}
     }
     @media(max-width:480px){
       .stats-grid{grid-template-columns:1fr 1fr}
-      .fat-valor{font-size:28px}
+      .fat-valor{font-size:26px}
+      .pg-title{font-size:22px}
+      .stat-num{font-size:28px}
+      .content{padding:12px 10px 90px}
+      .m-row{grid-template-columns:1fr}
+      .ag-filters{flex-wrap:wrap;gap:4px}
+      .ag-filter-btn{font-size:10px;padding:4px 9px}
+      .notif-dd{width:calc(100vw - 32px);right:-100px}
+      .topbar{height:50px}
     }
+    .hamburger{display:none;width:36px;height:36px;border-radius:8px;
+      background:var(--card);border:1px solid var(--borda);
+      align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+    .hamburger svg{width:16px;height:16px;color:var(--txt)}
+    @media(max-width:900px){.hamburger{display:flex}}
+    .bottom-nav{
+      display:none;position:fixed;bottom:0;left:0;right:0;
+      background:var(--sidebar);border-top:1px solid var(--borda);
+      padding:6px 0 calc(6px + var(--sb));z-index:45;
+      grid-template-columns:repeat(5,1fr);
+    }
+    .bn-item{display:flex;flex-direction:column;align-items:center;gap:3px;
+      padding:6px 4px;cursor:pointer;-webkit-tap-highlight-color:transparent;
+      color:var(--muted);font-size:9px;font-weight:600;position:relative;
+      letter-spacing:0.03em;transition:color 0.15s;border:none;background:none;
+      font-family:inherit}
+    .bn-item.ativo{color:var(--verde)}
+    .bn-item svg{width:20px;height:20px;stroke-width:1.8}
+    .bn-badge{position:absolute;top:2px;right:calc(50% - 18px);
+      background:var(--laranja);color:#000;font-size:9px;font-weight:800;
+      border-radius:999px;padding:1px 5px;min-width:16px;text-align:center;
+      border:2px solid var(--sidebar)}
+    .alerta-lembrete{display:none;position:fixed;top:66px;left:50%;
+      transform:translateX(-50%);z-index:300;
+      min-width:280px;max-width:calc(100vw - 32px);
+      border-radius:12px;padding:14px 18px;
+      box-shadow:0 8px 32px rgba(0,0,0,0.5);
+      animation:tUp 0.3s ease}
+    .alerta-lembrete.show{display:flex;align-items:flex-start;gap:12px}
+    .alerta-lembrete.urgente-1h{background:#7f1d1d;border:1px solid #991b1b}
+    .alerta-lembrete.urgente-30{background:#450a0a;border:2px solid #dc2626}
+    .al-icon{font-size:22px;flex-shrink:0;margin-top:1px}
+    .al-body{flex:1;min-width:0}
+    .al-titulo{font-size:13px;font-weight:800;color:#fca5a5;margin-bottom:3px}
+    .alerta-lembrete.urgente-30 .al-titulo{color:#f87171;animation:pulseRed 1s infinite}
+    @keyframes pulseRed{0%,100%{opacity:1}50%{opacity:0.65}}
+    .al-msg{font-size:12px;color:#fecaca;line-height:1.4}
+    .al-close{width:20px;height:20px;border-radius:4px;background:rgba(255,255,255,0.1);
+      display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;
+      color:#fca5a5;font-size:14px;border:none;font-family:inherit}
+    .al-wpp-btn{display:inline-flex;align-items:center;gap:6px;margin-top:8px;
+      background:#25D366;color:#fff;padding:7px 14px;border-radius:8px;
+      font-size:12px;font-weight:700;text-decoration:none;border:none;
+      cursor:pointer;font-family:inherit}
   </style>
 </head>
 <body>
@@ -455,6 +514,9 @@
 
     <!-- TOPBAR -->
     <div class="topbar">
+      <button class="hamburger" onclick="toggleSidebar()" aria-label="Menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
       <div class="tb-search">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35" stroke-linecap="round"/></svg>
         <input type="text" placeholder="Buscar cliente, agendamento, serviço..."/>
@@ -733,6 +795,45 @@
   </div><!-- /main -->
 </div><!-- /app -->
 
+<!-- SIDEBAR OVERLAY -->
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+<!-- BOTTOM NAV (mobile) -->
+<nav class="bottom-nav" id="bottom-nav">
+  <button class="bn-item ativo" id="bn-dashboard" onclick="pg('dashboard',null);bnAtivar('bn-dashboard')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    Início
+  </button>
+  <button class="bn-item" id="bn-agenda" onclick="pg('agenda',null);bnAtivar('bn-agenda')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18" stroke-linecap="round"/></svg>
+    Agenda
+  </button>
+  <button class="bn-item" id="bn-hoje" onclick="pg('hoje',null);bnAtivar('bn-hoje')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2" stroke-linecap="round"/></svg>
+    Hoje
+    <span class="bn-badge" id="bn-hoje-badge" style="display:none">0</span>
+  </button>
+  <button class="bn-item" id="bn-servicos" onclick="pg('servicos',null);bnAtivar('bn-servicos')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+    Serviços
+  </button>
+  <button class="bn-item" id="bn-config" onclick="pg('config',null);bnAtivar('bn-config')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    Config
+  </button>
+</nav>
+
+<!-- ALERTAS DE LEMBRETE -->
+<div class="alerta-lembrete" id="alerta-lembrete">
+  <div class="al-icon" id="al-icon">⚠️</div>
+  <div class="al-body">
+    <div class="al-titulo" id="al-titulo">Lembrete</div>
+    <div class="al-msg" id="al-msg"></div>
+    <div id="al-wpp-wrap"></div>
+  </div>
+  <button class="al-close" onclick="fecharAlerta()">✕</button>
+</div>
+
 <!-- MODAL EDITAR AGENDAMENTO -->
 <div class="overlay" id="m-ag" onclick="if(event.target===this)fechar('m-ag')">
   <div class="modal">
@@ -839,8 +940,29 @@ async function init() {
       document.getElementById('sb-plan-sub').textContent = `Renova em ${dias} dias`;
     }
 
-    await Promise.all([carregarDash(), carregarNotifs()]);
+    const [_dp] = await Promise.all([carregarDash(), carregarNotifs()]);
     setInterval(carregarNotifs, 120000);
+
+    // Lembrete: verificar imediatamente e depois a cada 2min
+    verificarLembretes();
+
+    // Pedir permissão de push com delay (não interrompe carregamento)
+    setTimeout(() => {
+      if (Notification.permission === 'default') {
+        pedirPermissaoPush();
+      } else if (Notification.permission === 'granted') {
+        iniciarPush();
+      }
+    }, 3000);
+
+    // Atualizar badge do bottom nav (lê do elemento já preenchido)
+    setTimeout(() => {
+      const hojeBadgeBn = document.getElementById('bn-hoje-badge');
+      const hojeSbBadge = document.getElementById('sb-hoje-badge');
+      if (hojeSbBadge && hojeSbBadge.style.display !== 'none') {
+        if (hojeBadgeBn) { hojeBadgeBn.style.display = 'block'; hojeBadgeBn.textContent = hojeSbBadge.textContent; }
+      }
+    }, 1000);
   } catch(e) { location.href = '/login'; }
 }
 
@@ -887,6 +1009,9 @@ function pg(nome, el) {
   };
   if (actions[nome]) actions[nome]();
   window.scrollTo({top:0,behavior:'smooth'});
+  // Fechar sidebar mobile ao navegar
+  const sb = document.getElementById('sidebar');
+  if (sb && sb.classList.contains('open')) toggleSidebar();
 }
 
 // ── DASHBOARD ──
@@ -1407,6 +1532,186 @@ setInterval(() => {
   if (el) el.textContent = 'Atualizado agora';
 }, 30000);
 
+// ── SIDEBAR MOBILE ──
+function toggleSidebar() {
+  const sb = document.getElementById('sidebar');
+  const ov = document.getElementById('sidebar-overlay');
+  const aberto = sb.classList.toggle('open');
+  ov.classList.toggle('show', aberto);
+  document.body.style.overflow = aberto ? 'hidden' : '';
+}
+
+// ── BOTTOM NAV ──
+function bnAtivar(id) {
+  document.querySelectorAll('.bn-item').forEach(b => b.classList.remove('ativo'));
+  const el = document.getElementById(id);
+  if (el) el.classList.add('ativo');
+  // fechar sidebar se aberto
+  const sb = document.getElementById('sidebar');
+  if (sb.classList.contains('open')) toggleSidebar();
+}
+
+// Sincroniza bottom nav com sidebar
+const _pgOrig = pg;
+// Override pg para sincronizar bottom nav
+function pgMobile(nome, el) {
+  _pgOrig(nome, el);
+  const map = {dashboard:'bn-dashboard',agenda:'bn-agenda',hoje:'bn-hoje',
+    servicos:'bn-servicos',config:'bn-config',bloqueios:null};
+  if (map[nome]) bnAtivar(map[nome]);
+}
+
+// ── WEB PUSH NOTIFICATIONS ──
+let _swReg = null;
+let _pushAtivo = false;
+
+async function iniciarPush() {
+  if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
+  try {
+    _swReg = await navigator.serviceWorker.register('/sw.js');
+    await navigator.serviceWorker.ready;
+
+    // Verificar permissão
+    if (Notification.permission === 'denied') return;
+
+    // Pegar chave pública VAPID
+    const r = await fetch('/negocio/push/vapid-key', {credentials:'include'});
+    const d = await r.json();
+    if (!d.publicKey) return; // VAPID não configurado, ok
+
+    // Inscrever
+    const sub = await _swReg.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: urlBase64ToUint8Array(d.publicKey),
+    });
+
+    await fetch('/negocio/push/subscribe', {
+      method: 'POST', credentials: 'include',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(sub.toJSON()),
+    });
+    _pushAtivo = true;
+  } catch(e) {
+    // VAPID não configurado ou usuário recusou — silencioso
+  }
+}
+
+async function pedirPermissaoPush() {
+  if (!('Notification' in window)) return false;
+  if (Notification.permission === 'granted') { await iniciarPush(); return true; }
+  if (Notification.permission === 'denied') return false;
+  const perm = await Notification.requestPermission();
+  if (perm === 'granted') { await iniciarPush(); return true; }
+  return false;
+}
+
+function urlBase64ToUint8Array(base64String) {
+  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+  const rawData = window.atob(base64);
+  return new Uint8Array([...rawData].map(c => c.charCodeAt(0)));
+}
+
+// ── ALERTAS DE LEMBRETE (1h e 30min) ──
+let _alertaShown = {};
+let _alertaTimer = null;
+
+async function verificarLembretes() {
+  try {
+    const r = await fetch('/negocio/agendamentos/proximos', {credentials:'include'});
+    const d = await r.json();
+    if (!d.agendamentos?.length) return;
+
+    for (const ag of d.agendamentos) {
+      const min = ag.minutos_restantes;
+      const key1h  = 'lembrete-1h-'  + ag.id;
+      const key30m = 'lembrete-30m-' + ag.id;
+
+      // Janela: 55-65 min = 1h
+      if (min >= 55 && min <= 65 && !_alertaShown[key1h]) {
+        _alertaShown[key1h] = true;
+        mostrarAlerta(ag, '1h');
+        // Notificação nativa
+        if (_swReg && Notification.permission === 'granted') {
+          _swReg.showNotification('Agendamento em 1 hora', {
+            body: `${ag.nome} — ${ag.horario}${ag.servico?' · '+ag.servico:''}`,
+            icon: '/icon-192.png', tag: 'lembrete-1h-'+ag.id,
+            requireInteraction: true,
+            vibrate: [200,100,200],
+          });
+        }
+        break;
+      }
+
+      // Janela: 25-35 min = 30min
+      if (min >= 25 && min <= 35 && !_alertaShown[key30m]) {
+        _alertaShown[key30m] = true;
+        mostrarAlerta(ag, '30m');
+        if (_swReg && Notification.permission === 'granted') {
+          _swReg.showNotification('⚠️ Agendamento em 30 minutos!', {
+            body: `${ag.nome} — ${ag.horario}${ag.servico?' · '+ag.servico:''}`,
+            icon: '/icon-192.png', tag: 'lembrete-30m-'+ag.id,
+            requireInteraction: true,
+            vibrate: [300,100,300,100,300],
+          });
+        }
+        break;
+      }
+    }
+  } catch(e) {}
+}
+
+function mostrarAlerta(ag, tipo) {
+  const el = document.getElementById('alerta-lembrete');
+  const titulo = document.getElementById('al-titulo');
+  const msg    = document.getElementById('al-msg');
+  const icon   = document.getElementById('al-icon');
+  const wppWrap= document.getElementById('al-wpp-wrap');
+
+  const [ano, mes, dia] = ag.data.split('-');
+  const dataFmt = `${dia}/${mes}/${ano}`;
+
+  el.className = 'alerta-lembrete show ' + (tipo === '1h' ? 'urgente-1h' : 'urgente-30');
+
+  if (tipo === '1h') {
+    icon.textContent = '⏰';
+    titulo.textContent = 'Agendamento em 1 hora — Confirmar cliente?';
+    msg.textContent = `${ag.nome} · ${ag.horario} · ${dataFmt}${ag.servico?' · '+ag.servico:''}`;
+  } else {
+    icon.textContent = '🔴';
+    titulo.textContent = '⚠️ FALTAM 30 MINUTOS!';
+    msg.textContent = `${ag.nome} · ${ag.horario} · ${dataFmt}${ag.servico?' · '+ag.servico:''}`;
+  }
+
+  // Botão WhatsApp
+  wppWrap.innerHTML = '';
+  if (ag.telefone) {
+    const tel = ag.telefone.replace(/\D/g,'');
+    const num = tel.length <= 11 ? '55'+tel : tel;
+    const msgTxt = tipo === '1h'
+      ? `Olá ${ag.nome}! Passando para confirmar seu agendamento amanhã${ag.servico?' de '+ag.servico:''} às ${ag.horario}. Confirmado?`
+      : `${ag.nome}, seu agendamento${ag.servico?' de '+ag.servico:''} começa em 30 minutos (${ag.horario})! Te esperamos!`;
+    const link = 'https://wa.me/' + num + '?text=' + encodeURIComponent(msgTxt);
+    const btn = document.createElement('a');
+    btn.href = link; btn.target = '_blank'; btn.className = 'al-wpp-btn';
+    btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Enviar WhatsApp';
+    wppWrap.appendChild(btn);
+  }
+
+  // Auto-fechar após 60s
+  clearTimeout(_alertaTimer);
+  _alertaTimer = setTimeout(fecharAlerta, 60000);
+}
+
+function fecharAlerta() {
+  clearTimeout(_alertaTimer);
+  document.getElementById('alerta-lembrete').className = 'alerta-lembrete';
+}
+
+// Polling a cada 2 minutos
+setInterval(verificarLembretes, 2 * 60 * 1000);
+
+// ── INIT ──
 init();
 </script>
 </body>
