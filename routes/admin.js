@@ -40,17 +40,10 @@ router.get('/clientes', requireMaster, async (req, res) => {
         COUNT(a.id) as total_agendamentos,
         CASE
           WHEN u.plano_pago = true AND (u.acesso_expira = '' OR u.acesso_expira >= $1) THEN 'pago'
-          WHEN u.trial_expira >= $1 AND u.acesso_ativo = true AND u.plano_pago = false THEN 'trial'
+          WHEN u.trial_expira >= $1 AND u.acesso_ativo = true THEN 'trial'
           WHEN u.acesso_ativo = false THEN 'bloqueado'
           ELSE 'expirado'
-        END as status_acesso,
-        CASE
-          WHEN u.plano_pago = true AND u.acesso_expira != '' AND u.acesso_expira IS NOT NULL
-            THEN GREATEST(0, (DATE(u.acesso_expira) - DATE($1)))
-          WHEN u.plano_pago = false AND u.trial_expira != '' AND u.trial_expira IS NOT NULL
-            THEN GREATEST(0, (DATE(u.trial_expira) - DATE($1)))
-          ELSE 0
-        END as dias_restantes
+        END as status_acesso
       FROM usuarios u
       LEFT JOIN agendamentos a ON a.negocio_id = u.id
       GROUP BY u.id
@@ -100,8 +93,8 @@ router.patch('/clientes/:id/acesso', requireMaster, async (req, res) => {
       : `Seu acesso foi liberado por ${diasText} até ${novaExpira.split('-').reverse().join('/')}.`;
 
     await pool.query(
-      `INSERT INTO notificacoes (id, usuario_id, tipo, titulo, mensagem)
-       VALUES (gen_random_uuid(), $1, $2, $3, $4)`,
+      `INSERT INTO notificacoes (usuario_id, tipo, titulo, mensagem)
+       VALUES ($1, $2, $3, $4)`,
       [req.params.id, tipoPago, titulo, msg]
     ).catch(() => {}); // silencia erro se tabela não existir ainda
 
@@ -131,8 +124,8 @@ router.post('/clientes/:id/notificar', requireMaster, async (req, res) => {
     const u = (await pool.query('SELECT nome, email, nome_negocio FROM usuarios WHERE id=$1', [req.params.id])).rows[0];
     if (!u) return res.status(404).json({ erro: 'Usuário não encontrado.' });
     await pool.query(
-      `INSERT INTO notificacoes (id, usuario_id, tipo, titulo, mensagem)
-       VALUES (gen_random_uuid(), $1, $2, $3, $4)`,
+      `INSERT INTO notificacoes (usuario_id, tipo, titulo, mensagem)
+       VALUES ($1, $2, $3, $4)`,
       [req.params.id, tipo || 'info', titulo.trim(), mensagem.trim()]
     );
     res.json({ sucesso: true, msg: `Notificação enviada para ${u.nome_negocio}.` });

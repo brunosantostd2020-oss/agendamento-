@@ -1,875 +1,588 @@
 <!DOCTYPE html>
-<html lang="pt-BR" id="html-root">
+<html lang="pt-BR">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"/>
-<meta name="mobile-web-app-capable" content="yes"/>
-<meta name="apple-mobile-web-app-capable" content="yes"/>
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-<meta name="theme-color" content="#0d9488" id="theme-color"/>
-<title>Agendamento — AgendaOK</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<style>
-/* =====================================================================
-   AgendaOK — Painel de agendamento do cliente
-   Design: Lovable redesign + lógica real do backend
-   Cor primária via --cor no <html style="--cor:#xxxxxx">
-   ===================================================================== */
+ <meta charset="UTF-8"/>
+ <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+ <meta name="mobile-web-app-capable" content="yes"/>
+ <meta name="apple-mobile-web-app-capable" content="yes"/>
+ <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+ <meta name="theme-color" content="#0a0a0a" id="theme-color"/>
+ <title>Agendamento</title>
+ <link rel="preconnect" href="https://fonts.googleapis.com"/>
+ <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+ <style>
+ *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+ :root {
+ --cor: #0a0a0a; --cor-lt: #f5f4f0;
+ --branco: #fff; --bg: #fafaf9;
+ --texto: #0a0a0a; --muted: #6b6860; --borda: #e8e6e1;
+ --verde: #16a34a; --vermelho: #dc2626;
+ --r: 6px;
+ --sb: env(safe-area-inset-bottom, 0px);
+ --st: env(safe-area-inset-top, 0px);
+ }
+ html { -webkit-tap-highlight-color: transparent; -webkit-text-size-adjust: 100%; }
+ body {
+ font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+ background: var(--bg); color: var(--texto);
+ min-height: 100dvh; overflow-x: hidden;
+ -webkit-font-smoothing: antialiased;
+ }
 
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+ /* ── HEADER ── */
+ .hdr {
+ background: var(--cor);
+ padding: 12px 20px;
+ padding-top: calc(12px + var(--st));
+ display: flex; align-items: center; justify-content: space-between;
+ position: sticky; top: 0; z-index: 100;
+ min-height: calc(58px + var(--st));
+ }
+ .hdr-l { display: flex; align-items: center; gap: 12px; min-width: 0; }
+ .hdr-ico {
+ width: 40px; height: 40px; flex-shrink: 0;
+ border-radius: 8px;
+ background: rgba(255,255,255,0.1);
+ border: 1px solid rgba(255,255,255,0.15);
+ display: flex; align-items: center; justify-content: center;
+ font-size: 20px;
+ }
+ .hdr-nome {
+ font-size: 16px; font-weight: 700; color: #fff;
+ white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+ letter-spacing: -0.2px;
+ }
+ .hdr-sub {
+ font-size: 11px; color: rgba(255,255,255,0.4);
+ text-transform: uppercase; letter-spacing: 0.06em;
+ margin-top: 1px;
+ }
+ .hdr-r { font-size: 11px; color: rgba(255,255,255,0.35); flex-shrink: 0; }
+ .hdr-r strong { color: rgba(255,255,255,0.55); font-weight: 500; }
 
-:root{
-  --cor:#0d9488;
-  --cor-dark:color-mix(in srgb,var(--cor) 80%,#000);
-  --cor-soft:color-mix(in srgb,var(--cor) 14%,#fff);
-  --cor-softer:color-mix(in srgb,var(--cor) 7%,#fff);
-  --bg:#f6f7f9;
-  --surface:#fff;
-  --text:#0f172a;
-  --muted:#6b7280;
-  --muted-2:#94a3b8;
-  --border:#e5e7eb;
-  --border-strong:#d1d5db;
-  --danger:#dc2626;
-  --radius:14px;
-  --radius-sm:10px;
-  --radius-lg:18px;
-  --shadow-sm:0 1px 2px rgba(15,23,42,.04),0 1px 1px rgba(15,23,42,.03);
-  --shadow-md:0 4px 12px -2px rgba(15,23,42,.08),0 2px 4px -1px rgba(15,23,42,.05);
-  --shadow-lg:0 12px 28px -10px rgba(15,23,42,.16),0 4px 8px -2px rgba(15,23,42,.06);
-  --font:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
-  --sb:env(safe-area-inset-bottom,0px);
-  --st:env(safe-area-inset-top,0px);
-}
+ /* ── PROGRESSO ── */
+ .prog-bar {
+ background: var(--cor); padding: 0 20px 14px;
+ }
+ .prog-track {
+ height: 2px; background: rgba(255,255,255,0.1); border-radius: 999px; overflow: hidden;
+ }
+ .prog-fill {
+ height: 100%; background: rgba(255,255,255,0.55); border-radius: 999px;
+ transition: width 0.35s cubic-bezier(0.4,0,0.2,1); width: 25%;
+ }
 
-html,body{margin:0;padding:0;background:var(--bg);color:var(--text);
-  font-family:var(--font);font-size:15px;line-height:1.5;
-  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
-  min-height:100dvh}
-body{padding-bottom:calc(110px + var(--sb));overscroll-behavior-y:none}
+ /* ── STEPS ── */
+ .steps {
+ background: var(--branco); border-bottom: 1px solid var(--borda);
+ padding: 0 20px; display: flex; align-items: center; justify-content: center;
+ height: 54px;
+ position: sticky; top: calc(58px + var(--st)); z-index: 90;
+ }
+ .si { display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 56px; }
+ .sc {
+ width: 26px; height: 26px; border-radius: 50%;
+ border: 1.5px solid var(--borda); background: var(--branco);
+ display: flex; align-items: center; justify-content: center;
+ font-size: 11px; font-weight: 700; color: var(--muted);
+ transition: all 0.25s;
+ }
+ .si.ativo .sc { border-color: var(--cor); background: var(--cor); color: #fff; }
+ .si.feito .sc { border-color: var(--verde); background: var(--verde); color: #fff; }
+ .slbl { font-size: 9px; font-weight: 600; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; }
+ .si.ativo .slbl { color: var(--cor); }
+ .si.feito .slbl { color: var(--verde); }
+ .sl { flex: 1; height: 1.5px; background: var(--borda); max-width: 28px; margin-bottom: 14px; transition: background 0.3s; }
+ .sl.feita { background: var(--verde); }
 
-/* ── HEADER ── */
-.hdr{
-  background:var(--cor);
-  background-image:linear-gradient(135deg,var(--cor) 0%,var(--cor-dark) 100%);
-  color:#fff;position:sticky;top:0;z-index:50;
-  box-shadow:var(--shadow-md);
-}
-.hdr-inner{
-  max-width:720px;margin:0 auto;
-  padding:calc(14px + var(--st)) 20px 14px;
-  display:flex;align-items:center;justify-content:space-between;gap:14px;
-}
-.hdr-l{display:flex;align-items:center;gap:14px;min-width:0}
-.hdr-ico{
-  width:46px;height:46px;border-radius:12px;
-  background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.25);
-  display:flex;align-items:center;justify-content:center;
-  color:#fff;flex-shrink:0;backdrop-filter:blur(8px);font-size:20px;
-}
-.hdr-ico svg{width:22px;height:22px}
-.hdr-info{min-width:0}
-.hdr-nome{font-size:16px;font-weight:700;letter-spacing:.3px;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.hdr-sub{font-size:12px;font-weight:500;opacity:.8;text-transform:capitalize;margin-top:2px}
-.hdr-r{font-size:12px;font-weight:500;opacity:.85;display:flex;align-items:center;gap:4px;white-space:nowrap}
-.hdr-r strong{font-weight:700}
+ /* ── CONTENT ── */
+ .content { padding: 24px 20px calc(90px + var(--sb)); max-width: 560px; margin: 0 auto; }
+ .sec { display: none; }
+ .sec.ativa { display: block; }
 
-/* progress */
-.prog-bar{padding:0}
-.prog-track{height:3px;background:rgba(255,255,255,.2);width:100%;overflow:hidden}
-.prog-fill{height:100%;background:#fff;width:25%;
-  transition:width .35s cubic-bezier(.4,0,.2,1);border-radius:0 2px 2px 0}
+ /* ── CAMPOS ── */
+ .campo { margin-bottom: 20px; }
+ .campo label {
+ display: block; font-size: 11px; font-weight: 600;
+ color: var(--muted); letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 8px;
+ }
+ .campo input, .campo textarea {
+ width: 100%; border: 1.5px solid var(--borda); border-radius: var(--r);
+ font-family: 'Inter', sans-serif; font-size: 17px; font-weight: 400;
+ padding: 15px 16px; color: var(--texto); background: var(--branco);
+ outline: none; transition: border-color 0.15s;
+ -webkit-appearance: none; appearance: none;
+ /* Evita zoom no iOS */
+ }
+ .campo input:focus, .campo textarea:focus { border-color: var(--cor); }
+ .campo input::placeholder, .campo textarea::placeholder { color: #c5c3be; }
+ .campo textarea { resize: none; min-height: 88px; line-height: 1.5; }
 
-/* ── STEPS ── */
-.steps{
-  max-width:720px;margin:0 auto;
-  padding:20px 20px 6px;
-  display:flex;align-items:center;gap:6px;
-}
-.si{display:flex;flex-direction:column;align-items:center;gap:6px;flex-shrink:0}
-.sc{
-  width:32px;height:32px;border-radius:50%;
-  background:#fff;border:1.5px solid var(--border-strong);
-  color:var(--muted);display:flex;align-items:center;justify-content:center;
-  font-size:13px;font-weight:700;transition:all .25s ease;
-}
-.slbl{font-size:11px;font-weight:600;color:var(--muted);
-  text-transform:uppercase;letter-spacing:.5px;transition:color .25s ease}
-.si.ativo .sc{background:var(--cor);border-color:var(--cor);color:#fff;
-  box-shadow:0 0 0 4px var(--cor-soft)}
-.si.ativo .slbl{color:var(--cor)}
-.si.feito .sc{background:var(--cor);border-color:var(--cor);color:#fff}
-.si.feito .sc::after{content:'✓'}
-.si.feito .sc span{display:none}
-.si.feito .slbl{color:var(--text)}
-.sl{flex:1;height:2px;background:var(--border);border-radius:2px;
-  margin-bottom:22px;transition:background .25s ease}
-.sl.feito{background:var(--cor)}
+ /* ── SERVIÇOS ── */
+ .srv-lista { display: flex; flex-direction: column; gap: 10px; }
+ .srv-opt {
+ border: 1.5px solid var(--borda); border-radius: var(--r);
+ padding: 16px; cursor: pointer;
+ display: flex; align-items: center; justify-content: space-between; gap: 14px;
+ background: var(--branco); transition: all 0.15s;
+ -webkit-tap-highlight-color: transparent; user-select: none;
+ min-height: 64px;
+ }
+ .srv-opt.sel { border-color: var(--cor); background: var(--cor); }
+ .srv-nome { font-size: 15px; font-weight: 600; color: var(--texto); margin-bottom: 3px; letter-spacing: -0.1px; }
+ .srv-opt.sel .srv-nome { color: #fff; }
+ .srv-det { font-size: 12px; color: var(--muted); font-weight: 400; }
+ .srv-opt.sel .srv-det { color: rgba(255,255,255,0.5); }
+ .srv-preco { font-size: 17px; font-weight: 800; color: var(--cor); white-space: nowrap; flex-shrink: 0; letter-spacing: -0.3px; }
+ .srv-opt.sel .srv-preco { color: rgba(255,255,255,0.8); }
+ .srv-sem { font-size: 13px; color: var(--muted); padding: 16px 0; border-top: 1px solid var(--borda); }
 
-/* ── CONTENT ── */
-.content{max-width:720px;margin:0 auto;padding:8px 20px 32px;-webkit-overflow-scrolling:touch}
-.sec{display:none;animation:fadeIn .3s ease}
-.sec.ativa{display:block}
-@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+ /* ── CALENDÁRIO ── */
+ .cal-card {
+ background: var(--branco); border: 1.5px solid var(--borda);
+ border-radius: var(--r); padding: 18px; margin-bottom: 12px;
+ }
+ .cal-nav {
+ display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;
+ }
+ .cal-mes { font-size: 17px; font-weight: 700; color: var(--texto); letter-spacing: -0.3px; }
+ .cal-btn {
+ width: 44px; height: 44px; border-radius: 50%;
+ border: 1.5px solid var(--borda); background: var(--branco);
+ cursor: pointer; font-size: 20px; color: var(--muted);
+ display: flex; align-items: center; justify-content: center;
+ -webkit-tap-highlight-color: transparent;
+ }
+ .cal-btn:active { background: var(--bg); }
+ .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+ .cal-dn { text-align: center; font-size: 10px; font-weight: 600; color: var(--muted); letter-spacing: 0.05em; text-transform: uppercase; padding: 6px 0; }
+ .cal-dia {
+ aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+ border-radius: 50%; font-size: 14px; font-weight: 500;
+ cursor: pointer; transition: all 0.15s;
+ -webkit-tap-highlight-color: transparent; user-select: none;
+ }
+ .cal-dia:not(.dis):not(.vz):active { opacity: 0.6; }
+ .cal-dia.sel { background: var(--cor) !important; color: #fff !important; font-weight: 700; }
+ .cal-dia.hj { border: 1.5px solid var(--cor); color: var(--cor); font-weight: 700; }
+ .cal-dia.dis { opacity: 0.2; cursor: not-allowed; }
+ .cal-dia.vz { cursor: default; }
 
-.sec-head{margin-bottom:22px}
-.sec-head h2{font-size:22px;font-weight:700;margin:0 0 4px;
-  letter-spacing:-.3px;color:var(--text)}
-.sec-head p{margin:0;font-size:14px;color:var(--muted)}
+ /* ── HORÁRIOS ── */
+ .hr-card {
+ background: var(--branco); border: 1.5px solid var(--borda);
+ border-radius: var(--r); padding: 18px; margin-bottom: 12px;
+ }
+ .hr-lbl { font-size: 11px; font-weight: 600; color: var(--muted); letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 14px; }
+ .hr-grade { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+ .hr-btn {
+ padding: 15px 4px; border-radius: var(--r);
+ border: 1.5px solid var(--borda); background: var(--branco);
+ font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 500;
+ color: var(--texto); cursor: pointer; text-align: center;
+ transition: all 0.15s; -webkit-tap-highlight-color: transparent;
+ min-height: 52px;
+ }
+ .hr-btn:active:not(.ocup) { opacity: 0.6; }
+ .hr-btn.sel { background: var(--cor) !important; border-color: var(--cor) !important; color: #fff !important; font-weight: 700; }
+ .hr-btn.ocup { opacity: 0.22; cursor: not-allowed; text-decoration: line-through; font-size: 12px; color: var(--muted); background: var(--bg); }
+ .hr-btn.passado { opacity: 0.15; cursor: not-allowed; font-size: 12px; color: var(--muted); background: var(--bg); }
+ .hr-load { text-align: center; padding: 28px; font-size: 13px; color: var(--muted); }
+ .hr-info { font-size: 11px; color: var(--muted); margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--borda); display: flex; align-items: center; gap: 16px; }
+ .hr-leg { display: flex; align-items: center; gap: 5px; }
+ .hr-leg-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 
-/* ── CAMPOS ── */
-.campo{margin-bottom:18px}
-.campo label{display:block;font-size:12px;font-weight:600;color:var(--text);
-  text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
-.campo-opt{text-transform:none;letter-spacing:0;font-weight:400;color:var(--muted-2)}
-.campo-help{display:block;font-size:12px;color:var(--muted);margin-top:6px}
+ /* ── RESUMO ── */
+ .res-card {
+ border: 1.5px solid var(--borda); border-radius: var(--r);
+ overflow: hidden; margin-bottom: 16px;
+ }
+ .res-hdr { background: var(--cor); padding: 16px 18px; }
+ .res-hdr-lbl { font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.5); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 3px; }
+ .res-hdr-nome { font-size: 18px; font-weight: 700; color: #fff; letter-spacing: -0.2px; }
+ .res-body { background: var(--branco); }
+ .res-linha { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; border-bottom: 1px solid var(--bg); font-size: 14px; gap: 12px; }
+ .res-linha:last-child { border-bottom: none; }
+ .res-k { font-weight: 400; color: var(--muted); font-size: 13px; flex-shrink: 0; }
+ .res-v { font-weight: 600; color: var(--texto); text-align: right; }
+ .res-preco { font-size: 22px; font-weight: 900; color: var(--cor); letter-spacing: -0.5px; }
+ .aviso { font-size: 12px; color: var(--muted); line-height: 1.7; padding: 14px 0; border-top: 1px solid var(--borda); }
 
-.campo input,.campo textarea{
-  width:100%;background:var(--surface);border:1.5px solid var(--border);
-  border-radius:var(--radius);padding:14px 16px;
-  font:inherit;font-size:16px;font-weight:500;color:var(--text);
-  transition:border-color .2s,box-shadow .2s;outline:none;
-  -webkit-appearance:none;appearance:none;
-}
-.campo input::placeholder,.campo textarea::placeholder{color:var(--muted-2);font-weight:400}
-.campo input:focus,.campo textarea:focus{
-  border-color:var(--cor);box-shadow:0 0 0 4px var(--cor-soft)}
-.campo textarea{resize:vertical;min-height:90px;font-family:inherit}
+ /* ── SUCESSO ── */
+ .suc { min-height: 60dvh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px 20px; }
+ .suc-ico { width: 72px; height: 72px; border-radius: 50%; background: var(--cor); display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; animation: pop 0.4s cubic-bezier(0.34,1.56,0.64,1); }
+ @keyframes pop { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+ .suc-titulo { font-size: 26px; font-weight: 800; color: var(--texto); letter-spacing: -0.5px; margin-bottom: 10px; }
+ .suc-txt { font-size: 15px; color: var(--muted); font-weight: 400; line-height: 1.65; max-width: 280px; margin: 0 auto 28px; }
+ .suc-btn { padding: 15px 28px; border-radius: var(--r); border: 1.5px solid var(--borda); background: var(--branco); color: var(--muted); font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; }
 
-.input-wrap{position:relative;display:flex;align-items:center}
-.input-ico{position:absolute;left:14px;top:50%;transform:translateY(-50%);
-  color:var(--cor);display:flex;align-items:center;pointer-events:none}
-.input-wrap input{padding-left:44px}
+ /* ── BOTTOM ── */
+ .btm {
+ position: fixed; bottom: 0; left: 0; right: 0;
+ background: var(--branco); border-top: 1px solid var(--borda);
+ padding: 12px 20px; padding-bottom: calc(12px + var(--sb));
+ display: flex; gap: 10px; z-index: 100;
+ }
+ .btn-prox {
+ flex: 1; padding: 17px; border-radius: var(--r);
+ background: var(--cor); color: #fff;
+ font-family: 'Inter', sans-serif; font-size: 16px; font-weight: 600;
+ border: none; cursor: pointer; letter-spacing: -0.1px;
+ -webkit-tap-highlight-color: transparent;
+ transition: opacity 0.15s;
+ }
+ .btn-prox:active { opacity: 0.75; }
+ .btn-prox:disabled { opacity: 0.35; }
+ .btn-volt {
+ padding: 17px 22px; border-radius: var(--r);
+ background: none; border: 1.5px solid var(--borda);
+ color: var(--muted); font-family: 'Inter', sans-serif;
+ font-size: 15px; font-weight: 500; cursor: pointer;
+ -webkit-tap-highlight-color: transparent;
+ transition: opacity 0.15s;
+ }
+ .btn-volt:active { opacity: 0.6; }
 
-/* ── SERVIÇOS ── */
-.srv-lista{display:flex;flex-direction:column;gap:10px}
-.srv-opt{
-  width:100%;text-align:left;background:var(--surface);
-  border:1.5px solid var(--border);border-radius:var(--radius);
-  padding:16px 18px;display:flex;align-items:center;
-  justify-content:space-between;gap:14px;
-  cursor:pointer;transition:all .2s ease;font:inherit;color:inherit;
-  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
-}
-.srv-opt:hover{border-color:var(--cor);transform:translateY(-1px);box-shadow:var(--shadow-md)}
-.srv-opt.sel{border-color:var(--cor);background:var(--cor-softer);
-  box-shadow:0 0 0 3px var(--cor-soft)}
-.srv-info{min-width:0;flex:1}
-.srv-nome{font-size:15px;font-weight:600;color:var(--text);margin-bottom:3px}
-.srv-det{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.srv-tempo{font-weight:600;color:var(--text)}
-.srv-det .dot{width:3px;height:3px;border-radius:50%;background:var(--muted-2);display:inline-block}
-.srv-preco{font-size:16px;font-weight:700;color:var(--cor);white-space:nowrap;flex-shrink:0}
-.srv-sem{text-align:center;padding:28px 20px;color:var(--muted);font-size:14px}
+ /* ── TOAST ── */
+ .toast {
+ position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%);
+ background: var(--texto); color: #fff;
+ border-radius: var(--r); padding: 12px 20px;
+ font-size: 13px; font-weight: 600; z-index: 999;
+ animation: tUp 0.2s ease; white-space: nowrap;
+ }
+ .toast.err { background: var(--vermelho); }
+ @keyframes tUp { from { opacity: 0; transform: translateX(-50%) translateY(8px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
 
-/* ── CALENDÁRIO ── */
-.cal-card{
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--radius-lg);padding:18px;
-  box-shadow:var(--shadow-sm);margin-bottom:18px;
-}
-.cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-.cal-btn{
-  width:36px;height:36px;border-radius:10px;
-  background:var(--bg);border:1px solid var(--border);
-  color:var(--text);font-size:20px;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  transition:all .2s ease;font-weight:600;font-family:inherit;
-}
-.cal-btn:hover{background:var(--cor-softer);border-color:var(--cor);color:var(--cor)}
-.cal-mes{font-size:15px;font-weight:700;color:var(--text)}
-.cal-dow{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:8px}
-.cal-dow span{text-align:center;font-size:11px;font-weight:700;color:var(--muted);
-  text-transform:uppercase;padding:6px 0}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
-.cal-dia{
-  aspect-ratio:1;border-radius:10px;border:1px solid transparent;
-  background:transparent;color:var(--text);font-size:14px;font-weight:600;
-  display:flex;align-items:center;justify-content:center;
-  cursor:pointer;transition:all .15s ease;font-family:inherit;
-  touch-action:manipulation;
-}
-.cal-dia:hover:not(.off):not(.dis){background:var(--cor-softer);color:var(--cor)}
-.cal-dia.off{visibility:hidden}
-.cal-dia.vz{visibility:hidden}
-.cal-dia.dis{color:var(--muted-2);cursor:not-allowed;opacity:.4}
-.cal-dia.hj{background:var(--bg);border-color:var(--border-strong)}
-.cal-dia.sel{background:var(--cor);color:#fff;
-  box-shadow:0 4px 10px -2px color-mix(in srgb,var(--cor) 50%,transparent)}
-
-/* horários */
-.hr-card{
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--radius-lg);padding:18px;box-shadow:var(--shadow-sm);
-}
-.hr-lbl{font-size:12px;font-weight:700;color:var(--text);
-  text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px}
-.hr-load{text-align:center;padding:24px;color:var(--muted);font-size:14px}
-.hr-grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:8px}
-.hr-btn{
-  padding:13px 8px;border-radius:10px;border:1.5px solid var(--border);
-  background:var(--surface);color:var(--text);font-size:14px;font-weight:600;
-  cursor:pointer;transition:all .15s ease;font-family:inherit;
-  touch-action:manipulation;
-}
-.hr-btn:hover:not(:disabled){border-color:var(--cor);color:var(--cor)}
-.hr-btn.sel{background:var(--cor);border-color:var(--cor);color:#fff;
-  box-shadow:0 4px 10px -2px color-mix(in srgb,var(--cor) 50%,transparent)}
-.hr-btn.ocup{opacity:.22;cursor:not-allowed;text-decoration:line-through;
-  font-size:12px;color:var(--muted);background:var(--bg)}
-.hr-btn.passado{opacity:.15;cursor:not-allowed;font-size:12px;
-  color:var(--muted);background:var(--bg)}
-.hr-leg{font-size:11px;color:var(--muted);margin-top:12px;padding-top:10px;
-  border-top:1px solid var(--border);display:flex;gap:14px;flex-wrap:wrap}
-.hr-leg span{display:flex;align-items:center;gap:5px}
-.hr-leg-dot{width:8px;height:8px;border-radius:50%}
-
-/* ── RESUMO ── */
-.res-card{
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--radius-lg);overflow:hidden;
-  box-shadow:var(--shadow-sm);margin-bottom:14px;
-}
-.res-hdr{
-  background:linear-gradient(135deg,var(--cor) 0%,var(--cor-dark) 100%);
-  color:#fff;padding:18px 20px;
-}
-.res-hdr-lbl{font-size:11px;font-weight:600;text-transform:uppercase;
-  letter-spacing:.8px;opacity:.85;margin-bottom:4px}
-.res-hdr-nome{font-size:18px;font-weight:700;letter-spacing:.3px}
-.res-body{padding:4px 20px}
-.res-linha{display:flex;align-items:center;justify-content:space-between;
-  gap:14px;padding:13px 0;border-bottom:1px dashed var(--border);font-size:14px}
-.res-linha:last-child{border-bottom:none}
-.res-k{color:var(--muted);font-weight:500}
-.res-v{color:var(--text);font-weight:600;text-align:right}
-.res-linha.total{padding:16px 0;border-top:1.5px solid var(--border);
-  border-bottom:none;margin-top:4px}
-.res-linha.total .res-k{color:var(--text);font-weight:700;font-size:15px}
-.res-linha.total .res-v{color:var(--cor);font-size:18px;font-weight:800}
-
-.aviso{
-  background:var(--cor-softer);border:1px solid var(--cor-soft);
-  color:var(--text);padding:14px 16px;border-radius:var(--radius);
-  font-size:13px;line-height:1.55;display:flex;align-items:flex-start;gap:10px;
-}
-.aviso svg{color:var(--cor);flex-shrink:0;margin-top:2px}
-
-/* ── SUCESSO ── */
-.suc{text-align:center;padding:48px 20px 20px;animation:fadeIn .4s ease}
-.suc-ico{
-  width:80px;height:80px;border-radius:50%;
-  background:linear-gradient(135deg,var(--cor) 0%,var(--cor-dark) 100%);
-  display:flex;align-items:center;justify-content:center;
-  margin:0 auto 22px;
-  box-shadow:0 12px 30px -8px color-mix(in srgb,var(--cor) 50%,transparent);
-  animation:pop .5s cubic-bezier(.25,1.2,.5,1);
-}
-@keyframes pop{0%{transform:scale(.4);opacity:0}100%{transform:scale(1);opacity:1}}
-.suc-titulo{font-size:22px;font-weight:700;color:var(--text);
-  margin-bottom:8px;letter-spacing:-.3px}
-.suc-txt{font-size:15px;color:var(--muted);max-width:340px;
-  margin:0 auto 28px;line-height:1.6}
-.suc-btn{
-  background:var(--cor);color:#fff;border:none;
-  padding:14px 28px;border-radius:var(--radius);
-  font-size:15px;font-weight:600;cursor:pointer;
-  transition:all .2s ease;font-family:inherit;
-}
-.suc-btn:hover{background:var(--cor-dark);transform:translateY(-1px);
-  box-shadow:var(--shadow-md)}
-
-/* ── BOTTOM BAR ── */
-.btm{
-  position:fixed;left:0;right:0;bottom:0;
-  padding:12px 20px calc(12px + var(--sb));
-  background:rgba(255,255,255,.92);
-  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-  border-top:1px solid var(--border);
-  display:flex;gap:10px;z-index:40;
-}
-.btn-volt,.btn-prox{
-  font-family:inherit;font-weight:600;font-size:15px;
-  border-radius:var(--radius);cursor:pointer;
-  transition:all .2s ease;display:inline-flex;
-  align-items:center;justify-content:center;gap:8px;height:52px;
-  touch-action:manipulation;
-}
-.btn-volt{
-  background:var(--surface);border:1.5px solid var(--border);
-  color:var(--text);padding:0 18px;min-width:52px;
-}
-.btn-volt:hover{border-color:var(--border-strong);background:var(--bg)}
-.btn-prox{
-  flex:1;background:var(--cor);
-  background-image:linear-gradient(135deg,var(--cor) 0%,var(--cor-dark) 100%);
-  border:none;color:#fff;padding:0 24px;
-  box-shadow:0 6px 18px -4px color-mix(in srgb,var(--cor) 50%,transparent);
-}
-.btn-prox:hover{transform:translateY(-1px);
-  box-shadow:0 10px 24px -4px color-mix(in srgb,var(--cor) 60%,transparent)}
-.btn-prox:active{transform:translateY(0)}
-.btn-prox:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
-
-/* ── TOAST ── */
-#toast{
-  position:fixed;left:50%;bottom:calc(80px + var(--sb));
-  transform:translateX(-50%);
-  background:#0f172a;color:#fff;
-  padding:12px 20px;border-radius:10px;
-  font-size:14px;font-weight:500;z-index:100;
-  box-shadow:0 10px 30px rgba(0,0,0,.2);
-  opacity:0;transition:opacity .2s,transform .2s;
-  max-width:90vw;text-align:center;pointer-events:none;
-}
-#toast.err{background:var(--danger)}
-
-/* ── RESPONSIVE ── */
-@media(min-width:760px){
-  .btm{justify-content:center}
-  .btm > *{flex-shrink:0}
-  .btn-prox{flex:0 1 600px}
-}
-@media(max-width:480px){
-  .hdr-inner{padding:calc(12px + var(--st)) 16px 12px}
-  .hdr-nome{font-size:15px}
-  .hdr-ico{width:42px;height:42px}
-  .content{padding:6px 16px 24px}
-  .steps{padding:16px 16px 4px}
-  .sc{width:28px;height:28px;font-size:12px}
-  .slbl{font-size:10px}
-  .sec-head h2{font-size:20px}
-  .btm{padding:10px 16px calc(10px + var(--sb))}
-  .btn-volt,.btn-prox{height:50px;font-size:14px}
-  .hr-grade{grid-template-columns:repeat(auto-fill,minmax(70px,1fr))}
-}
-</style>
+ @media (min-width: 600px) {
+ .hr-grade { grid-template-columns: repeat(5, 1fr); }
+ }
+ @media (max-width: 360px) {
+ .hr-grade { grid-template-columns: repeat(3, 1fr); }
+ .hr-btn { font-size: 13px; padding: 13px 2px; }
+ }
+ </style>
 </head>
 <body>
 
-<!-- HEADER -->
-<header class="hdr" id="hdr">
-  <div class="hdr-inner">
-    <div class="hdr-l">
-      <div class="hdr-ico" id="h-ico">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="4" width="18" height="17" rx="3"/>
-          <path d="M8 2v4M16 2v4M3 10h18" stroke-linecap="round"/>
-        </svg>
-      </div>
-      <div class="hdr-info">
-        <div class="hdr-nome" id="h-nome">Carregando...</div>
-        <div class="hdr-sub" id="h-sub"></div>
-      </div>
-    </div>
-    <div class="hdr-r">by <strong>AgendaOK</strong></div>
-  </div>
-  <div class="prog-bar">
-    <div class="prog-track"><div class="prog-fill" id="prog" style="width:25%"></div></div>
-  </div>
-</header>
-
-<!-- STEPS -->
-<nav class="steps" id="steps" aria-label="Etapas">
-  <div class="si ativo" id="si1"><div class="sc"><span>1</span></div><div class="slbl">Dados</div></div>
-  <div class="sl" id="sl1"></div>
-  <div class="si" id="si2"><div class="sc"><span>2</span></div><div class="slbl">Serviço</div></div>
-  <div class="sl" id="sl2"></div>
-  <div class="si" id="si3"><div class="sc"><span>3</span></div><div class="slbl">Horário</div></div>
-  <div class="sl" id="sl3"></div>
-  <div class="si" id="si4"><div class="sc"><span>4</span></div><div class="slbl">Confirmar</div></div>
-</nav>
-
-<main class="content">
-
-  <!-- S1 — Dados -->
-  <section class="sec ativa" id="s1">
-    <div class="sec-head">
-      <h2>Seus dados</h2>
-      <p>Precisamos apenas do essencial para confirmar seu horário.</p>
-    </div>
-    <div class="campo">
-      <label for="nome">Nome completo</label>
-      <input type="text" id="nome" placeholder="Seu nome completo"
-        autocomplete="name" autocapitalize="words" autocorrect="off"/>
-    </div>
-    <div class="campo">
-      <label for="telefone">WhatsApp</label>
-      <div class="input-wrap">
-        <span class="input-ico" aria-hidden="true">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
-            <path d="M12 0C5.373 0 0 5.373 0 12c0 2.121.555 4.112 1.528 5.836L0 24l6.336-1.508A11.946 11.946 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.003-1.368l-.36-.213-3.76.895.952-3.655-.234-.374A9.786 9.786 0 012.182 12C2.182 6.592 6.592 2.182 12 2.182S21.818 6.592 21.818 12 17.408 21.818 12 21.818z"/>
-          </svg>
-        </span>
-        <input type="tel" id="telefone" placeholder="(XX) 9 XXXX-XXXX"
-          autocomplete="tel" inputmode="tel"/>
-      </div>
-      <small class="campo-help">Usaremos para confirmar seu agendamento.</small>
-    </div>
-    <div class="campo">
-      <label for="obs">Observação <span class="campo-opt">(opcional)</span></label>
-      <textarea id="obs" placeholder="Alguma informação adicional..."></textarea>
-    </div>
-  </section>
-
-  <!-- S2 — Serviço -->
-  <section class="sec" id="s2">
-    <div class="sec-head">
-      <h2>Escolha o serviço</h2>
-      <p>Selecione o que você deseja agendar.</p>
-    </div>
-    <div class="campo">
-      <div class="srv-lista" id="srv-lista"></div>
-      <div class="srv-sem" id="srv-sem" style="display:none">
-        Nenhum serviço cadastrado. Continue para escolher o horário.
-      </div>
-    </div>
-  </section>
-
-  <!-- S3 — Horário -->
-  <section class="sec" id="s3">
-    <div class="sec-head">
-      <h2>Data e horário</h2>
-      <p>Selecione o melhor dia e horário para você.</p>
-    </div>
-    <div class="cal-card">
-      <div class="cal-nav">
-        <button class="cal-btn" type="button" onclick="mesAnt()" aria-label="Mês anterior">‹</button>
-        <div class="cal-mes" id="cal-mes"></div>
-        <button class="cal-btn" type="button" onclick="mesPrx()" aria-label="Próximo mês">›</button>
-      </div>
-      <div class="cal-dow">
-        <span>D</span><span>S</span><span>T</span><span>Q</span><span>Q</span><span>S</span><span>S</span>
-      </div>
-      <div class="cal-grid" id="cal-grid"></div>
-    </div>
-    <div id="hr-sec" style="display:none">
-      <div class="hr-card">
-        <div class="hr-lbl">Horários disponíveis</div>
-        <div id="hr-load" class="hr-load" style="display:none">Buscando horários...</div>
-        <div class="hr-grade" id="hr-grade"></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- S4 — Confirmar -->
-  <section class="sec" id="s4">
-    <div class="sec-head">
-      <h2>Confirme seu agendamento</h2>
-      <p>Revise as informações antes de finalizar.</p>
-    </div>
-    <div class="res-card">
-      <div class="res-hdr">
-        <div class="res-hdr-lbl">Agendamento</div>
-        <div class="res-hdr-nome" id="r-neg">—</div>
-      </div>
-      <div class="res-body" id="res-body"></div>
-    </div>
-    <div class="aviso">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
-      Ao confirmar, você concorda em receber contato pelo WhatsApp informado para confirmar o agendamento.
-    </div>
-  </section>
-
-  <!-- S5 — Sucesso -->
-  <section class="sec" id="s5">
-    <div class="suc">
-      <div class="suc-ico">
-        <svg width="36" height="36" viewBox="0 0 32 32" fill="none">
-          <path d="M7 17l6 6 12-12" stroke="#fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </div>
-      <div class="suc-titulo">Agendamento realizado!</div>
-      <div class="suc-txt">Recebemos sua solicitação. Em breve entraremos em contato pelo WhatsApp para confirmar.</div>
-      <button class="suc-btn" type="button" onclick="novo()">Fazer novo agendamento</button>
-    </div>
-  </section>
-
-</main>
-
-<!-- BOTTOM BAR -->
-<div class="btm" id="btm">
-  <button class="btn-volt" id="btn-volt" type="button" onclick="voltar()" style="display:none">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
-    Voltar
-  </button>
-  <button class="btn-prox" id="btn-prox" type="button" onclick="avancar()">
-    Próximo
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
-  </button>
+<div class="hdr" id="hdr">
+ <div class="hdr-l">
+ <div class="hdr-ico" id="h-ico">—</div>
+ <div style="min-width:0">
+ <div class="hdr-nome" id="h-nome">Carregando</div>
+ <div class="hdr-sub" id="h-sub"></div>
+ </div>
+ </div>
+ <div class="hdr-r">by <strong>AgendaOK</strong></div>
 </div>
 
-<div id="toast"></div>
+<div class="prog-bar" id="prog-bar">
+ <div class="prog-track"><div class="prog-fill" id="prog"></div></div>
+</div>
+
+<div class="steps" id="steps">
+ <div class="si ativo" id="si1"><div class="sc">1</div><div class="slbl">Dados</div></div>
+ <div class="sl" id="sl1"></div>
+ <div class="si" id="si2"><div class="sc">2</div><div class="slbl">Serviço</div></div>
+ <div class="sl" id="sl2"></div>
+ <div class="si" id="si3"><div class="sc">3</div><div class="slbl">Horário</div></div>
+ <div class="sl" id="sl3"></div>
+ <div class="si" id="si4"><div class="sc">4</div><div class="slbl">Confirmar</div></div>
+</div>
+
+<div class="content">
+
+ <!-- S1 -->
+ <div class="sec ativa" id="s1">
+ <div class="campo">
+ <label>Nome completo</label>
+ <input type="text" id="nome" placeholder="Seu nome completo" autocomplete="name" autocorrect="off" autocapitalize="words"/>
+ </div>
+ <div class="campo">
+ <label>WhatsApp</label>
+ <div style="position:relative">
+ <div style="position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:15px;font-weight:600;color:var(--muted);pointer-events:none;display:flex;align-items:center;gap:6px">
+ <svg width="14" height="14" viewBox="0 0 24 24" fill="#6b6860"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.121.555 4.112 1.528 5.836L0 24l6.336-1.508A11.946 11.946 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.003-1.368l-.36-.213-3.76.895.952-3.655-.234-.374A9.786 9.786 0 012.182 12C2.182 6.592 6.592 2.182 12 2.182S21.818 6.592 21.818 12 17.408 21.818 12 21.818z"/></svg>
+ </div>
+ <input type="tel" id="telefone" placeholder="(XX) 9 XXXX-XXXX" autocomplete="tel" inputmode="tel" style="padding-left:40px"/>
+ </div>
+ </div>
+ <div class="campo">
+ <label>Observação <span style="text-transform:none;letter-spacing:0;font-weight:400">(opcional)</span></label>
+ <textarea id="obs" placeholder="Alguma informação adicional..."></textarea>
+ </div>
+ </div>
+
+ <!-- S2 -->
+ <div class="sec" id="s2">
+ <div class="campo">
+ <label>Selecione o serviço</label>
+ <div class="srv-lista" id="srv-lista"></div>
+ <div class="srv-sem" id="srv-sem" style="display:none">Nenhum serviço cadastrado. Continue para escolher o horário.</div>
+ </div>
+ </div>
+
+ <!-- S3 -->
+ <div class="sec" id="s3">
+ <div class="cal-card">
+ <div class="cal-nav">
+ <button class="cal-btn" onclick="mesAnt()">‹</button>
+ <div class="cal-mes" id="cal-mes"></div>
+ <button class="cal-btn" onclick="mesPrx()">›</button>
+ </div>
+ <div class="cal-grid" id="cal-grid"></div>
+ </div>
+ <div id="hr-sec" style="display:none">
+ <div class="hr-card">
+ <div class="hr-lbl">Horários disponíveis</div>
+ <div id="hr-load" class="hr-load" style="display:none">Buscando...</div>
+ <div class="hr-grade" id="hr-grade"></div>
+ </div>
+ </div>
+ </div>
+
+ <!-- S4 -->
+ <div class="sec" id="s4">
+ <div class="res-card">
+ <div class="res-hdr">
+ <div class="res-hdr-lbl">Agendamento</div>
+ <div class="res-hdr-nome" id="r-neg"></div>
+ </div>
+ <div class="res-body" id="res-body"></div>
+ </div>
+ <div class="aviso">Ao confirmar, você concorda em receber contato pelo telefone informado. Em breve entraremos em contato para confirmar o agendamento.</div>
+ </div>
+
+ <!-- SUCESSO -->
+ <div class="sec" id="s5">
+ <div class="suc">
+ <div class="suc-ico">
+ <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+ <path d="M7 17l6 6 12-12" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+ </svg>
+ </div>
+ <div class="suc-titulo">Agendamento realizado.</div>
+ <div class="suc-txt">Recebemos sua solicitação. Em breve entraremos em contato para confirmar.</div>
+ <button class="suc-btn" onclick="novo()">Novo agendamento</button>
+ </div>
+ </div>
+
+</div>
+
+<div class="btm" id="btm">
+ <button class="btn-volt" id="btn-volt" onclick="voltar()" style="display:none">‹</button>
+ <button class="btn-prox" id="btn-prox" onclick="avancar()">Próximo</button>
+</div>
 
 <script>
-/* ──────────────────────────────────────────────
-   AgendaOK — lógica real integrada ao backend
-   ────────────────────────────────────────────── */
-const TEMAS={
-  barbearia:{ico:'✂️',cor:'#111827'},salao:{ico:'💅',cor:'#4a0728'},
-  clinica:{ico:'🏥',cor:'#0c2340'},odonto:{ico:'🦷',cor:'#0c3547'},
-  advocacia:{ico:'⚖️',cor:'#1c1007'},psicologia:{ico:'🧠',cor:'#1e0a3c'},
-  estetica:{ico:'✨',cor:'#3b0764'},tatuagem:{ico:'🎨',cor:'#030712'},
-  nutricao:{ico:'🥗',cor:'#052e16'},fisio:{ico:'💪',cor:'#0c2340'},
-  personal:{ico:'🏋️',cor:'#1c0505'},outro:{ico:'📅',cor:'#0d9488'}
-};
+const TEMAS={barbearia:{ico:'',cor:'#111827'},salao:{ico:'',cor:'#4a0728'},clinica:{ico:'+',cor:'#0c2340'},odonto:{ico:'',cor:'#0c3547'},advocacia:{ico:'',cor:'#1c1007'},psicologia:{ico:'',cor:'#1e0a3c'},estetica:{ico:'',cor:'#3b0764'},tatuagem:{ico:'',cor:'#030712'},nutricao:{ico:'',cor:'#052e16'},fisio:{ico:'',cor:'#0c2340'},personal:{ico:'',cor:'#1c0505'},outro:{ico:'',cor:'#0a0a0a'}};
 const MESES=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-const DIAS=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+const DIAS_S=['D','S','T','Q','Q','S','S'];
 const slug=location.pathname.split('/').pop();
+const E={passo:1,data:null,horario:null,ano:new Date().getFullYear(),mes:new Date().getMonth(),diasUteis:[0,1,2,3,4,5,6],srvId:null,srvNome:'',srvPreco:null,srvDur:null,temSrv:false};
 
-const E={
-  passo:1,data:null,horario:null,
-  ano:new Date().getFullYear(),mes:new Date().getMonth(),
-  diasUteis:[0,1,2,3,4,5,6],
-  srvId:null,srvNome:'',srvPreco:null,srvDur:null,
-  temSrv:false,nomeNegocio:''
-};
-
-// ── Inicialização ──
 async function init(){
-  try{
-    const[rI,rS]=await Promise.all([
-      fetch('/p/'+slug+'/info'),
-      fetch('/servicos/publico/'+slug)
-    ]);
-    if(!rI.ok){
-      document.getElementById('h-nome').textContent='Negócio não encontrado';
-      return;
-    }
-    const info=await rI.json();
-    const srvD=rS.ok?await rS.json():{servicos:[]};
-    const nicho=info.nicho||'outro';
-    const tema=TEMAS[nicho]||TEMAS.outro;
-    const cor=info.config?.cor||tema.cor;
-
-    aplicarCor(cor);
-    document.getElementById('html-root').style.setProperty('--cor',cor);
-    const ico=document.getElementById('h-ico');
-    ico.textContent='';
-    ico.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M8 2v4M16 2v4M3 10h18"/></svg>`;
-    document.getElementById('h-nome').textContent=info.nome_negocio;
-    document.getElementById('h-sub').textContent=nicho;
-    document.getElementById('r-neg').textContent=info.nome_negocio;
-    document.title=info.nome_negocio+' — Agendar';
-    E.nomeNegocio=info.nome_negocio;
-
-    if(info.config?.dias_uteis&&info.config.dias_uteis.trim()!==''){
-      E.diasUteis=info.config.dias_uteis.split(',').map(Number);
-    }
-
-    // Serviços
-    const lista=document.getElementById('srv-lista');
-    if(srvD.servicos&&srvD.servicos.length){
-      E.temSrv=true;
-      lista.innerHTML=srvD.servicos.map(s=>`
-        <button type="button" class="srv-opt" onclick="selSrv('${s.id}','${esc(s.nome)}',${s.preco||'null'},${s.duracao||60},this)">
-          <div class="srv-info">
-            <div class="srv-nome">${s.nome}</div>
-            <div class="srv-det">
-              ${s.duracao?`<span class="srv-tempo">${s.duracao} min</span>`:''}
-              ${s.duracao&&s.descricao?'<span class="dot"></span>':''}
-              ${s.descricao?s.descricao:''}
-            </div>
-          </div>
-          <div class="srv-preco">${s.preco?'R$ '+parseFloat(s.preco).toFixed(2).replace('.',','):'Grátis'}</div>
-        </button>`).join('');
-    } else {
-      document.getElementById('srv-sem').style.display='block';
-    }
-  }catch(e){console.error('init:',e)}
+ try{
+ const[rI,rS]=await Promise.all([fetch('/p/'+slug+'/info'),fetch('/servicos/publico/'+slug)]);
+ if(!rI.ok){document.getElementById('h-nome').textContent='Negócio não encontrado';return;}
+ const info=await rI.json();
+ const srvD=rS.ok?await rS.json():{servicos:[]};
+ const nicho=info.nicho||'outro';
+ const tema=TEMAS[nicho]||TEMAS.outro;
+ const cor=info.config?.cor||tema.cor;
+ aplicarCor(cor);
+ document.getElementById('h-ico').textContent=tema.ico;
+ document.getElementById('h-nome').textContent=info.nome_negocio;
+ document.getElementById('h-sub').textContent=nicho;
+ document.getElementById('r-neg').textContent=info.nome_negocio;
+ document.title=info.nome_negocio+' — Agendar';
+ if(info.config?.dias_uteis && info.config.dias_uteis.trim()!==''){
+ E.diasUteis=info.config.dias_uteis.split(',').map(Number);
+ }
+ // Se não configurado, todos os dias ficam disponíveis
+ const lista=document.getElementById('srv-lista');
+ if(srvD.servicos&&srvD.servicos.length){
+ E.temSrv=true;
+ lista.innerHTML=srvD.servicos.map(s=>`
+ <div class="srv-opt" onclick="selSrv('${s.id}','${esc(s.nome)}',${s.preco||'null'},${s.duracao||60},this)">
+ <div>
+ <div class="srv-nome">${s.nome}</div>
+ <div class="srv-det">${s.duracao?s.duracao+' min':''}${s.descricao?(s.duracao?' · ':'')+s.descricao:''}</div>
+ </div>
+ <div class="srv-preco">${s.preco?'R$'+parseFloat(s.preco).toFixed(2).replace('.',','):'Grátis'}</div>
+ </div>`).join('');
+ } else { document.getElementById('srv-sem').style.display='block'; }
+ }catch(e){}
 }
 
 function aplicarCor(cor){
-  document.getElementById('html-root').style.setProperty('--cor',cor);
-  document.getElementById('theme-color').setAttribute('content',cor);
+ document.documentElement.style.setProperty('--cor',cor);
+ document.getElementById('theme-color').setAttribute('content',cor);
+ document.getElementById('hdr').style.background=cor;
+ document.getElementById('prog-bar').style.background=cor;
 }
 
 function esc(s){return(s||'').replace(/'/g,"\\'")}
 
-// ── Seleção de serviço ──
 function selSrv(id,nome,preco,dur,el){
-  document.querySelectorAll('.srv-opt').forEach(e=>e.classList.remove('sel'));
-  el.classList.add('sel');
-  E.srvId=id;E.srvNome=nome;E.srvPreco=preco;E.srvDur=dur;
+ document.querySelectorAll('.srv-opt').forEach(e=>e.classList.remove('sel'));
+ el.classList.add('sel');
+ E.srvId=id;E.srvNome=nome;E.srvPreco=preco;E.srvDur=dur;
 }
 
-// ── Navegação ──
 function avancar(){
-  if(E.passo===1&&!v1())return;
-  if(E.passo===2&&E.temSrv&&!E.srvId){showToast('Selecione um serviço.');return;}
-  if(E.passo===3&&!v3())return;
-  if(E.passo===4){confirmar();return;}
-  ir(E.passo+1);
+ if(E.passo===1&&!v1())return;
+ if(E.passo===2&&E.temSrv&&!E.srvId){toast('Selecione um serviço','err');return;}
+ if(E.passo===3&&!v3())return;
+ if(E.passo===4){confirmar();return;}
+ ir(E.passo+1);
 }
 function voltar(){if(E.passo>1)ir(E.passo-1);}
 
 function ir(n){
-  E.passo=n;
-  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('ativa'));
-  document.getElementById('s'+n).classList.add('ativa');
-
-  // Steps
-  for(let i=1;i<=4;i++){
-    const si=document.getElementById('si'+i);
-    const sl=document.getElementById('sl'+i);
-    si.classList.remove('ativo','feito');
-    if(sl)sl.classList.remove('feito');
-    if(i<n){si.classList.add('feito');if(sl)sl.classList.add('feito');}
-    else if(i===n)si.classList.add('ativo');
-  }
-
-  // Progress
-  const pcts={1:25,2:50,3:75,4:100,5:100};
-  document.getElementById('prog').style.width=(pcts[n]||25)+'%';
-
-  // Bottom bar
-  const volt=document.getElementById('btn-volt');
-  const prox=document.getElementById('btn-prox');
-  volt.style.display=(n>1&&n<5)?'inline-flex':'none';
-
-  if(n===5){
-    document.getElementById('btm').style.display='none';
-    document.getElementById('steps').style.display='none';
-  } else {
-    document.getElementById('btm').style.display='flex';
-    document.getElementById('steps').style.display='flex';
-  }
-
-  if(n===4){
-    prox.innerHTML='Confirmar agendamento <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>';
-    renderRes();
-  } else {
-    prox.innerHTML='Próximo <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>';
-  }
-
-  if(n===3)renderCal();
-  window.scrollTo({top:0,behavior:'smooth'});
+ E.passo=n;
+ document.querySelectorAll('.sec').forEach(s=>s.classList.remove('ativa'));
+ document.getElementById('s'+n).classList.add('ativa');
+ [1,2,3,4].forEach(i=>{
+ const el=document.getElementById('si'+i);if(!el)return;
+ el.classList.remove('ativo','feito');
+ if(i<n)el.classList.add('feito');else if(i===n)el.classList.add('ativo');
+ const sl=document.getElementById('sl'+i);
+ if(sl)sl.classList.toggle('feita',i<n);
+ });
+ document.getElementById('prog').style.width=({1:25,2:50,3:75,4:100,5:100}[n]||25)+'%';
+ const volt=document.getElementById('btn-volt');
+ const prox=document.getElementById('btn-prox');
+ volt.style.display=(n>1&&n<5)?'block':'none';
+ if(n===4){prox.textContent='Confirmar agendamento';prox.style.background=var_cor()||'#16a34a';}
+ else if(n===5){document.getElementById('btm').style.display='none';document.getElementById('steps').style.display='none';document.getElementById('prog-bar').style.display='none';}
+ else{prox.textContent='Próximo';prox.style.background='var(--cor)';}
+ if(n===3)renderCal();
+ if(n===4)renderRes();
+ window.scrollTo({top:0,behavior:'smooth'});
 }
 
-// ── Validações ──
+function var_cor(){
+ return getComputedStyle(document.documentElement).getPropertyValue('--cor').trim();
+}
+
 function v1(){
-  const nome=document.getElementById('nome').value.trim();
-  const tel=document.getElementById('telefone').value.trim();
-  if(!nome||nome.length<2){
-    document.getElementById('nome').focus();
-    shake('btn-prox');showToast('Informe seu nome completo.');return false;
-  }
-  if(tel.replace(/\D/g,'').length<8){
-    document.getElementById('telefone').focus();
-    shake('btn-prox');showToast('Informe um WhatsApp válido.');return false;
-  }
-  return true;
+ const nome=g('nome');
+ const tel=document.getElementById('telefone').value.trim();
+ const telDigitos=tel.replace(/\D/g,'');
+ if(!nome||nome.length<2){toast('Informe seu nome completo','err');return false;}
+ if(!tel||telDigitos.length<8){toast('Informe seu WhatsApp','err');return false;}
+ return true;
 }
 function v3(){
-  if(!E.data){shake('btn-prox');showToast('Selecione uma data.');return false;}
-  if(!E.horario){shake('btn-prox');showToast('Selecione um horário.');return false;}
-  return true;
+ if(!E.data){toast('Selecione uma data','err');return false;}
+ if(!E.horario){toast('Selecione um horário','err');return false;}
+ return true;
+}
+function g(id){
+ const el=document.getElementById(id);
+ return el?el.value.trim():'';
 }
 
-function shake(id){
-  const el=document.getElementById(id);
-  el.animate(
-    [{transform:'translateX(-4px)'},{transform:'translateX(4px)'},{transform:'translateX(0)'}],
-    {duration:250,iterations:1}
-  );
-}
-
-// ── Máscara telefone ──
-document.getElementById('telefone').addEventListener('input',function(e){
-  let v=e.target.value.replace(/\D/g,'').slice(0,11);
-  if(!v){e.target.value='';return;}
-  if(v.length<=2)v='('+v;
-  else if(v.length<=7)v='('+v.slice(0,2)+') '+v.slice(2);
-  else if(v.length<=10)v='('+v.slice(0,2)+') '+v.slice(2,6)+'-'+v.slice(6);
-  else v='('+v.slice(0,2)+') '+v.slice(2,3)+' '+v.slice(3,7)+'-'+v.slice(7);
-  e.target.value=v;
-});
-
-// ── Calendário ──
 function renderCal(){
-  document.getElementById('cal-mes').textContent=MESES[E.mes]+' '+E.ano;
-  const grid=document.getElementById('cal-grid');
-  grid.innerHTML='';
-  const prim=new Date(E.ano,E.mes,1);
-  const ult=new Date(E.ano,E.mes+1,0);
-  const hoje=new Date();hoje.setHours(0,0,0,0);
-
-  // Células vazias antes do primeiro dia
-  for(let i=0;i<prim.getDay();i++){
-    const d=document.createElement('button');
-    d.className='cal-dia off';d.disabled=true;grid.appendChild(d);
-  }
-  for(let d=1;d<=ult.getDate();d++){
-    const dt=new Date(E.ano,E.mes,d);
-    const iso=dt.toISOString().split('T')[0];
-    const dow=dt.getDay();
-    const passado=dt<hoje;
-    const bloq=E.diasUteis.length<7&&!E.diasUteis.includes(dow);
-    const btn=document.createElement('button');
-    btn.type='button';
-    btn.className='cal-dia';
-    btn.textContent=d;
-    if(passado||bloq){btn.classList.add('dis');btn.disabled=true;}
-    else if(iso===E.data)btn.classList.add('sel');
-    else if(dt.getTime()===hoje.getTime())btn.classList.add('hj');
-    if(!passado&&!bloq){
-      btn.addEventListener('click',()=>selData(iso));
-    }
-    grid.appendChild(btn);
-  }
+ document.getElementById('cal-mes').textContent=MESES[E.mes]+' '+E.ano;
+ const grid=document.getElementById('cal-grid');
+ grid.innerHTML=DIAS_S.map(d=>`<div class="cal-dn">${d}</div>`).join('');
+ const prim=new Date(E.ano,E.mes,1),ult=new Date(E.ano,E.mes+1,0);
+ const hoje=new Date();hoje.setHours(0,0,0,0);
+ for(let i=0;i<prim.getDay();i++)grid.innerHTML+='<div class="cal-dia vz"></div>';
+ for(let d=1;d<=ult.getDate();d++){
+ const dt=new Date(E.ano,E.mes,d);
+ const iso=dt.toISOString().split('T')[0];
+ const dow=dt.getDay();
+ const pas=dt<hoje,fds=E.diasUteis.length<7&&!E.diasUteis.includes(dow);
+ const sel=iso===E.data,ehHoje=dt.getTime()===hoje.getTime();
+ let cls='cal-dia';
+ if(pas||fds)cls+=' dis';else if(sel)cls+=' sel';else if(ehHoje)cls+=' hj';
+ grid.innerHTML+=`<div class="${cls}" ${(!pas&&!fds)?`onclick="selData('${iso}')"`:''}>${d}</div>`;
+ }
 }
 
-function mesAnt(){
-  const h=new Date();
-  if(E.ano===h.getFullYear()&&E.mes===h.getMonth())return;
-  E.mes--;if(E.mes<0){E.mes=11;E.ano--;}
-  renderCal();
-}
-function mesPrx(){
-  E.mes++;if(E.mes>11){E.mes=0;E.ano++;}
-  renderCal();
-}
+function mesAnt(){const h=new Date();if(E.ano===h.getFullYear()&&E.mes===h.getMonth())return;E.mes--;if(E.mes<0){E.mes=11;E.ano--;}renderCal();}
+function mesPrx(){E.mes++;if(E.mes>11){E.mes=0;E.ano++;}renderCal();}
 
 async function selData(iso){
-  E.data=iso;E.horario=null;
-  renderCal();
-  const sec=document.getElementById('hr-sec');
-  const load=document.getElementById('hr-load');
-  const grade=document.getElementById('hr-grade');
-  sec.style.display='block';
-  load.style.display='block';
-  grade.innerHTML='';
-  setTimeout(()=>sec.scrollIntoView({behavior:'smooth',block:'nearest'}),100);
-  try{
-    const r=await fetch('/p/'+slug+'/horarios?data='+iso);
-    const d=await r.json();
-    load.style.display='none';
-    if(!d.horarios||!d.horarios.length){
-      grade.innerHTML='<p style="color:var(--muted);font-size:13px;grid-column:1/-1;padding:8px 0">Nenhum horário disponível.</p>';
-      return;
-    }
-    const livres=d.horarios.filter(h=>h.disponivel).length;
-    grade.innerHTML=d.horarios.map(h=>{
-      if(h.disponivel)
-        return `<button type="button" class="hr-btn" onclick="selHr('${h.horario}')">${h.horario}</button>`;
-      if(h.motivo==='passado')
-        return `<button type="button" class="hr-btn passado" disabled>${h.horario}</button>`;
-      return `<button type="button" class="hr-btn ocup" disabled title="Ocupado">${h.horario}</button>`;
-    }).join('');
-
-    // Legenda
-    const old=grade.parentElement.querySelector('.hr-leg');
-    if(old)old.remove();
-    if(d.horarios.length>0){
-      const ocup=d.horarios.length-livres;
-      const leg=document.createElement('div');
-      leg.className='hr-leg';
-      leg.innerHTML=
-        `<span><span class="hr-leg-dot" style="background:var(--cor)"></span>${livres} disponível${livres!==1?'s':''}</span>`
-        +(ocup>0?`<span><span class="hr-leg-dot" style="background:var(--border-strong)"></span>${ocup} ocupado${ocup!==1?'s':''}</span>`:'');
-      grade.after(leg);
-    }
-    if(livres===0){
-      grade.innerHTML='<p style="color:var(--danger);font-size:13px;font-weight:600;grid-column:1/-1;padding:8px 0">Nenhum horário disponível nesta data.</p>';
-    }
-  }catch(e){
-    load.style.display='none';
-    grade.innerHTML='<p style="color:var(--danger);font-size:13px;grid-column:1/-1">Erro ao buscar horários. Tente novamente.</p>';
-  }
+ E.data=iso;E.horario=null;renderCal();
+ const sec=document.getElementById('hr-sec'),load=document.getElementById('hr-load'),grade=document.getElementById('hr-grade');
+ sec.style.display='block';load.style.display='block';grade.innerHTML='';
+ setTimeout(()=>sec.scrollIntoView({behavior:'smooth',block:'nearest'}),100);
+ try{
+ const r=await fetch('/p/'+slug+'/horarios?data='+iso);
+ const d=await r.json();
+ load.style.display='none';
+ if(!d.horarios||!d.horarios.length){grade.innerHTML='<p style="color:var(--muted);font-size:13px;grid-column:1/-1;padding:8px 0">Nenhum horário disponível.</p>';return;}
+ const livres=d.horarios.filter(h=>h.disponivel).length;
+ grade.innerHTML=d.horarios.map(h=>{
+ if(h.disponivel) return `<button class="hr-btn" onclick="selHr('${h.horario}')">${h.horario}</button>`;
+ if(h.motivo==='passado') return `<button class="hr-btn" style="opacity:.15;cursor:not-allowed;text-decoration:line-through;font-size:12px" disabled>${h.horario}</button>`;
+ return `<button class="hr-btn ocup" disabled title="Ocupado">${h.horario}</button>`;
+ }).join('');
+ // Legenda
+ const old_info=grade.nextElementSibling;
+ if(old_info&&old_info.classList.contains('hr-leg-info'))old_info.remove();
+ if(d.horarios.length>0){
+ const info=document.createElement('div');
+ info.className='hr-leg-info';
+ info.style.cssText='font-size:11px;color:var(--muted);margin-top:12px;padding-top:10px;border-top:1px solid var(--borda);display:flex;gap:14px;flex-wrap:wrap';
+ const ocup=d.horarios.length-livres;
+ info.innerHTML=`<span style="display:flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:50%;background:var(--cor);display:inline-block"></span>${livres} disponível${livres!==1?'s':''}</span>`
+ +(ocup>0?`<span style="display:flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:50%;background:var(--borda);display:inline-block"></span>${ocup} ocupado${ocup!==1?'s':''}</span>`:'');
+ grade.after(info);
+ }
+ if(livres===0){grade.innerHTML='<p style="color:var(--vermelho);font-size:13px;font-weight:600;grid-column:1/-1;padding:8px 0">Nenhum horário disponível nesta data.</p>';}
+ }catch(e){load.style.display='none';grade.innerHTML='<p style="color:var(--vermelho);font-size:13px;grid-column:1/-1">Erro. Tente novamente.</p>';}
 }
 
-function selHr(h){
-  E.horario=h;
-  document.querySelectorAll('.hr-btn').forEach(b=>b.classList.toggle('sel',b.textContent.trim()===h));
-}
+function selHr(h){E.horario=h;document.querySelectorAll('.hr-btn').forEach(b=>b.classList.toggle('sel',b.textContent.trim()===h));}
 
-// ── Resumo ──
 function renderRes(){
-  const[ano,mes,dia]=E.data.split('-');
-  const dt=new Date(E.data+'T12:00:00');
-  const nomeVal=document.getElementById('nome').value.trim();
-  const telVal=document.getElementById('telefone').value.trim();
-  const obsVal=document.getElementById('obs').value.trim();
-
-  let html=`
-    <div class="res-linha"><span class="res-k">Cliente</span><span class="res-v">${nomeVal}</span></div>
-    <div class="res-linha"><span class="res-k">WhatsApp</span><span class="res-v">${telVal}</span></div>`;
-  if(E.srvNome)
-    html+=`<div class="res-linha"><span class="res-k">Serviço</span><span class="res-v">${E.srvNome}</span></div>`;
-  html+=`
-    <div class="res-linha"><span class="res-k">Data</span><span class="res-v">${DIAS[dt.getDay()]}, ${dia}/${mes}/${ano}</span></div>
-    <div class="res-linha"><span class="res-k">Horário</span><span class="res-v">${E.horario}</span></div>`;
-  if(E.srvPreco)
-    html+=`<div class="res-linha total"><span class="res-k">Total</span><span class="res-v">R$ ${parseFloat(E.srvPreco).toFixed(2).replace('.',',')}</span></div>`;
-  if(obsVal)
-    html+=`<div class="res-linha"><span class="res-k">Obs.</span><span class="res-v" style="font-weight:400;color:var(--muted)">${obsVal}</span></div>`;
-
-  document.getElementById('res-body').innerHTML=html;
+ const[ano,mes,dia]=E.data.split('-');
+ const dt=new Date(E.data+'T12:00:00');
+ const dias=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+ const nomeVal=document.getElementById('nome').value.trim();
+ const telVal=document.getElementById('telefone').value.trim();
+ let html=`<div class="res-linha"><span class="res-k">Nome</span><span class="res-v">${nomeVal}</span></div>
+ <div class="res-linha"><span class="res-k">WhatsApp</span><span class="res-v">${telVal}</span></div>`;
+ if(E.srvNome)html+=`<div class="res-linha"><span class="res-k">Serviço</span><span class="res-v">${E.srvNome}</span></div>`;
+ if(E.srvPreco)html+=`<div class="res-linha"><span class="res-k">Valor</span><span class="res-v res-preco">R$${parseFloat(E.srvPreco).toFixed(2).replace('.',',')}</span></div>`;
+ if(E.srvDur)html+=`<div class="res-linha"><span class="res-k">Duração</span><span class="res-v">${E.srvDur} minutos</span></div>`;
+ html+=`<div class="res-linha"><span class="res-k">Data</span><span class="res-v">${dias[dt.getDay()]}, ${dia}/${mes}/${ano}</span></div>
+ <div class="res-linha"><span class="res-k">Horário</span><span class="res-v">${E.horario}</span></div>`;
+ document.getElementById('res-body').innerHTML=html;
 }
 
-// ── Confirmar (chamada real ao backend) ──
 async function confirmar(){
-  const btn=document.getElementById('btn-prox');
-  btn.disabled=true;
-  btn.innerHTML='Enviando... <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>';
-  try{
-    const r=await fetch('/p/'+slug+'/agendar',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        nome:document.getElementById('nome').value.trim(),
-        email:'',
-        telefone:document.getElementById('telefone').value.trim(),
-        servico:E.srvNome,
-        servico_id:E.srvId,
-        preco_servico:E.srvPreco,
-        obs:document.getElementById('obs').value.trim(),
-        data:E.data,
-        horario:E.horario
-      })
-    });
-    const d=await r.json();
-    if(!r.ok)throw new Error(d.erro||'Erro ao agendar.');
-    ir(5);
-  }catch(e){
-    showToast(e.message,'err');
-    btn.disabled=false;
-    btn.innerHTML='Confirmar agendamento <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>';
-  }
+ const btn=document.getElementById('btn-prox');
+ btn.disabled=true;btn.textContent='Enviando...';
+ try{
+ const r=await fetch('/p/'+slug+'/agendar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nome:document.getElementById('nome').value.trim(),email:'',telefone:document.getElementById('telefone').value.trim(),servico:E.srvNome,servico_id:E.srvId,preco_servico:E.srvPreco,obs:g('obs'),data:E.data,horario:E.horario})});
+ const d=await r.json();
+ if(!r.ok)throw new Error(d.erro||'Erro');
+ ir(5);
+ }catch(e){toast(e.message,'err');btn.disabled=false;btn.textContent='Confirmar agendamento';btn.style.background='var(--cor)';}
 }
 
-// ── Novo agendamento ──
 function novo(){
-  E.data=null;E.horario=null;
-  E.mes=new Date().getMonth();E.ano=new Date().getFullYear();
-  E.srvId=null;E.srvNome='';E.srvPreco=null;E.srvDur=null;
-  ['nome','telefone','obs'].forEach(id=>{
-    const el=document.getElementById(id);if(el)el.value='';
-  });
-  document.querySelectorAll('.srv-opt').forEach(e=>e.classList.remove('sel'));
-  document.getElementById('hr-sec').style.display='none';
-  ir(1);
+ E.data=null;E.horario=null;E.mes=new Date().getMonth();E.ano=new Date().getFullYear();
+ E.srvId=null;E.srvNome='';E.srvPreco=null;E.srvDur=null;
+ ['nome','telefone','obs'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+ document.querySelectorAll('.srv-opt').forEach(e=>e.classList.remove('sel'));
+ document.getElementById('hr-sec').style.display='none';
+ document.getElementById('btm').style.display='flex';
+ document.getElementById('steps').style.display='flex';
+ document.getElementById('prog-bar').style.display='block';
+ ir(1);
 }
 
-// ── Toast ──
-let _toastTimer=null;
-function showToast(msg,tipo){
-  const t=document.getElementById('toast');
-  t.textContent=msg;
-  t.className=tipo==='err'?'err':'';
-  requestAnimationFrame(()=>{
-    t.style.opacity='1';
-    t.style.transform='translateX(-50%) translateY(-4px)';
-  });
-  clearTimeout(_toastTimer);
-  _toastTimer=setTimeout(()=>{
-    t.style.opacity='0';
-    t.style.transform='translateX(-50%) translateY(0)';
-  },2800);
+function toast(msg,tipo='ok'){
+ document.querySelectorAll('.toast').forEach(t=>t.remove());
+ const t=document.createElement('div');t.className='toast '+(tipo==='err'?'err':'');t.textContent=msg;
+ document.body.appendChild(t);setTimeout(()=>t.remove(),3000);
 }
 
 init();

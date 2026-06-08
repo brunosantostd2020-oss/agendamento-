@@ -4,7 +4,7 @@ const session   = require('express-session');
 const pgSession = require('connect-pg-simple')(session);
 const cors      = require('cors');
 const path      = require('path');
-const { pool, initDb, initServicos, initColunas, initExtras, initTrial, initTokenConfirm, initNotificacoes, initFuncionarios } = require('./middleware/database');
+const { pool, initDb, initServicos, initColunas, initExtras, initTrial, initTokenConfirm } = require('./middleware/database');
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
@@ -35,11 +35,9 @@ app.use('/servicos', require('./routes/servicos'));
 app.use('/p',        require('./routes/publico'));
 app.use('/extras',   require('./routes/extras'));
 app.use('/admin',    require('./routes/admin'));
-app.use('/funcionarios', require('./routes/funcionarios'));
 
 app.get('/cadastro',          (req, res) => res.sendFile(path.join(__dirname, 'public', 'cadastro.html')));
 app.get('/login',             (req, res) => res.sendFile(path.join(__dirname, 'public', 'login.html')));
-app.get('/recuperar-senha',   (req, res) => res.sendFile(path.join(__dirname, 'public', 'login.html')));
 app.get('/painel',            (req, res) => res.sendFile(path.join(__dirname, 'public', 'painel.html')));
 app.get('/agendar/:slug',     (req, res) => res.sendFile(path.join(__dirname, 'public', 'agendar.html')));
 app.get('/cancelar/:token',   (req, res) => res.sendFile(path.join(__dirname, 'public', 'cancelar.html')));
@@ -55,8 +53,6 @@ initDb()
   .then(() => initExtras())
   .then(() => initTrial())
   .then(() => initTokenConfirm())
-  .then(() => initNotificacoes())
-  .then(() => initFuncionarios())
   .then(() => {
     app.listen(PORT, () => console.log(`✅ AgendaOK rodando na porta ${PORT}`));
   });

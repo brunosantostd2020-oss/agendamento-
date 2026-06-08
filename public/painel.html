@@ -2,7 +2,7 @@
 <html lang="pt-BR" data-theme="dark">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no.0,viewport-fit=cover"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
   <meta name="mobile-web-app-capable" content="yes"/>
   <title>Painel — AgendaOK</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
@@ -36,8 +36,7 @@
     }
     html{-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
     body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--txt);
-      min-height:100dvh;overflow-x:hidden;-webkit-font-smoothing:antialiased;font-size:14px;
-      overscroll-behavior-y:none}
+      min-height:100dvh;overflow-x:hidden;-webkit-font-smoothing:antialiased;font-size:14px}
 
     /* ── LAYOUT ── */
     .app{display:flex;min-height:100dvh}
@@ -67,7 +66,6 @@
     .sb-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;
       color:var(--muted);font-size:13px;font-weight:500;cursor:pointer;
       transition:all 0.15s;-webkit-tap-highlight-color:transparent;
-      touch-action:manipulation;
       position:relative;text-decoration:none;white-space:nowrap}
     .sb-item:hover{background:var(--card);color:var(--txt)}
     .sb-item.ativo{background:rgba(0,208,132,0.1);color:var(--verde)}
@@ -99,7 +97,7 @@
       background:var(--card);border:1px solid var(--borda);border-radius:8px;
       padding:0 14px;height:36px}
     .tb-search input{flex:1;background:none;border:none;outline:none;font-family:inherit;
-      font-size:16px;color:var(--txt)}
+      font-size:13px;color:var(--txt)}
     .tb-search input::placeholder{color:var(--muted)}
     .tb-search svg{width:14px;height:14px;color:var(--muted);flex-shrink:0}
     .tb-kbd{font-size:10px;color:var(--muted2);background:var(--borda);
@@ -130,7 +128,7 @@
       font-size:12px;font-weight:800;color:#fff;cursor:pointer;flex-shrink:0}
 
     /* ── CONTENT ── */
-    .content{padding:24px;flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+    .content{padding:24px;flex:1;overflow-y:auto}
 
     /* ── PAGE HEADER ── */
     .pg-breadcrumb{font-size:11px;color:var(--muted);font-weight:500;
@@ -155,7 +153,7 @@
     .link-pub-lbl{font-size:10px;font-weight:700;color:var(--muted);
       letter-spacing:0.08em;text-transform:uppercase;margin-bottom:3px}
     .link-pub-url{font-size:12px;color:var(--verde);font-weight:500;
-      font-family:ui-monospace,monospace;word-break:break-all}
+      font-family:ui-monospace,monospace}
     .link-pub-btns{display:flex;gap:8px;margin-left:auto}
     .lp-btn{padding:6px 14px;border-radius:7px;font-size:12px;font-weight:600;
       cursor:pointer;font-family:inherit;border:1px solid var(--borda);
@@ -313,8 +311,7 @@
     .overlay.open{display:flex}
     .modal{background:var(--card);border:1px solid var(--borda);border-radius:14px 14px 0 0;
       padding:0;width:100%;max-width:480px;padding-bottom:var(--sb);
-      animation:slideUp 0.25s ease;max-height:85dvh;overflow-y:auto;
-      overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+      animation:slideUp 0.25s ease;max-height:85dvh;overflow-y:auto}
     @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
     .modal-handle{width:36px;height:3px;background:var(--borda);border-radius:999px;
       margin:14px auto 0}
@@ -325,7 +322,7 @@
       text-transform:uppercase;margin-bottom:7px;display:block;margin-top:14px}
     .m-label:first-of-type{margin-top:0}
     .m-input,.m-select,.m-textarea{width:100%;border:1px solid var(--borda);border-radius:8px;
-      font-family:inherit;font-size:16px;padding:11px 14px;color:var(--txt);
+      font-family:inherit;font-size:14px;padding:11px 14px;color:var(--txt);
       background:var(--card2);outline:none;appearance:none;transition:border-color 0.15s}
     .m-input:focus,.m-select:focus,.m-textarea:focus{border-color:var(--verde)}
     .m-input::placeholder,.m-textarea::placeholder{color:var(--muted)}
@@ -341,11 +338,9 @@
     .sp-title{font-size:13px;font-weight:600;color:var(--txt);flex:1}
     .sp-desc{font-size:11px;color:var(--muted)}
     .modal-footer{display:flex;gap:8px;margin-top:18px;padding-top:16px;
-      border-top:1px solid var(--borda);position:sticky;bottom:0;
-      background:var(--card);padding-bottom:4px}
+      border-top:1px solid var(--borda)}
     .m-btn{flex:1;padding:12px;border-radius:8px;font-family:inherit;font-size:13px;
-      font-weight:700;cursor:pointer;border:none;transition:opacity 0.15s;
-      touch-action:manipulation}
+      font-weight:700;cursor:pointer;border:none;transition:opacity 0.15s}
     .m-btn-g{background:var(--verde);color:#000}.m-btn-g:hover{opacity:0.85}
     .m-btn-out{background:none;border:1px solid var(--borda);color:var(--muted)}
 
@@ -374,186 +369,8 @@
     .nd-item-hora{font-size:10px;color:var(--muted2);margin-top:4px}
     .nd-empty{padding:28px;text-align:center;font-size:12px;color:var(--muted)}
 
-    /* ── ONBOARDING TOUR ── */
-    .ob-overlay{position:fixed;inset:0;z-index:1000;pointer-events:none}
-    .ob-backdrop{
-      position:fixed;inset:0;background:rgba(0,0,0,0);z-index:1000;
-      transition:background 0.4s ease;pointer-events:all
-    }
-    .ob-backdrop.show{background:rgba(0,0,0,0.72)}
-    .ob-spotlight{
-      position:fixed;z-index:1001;border-radius:12px;
-      box-shadow:0 0 0 9999px rgba(0,0,0,0.72);
-      transition:all 0.4s cubic-bezier(0.4,0,0.2,1);
-      pointer-events:none;
-      outline:2px solid rgba(0,208,132,0.7);
-      outline-offset:3px;
-    }
-    .ob-card{
-      position:fixed;z-index:1002;
-      background:var(--card);border:1px solid var(--borda);
-      border-radius:16px;padding:22px 24px;
-      width:min(340px, calc(100vw - 32px));
-      box-shadow:0 24px 60px -10px rgba(0,0,0,0.6);
-      animation:obIn 0.3s cubic-bezier(0.34,1.2,0.64,1);
-      pointer-events:all;
-    }
-    @keyframes obIn{from{opacity:0;transform:scale(0.92) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
-    .ob-step-badge{
-      display:inline-flex;align-items:center;gap:6px;
-      font-size:11px;font-weight:700;color:var(--verde);
-      background:var(--verde-dim);padding:4px 10px;border-radius:999px;
-      margin-bottom:12px;letter-spacing:0.04em;text-transform:uppercase;
-    }
-    .ob-emoji{font-size:28px;margin-bottom:10px;display:block}
-    .ob-titulo{font-size:17px;font-weight:800;color:var(--txt);
-      letter-spacing:-0.3px;margin-bottom:8px}
-    .ob-desc{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:18px}
-    .ob-footer{display:flex;align-items:center;justify-content:space-between;gap:10px}
-    .ob-dots{display:flex;gap:5px;align-items:center}
-    .ob-dot{width:6px;height:6px;border-radius:50%;background:var(--muted2);
-      transition:all 0.2s ease}
-    .ob-dot.ativo{background:var(--verde);width:18px;border-radius:3px}
-    .ob-btns{display:flex;gap:8px}
-    .ob-btn-skip{padding:8px 14px;border-radius:8px;background:none;
-      border:1px solid var(--borda);color:var(--muted);font-family:inherit;
-      font-size:12px;font-weight:600;cursor:pointer;transition:all 0.15s}
-    .ob-btn-skip:hover{border-color:var(--muted2)}
-    .ob-btn-next{padding:8px 18px;border-radius:8px;background:var(--verde);
-      border:none;color:#000;font-family:inherit;font-size:13px;
-      font-weight:700;cursor:pointer;transition:opacity 0.15s;
-      display:flex;align-items:center;gap:6px}
-    .ob-btn-next:hover{opacity:0.85}
-    .ob-btn-next svg{width:14px;height:14px}
-    .ob-progress{height:2px;background:var(--borda);border-radius:999px;
-      margin-bottom:16px;overflow:hidden}
-    .ob-progress-fill{height:100%;background:var(--verde);
-      border-radius:999px;transition:width 0.4s ease}
-
-    /* ── FUNCIONÁRIOS ── */
-    .func-topbar{display:flex;align-items:flex-start;justify-content:space-between;
-      gap:16px;margin-bottom:20px;flex-wrap:wrap}
-    .func-titulo{font-size:22px;font-weight:800;letter-spacing:-0.4px;margin:0 0 4px}
-    .func-subtitulo{font-size:13px;color:var(--muted)}
-    .func-add-btn{display:flex;align-items:center;gap:7px;padding:10px 18px;
-      border-radius:8px;background:var(--verde);border:none;color:#000;
-      font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;
-      transition:opacity 0.15s;white-space:nowrap;flex-shrink:0}
-    .func-add-btn:hover{opacity:0.85}
-
-    .func-resumo-bar{background:var(--card);border:1px solid var(--borda);
-      border-radius:var(--r);padding:16px 20px;margin-bottom:16px;
-      display:flex;align-items:center;gap:20px;flex-wrap:wrap}
-    .func-mes-wrap{display:flex;flex-direction:column;gap:4px;flex-shrink:0}
-    .func-mes-label{font-size:10px;font-weight:700;color:var(--muted);
-      letter-spacing:0.08em;text-transform:uppercase}
-    .func-mes-input{background:var(--card2);border:1px solid var(--borda);
-      border-radius:8px;color:var(--txt);font-family:inherit;
-      font-size:16px;padding:8px 12px;outline:none;cursor:pointer}
-    .func-mes-input:focus{border-color:var(--verde)}
-    .func-kpis{display:flex;align-items:center;gap:0;flex:1;flex-wrap:wrap}
-    .func-kpi{padding:0 20px;flex:1;min-width:100px}
-    .func-kpi:first-child{padding-left:0}
-    .func-kpi-div{width:1px;height:36px;background:var(--borda);flex-shrink:0}
-    .func-kpi-lbl{font-size:10px;font-weight:700;color:var(--muted);
-      letter-spacing:0.06em;text-transform:uppercase;margin-bottom:4px}
-    .func-kpi-val{font-size:20px;font-weight:900;letter-spacing:-0.5px}
-    .func-kpi-val.verde{color:var(--verde)}
-    .func-kpi-val.laranja{color:var(--laranja)}
-    .func-kpi-val.azul{color:var(--azul)}
-    .func-kpi-val.branco{color:var(--txt)}
-
-    /* Cards de funcionário */
-    .func-card{background:var(--card);border:1px solid var(--borda);
-      border-radius:var(--r);margin-bottom:10px;overflow:hidden;
-      transition:border-color 0.15s}
-    .func-card:hover{border-color:var(--muted2)}
-    .func-card-header{display:flex;align-items:center;gap:14px;padding:16px 20px;
-      cursor:pointer}
-    .func-avatar{width:44px;height:44px;border-radius:12px;display:flex;
-      align-items:center;justify-content:center;font-size:16px;font-weight:800;
-      color:#000;flex-shrink:0}
-    .func-info{flex:1;min-width:0}
-    .func-nome{font-size:14px;font-weight:700;color:var(--txt);
-      white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .func-cargo{font-size:11px;color:var(--muted);margin-top:1px}
-    .func-badge-inativo{font-size:9px;font-weight:800;padding:2px 8px;
-      border-radius:999px;background:rgba(239,68,68,0.12);color:var(--vermelho);
-      margin-left:8px;vertical-align:middle}
-    .func-stats{display:flex;gap:20px;flex-shrink:0}
-    .func-stat{text-align:right}
-    .func-stat-lbl{font-size:9px;font-weight:700;color:var(--muted);
-      letter-spacing:0.06em;text-transform:uppercase;margin-bottom:2px}
-    .func-stat-val{font-size:15px;font-weight:800}
-    .func-actions{display:flex;gap:6px;flex-shrink:0}
-    .func-action-btn{padding:6px 12px;border-radius:7px;font-family:inherit;
-      font-size:11px;font-weight:700;cursor:pointer;border:1px solid var(--borda);
-      background:var(--card2);color:var(--txt);transition:all 0.15s;white-space:nowrap}
-    .func-action-btn:hover{border-color:var(--muted2)}
-    .func-action-btn.green{border-color:var(--verde);color:var(--verde);
-      background:var(--verde-dim)}
-    .func-action-btn.red{border-color:var(--vermelho);color:var(--vermelho);
-      background:rgba(239,68,68,0.08)}
-
-    /* Barra de comissão no card */
-    .func-com-bar{padding:0 20px 14px;display:grid;
-      grid-template-columns:1fr 1fr 1fr 1fr;gap:10px}
-    .func-com-item{background:var(--card2);border-radius:8px;padding:10px 12px;
-      border:1px solid var(--borda)}
-    .func-com-item-lbl{font-size:9px;font-weight:700;color:var(--muted);
-      text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px}
-    .func-com-item-val{font-size:14px;font-weight:800;color:var(--txt)}
-    .func-com-item-val.verde{color:var(--verde)}
-    .func-com-item-val.laranja{color:var(--laranja)}
-    .func-com-item-val.azul{color:var(--azul)}
-
-    /* Modal comissão */
-    .com-kpi-card{border-radius:10px;padding:14px;border:1px solid var(--borda)}
-    .com-kpi-card.verde{background:var(--verde-dim);border-color:rgba(0,208,132,0.2)}
-    .com-kpi-card.laranja{background:var(--laranja-dim);border-color:rgba(249,115,22,0.2)}
-    .com-kpi-card.azul{background:var(--azul-dim);border-color:rgba(59,130,246,0.2)}
-    .com-kpi-card.roxo{background:var(--roxo-dim);border-color:rgba(168,85,247,0.2)}
-    .com-kpi-lbl{font-size:10px;font-weight:700;color:var(--muted);
-      text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px}
-    .com-kpi-val{font-size:22px;font-weight:900;letter-spacing:-0.5px;color:var(--txt)}
-    .com-total-box{background:linear-gradient(135deg,rgba(0,208,132,0.08),rgba(59,130,246,0.08));
-      border:1px solid rgba(0,208,132,0.2);border-radius:12px;
-      padding:18px 20px;margin-bottom:18px;text-align:center}
-    .com-total-lbl{font-size:11px;font-weight:700;color:var(--muted);
-      text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px}
-    .com-total-val{font-size:38px;font-weight:900;letter-spacing:-1.5px;
-      color:var(--verde);margin-bottom:12px}
-    .com-barra-track{height:8px;background:var(--borda);border-radius:999px;
-      overflow:hidden;margin-bottom:6px}
-    .com-barra-fill{height:100%;border-radius:999px;
-      background:linear-gradient(90deg,var(--verde),var(--azul));
-      transition:width 0.8s ease}
-    .com-barra-sub{font-size:11px;color:var(--muted)}
-
-    @media(max-width:900px){
-      .func-resumo-bar{flex-direction:column;gap:14px}
-      .func-kpis{gap:0}
-      .func-kpi{padding:0 12px;min-width:80px}
-      .func-stats{display:none}
-      .func-com-bar{grid-template-columns:1fr 1fr}
-    }
-    @media(max-width:480px){
-      .func-com-bar{grid-template-columns:1fr 1fr}
-      .func-kpi-val{font-size:16px}
-      .func-actions{flex-direction:column}
-    }
-
-    /* ── WPP BTN MODAL ── */
-    .m-wpp-btn{display:flex;align-items:center;gap:8px;width:100%;
-      background:#1a3a2a;border:1px solid #25D366;color:#25D366;
-      padding:11px 14px;border-radius:8px;font-size:13px;font-weight:700;
-      text-decoration:none;cursor:pointer;transition:all 0.15s;
-      -webkit-tap-highlight-color:transparent}
-    .m-wpp-btn:hover{background:#1f4a32}
-    .m-wpp-btn:active{opacity:0.8}
-
     /* ── TOAST ── */
-    .toast{position:fixed;bottom:calc(72px + var(--sb));left:50%;transform:translateX(-50%);
+    .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
       background:var(--card2);border:1px solid var(--borda);
       color:var(--txt);border-radius:8px;padding:10px 18px;
       font-size:12px;font-weight:600;z-index:999;
@@ -568,80 +385,18 @@
     @media(max-width:900px){
       .sidebar{transform:translateX(-100%);transition:transform 0.25s ease}
       .sidebar.open{transform:translateX(0)}
-      .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:49;backdrop-filter:blur(2px)}
-      .sidebar-overlay.show{display:block}
       .main{margin-left:0}
       .stats-grid{grid-template-columns:repeat(2,1fr)}
       .two-cols{grid-template-columns:1fr}
       .two-cols-eq{grid-template-columns:1fr}
-      .topbar{padding:0 12px}
-      .content{padding:14px 12px 90px}
+      .topbar{padding:0 16px}
+      .content{padding:16px}
       .tb-search{display:none}
-      .tb-copy-link{display:none}
-      .tb-novo{display:none}
-      .link-pub-btns{width:100%;margin-left:0;margin-top:10px}
-      .link-pub{flex-direction:column;align-items:flex-start}
-      .bottom-nav{display:grid}
     }
     @media(max-width:480px){
       .stats-grid{grid-template-columns:1fr 1fr}
-      .fat-valor{font-size:26px}
-      .pg-title{font-size:22px}
-      .stat-num{font-size:28px}
-      .content{padding:12px 10px 90px}
-      .m-row{grid-template-columns:1fr}
-      .ag-filters{flex-wrap:wrap;gap:4px}
-      .ag-filter-btn{font-size:10px;padding:4px 9px}
-      .blq-grid{grid-template-columns:1fr !important}
-      .notif-dd{width:calc(100vw - 24px);right:-8px;left:auto}
-      .topbar{height:50px}
+      .fat-valor{font-size:28px}
     }
-    .tb-title-mobile{display:none;font-size:14px;font-weight:700;color:var(--txt);flex:1;text-align:center}
-    @media(max-width:900px){.tb-title-mobile{display:block}}
-    .hamburger{display:none;width:36px;height:36px;border-radius:8px;
-      background:var(--card);border:1px solid var(--borda);
-      align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
-    .hamburger svg{width:16px;height:16px;color:var(--txt)}
-    @media(max-width:900px){.hamburger{display:flex}}
-    .bottom-nav{
-      display:none;position:fixed;bottom:0;left:0;right:0;
-      background:var(--sidebar);border-top:1px solid var(--borda);
-      padding:6px 0 calc(6px + var(--sb));z-index:45;
-      grid-template-columns:repeat(5,1fr);
-    }
-    .bn-item{display:flex;flex-direction:column;align-items:center;gap:3px;
-      padding:6px 4px;cursor:pointer;-webkit-tap-highlight-color:transparent;
-      color:var(--muted);font-size:9px;font-weight:600;position:relative;
-      letter-spacing:0.03em;transition:color 0.15s;border:none;background:none;
-      font-family:inherit;touch-action:manipulation}
-    .bn-item.ativo{color:var(--verde)}
-    .bn-item svg{width:20px;height:20px;stroke-width:1.8}
-    .bn-badge{position:absolute;top:2px;right:calc(50% - 18px);
-      background:var(--laranja);color:#000;font-size:9px;font-weight:800;
-      border-radius:999px;padding:1px 5px;min-width:16px;text-align:center;
-      border:2px solid var(--sidebar)}
-    .alerta-lembrete{display:none;position:fixed;top:62px;left:50%;
-      transform:translateX(-50%);z-index:300;
-      min-width:280px;max-width:calc(100vw - 32px);
-      border-radius:12px;padding:14px 18px;
-      box-shadow:0 8px 32px rgba(0,0,0,0.5);
-      animation:tUp 0.3s ease}
-    .alerta-lembrete.show{display:flex;align-items:flex-start;gap:12px}
-    .alerta-lembrete.urgente-1h{background:#7f1d1d;border:1px solid #991b1b}
-    .alerta-lembrete.urgente-30{background:#450a0a;border:2px solid #dc2626}
-    .al-icon{font-size:22px;flex-shrink:0;margin-top:1px}
-    .al-body{flex:1;min-width:0}
-    .al-titulo{font-size:13px;font-weight:800;color:#fca5a5;margin-bottom:3px}
-    .alerta-lembrete.urgente-30 .al-titulo{color:#f87171;animation:pulseRed 1s infinite}
-    @keyframes pulseRed{0%,100%{opacity:1}50%{opacity:0.65}}
-    .al-msg{font-size:12px;color:#fecaca;line-height:1.4}
-    .al-close{width:20px;height:20px;border-radius:4px;background:rgba(255,255,255,0.1);
-      display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;
-      color:#fca5a5;font-size:14px;border:none;font-family:inherit}
-    .al-wpp-btn{display:inline-flex;align-items:center;gap:6px;margin-top:8px;
-      background:#25D366;color:#fff;padding:7px 14px;border-radius:8px;
-      font-size:12px;font-weight:700;text-decoration:none;border:none;
-      cursor:pointer;font-family:inherit}
   </style>
 </head>
 <body>
@@ -681,10 +436,6 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4" stroke-linecap="round"/></svg>
         Bloqueios
       </a>
-      <a class="sb-item" onclick="pg('funcionarios',this)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke-linecap="round"/></svg>
-        Funcionários
-      </a>
       <div class="sb-divider"></div>
       <a class="sb-item" onclick="pg('config',this)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
@@ -704,10 +455,6 @@
 
     <!-- TOPBAR -->
     <div class="topbar">
-      <button class="hamburger" onclick="toggleSidebar()" aria-label="Menu">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-      </button>
-      <div class="tb-title-mobile" id="tb-title-mobile">AgendaOK</div>
       <div class="tb-search">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35" stroke-linecap="round"/></svg>
         <input type="text" placeholder="Buscar cliente, agendamento, serviço..."/>
@@ -916,7 +663,7 @@
       <div id="pg-bloqueios" style="display:none">
         <div class="pg-breadcrumb">Bloqueios</div>
         <h2 style="font-size:22px;font-weight:800;margin-bottom:16px;letter-spacing:-0.4px">Bloqueios de horário</h2>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;" class="blq-grid">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
           <div style="background:var(--card);border:1px solid var(--borda);border-radius:var(--r);padding:20px">
             <div style="font-size:14px;font-weight:700;margin-bottom:14px">Novo bloqueio</div>
             <div style="margin-bottom:12px">
@@ -952,53 +699,6 @@
         </div>
       </div>
 
-      <!-- FUNCIONÁRIOS -->
-      <div id="pg-funcionarios" style="display:none">
-        <div class="pg-breadcrumb">Equipe</div>
-        <div class="func-topbar">
-          <div>
-            <h2 class="func-titulo">Funcionários &amp; Comissões</h2>
-            <div class="func-subtitulo">Gestão de equipe, salários e comissões automáticas</div>
-          </div>
-          <button class="func-add-btn" onclick="abrirModalFunc()">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Novo funcionário
-          </button>
-        </div>
-
-        <!-- SELETOR DE MÊS + RESUMO GERAL -->
-        <div class="func-resumo-bar">
-          <div class="func-mes-wrap">
-            <label class="func-mes-label">Período</label>
-            <input type="month" id="func-mes" class="func-mes-input" onchange="carregarFuncionarios()"/>
-          </div>
-          <div class="func-kpis" id="func-kpis">
-            <div class="func-kpi">
-              <div class="func-kpi-lbl">Faturamento total</div>
-              <div class="func-kpi-val verde" id="fkpi-fat">R$ 0,00</div>
-            </div>
-            <div class="func-kpi-div"></div>
-            <div class="func-kpi">
-              <div class="func-kpi-lbl">Total de comissões</div>
-              <div class="func-kpi-val laranja" id="fkpi-com">R$ 0,00</div>
-            </div>
-            <div class="func-kpi-div"></div>
-            <div class="func-kpi">
-              <div class="func-kpi-lbl">Total da folha</div>
-              <div class="func-kpi-val azul" id="fkpi-folha">R$ 0,00</div>
-            </div>
-            <div class="func-kpi-div"></div>
-            <div class="func-kpi">
-              <div class="func-kpi-lbl">Funcionários ativos</div>
-              <div class="func-kpi-val branco" id="fkpi-qtd">0</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- LISTA DE FUNCIONÁRIOS -->
-        <div id="func-lista-pg"></div>
-      </div>
-
       <!-- CONFIG -->
       <div id="pg-config" style="display:none">
         <div class="pg-breadcrumb">Configurações</div>
@@ -1015,6 +715,37 @@
           <input class="m-input" type="color" id="cfg-cor" style="padding:6px;height:44px;margin-bottom:14px"/>
           <label class="m-label">Horários disponíveis</label>
           <input class="m-input" id="cfg-hr" placeholder="08:00,09:00,10:00..." style="margin-bottom:20px"/>
+          <label class="m-label" style="margin-bottom:10px">Dias de atendimento</label>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px" id="cfg-dias-wrap">
+            <label style="display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer">
+              <input type="checkbox" value="0" id="cd-0" style="width:18px;height:18px;accent-color:var(--verde);cursor:pointer"/>
+              <span style="font-size:11px;font-weight:600;color:var(--muted)">Dom</span>
+            </label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer">
+              <input type="checkbox" value="1" id="cd-1" style="width:18px;height:18px;accent-color:var(--verde);cursor:pointer"/>
+              <span style="font-size:11px;font-weight:600;color:var(--muted)">Seg</span>
+            </label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer">
+              <input type="checkbox" value="2" id="cd-2" style="width:18px;height:18px;accent-color:var(--verde);cursor:pointer"/>
+              <span style="font-size:11px;font-weight:600;color:var(--muted)">Ter</span>
+            </label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer">
+              <input type="checkbox" value="3" id="cd-3" style="width:18px;height:18px;accent-color:var(--verde);cursor:pointer"/>
+              <span style="font-size:11px;font-weight:600;color:var(--muted)">Qua</span>
+            </label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer">
+              <input type="checkbox" value="4" id="cd-4" style="width:18px;height:18px;accent-color:var(--verde);cursor:pointer"/>
+              <span style="font-size:11px;font-weight:600;color:var(--muted)">Qui</span>
+            </label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer">
+              <input type="checkbox" value="5" id="cd-5" style="width:18px;height:18px;accent-color:var(--verde);cursor:pointer"/>
+              <span style="font-size:11px;font-weight:600;color:var(--muted)">Sex</span>
+            </label>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer">
+              <input type="checkbox" value="6" id="cd-6" style="width:18px;height:18px;accent-color:var(--verde);cursor:pointer"/>
+              <span style="font-size:11px;font-weight:600;color:var(--muted)">Sáb</span>
+            </label>
+          </div>
           <div style="padding-top:16px;border-top:1px solid var(--borda)">
             <button onclick="salvarConfig()" style="padding:11px 24px;border-radius:8px;background:var(--verde);border:none;color:#000;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer">Salvar configurações</button>
             <button onclick="sair()" style="margin-left:10px;padding:11px 24px;border-radius:8px;background:none;border:1px solid var(--borda);color:var(--muted);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer">Sair da conta</button>
@@ -1033,45 +764,6 @@
   </div><!-- /main -->
 </div><!-- /app -->
 
-<!-- SIDEBAR OVERLAY -->
-<div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
-
-<!-- BOTTOM NAV (mobile) -->
-<nav class="bottom-nav" id="bottom-nav">
-  <button class="bn-item ativo" id="bn-dashboard" onclick="pg('dashboard',null);bnAtivar('bn-dashboard')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-    Início
-  </button>
-  <button class="bn-item" id="bn-agenda" onclick="pg('agenda',null);bnAtivar('bn-agenda')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18" stroke-linecap="round"/></svg>
-    Agenda
-  </button>
-  <button class="bn-item" id="bn-hoje" onclick="pg('hoje',null);bnAtivar('bn-hoje')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2" stroke-linecap="round"/></svg>
-    Hoje
-    <span class="bn-badge" id="bn-hoje-badge" style="display:none">0</span>
-  </button>
-  <button class="bn-item" id="bn-servicos" onclick="pg('servicos',null);bnAtivar('bn-servicos')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-    Serviços
-  </button>
-  <button class="bn-item" id="bn-funcionarios" onclick="pg('funcionarios',null);bnAtivar('bn-funcionarios')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke-linecap="round"/></svg>
-    Equipe
-  </button>
-</nav>
-
-<!-- ALERTAS DE LEMBRETE -->
-<div class="alerta-lembrete" id="alerta-lembrete">
-  <div class="al-icon" id="al-icon">⚠️</div>
-  <div class="al-body">
-    <div class="al-titulo" id="al-titulo">Lembrete</div>
-    <div class="al-msg" id="al-msg"></div>
-    <div id="al-wpp-wrap"></div>
-  </div>
-  <button class="al-close" onclick="fecharAlerta()">✕</button>
-</div>
-
 <!-- MODAL EDITAR AGENDAMENTO -->
 <div class="overlay" id="m-ag" onclick="if(event.target===this)fechar('m-ag')">
   <div class="modal">
@@ -1082,138 +774,11 @@
       <input type="hidden" id="m-ag-id"/>
       <label class="m-label">Status</label>
       <div class="status-pills" id="status-pills"></div>
-      <div id="m-ag-wpp" style="margin-top:14px"></div>
       <label class="m-label">Observações</label>
       <textarea class="m-textarea" id="m-ag-obs" placeholder="Notas internas..."></textarea>
       <div class="modal-footer">
         <button class="m-btn m-btn-out" onclick="fechar('m-ag')">Cancelar</button>
         <button class="m-btn m-btn-g" onclick="salvarStatus()">Salvar</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL FUNCIONÁRIO -->
-<div class="overlay" id="m-func" onclick="if(event.target===this)fechar('m-func')">
-  <div class="modal" style="max-height:92dvh">
-    <div class="modal-handle"></div>
-    <div class="modal-body">
-      <div class="modal-title" id="m-func-t">Novo funcionário</div>
-      <div class="modal-sub">Preencha os dados e a comissão será calculada automaticamente</div>
-      <input type="hidden" id="func-edit-id"/>
-
-      <label class="m-label">Nome completo</label>
-      <input class="m-input" id="f-nome" placeholder="Ex: Rafael Silva" style="margin-bottom:12px"/>
-
-      <div class="m-row">
-        <div>
-          <label class="m-label">Cargo</label>
-          <input class="m-input" id="f-cargo" placeholder="Ex: Barbeiro"/>
-        </div>
-        <div>
-          <label class="m-label">Cor identificação</label>
-          <input class="m-input" type="color" id="f-cor" value="#00d084" style="padding:6px;height:44px"/>
-        </div>
-      </div>
-
-      <div class="m-row" style="margin-top:12px">
-        <div>
-          <label class="m-label">WhatsApp</label>
-          <input class="m-input" id="f-tel" placeholder="(11) 99999-9999" type="tel"/>
-        </div>
-        <div>
-          <label class="m-label">E-mail</label>
-          <input class="m-input" id="f-email" placeholder="email@email.com" type="email"/>
-        </div>
-      </div>
-
-      <div style="background:var(--card2);border:1px solid var(--borda);border-radius:10px;padding:16px;margin-top:16px">
-        <div style="font-size:12px;font-weight:700;color:var(--txt);margin-bottom:12px;display:flex;align-items:center;gap:8px">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--verde)" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20" stroke-linecap="round"/></svg>
-          Remuneração
-        </div>
-        <div class="m-row">
-          <div>
-            <label class="m-label">Salário fixo (R$)</label>
-            <input class="m-input" type="number" id="f-salario" placeholder="0,00" step="0.01" min="0" oninput="calcPreview()"/>
-          </div>
-          <div>
-            <label class="m-label">Comissão (%)</label>
-            <div style="position:relative">
-              <input class="m-input" type="number" id="f-comissao" placeholder="0" step="0.5" min="0" max="100" oninput="calcPreview()" style="padding-right:40px"/>
-              <span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:14px;pointer-events:none">%</span>
-            </div>
-          </div>
-        </div>
-        <!-- PREVIEW DE CÁLCULO -->
-        <div id="f-preview" style="display:none;margin-top:12px;background:var(--bg);border-radius:8px;padding:12px">
-          <div style="font-size:10px;font-weight:700;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:8px">Preview do cálculo (mês atual)</div>
-          <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:4px">
-            <span>Salário fixo</span>
-            <span id="prev-fixo" style="color:var(--txt);font-weight:600">R$ 0,00</span>
-          </div>
-          <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:4px">
-            <span>Comissão (<span id="prev-pct">0</span>% sobre <span id="prev-bruto-lbl">R$ 0,00</span>)</span>
-            <span id="prev-com" style="color:var(--laranja);font-weight:600">R$ 0,00</span>
-          </div>
-          <div style="height:1px;background:var(--borda);margin:8px 0"></div>
-          <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:800">
-            <span style="color:var(--txt)">Total a pagar</span>
-            <span id="prev-total" style="color:var(--verde)">R$ 0,00</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="modal-footer">
-        <button class="m-btn m-btn-out" onclick="fechar('m-func')">Cancelar</button>
-        <button class="m-btn m-btn-g" onclick="salvarFunc()">Salvar</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL DETALHE COMISSÃO -->
-<div class="overlay" id="m-comissao" onclick="if(event.target===this)fechar('m-comissao')">
-  <div class="modal" style="max-height:92dvh">
-    <div class="modal-handle"></div>
-    <div class="modal-body">
-      <div class="modal-title" id="m-com-nome">Comissão</div>
-      <div class="modal-sub" id="m-com-periodo">—</div>
-
-      <!-- KPIs da comissão -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
-        <div class="com-kpi-card verde">
-          <div class="com-kpi-lbl">Atendimentos</div>
-          <div class="com-kpi-val" id="m-com-qtd">0</div>
-        </div>
-        <div class="com-kpi-card laranja">
-          <div class="com-kpi-lbl">Gerado (bruto)</div>
-          <div class="com-kpi-val" id="m-com-bruto">R$ 0,00</div>
-        </div>
-        <div class="com-kpi-card azul">
-          <div class="com-kpi-lbl">Salário fixo</div>
-          <div class="com-kpi-val" id="m-com-fixo">R$ 0,00</div>
-        </div>
-        <div class="com-kpi-card roxo">
-          <div class="com-kpi-lbl">Comissão (<span id="m-com-pct">0</span>%)</div>
-          <div class="com-kpi-val" id="m-com-comval">R$ 0,00</div>
-        </div>
-      </div>
-
-      <!-- Total destaque -->
-      <div class="com-total-box">
-        <div class="com-total-lbl">Total a pagar no mês</div>
-        <div class="com-total-val" id="m-com-total">R$ 0,00</div>
-        <div class="com-barra-track"><div class="com-barra-fill" id="m-com-barra"></div></div>
-        <div class="com-barra-sub" id="m-com-barra-sub">Comissão representa 0% da remuneração total</div>
-      </div>
-
-      <!-- Lista de atendimentos -->
-      <div style="font-size:11px;font-weight:700;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:10px">Atendimentos no período</div>
-      <div id="m-com-lista" style="max-height:200px;overflow-y:auto;background:var(--card2);border:1px solid var(--borda);border-radius:8px"></div>
-
-      <div class="modal-footer">
-        <button class="m-btn m-btn-out" onclick="fechar('m-comissao')">Fechar</button>
       </div>
     </div>
   </div>
@@ -1265,7 +830,6 @@ async function init() {
     const r = await fetch('/auth/me', {credentials:'include'});
     if (!r.ok) { location.href = '/login'; return; }
     U = await r.json();
-    if (!U || !U.logado) { location.href = '/login'; return; }
 
     if (!U.acesso_ok) { mostrarBloqueio(U.motivo_bloqueio); return; }
 
@@ -1277,24 +841,17 @@ async function init() {
       if (dias >= 0 && dias <= 3) avisoTrial(dias);
     }
 
-    // Preenche UI — com proteção contra null
-    const setEl = (id, val) => { const e = document.getElementById(id); if(e) e.textContent = val; };
-    const ini = (U.nome_negocio || '?').charAt(0).toUpperCase();
-    setEl('sb-av', ini);
-    setEl('sb-name', U.nome_negocio || '');
-    const tbTitleMob = document.getElementById('tb-title-mobile');
-    if (tbTitleMob) tbTitleMob.textContent = U.nome_negocio || '';
-    setEl('sb-sub', (U.nicho || '').toUpperCase() + ' · PRO');
-    setEl('tb-user', (U.nome || '?').charAt(0).toUpperCase());
-    setEl('pg-nome-usuario', (U.nome || '').split(' ')[0]);
+    // Preenche UI
+    const ini = U.nome_negocio.charAt(0).toUpperCase();
+    document.getElementById('sb-av').textContent = ini;
+    document.getElementById('sb-name').textContent = U.nome_negocio;
+    document.getElementById('sb-sub').textContent = (U.nicho || '').toUpperCase() + ' · PRO';
+    document.getElementById('tb-user').textContent = U.nome.charAt(0).toUpperCase();
+    document.getElementById('pg-nome-usuario').textContent = U.nome.split(' ')[0];
 
     const link = location.origin + '/agendar/' + U.slug;
     document.getElementById('lp-url').textContent = link;
     document.getElementById('qr-url-dash').textContent = '/' + U.slug;
-
-    // Inicializar mês no módulo funcionários
-    const funcMesEl = document.getElementById('func-mes');
-    if (funcMesEl) funcMesEl.value = new Date().toISOString().slice(0,7);
 
     // QR Code
     const qrSrc = 'https://api.qrserver.com/v1/create-qr-code/?size=72x72&data=' + encodeURIComponent(link) + '&color=00d084&bgcolor=161b22';
@@ -1313,30 +870,9 @@ async function init() {
       document.getElementById('sb-plan-sub').textContent = `Renova em ${dias} dias`;
     }
 
-    await Promise.allSettled([carregarDash(), carregarNotifs()]);
+    await Promise.all([carregarDash(), carregarNotifs()]);
     setInterval(carregarNotifs, 120000);
-
-    // Lembrete: verificar imediatamente e depois a cada 2min
-    verificarLembretes();
-
-    // Pedir permissão de push com delay (não interrompe carregamento)
-    setTimeout(() => {
-      if (Notification.permission === 'default') {
-        pedirPermissaoPush();
-      } else if (Notification.permission === 'granted') {
-        iniciarPush();
-      }
-    }, 3000);
-
-    // Tour de onboarding para novos usuários
-    setTimeout(() => obIniciar(false), 1500);
-
-    // Badge do bottom nav atualizado pelo carregarDash
-  } catch(e) {
-    console.error('Erro no init():', e);
-    // Só redireciona se for erro de autenticação (401)
-    // outros erros não devem expulsar o usuário
-  }
+  } catch(e) { location.href = '/login'; }
 }
 
 function mostrarBloqueio(motivo) {
@@ -1363,13 +899,9 @@ function avisoTrial(dias) {
 }
 
 // ── NAVEGAÇÃO ──
-const PAGINAS = ['dashboard','agenda','hoje','servicos','bloqueios','config','funcionarios'];
 function pg(nome, el) {
   paginaAtual = nome;
-  PAGINAS.forEach(p => {
-    const el2 = document.getElementById('pg-' + p);
-    if (el2) el2.style.display = 'none';
-  });
+  document.querySelectorAll('[id^="pg-"]').forEach(p => p.style.display = 'none');
   const target = document.getElementById('pg-' + nome);
   if (target) target.style.display = 'block';
 
@@ -1377,19 +909,15 @@ function pg(nome, el) {
   if (el) el.classList.add('ativo');
 
   const actions = {
-    dashboard:    carregarDash,
-    agenda:       () => carregarAgFull(filtroAg),
-    hoje:         carregarHojePg,
-    servicos:     carregarSrvPg,
-    bloqueios:    carregarBloqPg,
-    config:       carregarConfig,
-    funcionarios: carregarFuncionarios,
+    dashboard: carregarDash,
+    agenda:    () => carregarAgFull(filtroAg),
+    hoje:      carregarHojePg,
+    servicos:  carregarSrvPg,
+    bloqueios: carregarBloqPg,
+    config:    carregarConfig,
   };
   if (actions[nome]) actions[nome]();
   window.scrollTo({top:0,behavior:'smooth'});
-  // Fechar sidebar mobile ao navegar
-  const sb = document.getElementById('sidebar');
-  if (sb && sb.classList.contains('open')) toggleSidebar();
 }
 
 // ── DASHBOARD ──
@@ -1419,12 +947,6 @@ async function carregarDash() {
     // Badge hoje sidebar
     const hojeBadge = document.getElementById('sb-hoje-badge');
     if (s.hoje > 0) { hojeBadge.style.display = 'block'; hojeBadge.textContent = s.hoje; }
-    // Badge hoje bottom-nav mobile
-    const bnHojeBadge = document.getElementById('bn-hoje-badge');
-    if (bnHojeBadge) {
-      if (s.hoje > 0) { bnHojeBadge.style.display = 'block'; bnHojeBadge.textContent = s.hoje; }
-      else { bnHojeBadge.style.display = 'none'; }
-    }
 
     // Faturamento
     if (s.faturamento != null && s.faturamento > 0) {
@@ -1439,9 +961,7 @@ async function carregarDash() {
     renderChart(dh.agendamentos || []);
     await carregarSrvChart();
     renderProf(dh.agendamentos || []);
-  } catch(e) {
-    console.error('carregarDash erro:', e);
-  }
+  } catch(e) {}
 }
 
 // ── RENDER AGENDAMENTOS HOJE (Dashboard) ──
@@ -1464,7 +984,7 @@ function renderAgHoje(ags, filtro = 'todos') {
       : a.status === 'pendente'
       ? '<span class="ag-tag pend">Pendente</span>'
       : '';
-    return `<div class="ag-row" onclick="abrirModalAg('${a.id}','${esc(a.nome)}','${a.horario}','${a.status}','${esc(a.obs)}','${esc(a.telefone||'')}','${esc(a.servico||'')}','${a.data||''}')">
+    return `<div class="ag-row" onclick="abrirModalAg('${a.id}','${esc(a.nome)}','${a.horario}','${a.status}',\`${esc(a.obs)}\`)">
       <span class="ag-hora">${a.horario}</span>
       <div class="ag-dot ${dotCor[a.status]||'azul'}"></div>
       <div class="ag-info">
@@ -1514,7 +1034,7 @@ function renderAgRow(a, showActions = false) {
   }[a.status] || '';
 
   return `<div class="ag-row" style="border-bottom:1px solid var(--borda)"
-    onclick="abrirModalAg('${a.id}','${esc(a.nome)}','${a.horario} · ${dia}/${mes}','${a.status}','${esc(a.obs)}','${esc(a.telefone||'')}','${esc(a.servico||'')}','${a.data||''}')">
+    onclick="abrirModalAg('${a.id}','${esc(a.nome)}','${a.horario} · ${dia}/${mes}','${a.status}',\`${esc(a.obs)}\`)">
     <span class="ag-hora">${a.data === new Date().toISOString().split('T')[0] ? a.horario : dia+'/'+mes}</span>
     <div class="ag-dot ${dotCor[a.status]||'azul'}"></div>
     <div class="ag-info">
@@ -1589,7 +1109,7 @@ async function carregarSrvChart() {
           <div class="srv-bar-fill" style="width:${pcts[i]||5}%;background:${CORES_SRV[i%CORES_SRV.length]}"></div>
         </div>
       </div>`).join('');
-  } catch(e) { console.warn('carregarSrvChart:', e.message); }
+  } catch(e) {}
 }
 
 // ── PROFISSIONAIS ──
@@ -1614,7 +1134,7 @@ function renderProf(ags) {
 }
 
 // ── MODAL AGENDAMENTO ──
-function abrirModalAg(id, nome, info, status, obs, telefone, servico, data) {
+function abrirModalAg(id, nome, info, status, obs) {
   document.getElementById('m-ag-id').value = id;
   document.getElementById('m-ag-t').textContent = nome;
   document.getElementById('m-ag-s').textContent = info;
@@ -1627,28 +1147,6 @@ function abrirModalAg(id, nome, info, status, obs, telefone, servico, data) {
       <span class="sp-title">${v.lbl}</span>
       <span class="sp-desc">${v.desc}</span>
     </div>`).join('');
-
-  // ── Botão WhatsApp ──
-  const wppWrapModal = document.getElementById('m-ag-wpp');
-  if (wppWrapModal) {
-    wppWrapModal.innerHTML = '';
-    if (telefone && telefone.trim()) {
-      const tel = telefone.replace(/\D/g,'');
-      const num = tel.length <= 11 ? '55'+tel : tel;
-      let dataFmt = '';
-      if (data) { const [a2,m2,d2]=data.split('-'); dataFmt=d2+'/'+m2+'/'+a2; }
-      const horario = info.split(' · ')[0];
-      const msgConf = 'Olá ' + nome + '! Passando para confirmar seu agendamento'
-        + (servico?' de '+servico:'') + (dataFmt?' no dia '+dataFmt:'')
-        + (horario?' às '+horario:'') + '. Você confirma?';
-      const link = 'https://wa.me/'+num+'?text='+encodeURIComponent(msgConf);
-      wppWrapModal.innerHTML = '<a href="'+link+'" target="_blank" class="m-wpp-btn">'
-        +'<svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>'
-        +' Enviar WhatsApp de confirmação</a>';
-    } else {
-      wppWrapModal.innerHTML = '<p style="font-size:11px;color:var(--muted);margin:0">Sem telefone cadastrado para este agendamento.</p>';
-    }
-  }
 
   document.getElementById('m-ag').classList.add('open');
 }
@@ -1811,16 +1309,35 @@ async function carregarConfig() {
     document.getElementById('cfg-tel').value  = d.telefone || '';
     document.getElementById('cfg-cor').value  = d.cor || '#00d084';
     document.getElementById('cfg-hr').value   = d.horarios || '';
+    // Dias da semana — se vazio ou não definido, marca todos
+    const diasSalvos = d.dias_uteis && d.dias_uteis.trim() !== ''
+      ? d.dias_uteis.split(',').map(Number)
+      : [0,1,2,3,4,5,6];
+    for (let i = 0; i <= 6; i++) {
+      const cb = document.getElementById('cd-' + i);
+      if (cb) cb.checked = diasSalvos.includes(i);
+    }
   } catch(e) {}
 }
 
 async function salvarConfig() {
+  // Coleta dias marcados
+  const diasMarcados = [];
+  for (let i = 0; i <= 6; i++) {
+    const cb = document.getElementById('cd-' + i);
+    if (cb && cb.checked) diasMarcados.push(i);
+  }
+  if (diasMarcados.length === 0) {
+    toast('Selecione ao menos 1 dia de atendimento', 'err');
+    return;
+  }
   const payload = {
     nome_negocio: document.getElementById('cfg-nome').value,
     descricao:    document.getElementById('cfg-desc').value,
     telefone:     document.getElementById('cfg-tel').value,
     cor:          document.getElementById('cfg-cor').value,
     horarios:     document.getElementById('cfg-hr').value,
+    dias_uteis:   diasMarcados.join(','),
   };
   try {
     await fetch('/negocio/config', {method:'PATCH',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
@@ -1847,20 +1364,7 @@ async function carregarNotifs() {
     }
 
     lista.innerHTML = d.notificacoes.map(n => {
-      // Suporta ISO (TIMESTAMPTZ) e formato BR legado
-      let dt;
-      try {
-        const raw = n.criado_em || '';
-        if (raw.includes('/')) {
-          // "DD/MM/YYYY HH:MM:SS" -> converter
-          const [datePart, timePart] = raw.split(' ');
-          const [d2,m2,y2] = datePart.split('/');
-          dt = new Date(`${y2}-${m2}-${d2}T${timePart||'00:00:00'}`);
-        } else {
-          dt = new Date(raw);
-        }
-      } catch { dt = new Date(); }
-      if (isNaN(dt)) dt = new Date();
+      const dt = new Date(n.criado_em);
       const diffMin = Math.floor((new Date() - dt) / 60000);
       const hora = diffMin < 1 ? 'Agora' : diffMin < 60 ? diffMin+'min atrás' : Math.floor(diffMin/60)+'h atrás';
       const cores = {pagamento:'#00d084',acesso:'#3b82f6',info:'#6b7a99',aviso:'#f97316'};
@@ -1874,10 +1378,7 @@ async function carregarNotifs() {
         <div class="nd-item-hora">${hora}</div>
       </div>`;
     }).join('');
-  } catch(e) {
-    // Tabela notificacoes pode não existir ainda — silencioso
-    console.warn('carregarNotifs:', e.message);
-  }
+  } catch(e) {}
 }
 
 async function toggleNotif(e) {
@@ -1950,694 +1451,13 @@ function toast(msg, tipo = 'ok') {
   setTimeout(() => t.remove(), 2500);
 }
 
-// ── FUNCIONÁRIOS ─────────────────────────────────────────────
-let _funcEditId = null;
-let _funcBrutoAtual = 0; // faturamento do funcionário no mês atual (para preview)
-
-function moedaBR(v) {
-  return 'R$ ' + parseFloat(v||0).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
-}
-
-function mesAtual() {
-  const m = document.getElementById('func-mes');
-  return m?.value || new Date().toISOString().slice(0,7);
-}
-
-async function carregarFuncionarios() {
-  try {
-    const mes = mesAtual();
-    const [rFuncs, rResumo] = await Promise.all([
-      fetch('/funcionarios', {credentials:'include'}),
-      fetch('/funcionarios/resumo/mes?mes='+mes, {credentials:'include'}),
-    ]);
-    const dFuncs  = await rFuncs.json();
-    const dResumo = await rResumo.json();
-
-    // KPIs globais
-    document.getElementById('fkpi-fat').textContent   = moedaBR(dResumo.total_estabelecimento);
-    document.getElementById('fkpi-com').textContent   = moedaBR(dResumo.total_comissoes);
-    document.getElementById('fkpi-folha').textContent = moedaBR(dResumo.total_folha);
-    document.getElementById('fkpi-qtd').textContent   = dFuncs.funcionarios?.filter(f=>f.ativo).length || 0;
-
-    // Mapa de resumos por id
-    const resumoMap = {};
-    (dResumo.funcionarios||[]).forEach(r => resumoMap[r.id] = r);
-
-    const el = document.getElementById('func-lista-pg');
-    if (!dFuncs.funcionarios?.length) {
-      el.innerHTML = '<div style="background:var(--card);border:1px solid var(--borda);border-radius:var(--r);padding:40px;text-align:center;color:var(--muted);font-size:13px">Nenhum funcionário cadastrado. Clique em <strong style=\'color:var(--txt)\'>Novo funcionário</strong> para começar.</div>';
-      return;
-    }
-
-    el.innerHTML = dFuncs.funcionarios.map(f => {
-      const r = resumoMap[f.id] || {atendimentos:0, total_bruto:0, comissao_valor:0, salario_fixo:f.salario_fixo, total_a_pagar:parseFloat(f.salario_fixo||0), comissao_pct:f.comissao_pct};
-      const comissaoPct = parseFloat(f.comissao_pct||0);
-      const totalAPagar = r.total_a_pagar;
-      const propCom = totalAPagar > 0 ? Math.round((r.comissao_valor/totalAPagar)*100) : 0;
-
-      return `<div class="func-card" id="fcard-${f.id}">
-        <div class="func-card-header" onclick="toggleFuncDetalhes('${f.id}')">
-          <div class="func-avatar" style="background:${f.cor}">${f.nome.charAt(0).toUpperCase()}</div>
-          <div class="func-info">
-            <div class="func-nome">${f.nome}${!f.ativo?'<span class=\"func-badge-inativo\">INATIVO</span>':''}</div>
-            <div class="func-cargo">${f.cargo||'Sem cargo'}${f.telefone?' · '+f.telefone:''}</div>
-          </div>
-          <div class="func-stats">
-            <div class="func-stat">
-              <div class="func-stat-lbl">Atendimentos</div>
-              <div class="func-stat-val" style="color:var(--azul)">${r.atendimentos}</div>
-            </div>
-            <div class="func-stat">
-              <div class="func-stat-lbl">Gerado</div>
-              <div class="func-stat-val" style="color:var(--verde)">${moedaBR(r.total_bruto)}</div>
-            </div>
-            <div class="func-stat">
-              <div class="func-stat-lbl">A pagar</div>
-              <div class="func-stat-val" style="color:var(--txt)">${moedaBR(totalAPagar)}</div>
-            </div>
-          </div>
-          <div class="func-actions" onclick="event.stopPropagation()">
-            <button class="func-action-btn green" onclick="abrirComissao('${f.id}','${esc(f.nome)}')">Ver comissão</button>
-            <button class="func-action-btn" onclick="editarFunc('${f.id}')">Editar</button>
-            <button class="func-action-btn red" onclick="excluirFunc('${f.id}')">Excluir</button>
-          </div>
-        </div>
-        <div class="func-com-bar" id="fdet-${f.id}" style="display:none">
-          <div class="func-com-item">
-            <div class="func-com-item-lbl">Salário fixo</div>
-            <div class="func-com-item-val azul">${moedaBR(f.salario_fixo)}</div>
-          </div>
-          <div class="func-com-item">
-            <div class="func-com-item-lbl">Comissão (${comissaoPct}%)</div>
-            <div class="func-com-item-val laranja">${moedaBR(r.comissao_valor)}</div>
-          </div>
-          <div class="func-com-item">
-            <div class="func-com-item-lbl">Bruto gerado</div>
-            <div class="func-com-item-val verde">${moedaBR(r.total_bruto)}</div>
-          </div>
-          <div class="func-com-item" style="border-color:var(--verde);background:var(--verde-dim)">
-            <div class="func-com-item-lbl">Total a pagar</div>
-            <div class="func-com-item-val verde">${moedaBR(totalAPagar)}</div>
-          </div>
-        </div>
-      </div>`;
-    }).join('');
-  } catch(e) { console.warn('carregarFuncionarios:', e.message); }
-}
-
-function toggleFuncDetalhes(id) {
-  const el = document.getElementById('fdet-'+id);
-  if (!el) return;
-  el.style.display = el.style.display === 'none' ? 'grid' : 'none';
-}
-
-// ── MODAL FUNCIONÁRIO ──
-function abrirModalFunc() {
-  _funcEditId = null;
-  _funcBrutoAtual = 0;
-  document.getElementById('m-func-t').textContent = 'Novo funcionário';
-  ['f-nome','f-cargo','f-tel','f-email'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('f-salario').value = '';
-  document.getElementById('f-comissao').value = '';
-  document.getElementById('f-cor').value = '#00d084';
-  document.getElementById('f-preview').style.display = 'none';
-  document.getElementById('func-edit-id').value = '';
-  document.getElementById('m-func').classList.add('open');
-}
-
-async function editarFunc(id) {
-  try {
-    const r = await fetch('/funcionarios', {credentials:'include'});
-    const d = await r.json();
-    const f = d.funcionarios.find(x => x.id === id);
-    if (!f) return;
-    _funcEditId = id;
-    document.getElementById('m-func-t').textContent = 'Editar funcionário';
-    document.getElementById('func-edit-id').value = id;
-    document.getElementById('f-nome').value    = f.nome;
-    document.getElementById('f-cargo').value   = f.cargo||'';
-    document.getElementById('f-tel').value     = f.telefone||'';
-    document.getElementById('f-email').value   = f.email||'';
-    document.getElementById('f-salario').value = f.salario_fixo||'';
-    document.getElementById('f-comissao').value= f.comissao_pct||'';
-    document.getElementById('f-cor').value     = f.cor||'#00d084';
-    // Buscar bruto atual para preview
-    const mes = mesAtual();
-    try {
-      const rc = await fetch('/funcionarios/'+id+'/comissao?mes='+mes, {credentials:'include'});
-      const dc = await rc.json();
-      _funcBrutoAtual = dc.total_bruto || 0;
-    } catch{}
-    calcPreview();
-    document.getElementById('m-func').classList.add('open');
-  } catch(e) {}
-}
-
-function calcPreview() {
-  const fixo    = parseFloat(document.getElementById('f-salario').value)||0;
-  const pct     = parseFloat(document.getElementById('f-comissao').value)||0;
-  const preview = document.getElementById('f-preview');
-
-  if (fixo === 0 && pct === 0) { preview.style.display='none'; return; }
-  preview.style.display = 'block';
-
-  const comVal = _funcBrutoAtual * pct / 100;
-  const total  = fixo + comVal;
-
-  document.getElementById('prev-fixo').textContent      = moedaBR(fixo);
-  document.getElementById('prev-pct').textContent       = pct+'%';
-  document.getElementById('prev-bruto-lbl').textContent = moedaBR(_funcBrutoAtual);
-  document.getElementById('prev-com').textContent       = moedaBR(comVal);
-  document.getElementById('prev-total').textContent     = moedaBR(total);
-}
-
-async function salvarFunc() {
-  const nome = document.getElementById('f-nome').value.trim();
-  if (!nome) { toast('Informe o nome', 'err'); return; }
-  const payload = {
-    nome,
-    cargo:       document.getElementById('f-cargo').value,
-    telefone:    document.getElementById('f-tel').value,
-    email:       document.getElementById('f-email').value,
-    salario_fixo:document.getElementById('f-salario').value||0,
-    comissao_pct:document.getElementById('f-comissao').value||0,
-    cor:         document.getElementById('f-cor').value,
-  };
-  try {
-    const id = document.getElementById('func-edit-id').value;
-    const url    = id ? '/funcionarios/'+id : '/funcionarios';
-    const method = id ? 'PATCH' : 'POST';
-    const r = await fetch(url, {method, credentials:'include', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)});
-    if (!r.ok) { const d=await r.json(); toast(d.erro||'Erro','err'); return; }
-    fechar('m-func');
-    toast(id ? 'Funcionário atualizado' : 'Funcionário criado', 'ok');
-    carregarFuncionarios();
-  } catch(e) { toast('Erro ao salvar','err'); }
-}
-
-async function excluirFunc(id) {
-  if (!confirm('Excluir este funcionário? Os agendamentos vinculados serão desvinculados.')) return;
-  try {
-    await fetch('/funcionarios/'+id, {method:'DELETE', credentials:'include'});
-    toast('Removido', 'ok');
-    carregarFuncionarios();
-  } catch(e) {}
-}
-
-// ── MODAL COMISSÃO DETALHADA ──
-async function abrirComissao(id, nome) {
-  const mes = mesAtual();
-  try {
-    const r = await fetch('/funcionarios/'+id+'/comissao?mes='+mes, {credentials:'include'});
-    const d = await r.json();
-
-    const [ano,m] = mes.split('-');
-    const meses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-    document.getElementById('m-com-nome').textContent    = nome;
-    document.getElementById('m-com-periodo').textContent = meses[parseInt(m)-1]+' / '+ano;
-    document.getElementById('m-com-qtd').textContent     = d.atendimentos;
-    document.getElementById('m-com-bruto').textContent   = moedaBR(d.total_bruto);
-    document.getElementById('m-com-fixo').textContent    = moedaBR(d.salario_fixo);
-    document.getElementById('m-com-pct').textContent     = d.comissao_pct;
-    document.getElementById('m-com-comval').textContent  = moedaBR(d.comissao_valor);
-    document.getElementById('m-com-total').textContent   = moedaBR(d.total_a_pagar);
-
-    // Barra proporcional (comissão vs fixo)
-    const propCom = d.total_a_pagar > 0 ? Math.round((d.comissao_valor/d.total_a_pagar)*100) : 0;
-    document.getElementById('m-com-barra').style.width  = propCom+'%';
-    document.getElementById('m-com-barra-sub').textContent = 'Comissão representa '+propCom+'% da remuneração total';
-
-    // Lista de atendimentos
-    const lista = document.getElementById('m-com-lista');
-    if (!d.agendamentos?.length) {
-      lista.innerHTML = '<div style="padding:20px;text-align:center;font-size:12px;color:var(--muted)">Nenhum atendimento vinculado a este funcionário no período.</div>';
-    } else {
-      lista.innerHTML = d.agendamentos.map(a => {
-        const [ano2,mes2,dia] = a.data.split('-');
-        const preco = parseFloat(a.preco_servico||0);
-        const com   = preco * (d.comissao_pct/100);
-        return `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--borda)">
-          <div>
-            <div style="font-size:12px;font-weight:600;color:var(--txt)">${a.nome}</div>
-            <div style="font-size:11px;color:var(--muted)">${dia}/${mes2}/${ano2} · ${a.horario}${a.servico?' · '+a.servico:''}</div>
-          </div>
-          <div style="text-align:right">
-            <div style="font-size:12px;font-weight:700;color:var(--txt)">${moedaBR(preco)}</div>
-            <div style="font-size:10px;color:var(--laranja)">com: ${moedaBR(com)}</div>
-          </div>
-        </div>`;
-      }).join('');
-    }
-
-    document.getElementById('m-comissao').classList.add('open');
-  } catch(e) { toast('Erro ao carregar comissão','err'); }
-}
-
-// ── ONBOARDING TOUR ────────────────────────────────────────────
-const OB_KEY = 'agendaok_tour_v1';
-
-const OB_PASSOS = [
-  {
-    emoji: '👋',
-    titulo: 'Bem-vindo ao AgendaOK!',
-    desc: 'Este é o seu painel profissional de agendamentos. Deixa a gente te mostrar o que cada parte faz — são só 7 passos rápidos.',
-    alvo: null, // centralizado
-    pos: 'center',
-  },
-  {
-    emoji: '🔗',
-    titulo: 'Seu link público',
-    desc: 'Este é o link que você compartilha com seus clientes. Eles clicam e agendam na hora, sem precisar de nada mais.',
-    alvo: '.link-pub',
-    pos: 'bottom',
-  },
-  {
-    emoji: '📊',
-    titulo: 'Resumo do dia',
-    desc: 'Aqui você vê quantos agendamentos tem hoje, pendentes, confirmados e o faturamento estimado do mês.',
-    alvo: '.stats-grid',
-    pos: 'bottom',
-  },
-  {
-    emoji: '📅',
-    titulo: 'Agenda do dia',
-    desc: 'Todos os agendamentos de hoje aparecem aqui. Clique em qualquer um para confirmar, cancelar ou adicionar observações — e enviar WhatsApp direto para o cliente.',
-    alvo: '.ag-card',
-    pos: 'bottom',
-  },
-  {
-    emoji: '✂️',
-    titulo: 'Seus serviços',
-    desc: 'Cadastre os serviços que você oferece com nome, preço e duração. Eles aparecem para o cliente na hora de agendar.',
-    alvo: null,
-    paginaAntes: 'servicos',
-    pos: 'center',
-  },
-  {
-    emoji: '👥',
-    titulo: 'Gestão de equipe',
-    desc: 'Cadastre seus funcionários, defina o salário fixo e a % de comissão. O sistema calcula tudo automaticamente mês a mês.',
-    alvo: null,
-    paginaAntes: 'funcionarios',
-    pos: 'center',
-  },
-  {
-    emoji: '⚙️',
-    titulo: 'Configurações',
-    desc: 'Aqui você define os horários disponíveis, dias de atendimento, WhatsApp do negócio e a cor do seu painel.',
-    alvo: null,
-    paginaAntes: 'config',
-    pos: 'center',
-  },
-  {
-    emoji: '🎉',
-    titulo: 'Tudo pronto!',
-    desc: 'Você está pronto para receber agendamentos. Compartilhe o seu link com seus clientes e comece a lotar a agenda!',
-    alvo: null,
-    pos: 'center',
-    ultimo: true,
-  },
-];
-
-let _obPasso = 0;
-let _obResizeTimer = null;
-
-function obIniciar(forcar) {
-  // Só mostrar se nunca viu, ou se forçado
-  if (!forcar && localStorage.getItem(OB_KEY)) return;
-  _obPasso = 0;
-  document.getElementById('ob-root').style.display = 'block';
-  document.getElementById('ob-backdrop').classList.add('show');
-  // Construir dots
-  const dots = document.getElementById('ob-dots');
-  dots.innerHTML = OB_PASSOS.map((_,i) =>
-    `<div class="ob-dot${i===0?' ativo':''}" id="ob-dot-${i}"></div>`
-  ).join('');
-  obMostrarPasso(0);
-  window.addEventListener('resize', obReposicionar);
-}
-
-function obMostrarPasso(idx) {
-  _obPasso = idx;
-  const p = OB_PASSOS[idx];
-  const total = OB_PASSOS.length;
-
-  // Navegar para a página do passo se necessário
-  if (p.paginaAntes) {
-    pg(p.paginaAntes, null);
-    setTimeout(() => obPosicionar(p), 350);
-  } else {
-    // Voltar para dashboard se veio de outra página
-    if (!p.alvo || p.pos === 'center') {
-      if (idx > 0 && OB_PASSOS[idx-1]?.paginaAntes) {
-        pg('dashboard', null);
-        setTimeout(() => obPosicionar(p), 350);
-        return;
-      }
-    }
-    obPosicionar(p);
-  }
-
-  // Atualizar conteúdo
-  document.getElementById('ob-emoji').textContent = p.emoji;
-  document.getElementById('ob-titulo').textContent = p.titulo;
-  document.getElementById('ob-desc').textContent = p.desc;
-  document.getElementById('ob-badge').textContent = `Passo ${idx+1} de ${total}`;
-  document.getElementById('ob-prog-fill').style.width = ((idx+1)/total*100) + '%';
-
-  // Dots
-  document.querySelectorAll('.ob-dot').forEach((d,i) => {
-    d.classList.toggle('ativo', i === idx);
-  });
-
-  // Botão final
-  const btnNext = document.getElementById('ob-btn-next');
-  if (p.ultimo) {
-    btnNext.innerHTML = '🚀 Começar!';
-    btnNext.onclick = obFinalizar;
-  } else {
-    btnNext.innerHTML = 'Próximo <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>';
-    btnNext.onclick = obProximo;
-  }
-}
-
-function obPosicionar(p) {
-  try {
-  const card = document.getElementById('ob-card');
-  const spot = document.getElementById('ob-spotlight');
-
-  if (!p.alvo || p.pos === 'center') {
-    // Centralizado — sem spotlight
-    spot.style.display = 'none';
-    card.style.top = '50%';
-    card.style.left = '50%';
-    card.style.transform = 'translate(-50%, -50%)';
-    card.style.bottom = 'auto';
-    card.style.right = 'auto';
-    // Reiniciar animação
-    card.style.animation = 'none';
-    card.offsetHeight;
-    card.style.animation = '';
-    return;
-  }
-
-  const el = document.querySelector(p.alvo);
-  if (!el) {
-    spot.style.display = 'none';
-    card.style.top = '50%';
-    card.style.left = '50%';
-    card.style.transform = 'translate(-50%, -50%)';
-    return;
-  }
-
-  const rect = el.getBoundingClientRect();
-  const pad = 8;
-
-  // Spotlight no elemento
-  spot.style.display = 'block';
-  spot.style.top    = (rect.top - pad) + 'px';
-  spot.style.left   = (rect.left - pad) + 'px';
-  spot.style.width  = (rect.width + pad*2) + 'px';
-  spot.style.height = (rect.height + pad*2) + 'px';
-
-  // Posicionar card
-  const cardW = Math.min(340, window.innerWidth - 32);
-  const cardH = 220; // estimado
-  const vw = window.innerWidth;
-  const vh = window.innerHeight;
-
-  card.style.transform = 'none';
-
-  let top, left;
-
-  if (p.pos === 'bottom') {
-    top = rect.bottom + pad + 12;
-    if (top + cardH > vh - 16) top = rect.top - cardH - 16;
-  } else {
-    top = rect.top - cardH - 16;
-    if (top < 16) top = rect.bottom + 16;
-  }
-
-  left = rect.left + rect.width/2 - cardW/2;
-  if (left < 16) left = 16;
-  if (left + cardW > vw - 16) left = vw - cardW - 16;
-
-  card.style.top    = top + 'px';
-  card.style.left   = left + 'px';
-  card.style.bottom = 'auto';
-  card.style.right  = 'auto';
-  card.style.width  = cardW + 'px';
-
-  // Reiniciar animação
-  card.style.animation = 'none';
-  card.offsetHeight;
-  card.style.animation = '';
-
-  // Scroll para o elemento ficar visível
-  el.scrollIntoView({behavior:'smooth', block:'nearest'});
-  } catch(e) { console.warn('obPosicionar:', e.message); }
-}
-
-function obReposicionar() {
-  clearTimeout(_obResizeTimer);
-  _obResizeTimer = setTimeout(() => {
-    if (_obPasso < OB_PASSOS.length) obPosicionar(OB_PASSOS[_obPasso]);
-  }, 100);
-}
-
-function obProximo() {
-  if (_obPasso < OB_PASSOS.length - 1) {
-    obMostrarPasso(_obPasso + 1);
-  } else {
-    obFinalizar();
-  }
-}
-
-function obPular() {
-  obFinalizar();
-}
-
-function obFinalizar() {
-  localStorage.setItem(OB_KEY, '1');
-  document.getElementById('ob-root').style.display = 'none';
-  document.getElementById('ob-backdrop').classList.remove('show');
-  window.removeEventListener('resize', obReposicionar);
-  // Voltar para dashboard
-  pg('dashboard', document.querySelector('.sb-item'));
-}
-
 // Atualiza footer timestamp
 setInterval(() => {
   const el = document.getElementById('ft-update');
   if (el) el.textContent = 'Atualizado agora';
 }, 30000);
 
-// ── SIDEBAR MOBILE ──
-function toggleSidebar() {
-  const sb = document.getElementById('sidebar');
-  const ov = document.getElementById('sidebar-overlay');
-  const aberto = sb.classList.toggle('open');
-  ov.classList.toggle('show', aberto);
-  document.body.style.overflow = aberto ? 'hidden' : '';
-  document.body.style.position = aberto ? 'fixed' : '';
-  document.body.style.width = aberto ? '100%' : '';
-}
-
-// ── BOTTOM NAV ──
-function bnAtivar(id) {
-  document.querySelectorAll('.bn-item').forEach(b => b.classList.remove('ativo'));
-  const el = document.getElementById(id);
-  if (el) el.classList.add('ativo');
-  // fechar sidebar se aberto
-  const sb = document.getElementById('sidebar');
-  if (sb.classList.contains('open')) toggleSidebar();
-}
-
-// Sincroniza bottom nav com sidebar
-const _pgOrig = pg;
-// Override pg para sincronizar bottom nav
-function pgMobile(nome, el) {
-  _pgOrig(nome, el);
-  const map = {dashboard:'bn-dashboard',agenda:'bn-agenda',hoje:'bn-hoje',
-    servicos:'bn-servicos',funcionarios:'bn-funcionarios',config:null,bloqueios:null};
-  if (map[nome]) bnAtivar(map[nome]);
-}
-
-// ── WEB PUSH NOTIFICATIONS ──
-let _swReg = null;
-let _pushAtivo = false;
-
-async function iniciarPush() {
-  if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
-  try {
-    _swReg = await navigator.serviceWorker.register('/sw.js');
-    await navigator.serviceWorker.ready;
-
-    // Verificar permissão
-    if (Notification.permission === 'denied') return;
-
-    // Pegar chave pública VAPID
-    const r = await fetch('/negocio/push/vapid-key', {credentials:'include'});
-    const d = await r.json();
-    if (!d.publicKey) return; // VAPID não configurado, ok
-
-    // Inscrever
-    const sub = await _swReg.pushManager.subscribe({
-      userVisibleOnly: true,
-      applicationServerKey: urlBase64ToUint8Array(d.publicKey),
-    });
-
-    await fetch('/negocio/push/subscribe', {
-      method: 'POST', credentials: 'include',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify(sub.toJSON()),
-    });
-    _pushAtivo = true;
-  } catch(e) {
-    // VAPID não configurado ou usuário recusou — silencioso
-  }
-}
-
-async function pedirPermissaoPush() {
-  if (!('Notification' in window)) return false;
-  if (Notification.permission === 'granted') { await iniciarPush(); return true; }
-  if (Notification.permission === 'denied') return false;
-  const perm = await Notification.requestPermission();
-  if (perm === 'granted') { await iniciarPush(); return true; }
-  return false;
-}
-
-function urlBase64ToUint8Array(base64String) {
-  const padding = '='.repeat((4 - base64String.length % 4) % 4);
-  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
-  const rawData = window.atob(base64);
-  return new Uint8Array([...rawData].map(c => c.charCodeAt(0)));
-}
-
-// ── ALERTAS DE LEMBRETE (1h e 30min) ──
-let _alertaShown = {};
-let _alertaTimer = null;
-
-async function verificarLembretes() {
-  try {
-    const r = await fetch('/negocio/agendamentos/proximos', {credentials:'include'});
-    const d = await r.json();
-    if (!d.agendamentos?.length) return;
-
-    for (const ag of d.agendamentos) {
-      const min = ag.minutos_restantes;
-      const key1h  = 'lembrete-1h-'  + ag.id;
-      const key30m = 'lembrete-30m-' + ag.id;
-
-      // Janela: 55-65 min = 1h
-      if (min >= 55 && min <= 65 && !_alertaShown[key1h]) {
-        _alertaShown[key1h] = true;
-        mostrarAlerta(ag, '1h');
-        // Notificação nativa
-        if (_swReg && Notification.permission === 'granted') {
-          _swReg.showNotification('Agendamento em 1 hora', {
-            body: `${ag.nome} — ${ag.horario}${ag.servico?' · '+ag.servico:''}`,
-            icon: '/icon-192.png', tag: 'lembrete-1h-'+ag.id,
-            requireInteraction: true,
-            vibrate: [200,100,200],
-          });
-        }
-        break;
-      }
-
-      // Janela: 25-35 min = 30min
-      if (min >= 25 && min <= 35 && !_alertaShown[key30m]) {
-        _alertaShown[key30m] = true;
-        mostrarAlerta(ag, '30m');
-        if (_swReg && Notification.permission === 'granted') {
-          _swReg.showNotification('⚠️ Agendamento em 30 minutos!', {
-            body: `${ag.nome} — ${ag.horario}${ag.servico?' · '+ag.servico:''}`,
-            icon: '/icon-192.png', tag: 'lembrete-30m-'+ag.id,
-            requireInteraction: true,
-            vibrate: [300,100,300,100,300],
-          });
-        }
-        break;
-      }
-    }
-  } catch(e) { console.warn('verificarLembretes:', e.message); }
-}
-
-function mostrarAlerta(ag, tipo) {
-  const el = document.getElementById('alerta-lembrete');
-  const titulo = document.getElementById('al-titulo');
-  const msg    = document.getElementById('al-msg');
-  const icon   = document.getElementById('al-icon');
-  const wppWrap= document.getElementById('al-wpp-wrap');
-
-  const [ano, mes, dia] = ag.data.split('-');
-  const dataFmt = `${dia}/${mes}/${ano}`;
-
-  el.className = 'alerta-lembrete show ' + (tipo === '1h' ? 'urgente-1h' : 'urgente-30');
-
-  if (tipo === '1h') {
-    icon.textContent = '⏰';
-    titulo.textContent = 'Agendamento em 1 hora — Confirmar cliente?';
-    msg.textContent = `${ag.nome} · ${ag.horario} · ${dataFmt}${ag.servico?' · '+ag.servico:''}`;
-  } else {
-    icon.textContent = '🔴';
-    titulo.textContent = '⚠️ FALTAM 30 MINUTOS!';
-    msg.textContent = `${ag.nome} · ${ag.horario} · ${dataFmt}${ag.servico?' · '+ag.servico:''}`;
-  }
-
-  // Botão WhatsApp
-  wppWrap.innerHTML = '';
-  if (ag.telefone) {
-    const tel = ag.telefone.replace(/\D/g,'');
-    const num = tel.length <= 11 ? '55'+tel : tel;
-    const msgTxt = tipo === '1h'
-      ? `Olá ${ag.nome}! Passando para confirmar seu agendamento amanhã${ag.servico?' de '+ag.servico:''} às ${ag.horario}. Confirmado?`
-      : `${ag.nome}, seu agendamento${ag.servico?' de '+ag.servico:''} começa em 30 minutos (${ag.horario})! Te esperamos!`;
-    const link = 'https://wa.me/' + num + '?text=' + encodeURIComponent(msgTxt);
-    const btn = document.createElement('a');
-    btn.href = link; btn.target = '_blank'; btn.className = 'al-wpp-btn';
-    btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Enviar WhatsApp';
-    wppWrap.appendChild(btn);
-  }
-
-  // Auto-fechar após 60s
-  clearTimeout(_alertaTimer);
-  _alertaTimer = setTimeout(fecharAlerta, 60000);
-}
-
-function fecharAlerta() {
-  clearTimeout(_alertaTimer);
-  document.getElementById('alerta-lembrete').className = 'alerta-lembrete';
-}
-
-// Polling a cada 2 minutos
-setInterval(verificarLembretes, 2 * 60 * 1000);
-
-// ── INIT ──
 init();
 </script>
-<!-- ONBOARDING TOUR -->
-<div id="ob-root" style="display:none">
-  <div class="ob-backdrop" id="ob-backdrop"></div>
-  <div class="ob-spotlight" id="ob-spotlight"></div>
-  <div class="ob-card" id="ob-card">
-    <div class="ob-progress"><div class="ob-progress-fill" id="ob-prog-fill"></div></div>
-    <div class="ob-step-badge" id="ob-badge">Passo 1 de 7</div>
-    <span class="ob-emoji" id="ob-emoji">👋</span>
-    <div class="ob-titulo" id="ob-titulo">Bem-vindo ao AgendaOK!</div>
-    <div class="ob-desc" id="ob-desc">Vamos te mostrar o painel rapidinho. São só alguns passos.</div>
-    <div class="ob-footer">
-      <div class="ob-dots" id="ob-dots"></div>
-      <div class="ob-btns">
-        <button class="ob-btn-skip" onclick="obPular()">Pular tour</button>
-        <button class="ob-btn-next" id="ob-btn-next" onclick="obProximo()">
-          Próximo
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-
 </body>
 </html>

@@ -161,6 +161,7 @@ router.delete('/bloqueados/:id', requireAuth, async (req, res) => {
   } catch(e) { res.status(500).json({ erro: e.message }); }
 });
 
+module.exports = router;
 
 // ── NOTIFICAÇÕES ──────────────────────────────────────────────
 
@@ -205,71 +206,3 @@ router.delete('/notificacoes', requireAuth, async (req, res) => {
     res.json({ sucesso: true });
   } catch(e) { res.status(500).json({ erro: e.message }); }
 });
-
-// ── WEB PUSH ─────────────────────────────────────────────────
-
-// GET /negocio/push/vapid-key — retorna a chave pública VAPID
-router.get('/push/vapid-key', requireAuth, (req, res) => {
-  res.json({ publicKey: process.env.VAPID_PUBLIC_KEY || '' });
-});
-
-// POST /negocio/push/subscribe — salva subscription do navegador
-router.post('/push/subscribe', requireAuth, async (req, res) => {
-  const { endpoint, keys } = req.body;
-  if (!endpoint || !keys) return res.status(400).json({ erro: 'Dados inválidos.' });
-  try {
-    const { v4: uuidv4 } = require('uuid');
-    await pool.query(
-      `INSERT INTO push_subscriptions (id, usuario_id, endpoint, keys)
-       VALUES ($1,$2,$3,$4)
-       ON CONFLICT (endpoint) DO UPDATE SET usuario_id=$2, keys=$4`,
-      [uuidv4(), req.session.userId, endpoint, JSON.stringify(keys)]
-    );
-    res.json({ sucesso: true });
-  } catch(e) { res.status(500).json({ erro: e.message }); }
-});
-
-// DELETE /negocio/push/unsubscribe
-router.delete('/push/unsubscribe', requireAuth, async (req, res) => {
-  const { endpoint } = req.body;
-  try {
-    await pool.query('DELETE FROM push_subscriptions WHERE endpoint=$1 AND usuario_id=$2',
-      [endpoint, req.session.userId]);
-    res.json({ sucesso: true });
-  } catch(e) { res.status(500).json({ erro: e.message }); }
-});
-
-// GET /negocio/agendamentos/proximos — agendamentos nas próximas 2h para alertas
-router.get('/agendamentos/proximos', requireAuth, async (req, res) => {
-  try {
-    const agora = new Date();
-    const hoje = agora.toISOString().split('T')[0];
-    const em1h = new Date(agora.getTime() + 60 * 60 * 1000);
-    const em2h = new Date(agora.getTime() + 2 * 60 * 60 * 1000);
-
-    const hh = (d) => String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
-    const horaAtual = hh(agora);
-    const hora2h    = hh(em2h);
-
-    const r = await pool.query(
-      `SELECT * FROM agendamentos
-       WHERE negocio_id=$1 AND data=$2
-       AND status IN ('pendente','confirmado')
-       AND horario >= $3 AND horario <= $4
-       ORDER BY horario ASC`,
-      [req.session.userId, hoje, horaAtual, hora2h]
-    );
-
-    const agendamentos = r.rows.map(a => {
-      const [hh2, mm2] = a.horario.split(':').map(Number);
-      const minAg = hh2 * 60 + mm2;
-      const minAgora = agora.getHours() * 60 + agora.getMinutes();
-      const diff = minAg - minAgora;
-      return { ...a, minutos_restantes: diff };
-    });
-
-    res.json({ agendamentos });
-  } catch(e) { res.status(500).json({ erro: e.message }); }
-});
-
-module.exports = router;
