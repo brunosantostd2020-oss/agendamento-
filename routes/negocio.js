@@ -161,7 +161,6 @@ router.delete('/bloqueados/:id', requireAuth, async (req, res) => {
   } catch(e) { res.status(500).json({ erro: e.message }); }
 });
 
-module.exports = router;
 
 // ── NOTIFICAÇÕES ──────────────────────────────────────────────
 
@@ -272,3 +271,5 @@ router.get('/agendamentos/proximos', requireAuth, async (req, res) => {
     res.json({ agendamentos });
   } catch(e) { res.status(500).json({ erro: e.message }); }
 });
+
+module.exports = router;

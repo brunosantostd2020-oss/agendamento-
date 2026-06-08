@@ -222,3 +222,32 @@ async function initNotificacoes() {
 }
 
 module.exports = { pool, initDb, initServicos, initColunas, initExtras, initTrial, initTokenConfirm, initNotificacoes };
+
+async function initFuncionarios() {
+  const client = await pool.connect();
+  try {
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS funcionarios (
+        id UUID PRIMARY KEY,
+        negocio_id UUID REFERENCES usuarios(id) ON DELETE CASCADE,
+        nome TEXT NOT NULL,
+        cargo TEXT DEFAULT '',
+        telefone TEXT DEFAULT '',
+        email TEXT DEFAULT '',
+        salario_fixo NUMERIC(10,2) DEFAULT 0,
+        comissao_pct NUMERIC(5,2) DEFAULT 0,
+        ativo BOOLEAN DEFAULT true,
+        cor TEXT DEFAULT '#00d084',
+        criado_em TEXT,
+        atualizado_em TEXT
+      );
+
+      -- Vincular agendamentos a funcionários (opcional)
+      ALTER TABLE agendamentos ADD COLUMN IF NOT EXISTS funcionario_id UUID REFERENCES funcionarios(id) ON DELETE SET NULL;
+    `);
+    console.log('✅ Tabela funcionarios OK!');
+  } catch(e) { console.error('Funcionarios init:', e.message); }
+  finally { client.release(); }
+}
+
+module.exports = { pool, initDb, initServicos, initColunas, initExtras, initTrial, initTokenConfirm, initNotificacoes, initFuncionarios };

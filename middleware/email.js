@@ -24,7 +24,7 @@ async function enviarBoasVindas({ nome, email, senha, nomeNegocio, nicho, plano,
   const t = criarTransporterPrincipal();
   if (!t) { console.log('⚠️  EMAIL_USER não configurado. Pulando boas-vindas.'); return false; }
 
-  const planoNomes = { basico: 'Básico — R$49/mês', profissional: 'Profissional — R$99/mês', premium: 'Premium — R$199/mês' };
+  const planoNomes = { completo: 'AgendaOK — R$69,90/mês', basico: 'AgendaOK — R$69,90/mês', profissional: 'AgendaOK — R$69,90/mês', premium: 'AgendaOK — R$69,90/mês' };
   const linkPainel = process.env.BASE_URL ? process.env.BASE_URL + '/painel' : 'seu-site.railway.app/painel';
   const linkAgendar = process.env.BASE_URL ? process.env.BASE_URL + '/agendar/' + slug : 'seu-site.railway.app/agendar/' + slug;
 
@@ -118,9 +118,10 @@ async function enviarInstrucoesPagamento({ nome, email, plano, nomeNegocio }) {
   if (!t) return false;
 
   const planos = {
-    basico:       { nome: 'Básico',       preco: 'R$49,00', desc: 'Até 2 profissionais' },
-    profissional: { nome: 'Profissional', preco: 'R$99,00', desc: 'Até 10 profissionais + WhatsApp' },
-    premium:      { nome: 'Premium',      preco: 'R$199,00',desc: 'Profissionais ilimitados' },
+    completo:     { nome: 'AgendaOK', preco: 'R$69,90', desc: 'Tudo incluso, sem surpresas' },
+    basico:       { nome: 'AgendaOK', preco: 'R$69,90', desc: 'Tudo incluso, sem surpresas' },
+    profissional: { nome: 'AgendaOK', preco: 'R$69,90', desc: 'Tudo incluso, sem surpresas' },
+    premium:      { nome: 'AgendaOK', preco: 'R$69,90', desc: 'Tudo incluso, sem surpresas' },
   };
   const p = planos[plano] || { nome: plano, preco: '—', desc: '' };
 
