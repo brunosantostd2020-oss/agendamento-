@@ -3,7 +3,7 @@ const { enviarEmail } = require('./mailer');
 // ── 1. Boas-vindas ao novo cadastro ─────────────────────────
 
 async function enviarBoasVindas({ nome, email, senha, nomeNegocio, nicho, plano, slug }) {
-  const planoNomes = { basico: 'Básico — R$49/mês', profissional: 'Profissional — R$99/mês', premium: 'Premium — R$199/mês' };
+  const planoNomes = { pro: 'Pro — R$ 69,90/mês', basico: 'Pro — R$ 69,90/mês', profissional: 'Pro — R$ 69,90/mês', premium: 'Pro — R$ 69,90/mês' };
   const linkPainel = process.env.BASE_URL ? process.env.BASE_URL + '/painel' : 'seu-site.railway.app/painel';
   const linkAgendar = process.env.BASE_URL ? process.env.BASE_URL + '/agendar/' + slug : 'seu-site.railway.app/agendar/' + slug;
 
@@ -52,8 +52,8 @@ async function enviarBoasVindas({ nome, email, senha, nomeNegocio, nicho, plano,
       <!-- Plano -->
       <div style="background:#eff6ff;border:2px solid #bfdbfe;border-radius:12px;padding:24px;margin-bottom:20px">
         <h2 style="margin:0 0 16px;font-size:14px;color:#1d4ed8;text-transform:uppercase;letter-spacing:0.06em">📦 Plano escolhido</h2>
-        <p style="margin:0;font-size:18px;font-weight:800;color:#1e3a5f">${planoNomes[plano] || plano}</p>
-        <p style="margin:8px 0 0;font-size:13px;color:#64748b">Você tem 14 dias grátis para testar. Veja abaixo como realizar o pagamento.</p>
+        <p style="margin:0;font-size:18px;font-weight:800;color:#1e3a5f">${planoNomes[plano] || 'Pro — R$ 69,90/mês'}</p>
+        <p style="margin:8px 0 0;font-size:13px;color:#64748b">Você tem <strong>7 dias grátis</strong> para testar tudo. Depois, assine direto pelo painel.</p>
       </div>
 
       <!-- Links -->
@@ -86,85 +86,54 @@ async function enviarBoasVindas({ nome, email, senha, nomeNegocio, nicho, plano,
 // ── 2. E-mail de pagamento ───────────────────────────────────
 
 async function enviarInstrucoesPagamento({ nome, email, plano, nomeNegocio }) {
-  const planos = {
-    basico:       { nome: 'Básico',       preco: 'R$49,00', desc: 'Até 2 profissionais' },
-    profissional: { nome: 'Profissional', preco: 'R$99,00', desc: 'Até 10 profissionais + WhatsApp' },
-    premium:      { nome: 'Premium',      preco: 'R$199,00',desc: 'Profissionais ilimitados' },
-  };
-  const p = planos[plano] || { nome: plano, preco: '—', desc: '' };
-
-  const pixChave   = process.env.PIX_CHAVE   || 'seupix@email.com';
-  const pixNome    = process.env.PIX_NOME    || 'AgendaOK';
-  const pixBanco   = process.env.PIX_BANCO   || 'Banco do Brasil';
+  const linkAssinar = (process.env.BASE_URL || '') + '/assinar';
 
   const html = `
 <!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"/></head>
 <body style="margin:0;padding:0;background:#f0f9ff;font-family:Arial,sans-serif">
   <div style="max-width:560px;margin:40px auto;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08)">
-    
-    <div style="background:linear-gradient(135deg,#1d4ed8,#1e40af);padding:36px;text-align:center">
+
+    <div style="background:linear-gradient(135deg,#0d9488,#0a7c72);padding:36px;text-align:center">
       <div style="background:rgba(255,255,255,0.2);display:inline-block;border-radius:10px;padding:6px 18px;margin-bottom:14px">
-        <span style="color:white;font-size:13px;font-weight:700">AGENDA OK</span>
+        <span style="color:white;font-size:13px;font-weight:700;letter-spacing:0.08em">AGENDA OK</span>
       </div>
-      <h1 style="color:white;margin:0;font-size:24px;font-weight:800">💳 Instruções de Pagamento</h1>
-      <p style="color:rgba(255,255,255,0.9);margin:8px 0 0;font-size:14px">Finalize sua assinatura do plano ${p.nome}</p>
+      <h1 style="color:white;margin:0;font-size:24px;font-weight:800">🚀 Seu teste grátis começou!</h1>
+      <p style="color:rgba(255,255,255,0.9);margin:8px 0 0;font-size:14px">${nomeNegocio} — 7 dias com acesso completo</p>
     </div>
 
     <div style="padding:32px">
       <p style="font-size:16px;color:#334155;margin:0 0 24px">
         Olá, <strong>${nome}</strong>! 👋<br/>
-        Para ativar seu plano <strong>${p.nome}</strong>, realize o pagamento abaixo.
+        Você tem <strong>7 dias grátis</strong> para usar tudo: agendamentos ilimitados, equipe,
+        relatórios e notificações. Quando quiser garantir seu acesso, é só assinar pelo painel.
       </p>
 
-      <!-- Resumo do plano -->
-      <div style="background:#eff6ff;border:2px solid #bfdbfe;border-radius:12px;padding:20px;margin-bottom:20px">
-        <h2 style="margin:0 0 12px;font-size:14px;color:#1d4ed8;text-transform:uppercase">📦 Seu plano</h2>
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div>
-            <div style="font-size:18px;font-weight:800;color:#0f172a">${p.nome}</div>
-            <div style="font-size:13px;color:#64748b">${p.desc}</div>
-          </div>
-          <div style="font-size:28px;font-weight:900;color:#1d4ed8">${p.preco}<span style="font-size:14px;font-weight:500;color:#64748b">/mês</span></div>
-        </div>
+      <!-- Oferta de fundador -->
+      <div style="background:linear-gradient(135deg,#fff7ed,#fef2f2);border:2px solid #fdba74;border-radius:12px;padding:20px;margin-bottom:20px;text-align:center">
+        <div style="font-size:12px;font-weight:800;color:#ea580c;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">🔥 Oferta de fundador — vagas limitadas</div>
+        <div style="font-size:15px;color:#334155">Os primeiros assinantes pagam</div>
+        <div style="font-size:38px;font-weight:900;color:#0f172a;line-height:1.2">R$ 39,90<span style="font-size:16px;font-weight:600;color:#64748b">/mês</span></div>
+        <div style="font-size:13px;color:#64748b"><s>de R$ 69,90</s> — e o preço fica <strong>travado para sempre</strong></div>
       </div>
 
-      <!-- Dados para pagamento -->
-      <div style="background:#f0fdf4;border:2px solid #bbf7d0;border-radius:12px;padding:24px;margin-bottom:20px">
-        <h2 style="margin:0 0 16px;font-size:14px;color:#15803d;text-transform:uppercase">💚 Pagar via PIX</h2>
-        <table style="width:100%;border-collapse:collapse">
-          <tr>
-            <td style="padding:8px 0;font-size:14px;color:#64748b;font-weight:600;width:35%">Chave PIX</td>
-            <td style="padding:8px 0;font-size:15px;color:#0f172a;font-weight:800">${pixChave}</td>
-          </tr>
-          <tr style="border-top:1px solid #dcfce7">
-            <td style="padding:8px 0;font-size:14px;color:#64748b;font-weight:600">Nome</td>
-            <td style="padding:8px 0;font-size:14px;color:#0f172a;font-weight:700">${pixNome}</td>
-          </tr>
-          <tr style="border-top:1px solid #dcfce7">
-            <td style="padding:8px 0;font-size:14px;color:#64748b;font-weight:600">Banco</td>
-            <td style="padding:8px 0;font-size:14px;color:#0f172a;font-weight:700">${pixBanco}</td>
-          </tr>
-          <tr style="border-top:1px solid #dcfce7">
-            <td style="padding:8px 0;font-size:14px;color:#64748b;font-weight:600">Valor</td>
-            <td style="padding:8px 0;font-size:16px;color:#15803d;font-weight:800">${p.preco}</td>
-          </tr>
-          <tr style="border-top:1px solid #dcfce7">
-            <td style="padding:8px 0;font-size:14px;color:#64748b;font-weight:600">Identificação</td>
-            <td style="padding:8px 0;font-size:14px;color:#0f172a;font-weight:700">${nomeNegocio} — AgendaOK</td>
-          </tr>
-        </table>
-      </div>
-
-      <!-- Aviso -->
-      <div style="background:#fff7ed;border:1.5px solid #fed7aa;border-radius:10px;padding:16px;margin-bottom:24px">
-        <p style="margin:0;font-size:13px;color:#92400e;font-weight:600">
-          ⏰ Após o pagamento, envie o comprovante para <strong>${process.env.EMAIL_USER || 'contato@agendaok.com'}</strong> e ativaremos seu plano em até 24h. Seu período grátis de 14 dias já está ativo!
+      <!-- Como pagar -->
+      <div style="background:#f0fdf4;border:2px solid #bbf7d0;border-radius:12px;padding:20px;margin-bottom:24px">
+        <h2 style="margin:0 0 10px;font-size:14px;color:#15803d;text-transform:uppercase">💚 Pagamento simples e seguro</h2>
+        <p style="margin:0;font-size:14px;color:#334155;line-height:1.7">
+          PIX, cartão de crédito (até 12x) ou débito, direto pelo <strong>Mercado Pago</strong>.
+          Sem fidelidade — cancele quando quiser.
         </p>
+      </div>
+
+      <div style="text-align:center;margin-bottom:24px">
+        <a href="${linkAssinar}" style="display:inline-block;background:#0d9488;color:white;padding:16px 40px;border-radius:12px;font-weight:800;font-size:16px;text-decoration:none">
+          Garantir minha vaga →
+        </a>
       </div>
 
       <p style="font-size:13px;color:#94a3b8;text-align:center;margin:0">
         Dúvidas? Responda este e-mail.<br/>
-        © 2025 AgendaOK
+        © 2026 AgendaOK
       </p>
     </div>
   </div>
@@ -173,7 +142,7 @@ async function enviarInstrucoesPagamento({ nome, email, plano, nomeNegocio }) {
   return enviarEmail({
     fromName: 'AgendaOK',
     to: email,
-    subject: `💳 Instruções de pagamento — Plano ${p.nome} AgendaOK`,
+    subject: `🚀 Seu teste grátis de 7 dias começou — AgendaOK`,
     html,
   });
 }

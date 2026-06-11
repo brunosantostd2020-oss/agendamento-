@@ -16,6 +16,43 @@ function baseUrl() {
   return process.env.APP_URL || 'https://agendamento-production-e1a3.up.railway.app';
 }
 
+// ─── Preço / Oferta de fundador ──────────────────────────────────────────────
+// Primeiros N clientes pagam o preço de fundador PARA SEMPRE (fica travado
+// na coluna preco_mensal quando o primeiro pagamento é aprovado).
+const PRECO_PADRAO   = 69.90;
+const PRECO_FUNDADOR = 39.90;
+const VAGAS_FUNDADOR = parseInt(process.env.FOUNDER_LIMIT || '20');
+
+async function vagasFundadorUsadas() {
+  const r = await pool.query(
+    'SELECT COUNT(*) FROM usuarios WHERE preco_mensal IS NOT NULL AND preco_mensal < $1',
+    [PRECO_PADRAO]
+  );
+  return +r.rows[0].count;
+}
+
+async function precoDoUsuario(u) {
+  // Já tem preço travado (ex: fundador que renovou)
+  if (u.preco_mensal && parseFloat(u.preco_mensal) > 0) {
+    const preco = parseFloat(u.preco_mensal);
+    return { preco, fundador: preco <= PRECO_FUNDADOR, travado: true, vagas_restantes: 0 };
+  }
+  const usadas = await vagasFundadorUsadas();
+  if (usadas < VAGAS_FUNDADOR) {
+    return { preco: PRECO_FUNDADOR, fundador: true, travado: false, vagas_restantes: VAGAS_FUNDADOR - usadas };
+  }
+  return { preco: PRECO_PADRAO, fundador: false, travado: false, vagas_restantes: 0 };
+}
+
+// GET /pagamento/preco — preço atual do usuário (para a página de assinatura)
+router.get('/preco', requireAuth, async (req, res) => {
+  try {
+    const u = (await pool.query('SELECT * FROM usuarios WHERE id=$1', [req.session.userId])).rows[0];
+    if (!u) return res.status(404).json({ erro: 'Usuário não encontrado.' });
+    res.json(await precoDoUsuario(u));
+  } catch(e) { res.status(500).json({ erro: e.message }); }
+});
+
 // ─── POST /pagamento/assinar ──────────────────────────────────────────────────
 // Cria uma Preference (Checkout Pro) que aceita PIX, débito e crédito
 router.post('/assinar', requireAuth, async (req, res) => {
@@ -27,16 +64,17 @@ router.post('/assinar', requireAuth, async (req, res) => {
 
     const client = new Preference(getMPClient());
     const base   = baseUrl();
+    const { preco, fundador } = await precoDoUsuario(u);
 
     const preference = await client.create({
       body: {
         items: [{
           id:          'agendaok-pro-mensal',
-          title:       'AgendaOK Pro — Acesso mensal',
+          title:       fundador ? 'AgendaOK Pro — Oferta de Fundador' : 'AgendaOK Pro — Acesso mensal',
           description: 'Acesso completo à plataforma AgendaOK por 30 dias',
           quantity:    1,
           currency_id: 'BRL',
-          unit_price:  69.90,
+          unit_price:  preco,
         }],
         payer: {
           email: u.email,
@@ -92,6 +130,14 @@ router.get('/sucesso', requireAuth, async (req, res) => {
           'UPDATE usuarios SET plano_pago=true, acesso_ativo=true, acesso_expira=$1 WHERE id=$2',
           [expiraStr, userId]
         );
+
+        // Trava o preço pago para sempre (oferta de fundador)
+        if (pay.transaction_amount) {
+          await pool.query(
+            'UPDATE usuarios SET preco_mensal=$1 WHERE id=$2 AND preco_mensal IS NULL',
+            [pay.transaction_amount, userId]
+          ).catch(() => {});
+        }
 
         // Notificação no sino
         await pool.query(
@@ -153,6 +199,14 @@ router.post('/webhook', express.raw({ type: '*/*' }), async (req, res) => {
         'UPDATE usuarios SET plano_pago=true, acesso_ativo=true, acesso_expira=$1 WHERE id=$2',
         [expiraStr, u.id]
       );
+
+      // Trava o preço pago para sempre (oferta de fundador)
+      if (pay.transaction_amount) {
+        await pool.query(
+          'UPDATE usuarios SET preco_mensal=$1 WHERE id=$2 AND preco_mensal IS NULL',
+          [pay.transaction_amount, u.id]
+        ).catch(() => {});
+      }
 
       await pool.query(
         `INSERT INTO notificacoes (id, usuario_id, tipo, titulo, mensagem)
