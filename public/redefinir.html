@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+<title>Redefinir senha — AgendaOK</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:#0a0a0c;min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:20px;color:#e7e7ea;
+  background:radial-gradient(ellipse 100% 70% at 50% -10%, rgba(13,148,136,.18), transparent 60%), #0a0a0c}
+.card{width:100%;max-width:400px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:36px 30px}
+.logo{display:flex;align-items:center;gap:10px;margin-bottom:24px}
+.logo-mark{width:38px;height:38px;border-radius:10px;background:#0d9488;display:grid;place-items:center}
+.logo-mark svg{width:20px;height:20px;stroke:#fff;stroke-width:2;fill:none}
+.logo-text{font-size:17px;font-weight:800;color:#fff}
+h1{font-size:21px;font-weight:800;color:#fff;margin-bottom:6px;letter-spacing:-.3px}
+.sub{font-size:13px;color:rgba(255,255,255,.45);margin-bottom:24px;line-height:1.5}
+label{display:block;font-size:12px;font-weight:700;color:rgba(255,255,255,.6);margin-bottom:6px}
+.pw-wrap{position:relative;margin-bottom:14px}
+input{width:100%;border:1px solid rgba(255,255,255,.12);border-radius:10px;font-family:inherit;font-size:16px;padding:13px 44px 13px 14px;color:#fff;background:rgba(255,255,255,.05);outline:none;transition:border-color .2s}
+input:focus{border-color:#0d9488}
+input::placeholder{color:rgba(255,255,255,.25)}
+.pw-eye{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:rgba(255,255,255,.35);padding:4px;display:grid;place-items:center}
+.pw-eye svg{width:17px;height:17px}
+.btn{width:100%;padding:14px;border-radius:10px;background:#0d9488;color:#fff;font-family:inherit;font-size:15px;font-weight:800;border:none;cursor:pointer;margin-top:6px;transition:opacity .15s}
+.btn:hover{opacity:.9}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.erro{display:none;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:#fca5a5;border-radius:9px;padding:11px 13px;font-size:13px;font-weight:600;margin-bottom:14px}
+.erro.show{display:block}
+.ok-box{display:none;text-align:center;padding:14px 0 4px}
+.ok-box.show{display:block}
+.ok-ico{width:58px;height:58px;border-radius:50%;background:rgba(34,197,94,.12);border:2px solid rgba(34,197,94,.4);display:grid;place-items:center;margin:0 auto 16px}
+.ok-ico svg{width:26px;height:26px;stroke:#4ade80;stroke-width:2.5;fill:none}
+.voltar{display:block;text-align:center;margin-top:18px;font-size:13px;color:rgba(255,255,255,.45);text-decoration:none}
+.voltar strong{color:#2dd4bf}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">
+    <div class="logo-mark">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="4"/><path d="M8 2v4M16 2v4M3 10h18" stroke-linecap="round"/></svg>
+    </div>
+    <span class="logo-text">AgendaOK</span>
+  </div>
+
+  <div id="form-box">
+    <h1>Criar nova senha</h1>
+    <p class="sub">Escolha uma nova senha para a sua conta. Depois é só entrar normalmente.</p>
+    <div class="erro" id="erro"></div>
+
+    <label for="senha">Nova senha</label>
+    <div class="pw-wrap">
+      <input type="password" id="senha" placeholder="Mín. 6 caracteres" autocomplete="new-password"/>
+      <button type="button" class="pw-eye" onclick="togglePw('senha')" aria-label="Mostrar senha">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>
+      </button>
+    </div>
+
+    <label for="senha2">Confirmar nova senha</label>
+    <div class="pw-wrap">
+      <input type="password" id="senha2" placeholder="Repita a senha" autocomplete="new-password"
+        onkeydown="if(event.key==='Enter')salvar()"/>
+      <button type="button" class="pw-eye" onclick="togglePw('senha2')" aria-label="Mostrar senha">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>
+      </button>
+    </div>
+
+    <button class="btn" id="btn-salvar" onclick="salvar()">Salvar nova senha</button>
+  </div>
+
+  <div class="ok-box" id="ok-box">
+    <div class="ok-ico"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <h1 style="margin-bottom:6px">Senha alterada!</h1>
+    <p class="sub" style="margin-bottom:0">Sua nova senha já está valendo.</p>
+    <button class="btn" onclick="location.href='/login'" style="margin-top:18px">Entrar agora →</button>
+  </div>
+
+  <a class="voltar" href="/login">Lembrou a senha? <strong>Voltar para o login</strong></a>
+</div>
+
+<script>
+const token = location.pathname.split('/').pop();
+
+function togglePw(id) {
+  const inp = document.getElementById(id);
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+}
+
+function mostrarErro(msg) {
+  const el = document.getElementById('erro');
+  el.textContent = msg;
+  el.classList.add('show');
+}
+
+async function salvar() {
+  const senha  = document.getElementById('senha').value;
+  const senha2 = document.getElementById('senha2').value;
+  const btn    = document.getElementById('btn-salvar');
+  document.getElementById('erro').classList.remove('show');
+
+  if (senha.length < 6) { mostrarErro('A senha deve ter pelo menos 6 caracteres.'); return; }
+  if (senha !== senha2) { mostrarErro('As senhas não conferem.'); return; }
+
+  btn.disabled = true; btn.textContent = 'Salvando...';
+  try {
+    const r = await fetch('/auth/redefinir', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ token, senha }),
+    });
+    const d = await r.json();
+    if (!r.ok) { mostrarErro(d.erro || 'Erro ao redefinir.'); btn.disabled = false; btn.textContent = 'Salvar nova senha'; return; }
+    document.getElementById('form-box').style.display = 'none';
+    document.getElementById('ok-box').classList.add('show');
+  } catch(e) {
+    mostrarErro('Erro de conexão. Tente novamente.');
+    btn.disabled = false; btn.textContent = 'Salvar nova senha';
+  }
+}
+</script>
+</body>
+</html>

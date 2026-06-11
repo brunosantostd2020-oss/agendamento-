@@ -178,6 +178,8 @@ async function initTrial() {
       ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS plano_pago BOOLEAN DEFAULT false;
       ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS acesso_expira TEXT DEFAULT '';
       ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS preco_mensal NUMERIC(10,2); -- preço travado (oferta de fundador)
+      ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS reset_token  TEXT DEFAULT '';
+      ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS reset_expira TEXT DEFAULT '';
     `);
     // Preenche trial_expira para quem não tem (usuários antigos)
     await client.query(`

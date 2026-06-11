@@ -360,10 +360,29 @@ label{display:block;font-size:13px;font-weight:600;color:#334155;margin-bottom:7
         </div>
       </div>
 
-      <label class="remember">
-        <input type="checkbox" id="lembrar"/>
-        <span>Lembrar-me neste dispositivo</span>
-      </label>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
+        <label class="remember" style="margin:0">
+          <input type="checkbox" id="lembrar"/>
+          <span>Lembrar-me neste dispositivo</span>
+        </label>
+        <a href="#" onclick="toggleRecuperar(event)" style="font-size:13px;font-weight:600;color:#2dd4bf;text-decoration:none">Esqueci minha senha</a>
+      </div>
+
+      <!-- Recuperação de senha (inline) -->
+      <div id="rec-box" style="display:none;background:rgba(45,212,191,.06);border:1px solid rgba(45,212,191,.25);border-radius:10px;padding:14px;margin-top:12px">
+        <div style="font-size:13px;font-weight:700;margin-bottom:8px">Recuperar senha</div>
+        <div id="rec-msg" style="display:none;font-size:13px;line-height:1.5;color:#4ade80;font-weight:600"></div>
+        <div id="rec-form">
+          <div style="font-size:12px;opacity:.7;margin-bottom:8px">Digite seu e-mail e enviaremos um link para criar uma nova senha.</div>
+          <div style="display:flex;gap:8px">
+            <input type="email" id="rec-email" placeholder="seu@email.com" inputmode="email" autocapitalize="none"
+              style="flex:1;border:1px solid rgba(255,255,255,.15);border-radius:8px;font-family:inherit;font-size:14px;padding:10px 12px;color:inherit;background:rgba(255,255,255,.05);outline:none"
+              onkeydown="if(event.key==='Enter'){event.preventDefault();enviarRecuperacao()}"/>
+            <button type="button" id="rec-btn" onclick="enviarRecuperacao()"
+              style="padding:10px 16px;border-radius:8px;background:#0d9488;border:none;color:#fff;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap">Enviar link</button>
+          </div>
+        </div>
+      </div>
 
       <!-- BOTÃO ENTRAR — visível e grande -->
       <button class="btn-primary" id="btn-entrar" onclick="entrar()">
@@ -376,6 +395,54 @@ label{display:block;font-size:13px;font-weight:600;color:#334155;margin-bottom:7
 </div>
 
 <script>
+// Já está logado? Vai direto para o painel
+(async () => {
+  try {
+    const r = await fetch('/auth/me', { credentials: 'include' });
+    if (r.ok) {
+      const u = await r.json();
+      if (u.logado) location.replace('/painel');
+    }
+  } catch(e) {}
+})();
+
+// ── Recuperação de senha ──
+function toggleRecuperar(ev) {
+  ev.preventDefault();
+  const box = document.getElementById('rec-box');
+  const aberto = box.style.display !== 'none';
+  box.style.display = aberto ? 'none' : 'block';
+  if (!aberto) {
+    const emailLogin = document.getElementById('email').value.trim();
+    if (emailLogin) document.getElementById('rec-email').value = emailLogin;
+    setTimeout(() => document.getElementById('rec-email').focus(), 100);
+  }
+}
+
+async function enviarRecuperacao() {
+  const email = document.getElementById('rec-email').value.trim();
+  const btn   = document.getElementById('rec-btn');
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    document.getElementById('rec-email').focus();
+    return;
+  }
+  btn.disabled = true; btn.textContent = 'Enviando...';
+  try {
+    const r = await fetch('/auth/recuperar', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ email }),
+    });
+    const d = await r.json();
+    document.getElementById('rec-form').style.display = 'none';
+    const msg = document.getElementById('rec-msg');
+    msg.textContent = '✓ ' + (d.msg || 'Se este e-mail estiver cadastrado, você receberá o link em instantes.') + ' Confira também o spam.';
+    msg.style.display = 'block';
+  } catch(e) {
+    btn.disabled = false; btn.textContent = 'Enviar link';
+  }
+}
+
 document.getElementById('toggle-pw').addEventListener('click', function() {
   const inp = document.getElementById('senha');
   const ico = document.getElementById('eye-ico');

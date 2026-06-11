@@ -420,8 +420,24 @@ function selN(id, el) {
 
 function g(id) { return document.getElementById(id).value.trim(); }
 
-function avancar() {
-  if (passo === 1 && !v1()) return;
+// Enter avança o passo (campos de texto dos passos 1 e 2)
+['senha2','nome_neg'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); avancar(); }
+  });
+});
+
+// Se já está logado, vai direto para o painel
+(async () => {
+  try {
+    const r = await fetch('/auth/me', { credentials: 'include' });
+    if (r.ok) { const u = await r.json(); if (u.logado) location.replace('/painel'); }
+  } catch(e) {}
+})();
+
+async function avancar() {
+  if (passo === 1 && !(await v1())) return;
   if (passo === 2 && !v2()) return;
   if (passo === 3) { criar(); return; }
   ir(passo + 1);
@@ -463,12 +479,25 @@ function mostrarErro(id, msg) {
   setTimeout(() => el.classList.remove('show'), 4500);
 }
 
-function v1() {
+async function v1() {
   const nome = g('nome'), email = g('email'), senha = g('senha'), senha2 = g('senha2');
   if (!nome)                        { mostrarErro('e1','Informe seu nome completo.'); return false; }
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { mostrarErro('e1','E-mail inválido.'); return false; }
   if (senha.length < 6)             { mostrarErro('e1','Senha deve ter pelo menos 6 caracteres.'); return false; }
   if (senha !== senha2)             { mostrarErro('e1','As senhas não conferem.'); return false; }
+
+  // Avisa AGORA se o e-mail já tem conta (em vez de só no final do cadastro)
+  try {
+    const r = await fetch('/auth/email-existe?email=' + encodeURIComponent(email));
+    if (r.ok) {
+      const d = await r.json();
+      if (d.existe) {
+        mostrarErro('e1','Este e-mail já tem conta. Use "Entrar" abaixo ou recupere a senha no login.');
+        return false;
+      }
+    }
+  } catch(e) {} // se a checagem falhar, segue — o backend valida de novo no final
+
   return true;
 }
 

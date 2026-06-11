@@ -73,6 +73,7 @@ app.get('/confirmar/:token', (_, res) => res.sendFile(path.join(__dirname, 'publ
 app.get('/historico/:slug',  (_, res) => res.sendFile(path.join(__dirname, 'public', 'historico.html')));
 app.get('/master',           (_, res) => res.sendFile(path.join(__dirname, 'public', 'master.html')));
 app.get('/reagendar',        (_, res) => res.sendFile(path.join(__dirname, 'public', 'reagendar.html')));
+app.get('/redefinir/:token', (_, res) => res.sendFile(path.join(__dirname, 'public', 'redefinir.html')));
 app.get('*',                 (_, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
 
 // ── Inicializar banco e subir servidor ──────────────────────────────────────

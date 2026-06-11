@@ -4,6 +4,7 @@ const bcrypt  = require('bcryptjs');
 const { v4: uuidv4 } = require('uuid');
 const { pool } = require('../middleware/database');
 const { enviarBoasVindas, enviarInstrucoesPagamento } = require('../middleware/email');
+const { enviarEmail } = require('../middleware/mailer');
 const { rateLimit } = require('../middleware/rateLimit');
 
 // Cache em memória para /auth/me — evita query no banco a cada request
@@ -184,6 +185,72 @@ router.get('/me', async (req, res) => {
   } catch(e) {
     res.status(500).json({ logado: false });
   }
+});
+
+// GET /auth/email-existe?email= — validação antecipada no cadastro (passo 1)
+router.get('/email-existe', rateLimit({ windowMs: 60_000, max: 20 }), async (req, res) => {
+  const email = (req.query.email || '').toLowerCase().trim();
+  if (!email) return res.json({ existe: false });
+  try {
+    const r = await pool.query('SELECT 1 FROM usuarios WHERE email=$1', [email]);
+    res.json({ existe: r.rows.length > 0 });
+  } catch(e) { res.json({ existe: false }); }
+});
+
+// POST /auth/recuperar — envia link de redefinição de senha
+router.post('/recuperar', rateLimit({ windowMs: 10 * 60_000, max: 4, msg: 'Muitas solicitações. Aguarde alguns minutos.' }), async (req, res) => {
+  const email = (req.body.email || '').toLowerCase().trim();
+  // Resposta sempre genérica — não revela se o e-mail existe
+  const generica = { sucesso: true, msg: 'Se este e-mail estiver cadastrado, você receberá o link em instantes.' };
+  if (!email) return res.json(generica);
+  try {
+    const u = (await pool.query('SELECT id, nome FROM usuarios WHERE email=$1', [email])).rows[0];
+    if (u) {
+      const token  = uuidv4().replace(/-/g, '') + uuidv4().replace(/-/g, '');
+      const expira = new Date(Date.now() + 60 * 60 * 1000).toISOString(); // 1 hora
+      await pool.query('UPDATE usuarios SET reset_token=$1, reset_expira=$2 WHERE id=$3', [token, expira, u.id]);
+
+      const link = (process.env.BASE_URL || '') + '/redefinir/' + token;
+      enviarEmail({
+        fromName: 'AgendaOK',
+        to: email,
+        subject: '🔑 Redefinir sua senha — AgendaOK',
+        html: `
+<div style="font-family:Arial;max-width:480px;margin:0 auto;padding:32px">
+  <h2 style="color:#0d9488;margin:0 0 16px">Redefinir senha</h2>
+  <p style="font-size:15px;color:#334155;line-height:1.6">Olá, <strong>${u.nome}</strong>! Recebemos um pedido para redefinir a senha da sua conta AgendaOK.</p>
+  <p style="text-align:center;margin:28px 0">
+    <a href="${link}" style="display:inline-block;background:#0d9488;color:white;padding:14px 32px;border-radius:10px;text-decoration:none;font-weight:700;font-size:15px">Criar nova senha</a>
+  </p>
+  <p style="font-size:13px;color:#64748b;line-height:1.6">O link vale por <strong>1 hora</strong>. Se você não pediu a redefinição, ignore este e-mail — sua senha continua a mesma.</p>
+  <p style="font-size:12px;color:#94a3b8;margin-top:24px">© 2026 AgendaOK</p>
+</div>`,
+      }).catch(e => console.error('Email recuperar:', e.message));
+    }
+    res.json(generica);
+  } catch(e) {
+    console.error('Recuperar:', e.message);
+    res.json(generica);
+  }
+});
+
+// POST /auth/redefinir — troca a senha usando o token do e-mail
+router.post('/redefinir', rateLimit({ windowMs: 60_000, max: 6 }), async (req, res) => {
+  const { token, senha } = req.body;
+  if (!token) return res.status(400).json({ erro: 'Link inválido.' });
+  if (!senha || senha.length < 6) return res.status(400).json({ erro: 'A senha deve ter pelo menos 6 caracteres.' });
+  try {
+    const u = (await pool.query(
+      "SELECT id, reset_expira FROM usuarios WHERE reset_token=$1 AND reset_token != ''", [token]
+    )).rows[0];
+    if (!u || !u.reset_expira || new Date(u.reset_expira) < new Date()) {
+      return res.status(400).json({ erro: 'Link inválido ou expirado. Solicite um novo na tela de login.' });
+    }
+    const hash = await bcrypt.hash(senha, 6);
+    await pool.query("UPDATE usuarios SET senha=$1, reset_token='', reset_expira='' WHERE id=$2", [hash, u.id]);
+    clearMeCache(u.id);
+    res.json({ sucesso: true });
+  } catch(e) { res.status(500).json({ erro: 'Erro interno. Tente novamente.' }); }
 });
 
 module.exports = router;
