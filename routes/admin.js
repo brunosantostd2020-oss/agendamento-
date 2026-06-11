@@ -157,4 +157,34 @@ router.delete('/clientes/:id', requireMaster, async (req, res) => {
   }
 });
 
+// GET /admin/feedbacks — lista feedbacks dos usuários
+router.get('/feedbacks', requireMaster, async (req, res) => {
+  try {
+    const r = await pool.query(`
+      SELECT f.id, f.mensagem, f.lido, f.criado_em,
+             u.nome, u.email, u.nome_negocio, u.slug
+      FROM feedbacks f
+      LEFT JOIN usuarios u ON u.id = f.usuario_id
+      ORDER BY f.criado_em DESC
+    `);
+    res.json({ feedbacks: r.rows });
+  } catch(e) { res.status(500).json({ erro: e.message }); }
+});
+
+// PATCH /admin/feedbacks/:id/lido — marca feedback como lido
+router.patch('/feedbacks/:id/lido', requireMaster, async (req, res) => {
+  try {
+    await pool.query('UPDATE feedbacks SET lido=true WHERE id=$1', [req.params.id]);
+    res.json({ sucesso: true });
+  } catch(e) { res.status(500).json({ erro: e.message }); }
+});
+
+// DELETE /admin/feedbacks/:id — exclui feedback
+router.delete('/feedbacks/:id', requireMaster, async (req, res) => {
+  try {
+    await pool.query('DELETE FROM feedbacks WHERE id=$1', [req.params.id]);
+    res.json({ sucesso: true });
+  } catch(e) { res.status(500).json({ erro: e.message }); }
+});
+
 module.exports = router;

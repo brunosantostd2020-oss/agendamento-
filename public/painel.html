@@ -757,6 +757,13 @@
         </svg>
         Sair da conta
       </a>
+
+      <a class="sb-item" onclick="abrirFeedback()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+        Feedback
+      </a>
     </nav>
 
     <div class="sb-plan" id="sb-plan-wrap" onclick="location.href='/assinar'" style="cursor:pointer">
@@ -1345,6 +1352,24 @@
         <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="display:inline;vertical-align:middle;margin-right:4px"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
         WhatsApp
       </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL FEEDBACK -->
+<div class="overlay" id="m-feedback" onclick="if(event.target===this)fechar('m-feedback')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-body" style="padding:20px 20px 0">
+      <div style="font-size:17px;font-weight:800;color:var(--txt);margin-bottom:4px">💬 Enviar feedback</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:18px">Conte o que podemos melhorar no AgendaOK. Sua opinião vai direto para a nossa equipe.</div>
+      <label class="m-label">Sua mensagem</label>
+      <textarea class="m-textarea" id="fb-msg" maxlength="2000" placeholder="Ex: Seria ótimo ter um relatório mensal de faturamento..." style="min-height:120px;margin-bottom:6px"></textarea>
+      <div style="font-size:11px;color:var(--muted);text-align:right;margin-bottom:4px"><span id="fb-count">0</span>/2000</div>
+    </div>
+    <div class="modal-footer">
+      <button class="m-btn m-btn-out" onclick="fechar('m-feedback')">Cancelar</button>
+      <button class="m-btn m-btn-g" id="fb-btn" onclick="enviarFeedback()">Enviar feedback</button>
     </div>
   </div>
 </div>
@@ -2833,6 +2858,43 @@ async function sair() {
   await fetch('/auth/logout', {method:'POST',credentials:'include'});
   location.href = '/';
 }
+
+// ── FEEDBACK ──
+function abrirFeedback() {
+  fecharSidebar();
+  const ta = document.getElementById('fb-msg');
+  ta.value = '';
+  document.getElementById('fb-count').textContent = '0';
+  document.getElementById('m-feedback').classList.add('open');
+  setTimeout(() => ta.focus(), 200);
+}
+
+async function enviarFeedback() {
+  const msg = document.getElementById('fb-msg').value.trim();
+  if (!msg) { toast('Escreva sua mensagem antes de enviar', 'err'); return; }
+  const btn = document.getElementById('fb-btn');
+  btn.disabled = true; btn.textContent = 'Enviando...';
+  try {
+    const r = await fetch('/negocio/feedback', {
+      method:'POST', credentials:'include',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ mensagem: msg }),
+    });
+    const d = await r.json();
+    if (!r.ok) { toast(d.erro || 'Erro ao enviar feedback', 'err'); }
+    else {
+      fechar('m-feedback');
+      toast('Feedback enviado. Obrigado! 💚', 'ok');
+    }
+  } catch(e) { toast('Erro de conexão', 'err'); }
+  btn.disabled = false; btn.textContent = 'Enviar feedback';
+}
+
+document.addEventListener('input', (e) => {
+  if (e.target && e.target.id === 'fb-msg') {
+    document.getElementById('fb-count').textContent = e.target.value.length;
+  }
+});
 
 function toast(msg, tipo = 'ok') {
   document.querySelectorAll('.toast').forEach(t => t.remove());

@@ -313,6 +313,21 @@ router.delete('/bloqueados/:id', requireAuth, async (req, res) => {
   } catch(e) { res.status(500).json({ erro: e.message }); }
 });
 
+// POST /negocio/feedback — usuário envia feedback sobre a plataforma
+router.post('/feedback', requireAuth, async (req, res) => {
+  const { mensagem } = req.body;
+  const msg = (mensagem || '').trim();
+  if (!msg) return res.status(400).json({ erro: 'Escreva sua mensagem de feedback.' });
+  if (msg.length > 2000) return res.status(400).json({ erro: 'Mensagem muito longa (máx. 2000 caracteres).' });
+  try {
+    await pool.query(
+      `INSERT INTO feedbacks (id, usuario_id, mensagem) VALUES ($1, $2, $3)`,
+      [uuidv4(), req.session.userId, msg]
+    );
+    res.json({ sucesso: true, msg: 'Feedback enviado. Obrigado!' });
+  } catch(e) { res.status(500).json({ erro: e.message }); }
+});
+
 module.exports = router;
 
 // ── NOTIFICAÇÕES ──────────────────────────────────────────────

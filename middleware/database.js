@@ -259,4 +259,21 @@ async function initFuncionarios() {
   finally { client.release(); }
 }
 
-module.exports = { pool, initDb, initServicos, initColunas, initExtras, initTrial, initTokenConfirm, initPagamento, initFuncionarios };
+async function initFeedbacks() {
+  const client = await pool.connect();
+  try {
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS feedbacks (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        usuario_id UUID REFERENCES usuarios(id) ON DELETE CASCADE,
+        mensagem TEXT NOT NULL,
+        lido BOOLEAN DEFAULT false,
+        criado_em TIMESTAMPTZ DEFAULT NOW()
+      );
+    `);
+    console.log('✅ Tabela feedbacks OK!');
+  } catch(e) { console.error('Feedbacks:', e.message); }
+  finally { client.release(); }
+}
+
+module.exports = { pool, initDb, initServicos, initColunas, initExtras, initTrial, initTokenConfirm, initPagamento, initFuncionarios, initFeedbacks };
