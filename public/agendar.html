@@ -576,6 +576,20 @@ async function init(){
 };
 document.getElementById('h-sub').textContent = NICHO_NOMES[nicho] || 'Agendamento Online';
 
+ // ── Prova social: estrelas de avaliação ──
+ if (info.avaliacao && info.avaliacao.total > 0) {
+   const m = info.avaliacao.media;
+   const cheias = Math.max(0, Math.min(5, Math.round(m)));
+   const stars = '★'.repeat(cheias) + '☆'.repeat(5 - cheias);
+   const av = document.createElement('div');
+   av.id = 'h-aval';
+   av.style.cssText = 'margin-top:6px;font-size:13px';
+   av.innerHTML = '<span style="color:#f59e0b;letter-spacing:2px">' + stars + '</span> '
+     + '<b>' + String(m).replace('.', ',') + '</b> '
+     + '<span style="opacity:.65">(' + info.avaliacao.total + ' avalia' + (info.avaliacao.total > 1 ? 'ções' : 'ção') + ')</span>';
+   document.getElementById('h-sub').after(av);
+ }
+
  // ── Aplicar textos por nicho ──
  const T = textos(nicho);
  window._T = T;
@@ -640,6 +654,8 @@ function selSrv(id,nome,preco,dur,el){
  document.querySelectorAll('.srv-opt').forEach(e=>e.classList.remove('sel'));
  el.classList.add('sel');
  E.srvId=id;E.srvNome=nome;E.srvPreco=preco;E.srvDur=dur;
+ // Se já tinha data escolhida, atualiza a grade (duração muda a disponibilidade)
+ if(E.data){E.horario=null;selData(E.data);}
 }
 
 function avancar(){
@@ -657,6 +673,7 @@ function selProf(id, nomeOuEl, el) {
     document.querySelectorAll('.prof-item').forEach(p => p.classList.remove('sel'));
     document.querySelectorAll('.prof-qualquer').forEach(p => p.classList.remove('sel'));
     nomeOuEl.classList.add('sel');
+    if (E.data) { E.horario = null; selData(E.data); }
     return;
   }
   E.funcId   = id || null;
@@ -664,6 +681,8 @@ function selProf(id, nomeOuEl, el) {
   document.querySelectorAll('.prof-item').forEach(p => p.classList.remove('sel'));
   document.querySelectorAll('.prof-qualquer').forEach(p => p.classList.remove('sel'));
   if (el) el.classList.add('sel');
+  // Se já tinha data escolhida, atualiza a grade (disponibilidade muda por profissional)
+  if (E.data) { E.horario = null; selData(E.data); }
 }
 
 function voltar(){if(E.passo>1)ir(E.passo-1);}
@@ -741,7 +760,9 @@ async function selData(iso){
  sec.style.display='block';load.style.display='block';grade.innerHTML='';
  setTimeout(()=>sec.scrollIntoView({behavior:'smooth',block:'nearest'}),100);
  try{
- const r=await fetch('/p/'+slug+'/horarios?data='+iso);
+ const r=await fetch('/p/'+slug+'/horarios?data='+iso
+   +(E.funcId?'&funcionario_id='+encodeURIComponent(E.funcId):'')
+   +(E.srvDur?'&dur='+encodeURIComponent(E.srvDur):''));
  const d=await r.json();
  load.style.display='none';
  if(!d.horarios||!d.horarios.length){grade.innerHTML='<p style="color:var(--muted);font-size:13px;grid-column:1/-1;padding:8px 0">Nenhum horário disponível.</p>';return;}

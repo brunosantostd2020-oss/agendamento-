@@ -10,9 +10,14 @@ function requireMaster(req, res, next) {
 }
 
 // POST /admin/login
-router.post('/login', (req, res) => {
+const { rateLimit } = require('../middleware/rateLimit');
+router.post('/login', rateLimit({ windowMs: 60_000, max: 5 }), (req, res) => {
   const { senha } = req.body;
-  const masterSenha = process.env.MASTER_PASSWORD || 'master@agendaok2024';
+  const masterSenha = process.env.MASTER_PASSWORD;
+  if (!masterSenha) {
+    console.error('⚠️  MASTER_PASSWORD não configurada — login master desabilitado.');
+    return res.status(503).json({ erro: 'Acesso master não configurado no servidor.' });
+  }
   if (senha !== masterSenha) return res.status(401).json({ erro: 'Senha incorreta.' });
   req.session.isMaster = true;
   res.json({ sucesso: true });

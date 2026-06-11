@@ -28,9 +28,16 @@ const sessionStore = new pgSession({
   errorLog: (e) => console.error('Session store error:', e.message),
 });
 
+// Secret da sessão: NUNCA usar valor fixo público. Se faltar a env var,
+// gera um aleatório (sessões caem a cada deploy — configure SESSION_SECRET no Railway!)
+const SESSION_SECRET = process.env.SESSION_SECRET || (() => {
+  console.warn('⚠️  SESSION_SECRET não definida! Usando secret aleatório — os usuários serão deslogados a cada deploy. Configure no Railway.');
+  return require('crypto').randomBytes(32).toString('hex');
+})();
+
 app.use(session({
   store: sessionStore,
-  secret: process.env.SESSION_SECRET || 'agendaok-secret-2024',
+  secret: SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
   rolling: false,          // não re-salva sessão a cada request (menos queries)

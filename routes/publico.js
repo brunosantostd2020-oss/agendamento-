@@ -8,20 +8,75 @@ function hojeBR() {
 const { v4: uuidv4 } = require('uuid');
 const { pool } = require('../middleware/database');
 const { enviarConfirmacao } = require('../middleware/email');
-const nodemailer = require('nodemailer');
+const { enviarEmail } = require('../middleware/mailer');
+
+// ── Helpers de agenda (duração do serviço + equipe) ─────────────────────────
+function minutos(h) {
+  const [hh, mm] = (h || '0:0').split(':').map(Number);
+  return hh * 60 + (mm || 0);
+}
+
+// Ocupações do dia com a duração real do serviço (quando conhecida).
+// Agendamento sem serviço vinculado ocupa apenas o próprio slot (comportamento antigo).
+async function buscarOcupacoes(negocioId, data) {
+  const rows = (await pool.query(
+    `SELECT a.horario, a.funcionario_id, s.duracao
+     FROM agendamentos a
+     LEFT JOIN servicos s ON s.id = a.servico_id
+     WHERE a.negocio_id=$1 AND a.data=$2 AND a.status IN ('pendente','confirmado','reagendado')`,
+    [negocioId, data]
+  )).rows;
+  return rows.map(r => {
+    const ini = minutos(r.horario);
+    const dur = parseInt(r.duracao) || 0;
+    return { ini, fim: ini + Math.max(dur, 1), func: r.funcionario_id || null };
+  });
+}
+
+async function contarProfissionais(negocioId) {
+  return +(await pool.query(
+    'SELECT COUNT(*) FROM funcionarios WHERE negocio_id=$1 AND ativo=true', [negocioId]
+  )).rows[0].count;
+}
+
+// Conflito de um novo agendamento [ini, ini+dur):
+// — Sem equipe: qualquer sobreposição bloqueia (1 atendimento por vez).
+// — Com equipe: profissional escolhido ocupado bloqueia; senão bloqueia
+//   apenas quando TODOS os profissionais estão ocupados (capacidade cheia).
+function temConflito({ ini, dur, funcionarioId, ocupacoes, numProfs }) {
+  const fim = ini + Math.max(parseInt(dur) || 0, 1);
+  const sobrepostos = ocupacoes.filter(o => ini < o.fim && o.ini < fim);
+  if (numProfs > 0) {
+    if (funcionarioId && sobrepostos.some(o => o.func === funcionarioId)) return true;
+    return sobrepostos.length >= numProfs;
+  }
+  return sobrepostos.length >= 1;
+}
 
 router.get('/:slug/info', async (req, res) => {
   try {
     const r = await pool.query('SELECT * FROM usuarios WHERE slug=$1 AND ativo=true', [req.params.slug]);
     if (!r.rows.length) return res.status(404).json({ erro: 'Negócio não encontrado.' });
     const u = r.rows[0];
+
+    // Prova social: média e total de avaliações
+    let avaliacao = { media: null, total: 0 };
+    try {
+      const av = (await pool.query(
+        'SELECT ROUND(AVG(nota)::numeric, 1) AS media, COUNT(*) AS total FROM avaliacoes WHERE negocio_id=$1',
+        [u.id]
+      )).rows[0];
+      if (parseInt(av.total) > 0) avaliacao = { media: parseFloat(av.media), total: parseInt(av.total) };
+    } catch(_) {}
+
     res.json({ nome_negocio: u.nome_negocio, nicho: u.nicho, foto_url: u.foto_url||'',
+      avaliacao,
       config: { horarios: u.config.horarios, dias_uteis: u.config.dias_uteis, telefone: u.config.telefone, descricao: u.config.descricao, cor: u.config.cor } });
   } catch(e) { res.status(500).json({ erro: e.message }); }
 });
 
 router.get('/:slug/horarios', async (req, res) => {
-  const { data } = req.query;
+  const { data, funcionario_id, dur } = req.query;
   if (!data) return res.status(400).json({ erro: 'Data obrigatória.' });
   try {
     const r = await pool.query('SELECT * FROM usuarios WHERE slug=$1 AND ativo=true', [req.params.slug]);
@@ -42,11 +97,11 @@ router.get('/:slug/horarios', async (req, res) => {
     const todos = (u.config.horarios||'').split(',').map(h=>h.trim()).filter(Boolean);
     const intervalo = parseInt(u.config.intervalo) || 0;
 
-    // Agendamentos que bloqueiam vaga: pendente, confirmado e reagendado
-    const ocupados = (await pool.query(
-      `SELECT horario FROM agendamentos WHERE negocio_id=$1 AND data=$2 AND status IN ('pendente','confirmado','reagendado')`,
-      [u.id, data]
-    )).rows.map(r => r.horario);
+    // Ocupações (com duração do serviço) + tamanho da equipe
+    const [ocupacoes, numProfs] = await Promise.all([
+      buscarOcupacoes(u.id, data),
+      contarProfissionais(u.id),
+    ]);
 
     // Horários bloqueados pelo dono (dia inteiro ou horário específico)
     const bloqRows = (await pool.query(
@@ -54,43 +109,46 @@ router.get('/:slug/horarios', async (req, res) => {
       [u.id, data]
     )).rows;
 
-    const bloqueados = [];
+    const bloqueados = new Set();
     for (const b of bloqRows) {
       if (b.horario === 'todos') {
         // Dia inteiro bloqueado — retorna tudo indisponível
         return res.json({ horarios: todos.map(h => ({ horario: h, disponivel: false, motivo: 'bloqueado' })) });
       }
-      bloqueados.push(b.horario);
+      bloqueados.add(b.horario);
     }
-
-    const indisponiveis = new Set([...ocupados, ...bloqueados]);
 
     // Se for hoje, filtra horários que já passaram (com 30 min de antecedência)
     const isHoje = data === hoje;
     const limiteMin = isHoje ? agoraBR.getUTCHours() * 60 + agoraBR.getUTCMinutes() + 30 : 0;
+    const durNova = parseInt(dur) || 0; // duração do serviço sendo agendado (opcional)
 
     const result = todos.map(h => {
-      const [hh, mm] = h.split(':').map(Number);
-      const minHorario = hh * 60 + (mm || 0);
-      const jaPAssou = isHoje && minHorario < limiteMin;
+      const m = minutos(h);
+      const jaPassou  = isHoje && m < limiteMin;
+      const bloqueado = bloqueados.has(h);
+      const ocupado   = !bloqueado && !jaPassou && temConflito({
+        ini: m, dur: durNova,
+        funcionarioId: funcionario_id || null,
+        ocupacoes, numProfs,
+      });
 
-      // Verificar intervalo entre atendimentos
-      let conflito = false;
-      if (intervalo > 0 && !indisponiveis.has(h) && !jaPAssou) {
-        for (const oc of ocupados) {
-          const [oh, om] = oc.split(':').map(Number);
-          if (Math.abs(minHorario - (oh * 60 + (om||0))) < intervalo) {
-            conflito = true; break;
-          }
-        }
+      // Intervalo de respiro entre atendimentos (configurável pelo dono)
+      let conflitoIntervalo = false;
+      if (intervalo > 0 && !bloqueado && !jaPassou && !ocupado) {
+        conflitoIntervalo = ocupacoes.some(o => {
+          const d = Math.abs(m - o.ini);
+          return d > 0 && d < intervalo;
+        });
       }
 
       return {
         horario:    h,
-        disponivel: !indisponiveis.has(h) && !jaPAssou && !conflito,
-        motivo:     indisponiveis.has(h) ? 'ocupado'
-                  : jaPAssou             ? 'passado'
-                  : conflito             ? 'intervalo'
+        disponivel: !bloqueado && !jaPassou && !ocupado && !conflitoIntervalo,
+        motivo:     bloqueado          ? 'ocupado'
+                  : ocupado            ? 'ocupado'
+                  : jaPassou           ? 'passado'
+                  : conflitoIntervalo  ? 'intervalo'
                   : null,
       };
     });
@@ -107,8 +165,21 @@ router.post('/:slug/agendar', async (req, res) => {
     const r = await pool.query('SELECT * FROM usuarios WHERE slug=$1 AND ativo=true', [req.params.slug]);
     if (!r.rows.length) return res.status(404).json({ erro: 'Negócio não encontrado.' });
     const u = r.rows[0];
-    const existente = await pool.query(`SELECT id FROM agendamentos WHERE negocio_id=$1 AND data=$2 AND horario=$3 AND status IN ('pendente','confirmado','reagendado')`, [u.id, data, horario]);
-    if (existente.rows.length) return res.status(409).json({ erro: 'Horário já reservado. Escolha outro.' });
+    // Conflito considerando duração do serviço e equipe (mesma regra da listagem)
+    let durNova = 0;
+    if (servico_id) {
+      const s = (await pool.query(
+        'SELECT duracao FROM servicos WHERE id=$1 AND negocio_id=$2', [servico_id, u.id]
+      )).rows[0];
+      durNova = s ? (parseInt(s.duracao) || 0) : 0;
+    }
+    const [ocupacoes, numProfs] = await Promise.all([
+      buscarOcupacoes(u.id, data),
+      contarProfissionais(u.id),
+    ]);
+    if (temConflito({ ini: minutos(horario), dur: durNova, funcionarioId: funcionario_id || null, ocupacoes, numProfs })) {
+      return res.status(409).json({ erro: 'Horário já reservado. Escolha outro.' });
+    }
 
     const agora   = new Date().toLocaleString('pt-BR');
     const tokenC  = uuidv4().replace(/-/g,'');
@@ -175,18 +246,16 @@ router.post('/:slug/agendar', async (req, res) => {
 });
 
 async function enviarConfirmacaoCompleta({ nomeCliente, emailCliente, nomeNegocio, data, horario, servico, preco, corNegocio, emailNegocio, senhaEmailNegocio, linkCancelar, linkAvaliar }) {
-  const emailUser = emailNegocio || process.env.EMAIL_USER;
-  const emailPass = senhaEmailNegocio || process.env.EMAIL_PASS;
-  if (!emailUser || !emailPass) return;
+  if (!emailCliente) return;
 
   const [ano, mes, dia] = data.split('-');
   const dataFmt = `${dia}/${mes}/${ano}`;
   const cor = corNegocio || '#0d9488';
   const precoTxt = preco ? `R$ ${parseFloat(preco).toFixed(2).replace('.', ',')}` : '';
 
-  const t = nodemailer.createTransport({ service: 'gmail', auth: { user: emailUser, pass: emailPass } });
-  await t.sendMail({
-    from: `"${nomeNegocio}" <${emailUser}>`,
+  await enviarEmail({
+    fromName: nomeNegocio,
+    gmailUser: emailNegocio, gmailPass: senhaEmailNegocio,
     to: emailCliente,
     subject: `Agendamento confirmado — ${nomeNegocio} • ${dataFmt} as ${horario}`,
     html: `

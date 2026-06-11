@@ -1,29 +1,8 @@
-const nodemailer = require('nodemailer');
-
-// ── Transporters ────────────────────────────────────────────
-
-function criarTransporterPrincipal() {
-  if (!process.env.EMAIL_USER) return null;
-  return nodemailer.createTransport({
-    service: 'gmail',
-    auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
-  });
-}
-
-function criarTransporterNegocio(emailUser, emailPass) {
-  if (!emailUser || !emailPass) return null;
-  return nodemailer.createTransport({
-    service: 'gmail',
-    auth: { user: emailUser, pass: emailPass },
-  });
-}
+const { enviarEmail } = require('./mailer');
 
 // ── 1. Boas-vindas ao novo cadastro ─────────────────────────
 
 async function enviarBoasVindas({ nome, email, senha, nomeNegocio, nicho, plano, slug }) {
-  const t = criarTransporterPrincipal();
-  if (!t) { console.log('⚠️  EMAIL_USER não configurado. Pulando boas-vindas.'); return false; }
-
   const planoNomes = { basico: 'Básico — R$49/mês', profissional: 'Profissional — R$99/mês', premium: 'Premium — R$199/mês' };
   const linkPainel = process.env.BASE_URL ? process.env.BASE_URL + '/painel' : 'seu-site.railway.app/painel';
   const linkAgendar = process.env.BASE_URL ? process.env.BASE_URL + '/agendar/' + slug : 'seu-site.railway.app/agendar/' + slug;
@@ -96,27 +75,17 @@ async function enviarBoasVindas({ nome, email, senha, nomeNegocio, nicho, plano,
   </div>
 </body></html>`;
 
-  try {
-    await t.sendMail({
-      from: `"AgendaOK" <${process.env.EMAIL_USER}>`,
-      to: email,
-      subject: `🎉 Bem-vindo ao AgendaOK, ${nome}! Seus dados de acesso`,
-      html,
-    });
-    console.log(`✅ Boas-vindas enviadas para ${email}`);
-    return true;
-  } catch(e) {
-    console.error('❌ Erro boas-vindas:', e.message);
-    return false;
-  }
+  return enviarEmail({
+    fromName: 'AgendaOK',
+    to: email,
+    subject: `🎉 Bem-vindo ao AgendaOK, ${nome}! Seus dados de acesso`,
+    html,
+  });
 }
 
 // ── 2. E-mail de pagamento ───────────────────────────────────
 
 async function enviarInstrucoesPagamento({ nome, email, plano, nomeNegocio }) {
-  const t = criarTransporterPrincipal();
-  if (!t) return false;
-
   const planos = {
     basico:       { nome: 'Básico',       preco: 'R$49,00', desc: 'Até 2 profissionais' },
     profissional: { nome: 'Profissional', preco: 'R$99,00', desc: 'Até 10 profissionais + WhatsApp' },
@@ -201,32 +170,20 @@ async function enviarInstrucoesPagamento({ nome, email, plano, nomeNegocio }) {
   </div>
 </body></html>`;
 
-  try {
-    await t.sendMail({
-      from: `"AgendaOK" <${process.env.EMAIL_USER}>`,
-      to: email,
-      subject: `💳 Instruções de pagamento — Plano ${p.nome} AgendaOK`,
-      html,
-    });
-    console.log(`✅ Pagamento enviado para ${email}`);
-    return true;
-  } catch(e) {
-    console.error('❌ Erro pagamento:', e.message);
-    return false;
-  }
+  return enviarEmail({
+    fromName: 'AgendaOK',
+    to: email,
+    subject: `💳 Instruções de pagamento — Plano ${p.nome} AgendaOK`,
+    html,
+  });
 }
 
 // ── 3. Confirmação de agendamento (pelo negócio) ─────────────
 
 async function enviarConfirmacao({ nomeCliente, emailCliente, nomeNegocio, nicho, data, horario, servico, corNegocio, emailNegocio, senhaEmailNegocio }) {
-  // Tenta usar o e-mail do negócio, senão usa o principal
-  const t = criarTransporterNegocio(emailNegocio, senhaEmailNegocio) || criarTransporterPrincipal();
-  if (!t) { console.log('⚠️  Nenhum e-mail configurado. Pulando confirmação.'); return false; }
-
   const [ano, mes, dia] = data.split('-');
   const dataFmt = `${dia}/${mes}/${ano}`;
   const cor = corNegocio || '#0d9488';
-  const remetente = emailNegocio || process.env.EMAIL_USER;
 
   const html = `
 <!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"/></head>
@@ -257,19 +214,13 @@ async function enviarConfirmacao({ nomeCliente, emailCliente, nomeNegocio, nicho
   </div>
 </body></html>`;
 
-  try {
-    await t.sendMail({
-      from: `"${nomeNegocio}" <${remetente}>`,
-      to: emailCliente,
-      subject: `✅ Agendamento confirmado — ${nomeNegocio} • ${dataFmt} às ${horario}`,
-      html,
-    });
-    console.log(`✅ Confirmação enviada para ${emailCliente}`);
-    return true;
-  } catch(e) {
-    console.error('❌ Erro confirmação:', e.message);
-    return false;
-  }
+  return enviarEmail({
+    fromName: nomeNegocio,
+    gmailUser: emailNegocio, gmailPass: senhaEmailNegocio,
+    to: emailCliente,
+    subject: `✅ Agendamento confirmado — ${nomeNegocio} • ${dataFmt} às ${horario}`,
+    html,
+  });
 }
 
 module.exports = { enviarBoasVindas, enviarInstrucoesPagamento, enviarConfirmacao };

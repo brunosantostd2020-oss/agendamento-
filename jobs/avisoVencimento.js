@@ -1,14 +1,9 @@
-const nodemailer = require('nodemailer');
-const { pool }   = require('../middleware/database');
+const { pool }        = require('../middleware/database');
+const { enviarEmail } = require('../middleware/mailer');
 
 const BASE_URL = () => process.env.APP_URL || 'https://agendamento-production-e1a3.up.railway.app';
 
 async function enviarEmailRenovacao({ nome, email, nomeNegocio, diasRestantes, linkRenovacao }) {
-  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) return;
-  const t = nodemailer.createTransport({
-    service: 'gmail',
-    auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
-  });
   const urgente = diasRestantes <= 0;
   const titulo  = urgente
     ? '🚨 Seu acesso AgendaOK venceu hoje!'
@@ -50,17 +45,7 @@ async function enviarEmailRenovacao({ nome, email, nomeNegocio, diasRestantes, l
   </div>
 </div></body></html>`;
 
-  try {
-    await t.sendMail({
-      from: `"AgendaOK" <${process.env.EMAIL_USER}>`,
-      to:   email,
-      subject: titulo,
-      html,
-    });
-    console.log(`✅ Aviso vencimento → ${email} (${diasRestantes}d restantes)`);
-  } catch(e) {
-    console.error(`❌ E-mail vencimento ${email}:`, e.message);
-  }
+  await enviarEmail({ fromName: 'AgendaOK', to: email, subject: titulo, html });
 }
 
 async function rodarAvisoVencimento() {

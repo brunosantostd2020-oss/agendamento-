@@ -3,7 +3,7 @@ const router  = express.Router();
 const { v4: uuidv4 } = require('uuid');
 const { pool } = require('../middleware/database');
 const { requireAuth } = require('../middleware/auth');
-const nodemailer = require('nodemailer');
+const { enviarEmail } = require('../middleware/mailer');
 
 // ── CONFIRMAÇÃO PELO DONO ─────────────────────────────────────
 
@@ -217,11 +217,10 @@ async function notificarListaEspera(negocioId, data, horario) {
     );
     for (const p of espera.rows) {
       const link = `${process.env.BASE_URL || ''}/agendar/${p.slug}`;
-      if (p.email && process.env.EMAIL_USER) {
+      if (p.email) {
         try {
-          const t = nodemailer.createTransport({ service: 'gmail', auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS } });
-          await t.sendMail({
-            from: `"AgendaOK" <${process.env.EMAIL_USER}>`,
+          await enviarEmail({
+            fromName: 'AgendaOK',
             to: p.email,
             subject: `Vaga aberta em ${p.nome_negocio}!`,
             html: `<div style="font-family:Arial;max-width:500px;margin:0 auto;padding:32px">
@@ -263,7 +262,7 @@ router.get('/historico/:slug', async (req, res) => {
 // ── RELATÓRIO MENSAL ──────────────────────────────────────────
 
 async function enviarRelatorioMensal() {
-  if (!process.env.EMAIL_USER) return;
+  if (!process.env.RESEND_API_KEY && !process.env.EMAIL_USER) return;
   try {
     const usuarios = await pool.query('SELECT * FROM usuarios WHERE ativo=true');
     const mesPassado = new Date();
@@ -297,9 +296,8 @@ async function enviarRelatorioMensal() {
         });
         const topServicos = Object.entries(servicosMap).sort((a,b)=>b[1]-a[1]).slice(0,3);
 
-        const t = nodemailer.createTransport({ service: 'gmail', auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS } });
-        await t.sendMail({
-          from: `"AgendaOK" <${process.env.EMAIL_USER}>`,
+        await enviarEmail({
+          fromName: 'AgendaOK',
           to: u.email,
           subject: `Relatorio de ${nomeMes} — ${u.nome_negocio}`,
           html: `

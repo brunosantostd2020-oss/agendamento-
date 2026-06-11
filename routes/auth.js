@@ -4,6 +4,7 @@ const bcrypt  = require('bcryptjs');
 const { v4: uuidv4 } = require('uuid');
 const { pool } = require('../middleware/database');
 const { enviarBoasVindas, enviarInstrucoesPagamento } = require('../middleware/email');
+const { rateLimit } = require('../middleware/rateLimit');
 
 // Cache em memória para /auth/me — evita query no banco a cada request
 const _meCache = new Map();
@@ -28,7 +29,7 @@ function clearMeCache(userId) {
 }
 
 // POST /auth/cadastro
-router.post('/cadastro', async (req, res) => {
+router.post('/cadastro', rateLimit({ windowMs: 10 * 60_000, max: 6, msg: 'Muitos cadastros seguidos. Aguarde alguns minutos.' }), async (req, res) => {
   const { nome, email, senha, nome_negocio, nicho, plano } = req.body;
 
   if (!nome || !email || !senha || !nome_negocio || !nicho || !plano)
@@ -97,13 +98,14 @@ router.post('/cadastro', async (req, res) => {
 });
 
 // POST /auth/login
-router.post('/login', async (req, res) => {
+router.post('/login', rateLimit({ windowMs: 60_000, max: 8, msg: 'Muitas tentativas de login. Aguarde 1 minuto.' }), async (req, res) => {
   const { email, senha } = req.body;
   if (!email || !senha) return res.status(400).json({ erro: 'E-mail e senha obrigatórios.' });
 
-  // Admin master
-  if (email === (process.env.ADMIN_EMAIL || 'admin@agendaok.com') &&
-      senha  === (process.env.ADMIN_PASSWORD || 'admin123')) {
+  // Admin master — só funciona se as credenciais estiverem configuradas no servidor
+  if (process.env.ADMIN_EMAIL && process.env.ADMIN_PASSWORD &&
+      email === process.env.ADMIN_EMAIL &&
+      senha === process.env.ADMIN_PASSWORD) {
     req.session.userId  = 'admin';
     req.session.isAdmin = true;
     return res.json({ sucesso: true, isAdmin: true });
