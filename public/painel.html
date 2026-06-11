@@ -764,6 +764,13 @@
         </svg>
         Feedback
       </a>
+
+      <a class="sb-item" onclick="abrirAjuda()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+        Ajuda
+      </a>
     </nav>
 
     <div class="sb-plan" id="sb-plan-wrap" onclick="location.href='/assinar'" style="cursor:pointer">
@@ -1407,6 +1414,27 @@
     <div class="modal-footer">
       <button class="m-btn m-btn-out" onclick="fechar('m-feedback')">Cancelar</button>
       <button class="m-btn m-btn-g" id="fb-btn" onclick="enviarFeedback()">Enviar feedback</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CENTRAL DE AJUDA -->
+<div class="overlay" id="m-ajuda" onclick="if(event.target===this)fechar('m-ajuda')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-body" style="padding:20px 20px 0">
+      <div style="font-size:17px;font-weight:800;color:var(--txt);margin-bottom:4px">💡 Central de Ajuda</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:16px">As dúvidas mais comuns, respondidas em 30 segundos.</div>
+      <div id="faq-lista"></div>
+      <button onclick="ajudaTour()" style="width:100%;margin-top:6px;padding:12px;border-radius:9px;background:none;border:1px solid var(--borda);color:var(--txt);font-family:inherit;font-size:13px;font-weight:700;cursor:pointer">
+        🔄 Refazer o tour de configuração
+      </button>
+    </div>
+    <div class="modal-footer">
+      <button class="m-btn m-btn-out" onclick="fechar('m-ajuda')">Fechar</button>
+      <button class="m-btn" onclick="ajudaWhats()" style="flex:1;background:#25D366;color:#fff;border:none;font-weight:800">
+        💬 Falar com o suporte
+      </button>
     </div>
   </div>
 </div>
@@ -3017,6 +3045,64 @@ function gerarGrade() {
   if (slots.length > 60) { toast('Grade muito grande (' + slots.length + ' horários). Aumente o intervalo.', 'err'); return; }
   document.getElementById('cfg-hr').value = slots.join(',');
   toast('✓ ' + slots.length + ' horários gerados! Revise e salve.', 'ok');
+}
+
+// ── CENTRAL DE AJUDA ──
+const SUPORTE_WPP = '5532998111297';
+const FAQ = [
+  { q: '📲 Como meus clientes agendam?',
+    a: 'Compartilhe seu link público (botão <b>Copiar link</b> no topo do painel). O cliente abre, escolhe serviço, profissional, data e horário — e você recebe a notificação na hora. Ele não precisa baixar nada.' },
+  { q: '🔗 Como coloco o link no Instagram?',
+    a: 'Copie seu link no painel. No Instagram: <b>Editar perfil → Links → Adicionar link externo</b> e cole. Dica: escreva na bio "Agende seu horário no link 👇".' },
+  { q: '🍽️ Como bloqueio almoço, folga ou férias?',
+    a: 'Use o menu <b>Bloqueios</b>: escolha a data e um horário específico ou o dia inteiro. Para o almoço de todo dia, o melhor é gerar sua grade de horários sem o horário do almoço em <b>Configurações → Horários disponíveis</b>.' },
+  { q: '✅ O cliente agendou — preciso confirmar?',
+    a: 'O agendamento chega como <b>pendente</b>. Abra-o e toque em "Enviar confirmação pelo WhatsApp" (mensagem pronta com 1 clique) ou apenas mude o status para confirmado. O cliente também pode confirmar sozinho pelo link que recebe.' },
+  { q: '💰 Por que marcar como "Concluído"?',
+    a: 'É o que alimenta seu <b>faturamento e relatórios</b>. Ao concluir, informe o valor cobrado — assim o painel mostra quanto você faturou no dia/mês. O sistema conclui automaticamente agendamentos do dia 1h após o horário, mas sem valor.' },
+  { q: '👥 Como adiciono minha equipe?',
+    a: 'Menu <b>Equipe → Adicionar funcionário</b>. Na página de agendamento, o cliente passa a escolher o profissional — e dois profissionais podem atender no mesmo horário sem conflito.' },
+  { q: '🔄 Como mudo a data/horário de um agendamento?',
+    a: 'Abra o agendamento na Agenda, altere os campos <b>Data e horário</b> e clique em <b>↻ Mover</b>. Pronto, sem excluir nada.' },
+  { q: '🔔 Como recebo aviso no celular?',
+    a: 'Em <b>Configurações → Notificações no aparelho → Ativar</b>. Você recebe um aviso a cada novo agendamento, mesmo com o painel fechado. No iPhone, antes adicione o site à tela de início (Safari → Compartilhar → Adicionar à Tela de Início).' },
+  { q: '⏱️ Para que serve a duração do serviço?',
+    a: 'Um serviço de 90min <b>ocupa automaticamente os horários seguintes</b> da agenda. Cadastre a duração certa em <b>Serviços</b> para nunca ter dois clientes no mesmo tempo.' },
+  { q: '📥 Como exporto meus dados?',
+    a: 'Nas telas <b>Agenda</b> e <b>Clientes</b> há o botão <b>⬇ Exportar CSV</b> — abre direto no Excel, com valores, status e histórico.' },
+];
+
+function abrirAjuda() {
+  fecharSidebar();
+  const el = document.getElementById('faq-lista');
+  if (!el.children.length) {
+    el.innerHTML = FAQ.map((f, i) => `
+      <div style="border:1px solid var(--borda);border-radius:10px;margin-bottom:8px;overflow:hidden">
+        <div onclick="toggleFaq(${i})" style="padding:12px 14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px">
+          <span style="font-size:13px;font-weight:700;color:var(--txt)">${f.q}</span>
+          <span id="faq-arr-${i}" style="color:var(--muted);font-size:11px;flex-shrink:0">▼</span>
+        </div>
+        <div id="faq-resp-${i}" style="display:none;padding:0 14px 12px;font-size:13px;color:var(--muted);line-height:1.65">${f.a}</div>
+      </div>`).join('');
+  }
+  document.getElementById('m-ajuda').classList.add('open');
+}
+
+function toggleFaq(i) {
+  const r = document.getElementById('faq-resp-' + i);
+  const aberto = r.style.display !== 'none';
+  r.style.display = aberto ? 'none' : 'block';
+  document.getElementById('faq-arr-' + i).textContent = aberto ? '▼' : '▲';
+}
+
+function ajudaTour() {
+  fechar('m-ajuda');
+  obReiniciar();
+}
+
+function ajudaWhats() {
+  const msg = encodeURIComponent('Olá! Sou do negócio "' + (U?.nome_negocio || '') + '" no AgendaOK e preciso de ajuda: ');
+  window.open('https://wa.me/' + SUPORTE_WPP + '?text=' + msg, '_blank');
 }
 
 // ── FEEDBACK ──
