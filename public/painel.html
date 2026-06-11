@@ -2973,13 +2973,13 @@ async function ativarPush() {
 
     const reg = await navigator.serviceWorker.register('/sw.js');
     await navigator.serviceWorker.ready;
-    let sub = await reg.pushManager.getSubscription();
-    if (!sub) {
-      sub = await reg.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlB64ToU8(dk.chave),
-      });
-    }
+    // Remove inscrição antiga (pode ter sido criada com outra chave) e refaz
+    const antiga = await reg.pushManager.getSubscription();
+    if (antiga) await antiga.unsubscribe().catch(() => {});
+    const sub = await reg.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: urlB64ToU8(dk.chave),
+    });
     const r = await fetch('/negocio/push/inscrever', {
       method:'POST', credentials:'include',
       headers:{'Content-Type':'application/json'},

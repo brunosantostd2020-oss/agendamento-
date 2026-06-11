@@ -46,7 +46,9 @@ async function enviarPushUsuario(usuarioId, { titulo, corpo, url, urgente } = {}
     for (const s of subs) {
       try {
         await webpush.sendNotification(s.dados, payload);
+        console.log(`🔔 Push enviado (usuário ${usuarioId})`);
       } catch(e) {
+        console.error(`❌ Push erro ${e.statusCode || ''}: ${e.body || e.message}`);
         // 404/410 = inscrição expirada (app desinstalado etc.) — limpa do banco
         if (e.statusCode === 404 || e.statusCode === 410) {
           await pool.query('DELETE FROM push_subscriptions WHERE id=$1', [s.id]).catch(() => {});
