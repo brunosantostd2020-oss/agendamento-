@@ -87,6 +87,7 @@ router.get('/clientes', requireAuth, async (req, res) => {
             AND data < TO_CHAR(CURRENT_DATE, 'YYYY-MM-DD')
         )::int AS nao_apareceu,
         MAX(data) AS ultima_visita,
+        (array_agg(horario ORDER BY data DESC, horario DESC))[1] AS ultimo_horario,
         COALESCE(SUM(
           CASE WHEN status = 'concluido' AND preco_servico IS NOT NULL
                THEN preco_servico ELSE 0 END

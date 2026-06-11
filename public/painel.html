@@ -144,7 +144,7 @@
     .tb-right{display:flex;align-items:center;gap:10px;flex-shrink:0;position:relative}
     .bell-wrap{position:relative;flex-shrink:0}
     .tb-bell svg{width:16px;height:16px;color:var(--muted)}
-    .tb-bell-dot{position:absolute;top:6px;right:6px;width:7px;height:7px;
+    .tb-bell-dot{position:absolute;top:2px;right:2px;min-width:16px;height:16px;padding:0 4px;border-radius:999px;background:#ef4444;color:#fff;font-size:10px;font-weight:800;line-height:16px;text-align:center;border:2px solid var(--bg);box-sizing:content-box;
       border-radius:50%;background:var(--laranja);border:2px solid var(--sidebar);display:none}
     .tb-bell-dot.show{display:block}
     .tb-copy-link{display:flex;align-items:center;gap:7px;padding:0 14px;height:36px;
@@ -2894,8 +2894,15 @@ async function carregarNotifs() {
     const dot = document.getElementById('bell-dot');
     const lista = document.getElementById('nd-list');
 
-    if (d.nao_lidas > 0) dot.classList.add('show');
-    else dot.classList.remove('show');
+    if (d.nao_lidas > 0) {
+      dot.textContent = d.nao_lidas > 9 ? '9+' : d.nao_lidas;
+      dot.classList.add('show');
+      document.title = '(' + d.nao_lidas + ') Painel — AgendaOK';
+    } else {
+      dot.textContent = '';
+      dot.classList.remove('show');
+      document.title = 'Painel — AgendaOK';
+    }
 
     if (!d.notificacoes?.length) {
       lista.innerHTML = '<div class="nd-empty">Sem notificações</div>';
@@ -3650,7 +3657,7 @@ function renderClientes() {
     const taxaNS   = totalAg>0 ? Math.round((noShow/totalAg)*100) : 0;
     const gasto    = parseFloat(c.total_gasto)||0;
     const gastFmt  = gasto>0 ? 'R$ '+gasto.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}) : '—';
-    const ultFmt   = c.ultima_visita ? new Date(c.ultima_visita+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short'}) : '—';
+    const ultFmt   = c.ultima_visita ? new Date(c.ultima_visita+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short'}) + (c.ultimo_horario ? ' às ' + c.ultimo_horario : '') : '—';
     let badge, cardClass='';
     if (dias<=0||!c.ultima_visita){ badge=`<span class="cli-badge aus-ok">✅ Ativo</span>`; }
     else if (dias<=7)  { badge=`<span class="cli-badge aus-ok">✅ Esta semana</span>`; }
