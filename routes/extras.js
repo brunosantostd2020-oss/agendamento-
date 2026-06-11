@@ -46,6 +46,29 @@ router.post('/confirmar/:token', async (req, res) => {
       `UPDATE agendamentos SET status=$1, atualizado_em=$2 WHERE token_confirm=$3`,
       [acao, new Date().toLocaleString('pt-BR'), req.params.token]
     );
+
+    // ── Notificação no sino do painel do dono ──
+    const [ano, mes, dia] = (a.data || '').split('-');
+    const dataFmt = a.data ? `${dia}/${mes}/${ano}` : '';
+    const horFmt  = a.horario || '';
+    const nomeCliente = a.nome || 'Cliente';
+
+    let titulo, mensagem;
+    if (acao === 'confirmado') {
+      titulo   = `✅ ${nomeCliente} confirmou!`;
+      mensagem = `O agendamento de ${nomeCliente} para ${dataFmt} às ${horFmt}${a.servico ? ' ('+a.servico+')' : ''} foi confirmado pelo cliente.`;
+    } else {
+      titulo   = `❌ ${nomeCliente} cancelou`;
+      mensagem = `O agendamento de ${nomeCliente} para ${dataFmt} às ${horFmt} foi cancelado pelo cliente.`;
+    }
+
+    // Salva notificação (silencia erro para não quebrar o fluxo)
+    pool.query(
+      `INSERT INTO notificacoes (id, usuario_id, tipo, titulo, mensagem)
+       VALUES (gen_random_uuid(), $1, $2, $3, $4)`,
+      [a.negocio_id, acao === 'confirmado' ? 'pagamento' : 'aviso', titulo, mensagem]
+    ).catch(e => console.error('Notif confirm:', e.message));
+
     res.json({ sucesso: true, status: acao });
   } catch(e) { res.status(500).json({ erro: e.message }); }
 });
@@ -336,6 +359,64 @@ async function enviarRelatorioMensal() {
 router.get('/relatorio-teste', requireAuth, async (req, res) => {
   await enviarRelatorioMensal();
   res.json({ sucesso: true, msg: 'Relatorio enviado!' });
+});
+
+// GET /extras/reagendar/:token — dados do agendamento para reagendar
+router.get('/reagendar/:token', async (req, res) => {
+  try {
+    const r = await pool.query(
+      `SELECT a.id, a.nome, a.data, a.horario, a.servico, a.status,
+              a.negocio_slug, u.nome_negocio, u.config
+       FROM agendamentos a
+       JOIN usuarios u ON u.id = a.negocio_id
+       WHERE a.token_cancel = $1`,
+      [req.params.token]
+    );
+    if (!r.rows.length) return res.status(404).json({ erro: 'Link inválido ou expirado.' });
+    const ag = r.rows[0];
+    if (ag.status === 'cancelado') return res.status(400).json({ erro: 'Este agendamento foi cancelado.' });
+    res.json({ agendamento: ag });
+  } catch(e) { res.status(500).json({ erro: e.message }); }
+});
+
+// POST /extras/reagendar/:token — confirmar novo horário
+router.post('/reagendar/:token', async (req, res) => {
+  const { nova_data, novo_horario } = req.body;
+  if (!nova_data || !novo_horario) return res.status(400).json({ erro: 'Data e horário obrigatórios.' });
+  try {
+    const r = await pool.query(
+      'SELECT * FROM agendamentos WHERE token_cancel = $1', [req.params.token]
+    );
+    if (!r.rows.length) return res.status(404).json({ erro: 'Link inválido.' });
+    const ag = r.rows[0];
+    if (ag.status === 'cancelado') return res.status(400).json({ erro: 'Agendamento cancelado.' });
+
+    // Verificar se horário está disponível
+    const ocupado = await pool.query(
+      `SELECT id FROM agendamentos
+       WHERE negocio_id=$1 AND data=$2 AND horario=$3
+         AND status IN ('pendente','confirmado','reagendado')
+         AND id != $4`,
+      [ag.negocio_id, nova_data, novo_horario, ag.id]
+    );
+    if (ocupado.rows.length) return res.status(409).json({ erro: 'Este horário já está ocupado. Escolha outro.' });
+
+    const agora = new Date().toLocaleString('pt-BR');
+    await pool.query(
+      `UPDATE agendamentos SET data=$1, horario=$2, status='reagendado', atualizado_em=$3 WHERE id=$4`,
+      [nova_data, novo_horario, agora, ag.id]
+    );
+
+    // Notificação no sino do dono
+    await pool.query(
+      `INSERT INTO notificacoes (id, usuario_id, tipo, titulo, mensagem)
+       VALUES (gen_random_uuid(), $1,'aviso','🔄 Reagendamento: ${ag.nome}',
+       'Reagendou para ${nova_data} às ${novo_horario}')`,
+      [ag.negocio_id]
+    ).catch(() => {});
+
+    res.json({ sucesso: true });
+  } catch(e) { res.status(500).json({ erro: e.message }); }
 });
 
 module.exports = router;

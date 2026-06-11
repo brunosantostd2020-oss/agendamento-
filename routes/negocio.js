@@ -1,4 +1,12 @@
 const express = require('express');
+
+// Data de hoje no fuso de Brasília (UTC-3)
+function hojeBC() {
+  const agora = new Date();
+  const br = new Date(agora.getTime() - 3*60*60*1000);
+  return br.toISOString().split('T')[0];
+}
+const hojeFunc = hojeBC;
 const router  = express.Router();
 const { v4: uuidv4 } = require('uuid');
 const { pool } = require('../middleware/database');
@@ -11,7 +19,7 @@ router.get('/painel', requireAuth, async (req, res) => {
     const u = (await pool.query('SELECT * FROM usuarios WHERE id = $1', [req.session.userId])).rows[0];
     if (!u) return res.status(404).json({ erro: 'Usuário não encontrado.' });
 
-    const hoje     = new Date().toISOString().split('T')[0];
+    const hoje     = hojeFunc();
     const mesAtual = hoje.slice(0, 7);
 
     const total      = +(await pool.query('SELECT COUNT(*) FROM agendamentos WHERE negocio_id=$1', [u.id])).rows[0].count;
@@ -37,8 +45,9 @@ router.get('/agendamentos', requireAuth, async (req, res) => {
     const { status } = req.query;
     let sql = 'SELECT * FROM agendamentos WHERE negocio_id=$1';
     const params = [req.session.userId];
-    if (status) { sql += ' AND status=$2'; params.push(status); }
-    sql += ' ORDER BY data ASC, horario ASC';
+    if (status && status !== 'todos') { sql += ' AND status=$2'; params.push(status); }
+    // Limitar a 500 por performance se não houver filtro
+    sql += ' ORDER BY data DESC, horario ASC LIMIT 500';
     const r = await pool.query(sql, params);
     res.json({ agendamentos: r.rows });
   } catch(e) { res.status(500).json({ erro: e.message }); }
@@ -47,7 +56,7 @@ router.get('/agendamentos', requireAuth, async (req, res) => {
 // GET /negocio/agendamentos/hoje
 router.get('/agendamentos/hoje', requireAuth, async (req, res) => {
   try {
-    const hoje = new Date().toISOString().split('T')[0];
+    const hoje = hojeFunc();
     const r = await pool.query(
       'SELECT * FROM agendamentos WHERE negocio_id=$1 AND data=$2 ORDER BY horario ASC',
       [req.session.userId, hoje]
@@ -56,17 +65,105 @@ router.get('/agendamentos/hoje', requireAuth, async (req, res) => {
   } catch(e) { res.status(500).json({ erro: e.message }); }
 });
 
+// GET /negocio/clientes — lista de clientes com histórico de visitas
+router.get('/clientes', requireAuth, async (req, res) => {
+  try {
+    const userId = req.session.userId;
+
+    // data é TEXT (YYYY-MM-DD) — usar comparação textual que funciona nesse formato
+    const { rows } = await pool.query(`
+      SELECT
+        nome,
+        telefone,
+        email,
+        COUNT(*)::int                                     AS total_agendamentos,
+        COUNT(*) FILTER (WHERE status = 'concluido')::int AS visitas_concluidas,
+        COUNT(*) FILTER (
+          WHERE status = 'cancelado'
+            AND data < TO_CHAR(CURRENT_DATE, 'YYYY-MM-DD')
+        )::int AS cancelamentos,
+        COUNT(*) FILTER (
+          WHERE status IN ('pendente','confirmado')
+            AND data < TO_CHAR(CURRENT_DATE, 'YYYY-MM-DD')
+        )::int AS nao_apareceu,
+        MAX(data) AS ultima_visita,
+        COALESCE(SUM(
+          CASE WHEN status = 'concluido' AND preco_servico IS NOT NULL
+               THEN preco_servico ELSE 0 END
+        ), 0) AS total_gasto,
+        CASE WHEN MAX(data) IS NOT NULL THEN (CURRENT_DATE - TO_DATE(MAX(data), 'YYYY-MM-DD'))::int ELSE NULL END AS dias_ausente
+      FROM agendamentos
+      WHERE negocio_id = $1
+        AND nome IS NOT NULL
+        AND TRIM(nome) != ''
+      GROUP BY nome, telefone, email
+      ORDER BY MAX(data) DESC NULLS LAST
+    `, [userId]);
+
+    res.json({ clientes: rows });
+  } catch(e) {
+    console.error('Erro /clientes:', e.message);
+    res.status(500).json({ erro: e.message });
+  }
+});
+
+// POST /negocio/agendamentos/manual — agendamento manual pelo dono (sem exigir telefone)
+router.post('/agendamentos/manual', requireAuth, async (req, res) => {
+  const { nome, telefone, data, horario, servico, preco_servico, obs } = req.body;
+  if (!nome || !data || !horario)
+    return res.status(400).json({ erro: 'Nome, data e horário são obrigatórios.' });
+  try {
+    const uid = req.session.userId;
+    const u   = (await pool.query('SELECT * FROM usuarios WHERE id=$1', [uid])).rows[0];
+    if (!u) return res.status(404).json({ erro: 'Usuário não encontrado.' });
+
+    const { v4: uuidv4 } = require('uuid');
+    const agId   = uuidv4();
+    const tokenC = uuidv4().replace(/-/g,'');
+    const tokenA = uuidv4().replace(/-/g,'');
+    const tokenCF= uuidv4().replace(/-/g,'');
+    const agora  = new Date().toLocaleString('pt-BR');
+
+    await pool.query(
+      `INSERT INTO agendamentos
+        (id,negocio_id,negocio_slug,nome,email,telefone,servico,preco_servico,obs,
+         data,horario,status,token_cancel,token_avalia,token_confirm,criado_em,atualizado_em)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,'confirmado',$12,$13,$14,$15,$15)`,
+      [agId, uid, u.slug, nome.trim(), '', telefone||'',
+       servico||'', preco_servico ? parseFloat(preco_servico) : null,
+       obs||'', data, horario, tokenC, tokenA, tokenCF, agora]
+    );
+
+    res.json({ sucesso: true, id: agId });
+  } catch(e) {
+    console.error('Erro agendamento manual:', e.message);
+    res.status(500).json({ erro: e.message });
+  }
+});
+
 // PATCH /negocio/agendamentos/:id/status
 router.patch('/agendamentos/:id/status', requireAuth, async (req, res) => {
-  const { status, obs } = req.body;
-  const statusValidos = ['pendente','confirmado','cancelado','concluido'];
+  const { status, obs, servico_concluido, preco_concluido, funcionario_id } = req.body;
+  const statusValidos = ['pendente','confirmado','cancelado','concluido','reagendado'];
   if (!statusValidos.includes(status)) return res.status(400).json({ erro: 'Status inválido.' });
   try {
     const agora = new Date().toLocaleString('pt-BR');
-    await pool.query(
-      'UPDATE agendamentos SET status=$1, obs=$2, atualizado_em=$3 WHERE id=$4 AND negocio_id=$5',
-      [status, obs||'', agora, req.params.id, req.session.userId]
-    );
+    // Se concluído, atualiza também servico e preco_servico
+    if (status === 'concluido' && servico_concluido) {
+      await pool.query(
+        `UPDATE agendamentos SET status=$1, obs=$2, atualizado_em=$3,
+         servico=$4, preco_servico=$5
+         WHERE id=$6 AND negocio_id=$7`,
+        [status, obs||'', agora, servico_concluido,
+         preco_concluido ? parseFloat(preco_concluido) : null,
+         req.params.id, req.session.userId]
+      );
+    } else {
+      await pool.query(
+        'UPDATE agendamentos SET status=$1, obs=$2, atualizado_em=$3 WHERE id=$4 AND negocio_id=$5',
+        [status, obs||'', agora, req.params.id, req.session.userId]
+      );
+    }
     res.json({ sucesso: true });
   } catch(e) { res.status(500).json({ erro: e.message }); }
 });
@@ -76,6 +173,56 @@ router.delete('/agendamentos/:id', requireAuth, async (req, res) => {
   try {
     await pool.query('DELETE FROM agendamentos WHERE id=$1 AND negocio_id=$2', [req.params.id, req.session.userId]);
     res.json({ sucesso: true });
+  } catch(e) { res.status(500).json({ erro: e.message }); }
+});
+
+// GET /negocio/buscar?q=termo — busca global
+router.get('/buscar', requireAuth, async (req, res) => {
+  const q = (req.query.q || '').trim();
+  if (q.length < 2) return res.json({ agendamentos: [], clientes: [] });
+  try {
+    const like = `%${q}%`;
+    const uid  = req.session.userId;
+
+    // Buscar agendamentos recentes que coincidem
+    const ags = await pool.query(`
+      SELECT id, nome, telefone, servico, data, horario, status
+      FROM agendamentos
+      WHERE negocio_id = $1
+        AND (LOWER(nome) LIKE LOWER($2) OR LOWER(servico) LIKE LOWER($2) OR telefone LIKE $2)
+      ORDER BY data DESC LIMIT 6
+    `, [uid, like]);
+
+    // Buscar clientes únicos
+    const clis = await pool.query(`
+      SELECT DISTINCT nome, telefone,
+        COUNT(*) AS visitas,
+        MAX(data) AS ultima
+      FROM agendamentos
+      WHERE negocio_id = $1
+        AND (LOWER(nome) LIKE LOWER($2) OR telefone LIKE $2)
+      GROUP BY nome, telefone
+      ORDER BY MAX(data) DESC LIMIT 4
+    `, [uid, like]);
+
+    res.json({ agendamentos: ags.rows, clientes: clis.rows });
+  } catch(e) {
+    res.json({ agendamentos: [], clientes: [] });
+  }
+});
+
+// GET /negocio/clientes/:telefone/historico — histórico completo
+router.get('/clientes/:telefone/historico', requireAuth, async (req, res) => {
+  try {
+    const tel = decodeURIComponent(req.params.telefone);
+    const r = await pool.query(`
+      SELECT id, nome, data, horario, servico, status, preco_servico, obs
+      FROM agendamentos
+      WHERE negocio_id = $1 AND telefone = $2
+      ORDER BY data DESC, horario DESC
+      LIMIT 50
+    `, [req.session.userId, tel]);
+    res.json({ historico: r.rows });
   } catch(e) { res.status(500).json({ erro: e.message }); }
 });
 
@@ -99,6 +246,11 @@ router.patch('/config', requireAuth, async (req, res) => {
 
     const nomeNegocio = req.body.nome_negocio || u.nome_negocio;
     await pool.query('UPDATE usuarios SET config=$1, nome_negocio=$2 WHERE id=$3', [JSON.stringify(cfg), nomeNegocio, req.session.userId]);
+    // Limpar cache do /auth/me para refletir novas configs
+    try {
+      const authRouter = require('./auth');
+      if (authRouter.clearMeCache) authRouter.clearMeCache(req.session.userId);
+    } catch(e) {}
     res.json({ sucesso: true });
   } catch(e) { res.status(500).json({ erro: e.message }); }
 });

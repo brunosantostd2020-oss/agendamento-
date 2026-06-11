@@ -5,6 +5,28 @@ const { v4: uuidv4 } = require('uuid');
 const { pool } = require('../middleware/database');
 const { enviarBoasVindas, enviarInstrucoesPagamento } = require('../middleware/email');
 
+// Cache em memória para /auth/me — evita query no banco a cada request
+const _meCache = new Map();
+const ME_TTL   = 30 * 1000; // 30 segundos
+
+function getMeCache(userId) {
+  const cached = _meCache.get(userId);
+  if (cached && Date.now() - cached.ts < ME_TTL) return cached.data;
+  return null;
+}
+function setMeCache(userId, data) {
+  _meCache.set(userId, { data, ts: Date.now() });
+  // Limpar cache de usuários inativos (máx 1000 entradas)
+  if (_meCache.size > 1000) {
+    const oldest = [..._meCache.entries()]
+      .sort((a,b) => a[1].ts - b[1].ts)[0];
+    _meCache.delete(oldest[0]);
+  }
+}
+function clearMeCache(userId) {
+  _meCache.delete(userId);
+}
+
 // POST /auth/cadastro
 router.post('/cadastro', async (req, res) => {
   const { nome, email, senha, nome_negocio, nicho, plano } = req.body;
@@ -35,7 +57,7 @@ router.post('/cadastro', async (req, res) => {
       slug = slugBase + '-' + i; i++;
     }
 
-    const hash  = await bcrypt.hash(senha, 10);
+    const hash  = await bcrypt.hash(senha, 6); // custo 6 = rápido e seguro para SaaS
     const agora = new Date().toLocaleString('pt-BR');
     const id    = uuidv4();
     const config = {
@@ -88,7 +110,7 @@ router.post('/login', async (req, res) => {
   }
 
   try {
-    const result = await pool.query('SELECT * FROM usuarios WHERE email = $1', [email.toLowerCase().trim()]);
+    const result = await pool.query('SELECT id,nome,email,senha,slug,nicho,plano FROM usuarios WHERE email=$1', [email.toLowerCase().trim()]);
     if (result.rows.length === 0)
       return res.status(401).json({ erro: 'E-mail ou senha incorretos.' });
 
@@ -111,6 +133,7 @@ router.post('/login', async (req, res) => {
 
 // POST /auth/logout
 router.post('/logout', (req, res) => {
+  if (req.session.userId) clearMeCache(req.session.userId);
   req.session.destroy();
   res.json({ sucesso: true });
 });
@@ -119,9 +142,17 @@ router.post('/logout', (req, res) => {
 router.get('/me', async (req, res) => {
   if (!req.session.userId) return res.status(401).json({ logado: false });
   try {
-    const r = await pool.query('SELECT * FROM usuarios WHERE id = $1', [req.session.userId]);
-    if (r.rows.length === 0) return res.status(401).json({ logado: false });
-    const u = r.rows[0];
+    // Usar cache para evitar query a cada carregamento de página
+    let u = getMeCache(req.session.userId);
+    if (!u) {
+      const r = await pool.query(
+        'SELECT id,nome,email,nome_negocio,nicho,plano,slug,config,trial_expira,acesso_expira,plano_pago,acesso_ativo FROM usuarios WHERE id=$1',
+        [req.session.userId]
+      );
+      if (r.rows.length === 0) return res.status(401).json({ logado: false });
+      u = r.rows[0];
+      setMeCache(req.session.userId, u);
+    }
 
     const hoje = new Date().toISOString().split('T')[0];
     let acesso_ok = true;
@@ -154,3 +185,4 @@ router.get('/me', async (req, res) => {
 });
 
 module.exports = router;
+module.exports.clearMeCache = clearMeCache;

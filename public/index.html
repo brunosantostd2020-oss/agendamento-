@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
 <meta name="theme-color" content="#0a0b10"/>
 <title>AgendaOK — Agendamento que funciona de verdade</title>
 <meta name="description" content="Seus clientes agendam pelo celular em segundos. Você gerencia tudo pelo painel — sem planilha, sem caderno."/>
@@ -214,6 +214,50 @@ p{margin:0}
 .stat-num{font-family:var(--font-display);font-size:52px;line-height:1;letter-spacing:-0.02em}
 .quote-stats .qs-muted{color:rgba(255,255,255,0.8);font-size:13px}
 
+/* PREÇO */
+.preco-section{background:linear-gradient(135deg,rgba(124,92,255,.08),rgba(91,139,255,.05));border-radius:var(--radius-xl);padding:60px 40px;text-align:center;border:1px solid rgba(124,92,255,.2)}
+.preco-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(37,211,102,.1);border:1px solid rgba(37,211,102,.25);color:#25d366;font-size:12px;font-weight:700;padding:6px 14px;border-radius:999px;margin-bottom:20px;text-transform:uppercase;letter-spacing:.06em}
+.preco-valor{font-size:clamp(56px,8vw,96px);font-weight:900;color:var(--text);line-height:1;letter-spacing:-3px}
+.preco-valor sup{font-size:28px;vertical-align:top;margin-top:16px;font-weight:700;letter-spacing:0}
+.preco-valor span{font-size:22px;font-weight:500;color:var(--text-dim);letter-spacing:-1px}
+.preco-desc{color:var(--text-dim);font-size:16px;margin:12px 0 28px}
+.preco-items{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:32px}
+.preco-item{display:flex;align-items:center;gap:6px;font-size:14px;color:var(--text-dim)}
+.preco-item svg{flex-shrink:0;color:#25d366}
+.preco-aviso{font-size:13px;color:var(--text-muted);margin-top:16px}
+
+/* DEPOIMENTOS */
+.depos-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.depo-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px}
+.depo-stars{color:#fbbf24;font-size:14px;margin-bottom:12px}
+.depo-txt{font-size:15px;color:var(--text-dim);line-height:1.6;margin-bottom:16px}
+.depo-autor{display:flex;align-items:center;gap:10px}
+.depo-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#000;flex-shrink:0}
+.depo-nome{font-size:13px;font-weight:700;color:var(--text)}
+.depo-neg{font-size:11px;color:var(--text-muted)}
+
+/* FAQ */
+.faq-list{max-width:720px;margin:0 auto}
+.faq-item{border-bottom:1px solid var(--border);padding:20px 0}
+.faq-item:last-child{border-bottom:none}
+.faq-q{font-size:16px;font-weight:700;color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;user-select:none}
+.faq-q::after{content:'+';font-size:22px;font-weight:300;color:var(--text-muted);flex-shrink:0;transition:transform .2s}
+.faq-item.open .faq-q::after{transform:rotate(45deg)}
+.faq-a{font-size:15px;color:var(--text-dim);line-height:1.65;max-height:0;overflow:hidden;transition:max-height .3s ease,padding .3s}
+.faq-item.open .faq-a{max-height:300px;padding-top:12px}
+
+/* GARANTIA */
+.garantia-box{display:flex;align-items:flex-start;gap:20px;background:rgba(37,211,102,.05);border:1px solid rgba(37,211,102,.2);border-radius:var(--radius-lg);padding:28px 32px;margin:40px auto;max-width:640px}
+.garantia-ico{font-size:40px;flex-shrink:0}
+.garantia-txt h4{font-size:18px;font-weight:800;color:var(--text);margin-bottom:6px}
+.garantia-txt p{font-size:14px;color:var(--text-dim);line-height:1.6}
+
+@media(max-width:768px){
+  .depos-grid{grid-template-columns:1fr}
+  .preco-section{padding:40px 24px}
+  .garantia-box{flex-direction:column;gap:12px;padding:20px}
+}
+
 /* FINAL CTA */
 .final-cta{padding-bottom:120px}
 .cta-card{text-align:center;padding:80px 40px;
@@ -279,7 +323,6 @@ p{margin:0}
   .foot-bottom{flex-direction:column;gap:8px;text-align:center}
 }
 @media(max-width:560px){
-  .nav-cta .btn-ghost{display:none}
   .steps,.features,.niches{grid-template-columns:1fr}
   .float-1,.float-2{display:none}
   .quote-text p{font-size:22px}
@@ -288,7 +331,53 @@ p{margin:0}
   .cta-card{padding:50px 24px}
   .foot-grid{grid-template-columns:1fr}
 }
+
+/* ── BARRA MOBILE INFERIOR — Entrar + Criar conta ── */
+.mobile-bottom-bar{
+  display:none;
+  position:fixed;bottom:0;left:0;right:0;z-index:100;
+  padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));
+  background:rgba(10,11,16,0.95);
+  border-top:1px solid var(--border);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  gap:10px;
+}
+.mobile-bottom-bar .btn{flex:1;justify-content:center;text-align:center;padding:13px 10px;font-size:15px}
+@media(max-width:560px){
+  .mobile-bottom-bar{display:flex}
+  /* garante que o conteúdo não fique atrás da barra */
+  body{padding-bottom:calc(72px + env(safe-area-inset-bottom,0px))}
+}
 </style>
+
+<!-- ═══════════════════════════════════════════════
+     META PIXEL — cole seu ID abaixo
+     Substitua SEU_PIXEL_ID pelo ID real
+═══════════════════════════════════════════════ -->
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', 'SEU_PIXEL_ID'); // ← SUBSTITUA PELO SEU PIXEL ID
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=SEU_PIXEL_ID&ev=PageView&noscript=1"/></noscript>
+
+<!-- ═══════════════════════════════════════════════
+     GOOGLE ANALYTICS — cole seu ID abaixo
+     Substitua G-XXXXXXXXXX pelo ID real
+═══════════════════════════════════════════════ -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX'); // ← SUBSTITUA PELO SEU ID
+</script>
+
 </head>
 <body>
 
@@ -310,6 +399,8 @@ p{margin:0}
     <a href="#como">Como funciona</a>
     <a href="#recursos">Recursos</a>
     <a href="#para-quem">Para quem</a>
+    <a href="#preco">Preço</a>
+    <a href="#faq">FAQ</a>
     <a href="#contato">Contato</a>
   </nav>
   <div class="nav-cta">
@@ -542,6 +633,135 @@ p{margin:0}
   </div>
 </section>
 
+<!-- ════ SEÇÃO DE PREÇO ════ -->
+<section class="section" id="preco">
+  <div class="section-head" style="text-align:center;margin:0 auto 48px">
+    <span class="eyebrow">Investimento</span>
+    <h2>Simples. <em>Sem surpresas.</em></h2>
+    <p>Um único plano com tudo incluído. Sem plano básico, sem limite de agendamentos.</p>
+  </div>
+
+  <div class="preco-section">
+    <div class="preco-badge">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      7 dias grátis para testar
+    </div>
+    <div class="preco-valor"><sup>R$</sup>69<span>,90/mês</span></div>
+    <p class="preco-desc">Cancele quando quiser. Sem fidelidade, sem multa.</p>
+
+    <div class="preco-items">
+      <div class="preco-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>Agendamentos ilimitados</div>
+      <div class="preco-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>Página pública exclusiva</div>
+      <div class="preco-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>Painel completo</div>
+      <div class="preco-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>Lembretes automáticos</div>
+      <div class="preco-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>Controle de equipe</div>
+      <div class="preco-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>PIX, débito e crédito</div>
+      <div class="preco-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>Relatórios de faturamento</div>
+      <div class="preco-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>Suporte via WhatsApp</div>
+    </div>
+
+    <a href="/cadastro" class="btn btn-primary lg" style="min-width:260px">
+      Testar grátis por 7 dias →
+    </a>
+    <p class="preco-aviso">💳 Não precisa de cartão para o teste. Cancele quando quiser.</p>
+  </div>
+
+  <!-- Garantia -->
+  <div class="garantia-box">
+    <div class="garantia-ico">🛡️</div>
+    <div class="garantia-txt">
+      <h4>Satisfação garantida nos primeiros 7 dias</h4>
+      <p>Se em 7 dias você não estiver satisfeito com o AgendaOK, não cobramos nada. Sem perguntas, sem burocracia. Você tem 7 dias para testar tudo completamente de graça.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ════ DEPOIMENTOS ════ -->
+<section class="section" id="depoimentos">
+  <div class="section-head" style="text-align:center;margin:0 auto 48px">
+    <span class="eyebrow">Quem já usa</span>
+    <h2>Negócios reais. <em>Resultados reais.</em></h2>
+    <p>Veja o que donos de negócios falam sobre o AgendaOK depois de usar na prática.</p>
+  </div>
+
+  <div class="depos-grid">
+    <div class="depo-card">
+      <div class="depo-stars">★★★★★</div>
+      <p class="depo-txt">"Antes eu perdia cliente porque esquecia de confirmar. Agora o sistema manda mensagem sozinho e minha taxa de no-show caiu mais da metade. Recomendo demais."</p>
+      <div class="depo-autor">
+        <div class="depo-avatar" style="background:linear-gradient(135deg,#f97316,#fbbf24)">RS</div>
+        <div>
+          <div class="depo-nome">Rafael Silva</div>
+          <div class="depo-neg">Barbearia · Belo Horizonte, MG</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="depo-card">
+      <div class="depo-stars">★★★★★</div>
+      <p class="depo-txt">"Uso para minha clínica de estética. Meus clientes adoram poder agendar de madrugada pelo celular sem precisar me ligar. Parece que tenho uma secretária 24h."</p>
+      <div class="depo-autor">
+        <div class="depo-avatar" style="background:linear-gradient(135deg,#ec4899,#f9a8d4)">MC</div>
+        <div>
+          <div class="depo-nome">Marina Costa</div>
+          <div class="depo-neg">Clínica de Estética · São Paulo, SP</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="depo-card">
+      <div class="depo-stars">★★★★★</div>
+      <p class="depo-txt">"Em 2 semanas já tinha todos os horários da semana cheios. O link de agendamento no Instagram faz todo o trabalho. Melhor investimento que fiz pro meu consultório."</p>
+      <div class="depo-autor">
+        <div class="depo-avatar" style="background:linear-gradient(135deg,#3b82f6,#a5f3fc)">DP</div>
+        <div>
+          <div class="depo-nome">Dr. Diego Pereira</div>
+          <div class="depo-neg">Fisioterapia · Curitiba, PR</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════ FAQ ════ -->
+<section class="section" id="faq">
+  <div class="section-head" style="text-align:center;margin:0 auto 48px">
+    <span class="eyebrow">Dúvidas frequentes</span>
+    <h2>Perguntas que todo <em>mundo faz.</em></h2>
+  </div>
+
+  <div class="faq-list">
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Meu cliente precisa criar conta ou baixar algum app?</div>
+      <div class="faq-a">Não. Seu cliente acessa pelo celular, escolhe o horário e confirma — tudo pelo navegador, sem app, sem cadastro, sem senha. É simples como clicar num link.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Funciona para qual tipo de negócio?</div>
+      <div class="faq-a">Para qualquer negócio que trabalha com horários marcados: barbearia, salão, clínica, dentista, psicólogo, fisioterapeuta, personal trainer, tatuagem, estética, advocacia e muito mais. O sistema se adapta ao seu nicho automaticamente.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Preciso de cartão de crédito para testar?</div>
+      <div class="faq-a">Não. Você cria a conta gratuitamente e usa por 7 dias completos sem precisar informar nenhum dado de pagamento. Só cobra se você decidir continuar depois.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Como meus clientes me encontram para agendar?</div>
+      <div class="faq-a">Você recebe uma página exclusiva (ex: seusite.com/agendar/seunome) e um QR Code. Coloque o link na bio do Instagram, mande pelo WhatsApp, imprima o QR Code no balcão — seus clientes acessam de qualquer lugar.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Posso cancelar quando quiser?</div>
+      <div class="faq-a">Sim. Sem fidelidade, sem multa. Se decidir cancelar, basta parar de renovar. Seus dados ficam salvos por 30 dias caso queira voltar.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">E se eu tiver problemas ou dúvidas?</div>
+      <div class="faq-a">Suporte via WhatsApp. Respondemos todos os dias. Não deixamos nenhum cliente sem resposta.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">O pagamento é feito como?</div>
+      <div class="faq-a">Via Mercado Pago — aceita PIX (à vista), cartão de débito e cartão de crédito em até 12x. O pagamento é 100% seguro e processado pelo Mercado Pago.</div>
+    </div>
+  </div>
+</section>
+
 <!-- FINAL CTA -->
 <section class="section final-cta" id="contato">
   <div class="cta-card">
@@ -585,9 +805,62 @@ p{margin:0}
       <a href="/cadastro" class="btn btn-primary sm" style="display:inline-flex;margin-top:8px">Criar conta grátis</a>
     </div>
   </div>
+  <!-- Selos de segurança e bandeiras -->
+  <div style="border-top:1px solid var(--border);margin-top:40px;padding-top:28px">
+
+    <!-- Bandeiras e métodos de pagamento -->
+    <div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:10px;margin-bottom:20px">
+      <span style="font-size:11px;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:.06em;margin-right:4px">Pagamentos aceitos:</span>
+      <!-- Visa -->
+      <div style="background:#1a1f71;border-radius:6px;padding:5px 10px;display:flex;align-items:center">
+        <svg width="38" height="14" viewBox="0 0 38 14" fill="none"><text x="0" y="12" font-family="Arial" font-size="13" font-weight="900" fill="white" font-style="italic">VISA</text></svg>
+      </div>
+      <!-- Mastercard -->
+      <div style="background:#252525;border-radius:6px;padding:5px 8px;display:flex;align-items:center;gap:4px">
+        <div style="width:16px;height:16px;border-radius:50%;background:#eb001b;opacity:.95"></div>
+        <div style="width:16px;height:16px;border-radius:50%;background:#f79e1b;margin-left:-8px;opacity:.95"></div>
+        <span style="font-size:10px;font-weight:700;color:white;margin-left:4px">Mastercard</span>
+      </div>
+      <!-- PIX -->
+      <div style="background:#32bcad;border-radius:6px;padding:5px 10px;display:flex;align-items:center;gap:5px">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+        <span style="font-size:11px;font-weight:800;color:white">PIX</span>
+      </div>
+      <!-- Elo -->
+      <div style="background:#ffcb05;border-radius:6px;padding:5px 10px">
+        <span style="font-size:11px;font-weight:900;color:#000">ELO</span>
+      </div>
+      <!-- Débito -->
+      <div style="background:#f5f5f5;border-radius:6px;padding:5px 10px;border:1px solid #e2e8f0">
+        <span style="font-size:10px;font-weight:700;color:#475569">💳 DÉBITO</span>
+      </div>
+    </div>
+
+    <!-- Selos de segurança -->
+    <div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:16px;margin-bottom:20px">
+      <div style="display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid #e2e8f0;border-radius:8px;background:#f8faff">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <span style="font-size:11px;font-weight:700;color:#16a34a">Site Seguro SSL</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid #e2e8f0;border-radius:8px;background:#f8faff">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <span style="font-size:11px;font-weight:700;color:#2563eb">Dados Criptografados</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid #e2e8f0;border-radius:8px;background:#f8faff">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2.5" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+        <span style="font-size:11px;font-weight:700;color:#7c3aed">Pagamento via Mercado Pago</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid #e2e8f0;border-radius:8px;background:#f8faff">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ea580c" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+        <span style="font-size:11px;font-weight:700;color:#ea580c">Política de Privacidade LGPD</span>
+      </div>
+    </div>
+
+  </div>
+
   <div class="foot-bottom">
     <span>© 2025 AgendaOK · Desenvolvido por Bruno Oliveira</span>
-    <span>Feito com ♥ no Brasil</span>
+    <span>🇧🇷 Feito com ♥ no Brasil</span>
   </div>
 </footer>
 
@@ -636,6 +909,28 @@ async function masterLogin(){
     window.location.href='/master';
   }catch(e){erro.textContent='Erro de conexão.';btn.disabled=false;btn.textContent='Entrar';}
 }
+</script>
+
+<!-- BARRA MOBILE INFERIOR -->
+<div class="mobile-bottom-bar">
+  <a href="/login" class="btn btn-ghost">Entrar</a>
+  <a href="/cadastro" class="btn btn-primary">Criar conta grátis →</a>
+</div>
+<script>
+function toggleFaq(el) {
+  const item = el.closest('.faq-item');
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+
+// Rastrear cliques no CTA para o pixel
+document.querySelectorAll('a[href="/cadastro"]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (typeof fbq !== 'undefined') fbq('track', 'Lead');
+    if (typeof gtag !== 'undefined') gtag('event', 'begin_checkout');
+  });
+});
 </script>
 </body>
 </html>

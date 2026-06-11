@@ -1,493 +1,721 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
- <meta charset="UTF-8"/>
- <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
- <meta name="theme-color" content="#0a0a0a"/>
- <title>Master — AgendaOK</title>
- <link rel="preconnect" href="https://fonts.googleapis.com"/>
- <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
- <style>
- *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
- :root{
- --preto:#0a0a0a;--branco:#fff;--bg:#fafaf9;
- --cinza:#f5f4f0;--cinza2:#e8e6e1;--muted:#6b6860;--texto:#1c1b18;
- --verde:#16a34a;--vermelho:#dc2626;--laranja:#ea580c;--azul:#2563eb;--roxo:#7c3aed;
- --r:4px;--sb:env(safe-area-inset-bottom,0px);--st:env(safe-area-inset-top,0px);
- }
- html{-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
- body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--texto);min-height:100dvh;-webkit-font-smoothing:antialiased}
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+<meta name="theme-color" content="#050507"/>
+<title>Master — AgendaOK</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#fafaf9;--branco:#fff;--cinza:#f5f4f0;--cinza2:#e8e6e1;
+  --muted:#6b6860;--texto:#1c1b18;--preto:#0a0a0a;
+  --verde:#16a34a;--vermelho:#dc2626;--laranja:#ea580c;
+  --azul:#2563eb;--roxo:#7c3aed;
+  --r:6px;--sb:env(safe-area-inset-bottom,0px);--st:env(safe-area-inset-top,0px);
+}
+html{-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);
+  color:var(--texto);min-height:100dvh;-webkit-font-smoothing:antialiased;
+  overflow-x:hidden}
 
- /* LOGIN */
- .login-wrap{min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:20px;background:var(--preto)}
- .login-card{background:#111;border:1px solid #222;border-radius:8px;padding:36px 28px;width:100%;max-width:360px;text-align:center}
- .login-logo{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:28px}
- .login-logo-m{width:32px;height:32px;background:var(--branco);border-radius:6px;display:flex;align-items:center;justify-content:center}
- .login-logo-m svg{width:16px;height:16px;fill:var(--preto)}
- .login-logo-t{font-size:18px;font-weight:800;color:var(--branco);letter-spacing:-0.3px}
- .login-badge{font-size:10px;font-weight:700;color:#555;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:24px}
- .login-input{width:100%;border:1px solid #222;border-radius:var(--r);font-family:'Inter',sans-serif;font-size:16px;font-weight:400;padding:14px 16px;color:var(--branco);background:#1a1a1a;outline:none;margin-bottom:12px;-webkit-appearance:none}
- .login-input:focus{border-color:#444}
- .login-btn{width:100%;padding:14px;border-radius:var(--r);background:var(--branco);color:var(--preto);font-family:'Inter',sans-serif;font-size:15px;font-weight:700;border:none;cursor:pointer;transition:opacity 0.15s}
- .login-btn:active{opacity:0.8}
- .login-btn:disabled{opacity:0.4}
- .login-erro{font-size:13px;color:var(--vermelho);margin-top:10px;min-height:18px}
+/* ══ LOGIN SCREEN ══════════════════════════════════════════════════════════ */
+.login-wrap{
+  min-height:100dvh;display:flex;align-items:center;justify-content:center;
+  padding:20px;padding-top:calc(20px + var(--st));
+  background:
+    radial-gradient(ellipse 120% 80% at 10% -5%, rgba(124,92,255,.22), transparent 55%),
+    radial-gradient(ellipse 100% 70% at 90% 110%, rgba(22,163,74,.14), transparent 55%),
+    #050507}
 
- /* APP */
- #app{display:none}
- .header{background:var(--preto);padding:0 20px;padding-top:var(--st);height:calc(58px + var(--st));display:flex;align-items:flex-end;justify-content:space-between;padding-bottom:11px;position:sticky;top:0;z-index:50}
- .h-left{display:flex;align-items:center;gap:10px}
- .h-logo{display:flex;align-items:center;gap:8px}
- .h-logo-m{width:26px;height:26px;background:var(--branco);border-radius:4px;display:flex;align-items:center;justify-content:center}
- .h-logo-m svg{width:13px;height:13px;fill:var(--preto)}
- .h-logo-t{font-size:15px;font-weight:800;color:var(--branco);letter-spacing:-0.2px}
- .h-badge{font-size:9px;font-weight:700;color:#555;letter-spacing:0.1em;text-transform:uppercase;background:#1a1a1a;border:1px solid #333;border-radius:999px;padding:3px 8px}
- .btn-sair{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:var(--r);color:rgba(255,255,255,0.6);font-family:'Inter',sans-serif;font-size:12px;font-weight:500;padding:7px 13px;cursor:pointer}
+.login-card{
+  width:100%;max-width:380px;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:20px;
+  padding:40px 36px;
+  text-align:center;
+  backdrop-filter:blur(20px);
+  box-shadow:0 40px 80px -20px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.08)}
 
- .content{padding:20px 16px calc(40px + var(--sb));max-width:800px;margin:0 auto}
+/* Logo no login */
+.lc-logo{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:6px}
+.lc-mark{
+  width:44px;height:44px;border-radius:12px;
+  background:linear-gradient(135deg,#a855f7,#6366f1);
+  display:grid;place-items:center;
+  box-shadow:0 8px 24px -8px rgba(168,85,247,.6)}
+.lc-mark svg{width:22px;height:22px;stroke:#fff;stroke-width:2;fill:none}
+.lc-name{font-size:20px;font-weight:800;color:#fff;letter-spacing:-.3px}
+.lc-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:10px;font-weight:700;color:#a78bfa;letter-spacing:.12em;
+  text-transform:uppercase;margin-bottom:32px;
+  background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.2);
+  border-radius:999px;padding:4px 12px}
+.lc-badge::before{content:'';width:5px;height:5px;border-radius:50%;
+  background:#a78bfa;box-shadow:0 0 6px #a78bfa}
 
- /* STATS */
- .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px}
- .stat{background:var(--branco);border:1px solid var(--cinza2);border-radius:var(--r);padding:14px}
- .stat-l{font-size:9px;font-weight:700;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px}
- .stat-v{font-size:28px;font-weight:900;color:var(--preto);letter-spacing:-0.5px;line-height:1}
- .stat-v.g{color:var(--verde)}.stat-v.y{color:var(--laranja)}.stat-v.r{color:var(--vermelho)}.stat-v.b{color:var(--azul)}.stat-v.p{color:var(--roxo)}
+.lc-title{font-size:22px;font-weight:800;color:#fff;letter-spacing:-.4px;margin-bottom:6px}
+.lc-sub{font-size:14px;color:rgba(255,255,255,.4);margin-bottom:28px;line-height:1.5}
 
- /* FILTROS */
- .filtros{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:14px;scrollbar-width:none}
- .filtros::-webkit-scrollbar{display:none}
- .filtro-btn{padding:7px 14px;border-radius:999px;border:1px solid var(--cinza2);background:var(--branco);color:var(--muted);font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:'Inter',sans-serif;flex-shrink:0;transition:all 0.15s}
- .filtro-btn.ativo{border-color:var(--preto);background:var(--preto);color:var(--branco)}
+.lc-field{position:relative;margin-bottom:14px}
+.lc-field svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);
+  width:16px;height:16px;stroke:rgba(255,255,255,.3);stroke-width:1.8;fill:none}
+.lc-input{
+  width:100%;border:1px solid rgba(255,255,255,.1);border-radius:10px;
+  font-family:'Inter',sans-serif;font-size:16px;font-weight:400;
+  padding:14px 44px;color:#fff;
+  background:rgba(255,255,255,.06);
+  outline:none;transition:border-color .2s,background .2s;
+  -webkit-appearance:none}
+.lc-input:focus{border-color:rgba(167,139,250,.5);background:rgba(255,255,255,.09)}
+.lc-input::placeholder{color:rgba(255,255,255,.25)}
+.lc-eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);
+  background:none;border:none;cursor:pointer;color:rgba(255,255,255,.3);
+  padding:4px;display:grid;place-items:center;transition:color .15s}
+.lc-eye:hover{color:rgba(255,255,255,.6)}
+.lc-eye svg{width:16px;height:16px}
 
- /* CLIENTE CARD */
- .cli-card{background:var(--branco);border:1px solid var(--cinza2);border-radius:var(--r);padding:16px;margin-bottom:10px;transition:border-color 0.15s}
- .cli-card:hover{border-color:var(--muted)}
- .cli-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;gap:10px}
- .cli-nome{font-size:15px;font-weight:700;color:var(--preto);letter-spacing:-0.1px;margin-bottom:2px}
- .cli-email{font-size:12px;color:var(--muted);font-weight:400}
- .cli-info{font-size:12px;color:var(--muted);font-weight:400;margin-bottom:10px;display:flex;gap:12px;flex-wrap:wrap}
- .cli-info span{display:flex;align-items:center;gap:4px}
- .cli-bottom{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
- .cli-acts{display:flex;gap:6px;flex-wrap:wrap}
+.lc-btn{
+  width:100%;padding:15px;border-radius:10px;
+  background:linear-gradient(135deg,#7c3aed,#6366f1);
+  color:#fff;font-family:'Inter',sans-serif;font-size:15px;font-weight:700;
+  border:none;cursor:pointer;transition:opacity .15s,transform .1s;
+  box-shadow:0 10px 30px -8px rgba(124,58,237,.5);
+  letter-spacing:-.1px;margin-top:4px}
+.lc-btn:hover{opacity:.92}
+.lc-btn:active{transform:scale(.98)}
+.lc-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
 
- /* BADGE */
- .badge{display:inline-flex;padding:3px 9px;border-radius:999px;font-size:10px;font-weight:700;letter-spacing:0.03em}
- .b-trial{background:#eff6ff;color:var(--azul);border:1px solid #bfdbfe}
- .b-pago{background:#f0fdf4;color:var(--verde);border:1px solid #bbf7d0}
- .b-expirado{background:#fef2f2;color:var(--vermelho);border:1px solid #fecaca}
- .b-bloqueado{background:#f5f3ff;color:var(--roxo);border:1px solid #ddd6fe}
+.lc-erro{font-size:12px;color:#f87171;margin-top:12px;min-height:16px;font-weight:500}
 
- /* BOTÕES */
- .ac-btn{padding:7px 13px;border-radius:var(--r);border:1px solid var(--cinza2);background:var(--branco);color:var(--muted);font-size:11px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.15s;white-space:nowrap}
- .ac-btn:hover{border-color:var(--muted);color:var(--preto)}
- .ac-btn.verde{border-color:#bbf7d0;background:#f0fdf4;color:var(--verde)}
- .ac-btn.verde:hover{background:#dcfce7}
- .ac-btn.danger{border-color:#fecaca;background:#fef2f2;color:var(--vermelho)}
- .ac-btn.danger:hover{background:#fee2e2}
+.lc-footer{margin-top:28px;font-size:11px;color:rgba(255,255,255,.2);line-height:1.6}
 
- /* MODAL */
- .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:100;align-items:flex-end;justify-content:center;backdrop-filter:blur(2px)}
- .overlay.aberto{display:flex}
- .modal{background:var(--branco);border-radius:8px 8px 0 0;padding:24px 20px;width:100%;max-width:480px;padding-bottom:calc(24px + var(--sb));animation:up 0.25s ease;max-height:85vh;overflow-y:auto}
- @keyframes up{from{transform:translateY(100%)}to{transform:translateY(0)}}
- .modal-h{width:32px;height:3px;background:var(--cinza2);border-radius:999px;margin:0 auto 18px}
- .modal-titulo{font-size:17px;font-weight:800;color:var(--preto);margin-bottom:6px;letter-spacing:-0.2px}
- .modal-sub{font-size:13px;color:var(--muted);font-weight:400;margin-bottom:20px;line-height:1.5}
- .m-label{font-size:10px;font-weight:600;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:7px;display:block}
- .m-input,.m-select{width:100%;border:1.5px solid var(--cinza2);border-radius:var(--r);font-family:'Inter',sans-serif;font-size:15px;font-weight:400;padding:13px 14px;color:var(--texto);background:var(--branco);outline:none;appearance:none;margin-bottom:14px;transition:border-color 0.15s}
- .m-input:focus,.m-select:focus{border-color:var(--preto)}
- .dias-rapidos{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
- .dias-btn{padding:8px 14px;border-radius:999px;border:1px solid var(--cinza2);background:var(--branco);color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;transition:all 0.15s;font-family:'Inter',sans-serif}
- .dias-btn:hover{border-color:var(--preto);color:var(--preto)}
- .modal-footer{display:flex;gap:8px;margin-top:6px}
- .m-btn{flex:1;padding:14px;border-radius:var(--r);font-family:'Inter',sans-serif;font-size:14px;font-weight:600;cursor:pointer;border:none;transition:opacity 0.15s;letter-spacing:-0.1px}
- .m-btn-dark{background:var(--preto);color:var(--branco)}.m-btn-dark:hover{opacity:0.85}
- .m-btn-out{background:none;border:1px solid var(--cinza2);color:var(--muted)}.m-btn-out:hover{border-color:var(--cinza3);color:var(--preto)}
+/* ══ APP ═══════════════════════════════════════════════════════════════════ */
+#app{display:none}
 
- /* MODAL NOTIFICAÇÃO */
- .tipo-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:4px}
- .tipo-btn{padding:10px;border-radius:var(--r);border:1px solid var(--borda2);background:var(--card2);font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;text-align:center;transition:all .15s;-webkit-tap-highlight-color:transparent;color:var(--muted)}
- .tipo-btn:active{opacity:.7}
- .tipo-btn.sel-tipo{border-color:var(--preto);background:var(--preto);color:#0a0a0a}
- .mtextarea{width:100%;border:1.5px solid var(--borda2);border-radius:var(--r);font-family:'Inter',sans-serif;font-size:15px;padding:12px 14px;color:var(--preto);background:var(--card);outline:none;transition:border-color .15s;resize:none;min-height:100px;line-height:1.5}
- .mtextarea:focus{border-color:#555}
- .mtextarea::placeholder{color:var(--muted)}
- .ab.azul{border-color:rgba(59,130,246,.3);background:rgba(59,130,246,.08);color:var(--azul)}
+.header{
+  background:var(--preto);
+  padding:0 20px;
+  padding-top:var(--st);
+  height:calc(58px + var(--st));
+  display:flex;align-items:center;justify-content:space-between;
+  padding-bottom:0;
+  position:sticky;top:0;z-index:50;
+  border-bottom:1px solid #1a1a1a}
+.header{align-items:flex-end;padding-bottom:11px}
+.h-left{display:flex;align-items:center;gap:10px}
+.h-logo{display:flex;align-items:center;gap:8px}
+.h-logo-m{width:26px;height:26px;background:#fff;border-radius:5px;
+  display:grid;place-items:center}
+.h-logo-m svg{width:13px;height:13px;fill:var(--preto)}
+.h-logo-t{font-size:15px;font-weight:800;color:#fff;letter-spacing:-.2px}
+.h-badge{font-size:9px;font-weight:700;color:#7c3aed;letter-spacing:.1em;
+  text-transform:uppercase;background:rgba(124,58,237,.15);
+  border:1px solid rgba(124,58,237,.3);border-radius:999px;padding:3px 8px}
+.btn-sair{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);
+  border-radius:var(--r);color:rgba(255,255,255,.5);font-family:'Inter',sans-serif;
+  font-size:12px;font-weight:500;padding:7px 13px;cursor:pointer;transition:all .15s}
+.btn-sair:hover{background:rgba(255,255,255,.12);color:#fff}
 
- /* TOAST */
- .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--preto);color:var(--branco);border-radius:var(--r);padding:11px 18px;font-size:12px;font-weight:600;z-index:999;animation:tUp 0.2s ease;white-space:nowrap}
- .toast.ok{background:var(--verde)}.toast.err{background:var(--vermelho)}
- @keyframes tUp{from{opacity:0;transform:translateX(-50%) translateY(8px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+.content{padding:20px 16px calc(40px + var(--sb));max-width:800px;margin:0 auto}
 
- .empty{text-align:center;padding:48px 20px;color:var(--muted)}
- .empty-l{font-size:20px;color:var(--cinza2);margin-bottom:8px;font-weight:900}
- .empty-t{font-size:13px;font-weight:400}
- .busca{width:100%;border:1.5px solid var(--cinza2);border-radius:var(--r);font-family:'Inter',sans-serif;font-size:15px;padding:13px 14px;color:var(--texto);background:var(--branco);outline:none;margin-bottom:14px;-webkit-appearance:none}
- .busca:focus{border-color:var(--preto)}
- .result-info{font-size:11px;color:var(--muted);font-weight:500;margin-bottom:12px}
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px}
+.stat{background:var(--branco);border:1px solid var(--cinza2);
+  border-radius:var(--r);padding:14px}
+.stat-l{font-size:9px;font-weight:700;color:var(--muted);
+  letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.stat-v{font-size:28px;font-weight:900;color:var(--preto);
+  letter-spacing:-.5px;line-height:1}
+.stat-v.g{color:var(--verde)}.stat-v.y{color:var(--laranja)}
+.stat-v.r{color:var(--vermelho)}.stat-v.b{color:var(--azul)}.stat-v.p{color:var(--roxo)}
 
- @media(max-width:400px){.stats{grid-template-columns:repeat(2,1fr)}}
- </style>
+/* Filtros */
+.filtros{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;
+  margin-bottom:14px;scrollbar-width:none}
+.filtros::-webkit-scrollbar{display:none}
+.filtro-btn{padding:7px 14px;border-radius:999px;border:1px solid var(--cinza2);
+  background:var(--branco);color:var(--muted);font-size:11px;font-weight:600;
+  cursor:pointer;white-space:nowrap;font-family:'Inter',sans-serif;flex-shrink:0;transition:all .15s}
+.filtro-btn.ativo{border-color:var(--preto);background:var(--preto);color:var(--branco)}
+
+/* Cliente card */
+.cli-card{background:var(--branco);border:1px solid var(--cinza2);
+  border-radius:var(--r);padding:16px;margin-bottom:10px;transition:border-color .15s}
+.cli-card:hover{border-color:var(--muted)}
+.cli-top{display:flex;align-items:flex-start;justify-content:space-between;
+  margin-bottom:10px;gap:10px}
+.cli-nome{font-size:15px;font-weight:700;color:var(--preto);
+  letter-spacing:-.1px;margin-bottom:2px}
+.cli-email{font-size:12px;color:var(--muted);font-weight:400}
+.cli-info{font-size:12px;color:var(--muted);margin-bottom:10px;
+  display:flex;gap:12px;flex-wrap:wrap}
+.cli-bottom{display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:8px}
+.cli-acts{display:flex;gap:6px;flex-wrap:wrap}
+
+/* Badge */
+.badge{display:inline-flex;padding:3px 9px;border-radius:999px;
+  font-size:10px;font-weight:700;letter-spacing:.03em}
+.b-trial{background:#eff6ff;color:var(--azul);border:1px solid #bfdbfe}
+.b-pago{background:#f0fdf4;color:var(--verde);border:1px solid #bbf7d0}
+.b-expirado{background:#fef2f2;color:var(--vermelho);border:1px solid #fecaca}
+.b-bloqueado{background:#f5f3ff;color:var(--roxo);border:1px solid #ddd6fe}
+
+/* Botões ação */
+.ac-btn{padding:7px 13px;border-radius:var(--r);border:1px solid var(--cinza2);
+  background:var(--branco);color:var(--muted);font-size:11px;font-weight:600;
+  cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s;white-space:nowrap}
+.ac-btn:hover{border-color:var(--muted);color:var(--preto)}
+.ac-btn.verde{border-color:#bbf7d0;background:#f0fdf4;color:var(--verde)}
+.ac-btn.verde:hover{background:#dcfce7}
+.ac-btn.azul{border-color:#bfdbfe;background:#eff6ff;color:var(--azul)}
+.ac-btn.azul:hover{background:#dbeafe}
+.ac-btn.danger{border-color:#fecaca;background:#fef2f2;color:var(--vermelho)}
+.ac-btn.danger:hover{background:#fee2e2}
+
+/* ══ OVERLAY / MODAL ═══════════════════════════════════════════════════════ */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);
+  z-index:100;align-items:flex-end;justify-content:center;backdrop-filter:blur(3px)}
+.overlay.aberto{display:flex}
+.modal{background:var(--branco);border-radius:12px 12px 0 0;
+  padding:0;width:100%;max-width:480px;
+  padding-bottom:calc(24px + var(--sb));
+  animation:up .25s ease;max-height:88vh;overflow-y:auto}
+@keyframes up{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-handle{width:36px;height:3px;background:var(--cinza2);
+  border-radius:999px;margin:14px auto 0}
+.modal-body{padding:20px 22px 0}
+.modal-titulo{font-size:18px;font-weight:800;color:var(--preto);
+  margin-bottom:4px;letter-spacing:-.3px}
+.modal-sub{font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.5}
+.m-label{font-size:10px;font-weight:700;color:var(--muted);
+  letter-spacing:.08em;text-transform:uppercase;margin-bottom:7px;display:block;margin-top:16px}
+.m-label:first-of-type{margin-top:0}
+.m-input,.m-select{width:100%;border:1.5px solid var(--cinza2);border-radius:var(--r);
+  font-family:'Inter',sans-serif;font-size:16px;font-weight:400;
+  padding:13px 14px;color:var(--texto);background:var(--branco);
+  outline:none;appearance:none;transition:border-color .15s}
+.m-input:focus,.m-select:focus{border-color:var(--preto)}
+.dias-rapidos{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.dias-btn{padding:7px 13px;border-radius:999px;border:1px solid var(--cinza2);
+  background:var(--branco);color:var(--muted);font-size:12px;font-weight:600;
+  cursor:pointer;transition:all .15s;font-family:'Inter',sans-serif}
+.dias-btn:hover,.dias-btn.sel{border-color:var(--preto);background:var(--preto);color:#fff}
+.modal-footer{display:flex;gap:8px;margin-top:20px;padding-top:16px;
+  border-top:1px solid var(--cinza2)}
+.m-btn{flex:1;padding:13px;border-radius:var(--r);font-family:'Inter',sans-serif;
+  font-size:14px;font-weight:700;cursor:pointer;border:none;transition:opacity .15s}
+.m-btn-dark{background:var(--preto);color:#fff}
+.m-btn-dark:hover{opacity:.85}
+.m-btn-out{background:none;border:1.5px solid var(--cinza2);color:var(--muted)}
+
+/* ══ MODAL NOTIFICAÇÃO ═══════════════════════════════════════════════════ */
+.tipo-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:6px}
+.tipo-btn{
+  padding:11px 8px;border-radius:8px;
+  border:1.5px solid var(--cinza2);background:var(--cinza);
+  font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;
+  text-align:center;transition:all .15s;color:var(--muted);
+  -webkit-tap-highlight-color:transparent}
+.tipo-btn:active{opacity:.7}
+.tipo-btn.sel-tipo{
+  border-color:var(--preto);background:var(--preto);color:#fff}
+.m-textarea{
+  width:100%;border:1.5px solid var(--cinza2);border-radius:var(--r);
+  font-family:'Inter',sans-serif;font-size:16px;
+  padding:13px 14px;color:var(--preto);background:var(--branco);
+  outline:none;transition:border-color .15s;resize:none;
+  min-height:110px;line-height:1.55}
+.m-textarea:focus{border-color:var(--preto)}
+.m-textarea::placeholder{color:#b8b4ae}
+.notif-info{
+  background:rgba(37,99,235,.06);border:1px solid rgba(37,99,235,.18);
+  border-radius:var(--r);padding:11px 14px;
+  font-size:12px;color:var(--azul);font-weight:500;
+  margin-top:14px;line-height:1.55;display:flex;gap:8px;align-items:flex-start}
+.notif-info svg{width:14px;height:14px;flex-shrink:0;margin-top:1px}
+
+/* Outros */
+.empty{text-align:center;padding:48px 20px;color:var(--muted)}
+.busca{width:100%;border:1.5px solid var(--cinza2);border-radius:var(--r);
+  font-family:'Inter',sans-serif;font-size:16px;padding:13px 14px;
+  color:var(--texto);background:var(--branco);outline:none;margin-bottom:14px;
+  -webkit-appearance:none;transition:border-color .15s}
+.busca:focus{border-color:var(--preto)}
+.result-info{font-size:11px;color:var(--muted);font-weight:500;margin-bottom:12px}
+
+/* Toast */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+  background:var(--preto);color:#fff;border-radius:8px;
+  padding:11px 18px;font-size:12px;font-weight:600;z-index:999;
+  animation:tUp .2s ease;white-space:nowrap;
+  box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.toast.ok{background:var(--verde)}.toast.err{background:var(--vermelho)}
+@keyframes tUp{from{opacity:0;transform:translateX(-50%) translateY(8px)}
+  to{opacity:1;transform:translateX(-50%) translateY(0)}}
+
+@media(max-width:400px){.stats{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:480px){
+  .login-card{padding:32px 24px}
+  .lc-title{font-size:20px}
+}
+</style>
 </head>
 <body>
 
-<!-- LOGIN -->
+<!-- ══ LOGIN ══════════════════════════════════════════════════════════════ -->
 <div class="login-wrap" id="login-screen">
- <div class="login-card">
- <div class="login-logo">
- <div class="login-logo-m"><svg viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12" rx="2"/><line x1="5" y1="6" x2="11" y2="6" stroke="#0a0a0a" stroke-width="1.5" stroke-linecap="round"/><line x1="5" y1="9" x2="9" y2="9" stroke="#0a0a0a" stroke-width="1.5" stroke-linecap="round"/></svg></div>
- <span class="login-logo-t">AgendaOK</span>
- </div>
- <div class="login-badge">Painel Master</div>
- <input class="login-input" type="password" id="master-senha" placeholder="Senha master" onkeydown="if(event.key==='Enter')fazerLogin()"/>
- <button class="login-btn" id="login-btn" onclick="fazerLogin()">Acessar</button>
- <div class="login-erro" id="login-erro"></div>
- </div>
+  <div class="login-card">
+    <div class="lc-logo">
+      <div class="lc-mark">
+        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="4"/><path d="M8 2v4M16 2v4M3 10h18" stroke-linecap="round"/><circle cx="8.5" cy="15" r="1.2" fill="white" stroke="none"/><circle cx="12" cy="15" r="1.2" fill="white" stroke="none"/><circle cx="15.5" cy="15" r="1.2" fill="white" stroke="none"/></svg>
+      </div>
+      <span class="lc-name">AgendaOK</span>
+    </div>
+    <div class="lc-badge">Painel Master</div>
+
+    <div class="lc-title">Acesso restrito</div>
+    <div class="lc-sub">Área exclusiva para administradores da plataforma.</div>
+
+    <div class="lc-field">
+      <svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3" stroke-linecap="round"/></svg>
+      <input class="lc-input" type="password" id="master-senha"
+        placeholder="Senha master"
+        autocomplete="current-password"
+        onkeydown="if(event.key==='Enter')fazerLogin()"/>
+      <button class="lc-eye" id="lc-eye" onclick="toggleSenha()" type="button">
+        <svg id="lc-eye-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+          <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/>
+          <circle cx="12" cy="12" r="3"/>
+        </svg>
+      </button>
+    </div>
+
+    <button class="lc-btn" id="login-btn" onclick="fazerLogin()">
+      Entrar no painel
+    </button>
+    <div class="lc-erro" id="login-erro"></div>
+
+    <div class="lc-footer">
+      Acesso monitorado e registrado.<br/>
+      Somente para a equipe AgendaOK.
+    </div>
+  </div>
 </div>
 
-<!-- APP -->
+<!-- ══ APP ════════════════════════════════════════════════════════════════ -->
 <div id="app">
- <div class="header">
- <div class="h-left">
- <div class="h-logo">
- <div class="h-logo-m"><svg viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12" rx="2"/><line x1="5" y1="6" x2="11" y2="6" stroke="#0a0a0a" stroke-width="1.5" stroke-linecap="round"/><line x1="5" y1="9" x2="9" y2="9" stroke="#0a0a0a" stroke-width="1.5" stroke-linecap="round"/></svg></div>
- <span class="h-logo-t">AgendaOK</span>
- </div>
- <span class="h-badge">Master</span>
- </div>
- <button class="btn-sair" onclick="sair()">Sair</button>
- </div>
+  <div class="header">
+    <div class="h-left">
+      <div class="h-logo">
+        <div class="h-logo-m"><svg viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12" rx="2"/><line x1="5" y1="6" x2="11" y2="6" stroke="#0a0a0a" stroke-width="1.5" stroke-linecap="round"/><line x1="5" y1="9" x2="9" y2="9" stroke="#0a0a0a" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <span class="h-logo-t">AgendaOK</span>
+      </div>
+      <span class="h-badge">Master</span>
+    </div>
+    <button class="btn-sair" onclick="sair()">Sair</button>
+  </div>
 
- <div class="content">
- <!-- STATS -->
- <div class="stats">
- <div class="stat"><div class="stat-l">Clientes</div><div class="stat-v" id="s-total">—</div></div>
- <div class="stat"><div class="stat-l">Em trial</div><div class="stat-v b" id="s-trial">—</div></div>
- <div class="stat"><div class="stat-l">Pagos</div><div class="stat-v g" id="s-pagos">—</div></div>
- <div class="stat"><div class="stat-l">Expirados</div><div class="stat-v y" id="s-exp">—</div></div>
- <div class="stat"><div class="stat-l">Bloqueados</div><div class="stat-v r" id="s-bloq">—</div></div>
- <div class="stat"><div class="stat-l">Agendamentos</div><div class="stat-v p" id="s-ag">—</div></div>
- </div>
+  <div class="content">
+    <div class="stats">
+      <div class="stat"><div class="stat-l">Clientes</div><div class="stat-v" id="s-total">—</div></div>
+      <div class="stat"><div class="stat-l">Em trial</div><div class="stat-v b" id="s-trial">—</div></div>
+      <div class="stat"><div class="stat-l">Pagos</div><div class="stat-v g" id="s-pagos">—</div></div>
+      <div class="stat"><div class="stat-l">Expirados</div><div class="stat-v y" id="s-exp">—</div></div>
+      <div class="stat"><div class="stat-l">Bloqueados</div><div class="stat-v r" id="s-bloq">—</div></div>
+      <div class="stat"><div class="stat-l">Agendamentos</div><div class="stat-v p" id="s-ag">—</div></div>
+    </div>
 
- <!-- BUSCA E FILTROS -->
- <input class="busca" type="search" id="busca" placeholder="Buscar por nome, e-mail ou negócio..." oninput="filtrarLista()"/>
- <div class="filtros">
- <button class="filtro-btn ativo" onclick="setFiltro('todos',this)">Todos</button>
- <button class="filtro-btn" onclick="setFiltro('trial',this)">Em trial</button>
- <button class="filtro-btn" onclick="setFiltro('pago',this)">Pagos</button>
- <button class="filtro-btn" onclick="setFiltro('expirado',this)">Expirados</button>
- <button class="filtro-btn" onclick="setFiltro('bloqueado',this)">Bloqueados</button>
- </div>
- <div class="result-info" id="result-info"></div>
- <div id="lista-clientes"></div>
- </div>
+    <input class="busca" type="search" id="busca" placeholder="Buscar por nome, e-mail ou negócio..." oninput="filtrarLista()" autocorrect="off" autocapitalize="none"/>
+    <div class="filtros">
+      <button class="filtro-btn ativo" onclick="setFiltro('todos',this)">Todos</button>
+      <button class="filtro-btn" onclick="setFiltro('trial',this)">Em trial</button>
+      <button class="filtro-btn" onclick="setFiltro('pago',this)">Pagos</button>
+      <button class="filtro-btn" onclick="setFiltro('expirado',this)">Expirados</button>
+      <button class="filtro-btn" onclick="setFiltro('bloqueado',this)">Bloqueados</button>
+    </div>
+    <div class="result-info" id="result-info"></div>
+    <div id="lista-clientes"></div>
+  </div>
 </div>
 
-<!-- MODAL ACESSO -->
+<!-- ══ MODAL ACESSO ═══════════════════════════════════════════════════════ -->
 <div class="overlay" id="modal-acesso">
- <div class="modal">
- <div class="modal-h"></div>
- <div class="modal-titulo" id="modal-titulo">Gerenciar acesso</div>
- <div class="modal-sub" id="modal-sub"></div>
- <input type="hidden" id="modal-cli-id"/>
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-body">
+      <div class="modal-titulo" id="modal-titulo">Gerenciar acesso</div>
+      <div class="modal-sub" id="modal-sub"></div>
+      <input type="hidden" id="modal-cli-id"/>
 
- <label class="m-label">Adicionar dias de acesso</label>
- <div class="dias-rapidos">
- <button class="dias-btn" onclick="setDias(7)">7 dias</button>
- <button class="dias-btn" onclick="setDias(15)">15 dias</button>
- <button class="dias-btn" onclick="setDias(30)">30 dias</button>
- <button class="dias-btn" onclick="setDias(60)">60 dias</button>
- <button class="dias-btn" onclick="setDias(90)">90 dias</button>
- <button class="dias-btn" onclick="setDias(365)">1 ano</button>
- </div>
- <input class="m-input" type="number" id="modal-dias" placeholder="Ou informe os dias" min="1"/>
+      <label class="m-label">Adicionar dias de acesso</label>
+      <div class="dias-rapidos">
+        <button class="dias-btn" onclick="setDias(7)">7 dias</button>
+        <button class="dias-btn" onclick="setDias(15)">15 dias</button>
+        <button class="dias-btn" onclick="setDias(30)">30 dias</button>
+        <button class="dias-btn" onclick="setDias(60)">60 dias</button>
+        <button class="dias-btn" onclick="setDias(90)">90 dias</button>
+        <button class="dias-btn" onclick="setDias(365)">1 ano</button>
+      </div>
+      <input class="m-input" type="number" id="modal-dias" placeholder="Ou informe os dias" min="1" style="font-size:16px"/>
 
- <label class="m-label">Marcar como pago?</label>
- <select class="m-select" id="modal-pago">
- <option value="false">Não — continua como trial/gratuito</option>
- <option value="true">Sim — marcar como cliente pago</option>
- </select>
+      <label class="m-label">Marcar como pago?</label>
+      <select class="m-select" id="modal-pago" style="font-size:16px">
+        <option value="false">Não — continua como trial/gratuito</option>
+        <option value="true">Sim — marcar como cliente pago</option>
+      </select>
 
- <div class="modal-footer">
- <button class="m-btn m-btn-out" onclick="fecharModal()">Cancelar</button>
- <button class="m-btn m-btn-dark" onclick="liberarAcesso()">Liberar acesso</button>
- </div>
- </div>
+      <div class="modal-footer">
+        <button class="m-btn m-btn-out" onclick="fecharModal()">Cancelar</button>
+        <button class="m-btn m-btn-dark" onclick="liberarAcesso()">Liberar acesso</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL NOTIFICAÇÃO ══════════════════════════════════════════════════ -->
+<div class="overlay" id="m-notif" onclick="if(event.target===this)fechar('m-notif')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-body">
+      <div class="modal-titulo">Enviar notificação</div>
+      <div class="modal-sub" id="n-dest">Para: —</div>
+      <input type="hidden" id="n-id"/>
+      <input type="hidden" id="n-tipo" value="info"/>
+
+      <label class="m-label">Tipo de mensagem</label>
+      <div class="tipo-grid">
+        <button class="tipo-btn sel-tipo" onclick="selTipo('info',this)">📋 Informativo</button>
+        <button class="tipo-btn" onclick="selTipo('pagamento',this)">💳 Pagamento</button>
+        <button class="tipo-btn" onclick="selTipo('acesso',this)">🔑 Acesso</button>
+        <button class="tipo-btn" onclick="selTipo('aviso',this)">⚠️ Aviso</button>
+      </div>
+
+      <label class="m-label">Título</label>
+      <input class="m-input" type="text" id="n-titulo" placeholder="Ex: Pagamento pendente" style="font-size:16px"/>
+
+      <label class="m-label">Mensagem</label>
+      <textarea class="m-textarea" id="n-msg" placeholder="Escreva a mensagem que o usuário vai receber no sino de notificações..."></textarea>
+
+      <div class="notif-info">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><circle cx="12" cy="16" r=".5" fill="currentColor"/>
+        </svg>
+        A mensagem aparecerá no sino do painel do usuário em tempo real.
+      </div>
+
+      <div class="modal-footer">
+        <button class="m-btn m-btn-out" onclick="fechar('m-notif')">Cancelar</button>
+        <button class="m-btn m-btn-dark" onclick="enviarNotif()">Enviar mensagem</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
 let todosClientes = [];
-let filtroAtual = 'todos';
-let buscaAtual = '';
+let filtroAtual   = 'todos';
 
-async function fazerLogin(){
- const senha = document.getElementById('master-senha').value;
- const erro = document.getElementById('login-erro');
- const btn = document.getElementById('login-btn');
- erro.textContent = '';
- if(!senha){erro.textContent='Informe a senha.';return;}
- btn.disabled=true;btn.textContent='Verificando...';
- try{
- const r=await fetch('/admin/login',{method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({senha})});
- const d=await r.json();
- if(!r.ok){erro.textContent=d.erro||'Senha incorreta.';btn.disabled=false;btn.textContent='Acessar';return;}
- document.getElementById('login-screen').style.display='none';
- document.getElementById('app').style.display='block';
- iniciarApp();
- }catch(e){erro.textContent='Erro de conexão.';btn.disabled=false;btn.textContent='Acessar';}
+// ── Olho da senha ──
+function toggleSenha() {
+  const inp = document.getElementById('master-senha');
+  const ico = document.getElementById('lc-eye-ico');
+  const show = inp.type === 'password';
+  inp.type = show ? 'text' : 'password';
+  ico.innerHTML = show
+    ? '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>'
+    : '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/>';
 }
 
-async function verificarSessao(){
- try{
- const r=await fetch('/admin/status',{credentials:'include'});
- const d=await r.json();
- if(d.logado){
- document.getElementById('login-screen').style.display='none';
- document.getElementById('app').style.display='block';
- iniciarApp();
- }
- }catch(e){}
+// ── Login ──
+async function fazerLogin() {
+  const senha = document.getElementById('master-senha').value;
+  const erro  = document.getElementById('login-erro');
+  const btn   = document.getElementById('login-btn');
+  erro.textContent = '';
+  if (!senha) { erro.textContent = 'Informe a senha.'; return; }
+  btn.disabled = true; btn.textContent = 'Verificando...';
+  try {
+    const r = await fetch('/admin/login', {
+      method:'POST', credentials:'include',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({senha}),
+    });
+    const d = await r.json();
+    if (!r.ok) {
+      erro.textContent = d.erro || 'Senha incorreta.';
+      btn.disabled = false; btn.textContent = 'Entrar no painel';
+      return;
+    }
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    iniciarApp();
+  } catch(e) {
+    erro.textContent = 'Erro de conexão.';
+    btn.disabled = false; btn.textContent = 'Entrar no painel';
+  }
 }
 
-async function iniciarApp(){
- await Promise.all([carregarStats(), carregarClientes()]);
+async function verificarSessao() {
+  try {
+    const r = await fetch('/admin/status', {credentials:'include'});
+    const d = await r.json();
+    if (d.logado) {
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('app').style.display = 'block';
+      iniciarApp();
+    }
+  } catch(e) {}
 }
 
-async function carregarStats(){
- try{
- const r=await fetch('/admin/stats',{credentials:'include'});
- const d=await r.json();
- document.getElementById('s-total').textContent=d.total;
- document.getElementById('s-trial').textContent=d.trial;
- document.getElementById('s-pagos').textContent=d.pagos;
- document.getElementById('s-exp').textContent=d.expirados;
- document.getElementById('s-bloq').textContent=d.bloqueados;
- document.getElementById('s-ag').textContent=d.agendamentos;
- }catch(e){}
+async function iniciarApp() {
+  await Promise.all([carregarStats(), carregarClientes()]);
 }
 
-async function carregarClientes(){
- try{
- const r=await fetch('/admin/clientes',{credentials:'include'});
- const d=await r.json();
- todosClientes=d.clientes||[];
- renderLista();
- }catch(e){}
+async function carregarStats() {
+  try {
+    const r = await fetch('/admin/stats', {credentials:'include'});
+    const d = await r.json();
+    document.getElementById('s-total').textContent = d.total;
+    document.getElementById('s-trial').textContent = d.trial;
+    document.getElementById('s-pagos').textContent = d.pagos;
+    document.getElementById('s-exp').textContent   = d.expirados;
+    document.getElementById('s-bloq').textContent  = d.bloqueados;
+    document.getElementById('s-ag').textContent    = d.agendamentos;
+  } catch(e) {}
 }
 
-function setFiltro(f,el){
- filtroAtual=f;
- document.querySelectorAll('.filtro-btn').forEach(b=>b.classList.remove('ativo'));
- if(el)el.classList.add('ativo');
- renderLista();
+async function carregarClientes() {
+  try {
+    const r = await fetch('/admin/clientes', {credentials:'include'});
+    const d = await r.json();
+    todosClientes = d.clientes || [];
+    renderLista();
+  } catch(e) {}
 }
 
-function filtrarLista(){
- buscaAtual=document.getElementById('busca').value.toLowerCase().trim();
- renderLista();
+function setFiltro(f, el) {
+  filtroAtual = f;
+  document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('ativo'));
+  if (el) el.classList.add('ativo');
+  renderLista();
 }
 
-function renderLista(){
- let lista=todosClientes;
- if(filtroAtual!=='todos') lista=lista.filter(c=>c.status_acesso===filtroAtual);
- if(buscaAtual) lista=lista.filter(c=>
- (c.nome||'').toLowerCase().includes(buscaAtual)||
- (c.email||'').toLowerCase().includes(buscaAtual)||
- (c.nome_negocio||'').toLowerCase().includes(buscaAtual)
- );
+function filtrarLista() { renderLista(); }
 
- document.getElementById('result-info').textContent=lista.length+' cliente(s) encontrado(s)';
- const el=document.getElementById('lista-clientes');
-
- if(!lista.length){
- el.innerHTML='<div class="empty"><div class="empty-l">—</div><div class="empty-t">Nenhum cliente encontrado</div></div>';
- return;
- }
-
- const statusBadge={
- trial:'<span class="badge b-trial">Trial</span>',
- pago:'<span class="badge b-pago">Pago</span>',
- expirado:'<span class="badge b-expirado">Expirado</span>',
- bloqueado:'<span class="badge b-bloqueado">Bloqueado</span>',
- };
-
- el.innerHTML=lista.map(c=>{
- const expiraInfo=c.plano_pago&&c.acesso_expira?` ·Acesso até ${fmtData(c.acesso_expira)}`:(!c.plano_pago&&c.trial_expira?` · Trial até ${fmtData(c.trial_expira)}`:'');
- return`<div class="cli-card">
- <div class="cli-top">
- <div>
- <div class="cli-nome">${c.nome_negocio}</div>
- <div class="cli-email">${c.nome} · ${c.email}</div>
- </div>
- ${statusBadge[c.status_acesso]||''}
- </div>
- <div class="cli-info">
- <span> ${c.nicho}</span>
- <span> ${c.total_agendamentos} agendamento(s)</span>
- <span> Desde ${fmtData(c.criado_em?.split(' ')[0])}</span>
- ${expiraInfo?`<span> ${expiraInfo.replace(' · ','')}</span>`:''}
- </div>
- <div class="cli-bottom">
- <div style="font-size:11px;color:var(--muted)">/${c.slug}</div>
- <div class="cli-acts">
- <button class="ac-btn verde" onclick="abrirModalAcesso('${c.id}','${esc(c.nome_negocio)}','${esc(c.email)}','${c.status_acesso}','${c.trial_expira||''}','${c.acesso_expira||''}')">Liberar acesso</button>
- <button class="ac-btn azul" onclick="abrirNotifModal('${c.id}','${esc(c.nome_negocio)}')">
-   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-   Enviar mensagem
- </button>
- ${c.acesso_ativo?`<button class="ac-btn danger" onclick="bloquearCliente('${c.id}','${esc(c.nome_negocio)}')">Bloquear</button>`:`<button class="ac-btn verde" onclick="liberarRapido('${c.id}')">Desbloquear</button>`}
- </div>
- </div>
- </div>`;
- }).join('');
+function esc(s) { return String(s||'').replace(/'/g,"\\'").replace(/"/g,'&quot;'); }
+function fmtData(d) {
+  if (!d) return '—';
+  const [a,m,di] = d.split('-');
+  return `${di}/${m}/${a}`;
 }
 
-function fmtData(iso){
- if(!iso||iso===''||iso==='undefined') return '—';
- try{const[a,m,d]=(iso.split('T')[0]).split('-');return d+'/'+m+'/'+a;}catch{return iso;}
-}
-function esc(s){return(s||'').replace(/'/g,"\\'");}
+const statusBadge = {
+  trial:    '<span class="badge b-trial">Trial</span>',
+  pago:     '<span class="badge b-pago">Pago</span>',
+  expirado: '<span class="badge b-expirado">Expirado</span>',
+  bloqueado:'<span class="badge b-bloqueado">Bloqueado</span>',
+};
 
-function abrirModalAcesso(id,nome,email,status,trialExp,acessoExp){
- document.getElementById('modal-cli-id').value=id;
- document.getElementById('modal-titulo').textContent=nome;
- const expiraInfo=status==='pago'&&acessoExp?`Acesso até ${fmtData(acessoExp)}`:(!acessoExp||acessoExp==='')?`Trial até ${fmtData(trialExp)}`:`Acesso até ${fmtData(acessoExp)}`;
- document.getElementById('modal-sub').textContent=email+' · '+expiraInfo;
- document.getElementById('modal-dias').value='30';
- document.getElementById('modal-pago').value='true';
- document.getElementById('modal-acesso').classList.add('aberto');
-}
+function renderLista() {
+  const q = (document.getElementById('busca').value || '').toLowerCase();
+  let lista = todosClientes;
+  if (filtroAtual !== 'todos') lista = lista.filter(c => c.status_acesso === filtroAtual);
+  if (q) lista = lista.filter(c =>
+    (c.nome||'').toLowerCase().includes(q) ||
+    (c.email||'').toLowerCase().includes(q) ||
+    (c.nome_negocio||'').toLowerCase().includes(q)
+  );
 
-function setDias(n){document.getElementById('modal-dias').value=n;}
+  document.getElementById('result-info').textContent =
+    `${lista.length} cliente${lista.length !== 1 ? 's' : ''} encontrado${lista.length !== 1 ? 's' : ''}`;
 
-async function liberarAcesso(){
- const id=document.getElementById('modal-cli-id').value;
- const dias=parseInt(document.getElementById('modal-dias').value)||30;
- const pago=document.getElementById('modal-pago').value==='true';
- try{
- const r=await fetch('/admin/clientes/'+id+'/acesso',{method:'PATCH',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({dias,pago})});
- const d=await r.json();
- if(!r.ok)throw new Error(d.erro);
- fecharModal();
- toast(d.msg||'Acesso liberado!','ok');
- await Promise.all([carregarClientes(),carregarStats()]);
- }catch(e){toast(e.message,'err');}
-}
+  if (!lista.length) {
+    document.getElementById('lista-clientes').innerHTML =
+      '<div class="empty"><div class="empty-l">—</div><div class="empty-t">Nenhum cliente encontrado</div></div>';
+    return;
+  }
 
-async function bloquearCliente(id,nome){
- if(!confirm(`Bloquear o acesso de "${nome}"?`))return;
- try{
- await fetch('/admin/clientes/'+id+'/acesso',{method:'PATCH',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({bloquear:true})});
- toast('Acesso bloqueado','ok');
- await Promise.all([carregarClientes(),carregarStats()]);
- }catch(e){toast('Erro','err');}
-}
+  const expiraInfo = c => c.plano_pago && c.acesso_expira
+    ? ` · Acesso até ${fmtData(c.acesso_expira)}`
+    : (!c.plano_pago && c.trial_expira ? ` · Trial até ${fmtData(c.trial_expira)}` : '');
 
-async function liberarRapido(id){
- try{
- await fetch('/admin/clientes/'+id+'/acesso',{method:'PATCH',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({dias:30,pago:false})});
- toast('Desbloqueado por 30 dias','ok');
- await Promise.all([carregarClientes(),carregarStats()]);
- }catch(e){toast('Erro','err');}
-}
-
-function fecharModal(){document.getElementById('modal-acesso').classList.remove('aberto');}
-document.getElementById('modal-acesso').addEventListener('click',function(e){if(e.target===this)fecharModal();});
-
-async function sair(){
- await fetch('/admin/logout',{method:'POST',credentials:'include'});
- document.getElementById('app').style.display='none';
- document.getElementById('login-screen').style.display='flex';
- document.getElementById('master-senha').value='';
-}
-
-function toast(msg,tipo='ok'){
- document.querySelectorAll('.toast').forEach(t=>t.remove());
- const t=document.createElement('div');t.className='toast '+tipo;t.textContent=msg;
- document.body.appendChild(t);setTimeout(()=>t.remove(),3000);
+  document.getElementById('lista-clientes').innerHTML = lista.map(c => `
+    <div class="cli-card">
+      <div class="cli-top">
+        <div>
+          <div class="cli-nome">${c.nome_negocio}</div>
+          <div class="cli-email">${c.nome} · ${c.email}</div>
+        </div>
+        ${statusBadge[c.status_acesso] || ''}
+      </div>
+      <div class="cli-info">
+        <span>${c.nicho}</span>
+        <span>${c.total_agendamentos} agendamento(s)</span>
+        <span>${expiraInfo(c)}</span>
+      </div>
+      <div class="cli-bottom">
+        <div class="cli-acts">
+          <button class="ac-btn verde" onclick="abrirModalAcesso('${c.id}','${esc(c.nome_negocio)}','${esc(c.email)}','${c.status_acesso}','${c.trial_expira||''}','${c.acesso_expira||''}')">Liberar acesso</button>
+          <button class="ac-btn azul" onclick="abrirNotifModal('${c.id}','${esc(c.nome_negocio)}')">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="display:inline;vertical-align:middle;margin-right:3px"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            Notificação
+          </button>
+          <button class="ac-btn danger" onclick="bloquearCliente('${c.id}','${esc(c.nome_negocio)}')">Bloquear</button>
+          <button class="ac-btn" style="border-color:#fecaca;background:#fef2f2;color:#dc2626;font-weight:700" onclick="excluirCliente('${c.id}','${esc(c.nome_negocio)}')">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="display:inline;vertical-align:middle;margin-right:3px"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+            Excluir
+          </button>
+        </div>
+      </div>
+    </div>`).join('');
 }
 
-document.getElementById('master-senha').addEventListener('keydown',e=>{if(e.key==='Enter')fazerLogin();});
+function abrirModalAcesso(id, nome, email, status, trialExp, acessoExp) {
+  document.getElementById('modal-cli-id').value = id;
+  document.getElementById('modal-titulo').textContent = nome;
+  document.getElementById('modal-sub').textContent = email +
+    (trialExp ? ` · Trial: ${fmtData(trialExp)}` : '') +
+    (acessoExp ? ` · Acesso: ${fmtData(acessoExp)}` : '');
+  document.getElementById('modal-acesso').classList.add('aberto');
+}
+
+function setDias(n) {
+  document.getElementById('modal-dias').value = n;
+  document.querySelectorAll('.dias-btn').forEach(b => {
+    b.classList.toggle('sel', b.textContent.includes(n === 365 ? '1 ano' : n + ' dias'));
+  });
+}
+
+async function liberarAcesso() {
+  const id   = document.getElementById('modal-cli-id').value;
+  const dias = parseInt(document.getElementById('modal-dias').value) || 30;
+  const pago = document.getElementById('modal-pago').value === 'true';
+  try {
+    const r = await fetch('/admin/clientes/' + id + '/acesso', {
+      method:'PATCH', credentials:'include',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({dias, pago}),
+    });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.erro);
+    fecharModal();
+    toast(d.msg || 'Acesso liberado!', 'ok');
+    await Promise.all([carregarClientes(), carregarStats()]);
+  } catch(e) { toast(e.message, 'err'); }
+}
+
+async function bloquearCliente(id, nome) {
+  if (!confirm(`Bloquear o acesso de "${nome}"?`)) return;
+  try {
+    await fetch('/admin/clientes/' + id + '/acesso', {
+      method:'PATCH', credentials:'include',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({bloquear:true}),
+    });
+    toast('Acesso bloqueado', 'ok');
+    await Promise.all([carregarClientes(), carregarStats()]);
+  } catch(e) { toast('Erro', 'err'); }
+}
+
+function fecharModal() { document.getElementById('modal-acesso').classList.remove('aberto'); }
+document.getElementById('modal-acesso').addEventListener('click', function(e) {
+  if (e.target === this) fecharModal();
+});
+
+async function sair() {
+  await fetch('/admin/logout', {method:'POST', credentials:'include'});
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('master-senha').value = '';
+}
+
+function toast(msg, tipo='ok') {
+  document.querySelectorAll('.toast').forEach(t => t.remove());
+  const t = document.createElement('div');
+  t.className = 'toast ' + tipo;
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3000);
+}
+
+document.getElementById('master-senha').addEventListener('keydown', e => {
+  if (e.key === 'Enter') fazerLogin();
+});
+
 // ── NOTIFICAÇÃO MANUAL ──
 function abrirNotifModal(id, nome) {
- document.getElementById('n-id').value = id;
- document.getElementById('n-dest').textContent = 'Para: ' + nome;
- document.getElementById('n-titulo').value = '';
- document.getElementById('n-msg').value = '';
- document.getElementById('n-tipo').value = 'info';
- document.querySelectorAll('.tipo-btn').forEach(b => b.classList.remove('sel-tipo'));
- document.querySelector('.tipo-btn').classList.add('sel-tipo');
- document.getElementById('m-notif').classList.add('aberto');
+  document.getElementById('n-id').value = id;
+  document.getElementById('n-dest').textContent = 'Para: ' + nome;
+  document.getElementById('n-titulo').value = '';
+  document.getElementById('n-msg').value = '';
+  document.getElementById('n-tipo').value = 'info';
+  document.querySelectorAll('.tipo-btn').forEach(b => b.classList.remove('sel-tipo'));
+  document.querySelector('.tipo-btn').classList.add('sel-tipo');
+  document.getElementById('m-notif').classList.add('aberto');
 }
 
 function selTipo(tipo, el) {
- document.getElementById('n-tipo').value = tipo;
- document.querySelectorAll('.tipo-btn').forEach(b => b.classList.remove('sel-tipo'));
- el.classList.add('sel-tipo');
+  document.getElementById('n-tipo').value = tipo;
+  document.querySelectorAll('.tipo-btn').forEach(b => b.classList.remove('sel-tipo'));
+  el.classList.add('sel-tipo');
 }
 
 async function enviarNotif() {
- const id = document.getElementById('n-id').value;
- const titulo = document.getElementById('n-titulo').value.trim();
- const mensagem= document.getElementById('n-msg').value.trim();
- const tipo = document.getElementById('n-tipo').value;
- if (!titulo) { toast('Informe o título', 'err'); return; }
- if (!mensagem){ toast('Escreva a mensagem', 'err'); return; }
- try {
- const r = await fetch('/admin/clientes/' + id + '/notificar', {
- method: 'POST', credentials: 'include',
- headers: { 'Content-Type': 'application/json' },
- body: JSON.stringify({ titulo, mensagem, tipo }),
- });
- const d = await r.json();
- if (!r.ok) throw new Error(d.erro);
- fechar('m-notif');
- toast(' Mensagem enviada!', 'ok');
- } catch(e) { toast(e.message || 'Erro ao enviar', 'err'); }
+  const id       = document.getElementById('n-id').value;
+  const titulo   = document.getElementById('n-titulo').value.trim();
+  const mensagem = document.getElementById('n-msg').value.trim();
+  const tipo     = document.getElementById('n-tipo').value;
+  if (!titulo)   { toast('Informe o título', 'err'); return; }
+  if (!mensagem) { toast('Informe a mensagem', 'err'); return; }
+  try {
+    const r = await fetch('/admin/clientes/' + id + '/notificar', {
+      method:'POST', credentials:'include',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({titulo, mensagem, tipo}),
+    });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.erro);
+    fechar('m-notif');
+    toast('Notificação enviada!', 'ok');
+  } catch(e) { toast(e.message || 'Erro ao enviar', 'err'); }
 }
 
-verificarSessao();
+async function excluirCliente(id, nome) {
+  if (!confirm(`⚠️ Excluir permanentemente "${nome}"?
+
+Todos os dados serão removidos:
+• Agendamentos
+• Serviços
+• Funcionários
+• Notificações
+
+Esta ação NÃO pode ser desfeita!`)) return;
+  try {
+    const r = await fetch('/admin/clientes/' + id, {
+      method: 'DELETE',
+      credentials: 'include',
+    });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.erro);
+    toast(d.msg || 'Cliente excluído!', 'ok');
+    await Promise.all([carregarClientes(), carregarStats()]);
+  } catch(e) {
+    toast(e.message || 'Erro ao excluir', 'err');
+  }
+}
 
 function fechar(id) {
   const el = document.getElementById(id);
   if (el) el.classList.remove('aberto');
 }
+
+verificarSessao();
 </script>
-<!-- MODAL ENVIAR MENSAGEM -->
-<div class="overlay" id="m-notif" onclick="if(event.target===this)fechar('m-notif')">
- <div class="modal">
- <div class="mhandle"></div>
- <div class="mbody">
- <div class="mt">Enviar mensagem</div>
- <div class="ms" id="n-dest">Para: —</div>
- <input type="hidden" id="n-id"/>
-
- <label class="ml">Tipo de mensagem</label>
- <div class="tipo-grid">
- <button class="tipo-btn sel-tipo" onclick="selTipo('info',this)">Informativo</button>
- <button class="tipo-btn" onclick="selTipo('pagamento',this)">Pagamento</button>
- <button class="tipo-btn" onclick="selTipo('acesso',this)">Acesso</button>
- <button class="tipo-btn" onclick="selTipo('aviso',this)">Aviso</button>
- </div>
- <input type="hidden" id="n-tipo" value="info"/>
-
- <label class="ml">Título</label>
- <input class="mi" type="text" id="n-titulo" placeholder="Ex:Pagamento pendente"/>
-
- <label class="ml">Mensagem</label>
- <textarea class="mtextarea" id="n-msg" placeholder="Escreva a mensagem que o usuário vai receber no sino de notificações..."></textarea>
-
- <div style="background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);border-radius:var(--r);padding:11px 13px;font-size:12px;color:var(--azul);font-weight:500;margin-top:12px;line-height:1.5">
- A mensagem aparecerá no sino do painel do usuário em tempo real.
- </div>
-
- <div class="mf">
- <button class="mbtn mbtn-out" onclick="fechar('m-notif')">Cancelar</button>
- <button class="mbtn mbtn-dark" onclick="enviarNotif()">Enviar mensagem</button>
- </div>
- </div>
- </div>
-</div>
-
 </body>
 </html>

@@ -3,6 +3,14 @@ const { Pool } = require('pg');
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+  connectionTimeoutMillis: 10000,  // 10s para conectar
+  idleTimeoutMillis:       30000,  // fecha conexões ociosas após 30s
+  max:                     10,     // máximo de conexões simultâneas
+});
+
+// Log de erros do pool (evita crashes silenciosos)
+pool.on('error', (err) => {
+  console.error('Pool error (não crítico):', err.message);
 });
 
 async function initDb() {
@@ -48,6 +56,13 @@ async function initDb() {
         criado_em TEXT
       );
     `);
+    // Índices para performance (acelera login e buscas)
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_usuarios_email ON usuarios(email);
+      CREATE INDEX IF NOT EXISTS idx_agendamentos_negocio_data ON agendamentos(negocio_id, data);
+      CREATE INDEX IF NOT EXISTS idx_agendamentos_negocio_status ON agendamentos(negocio_id, status);
+    `).catch(() => {}); // Silencioso se já existir
+
     console.log('✅ Banco de dados iniciado com sucesso!');
   } catch(e) {
     console.error('❌ Erro ao iniciar banco:', e.message);

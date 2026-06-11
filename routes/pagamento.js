@@ -1,62 +1,196 @@
 const express = require('express');
 const router  = express.Router();
-const { MercadoPagoConfig, PreApproval, Payment } = require('mercadopago');
+const { MercadoPagoConfig, Preference, Payment, PreApproval } = require('mercadopago');
 const { pool } = require('../middleware/database');
+const { v4: uuidv4 } = require('uuid');
 const { requireAuth } = require('../middleware/auth');
 
-// ─── Configuração MP ────────────────────────────────────────────────────────
+// ─── Configuração MP ─────────────────────────────────────────────────────────
 function getMPClient() {
   const token = process.env.MP_ACCESS_TOKEN;
-  if (!token) throw new Error('MP_ACCESS_TOKEN não configurado.');
+  if (!token) throw new Error('MP_ACCESS_TOKEN não configurado no servidor.');
   return new MercadoPagoConfig({ accessToken: token });
 }
 
-// ─── POST /pagamento/assinar ────────────────────────────────────────────────
-// Cria uma assinatura recorrente de R$69,90/mês
+function baseUrl() {
+  return process.env.APP_URL || 'https://agendamento-production-e1a3.up.railway.app';
+}
+
+// ─── POST /pagamento/assinar ──────────────────────────────────────────────────
+// Cria uma Preference (Checkout Pro) que aceita PIX, débito e crédito
 router.post('/assinar', requireAuth, async (req, res) => {
   try {
-    const u = (await pool.query('SELECT * FROM usuarios WHERE id=$1', [req.session.userId])).rows[0];
+    const u = (await pool.query(
+      'SELECT * FROM usuarios WHERE id=$1', [req.session.userId]
+    )).rows[0];
     if (!u) return res.status(404).json({ erro: 'Usuário não encontrado.' });
 
-    const client = getMPClient();
-    const preApproval = new PreApproval(client);
+    const client = new Preference(getMPClient());
+    const base   = baseUrl();
 
-    const backUrl = process.env.APP_URL || 'https://agendamento-production-e1a3.up.railway.app';
-
-    const data = await preApproval.create({
+    const preference = await client.create({
       body: {
-        payer_email:   u.email,
-        back_url:      `${backUrl}/painel`,
-        reason:        'AgendaOK — Assinatura Mensal',
-        auto_recurring: {
-          frequency:           1,
-          frequency_type:      'months',
-          transaction_amount:  69.90,
-          currency_id:         'BRL',
+        items: [{
+          id:          'agendaok-pro-mensal',
+          title:       'AgendaOK Pro — Acesso mensal',
+          description: 'Acesso completo à plataforma AgendaOK por 30 dias',
+          quantity:    1,
+          currency_id: 'BRL',
+          unit_price:  69.90,
+        }],
+        payer: {
+          email: u.email,
+          name:  u.nome || '',
         },
-        status: 'pending',
+        payment_methods: {
+          // Aceitar todos: crédito, débito e PIX
+          excluded_payment_types: [],
+          installments: 12, // até 12x no crédito
+        },
+        back_urls: {
+          success: `${base}/pagamento/sucesso`,
+          failure: `${base}/assinar?motivo=falha`,
+          pending: `${base}/assinar?motivo=pendente`,
+        },
+        auto_return:         'approved',
+        notification_url:    `${base}/pagamento/webhook`,
+        external_reference:  u.id, // ID do usuário para identificar no webhook
+        statement_descriptor:'AGENDAOK',
+        expires:             false,
       }
     });
 
-    // Salva o ID da assinatura no banco
-    await pool.query(
-      'UPDATE usuarios SET mp_subscription_id=$1 WHERE id=$2',
-      [data.id, u.id]
-    ).catch(() => {});
-
-    // Retorna URL de pagamento
-    res.json({ sucesso: true, checkout_url: data.init_point });
+    res.json({ sucesso: true, checkout_url: preference.init_point });
   } catch(e) {
-    console.error('Erro ao criar assinatura MP:', e.message);
-    res.status(500).json({ erro: 'Erro ao criar assinatura. Tente novamente.' });
+    console.error('Erro ao criar preferência MP:', e.message);
+    res.status(500).json({ erro: e.message || 'Erro ao criar pagamento.' });
   }
 });
 
-// ─── GET /pagamento/status ──────────────────────────────────────────────────
-// Verifica status atual da assinatura do usuário logado
+// ─── GET /pagamento/sucesso ───────────────────────────────────────────────────
+// MP redireciona aqui após pagamento aprovado
+router.get('/sucesso', requireAuth, async (req, res) => {
+  try {
+    const { payment_id, status, external_reference } = req.query;
+
+    if (status === 'approved' && payment_id) {
+      // Verificar o pagamento na API do MP
+      const client  = getMPClient();
+      const payApi  = new Payment(client);
+      const pay     = await payApi.get({ id: payment_id }).catch(() => null);
+
+      const userId = external_reference || req.session.userId;
+
+      if (pay && pay.status === 'approved') {
+        // Liberar 30 dias de acesso
+        const expira = new Date();
+        expira.setDate(expira.getDate() + 30);
+        const expiraStr = expira.toISOString().split('T')[0];
+
+        await pool.query(
+          'UPDATE usuarios SET plano_pago=true, acesso_ativo=true, acesso_expira=$1 WHERE id=$2',
+          [expiraStr, userId]
+        );
+
+        // Notificação no sino
+        await pool.query(
+          `INSERT INTO notificacoes (id, usuario_id, tipo, titulo, mensagem)
+           VALUES (gen_random_uuid(), $1,'pagamento','✅ Pagamento aprovado!','Seu acesso AgendaOK foi liberado por 30 dias. Obrigado!')`,
+          [userId]
+        ).catch(() => {});
+      }
+    }
+
+    // Redireciona para o painel com mensagem de sucesso
+    res.redirect('/painel?pagamento=aprovado');
+  } catch(e) {
+    console.error('Erro no retorno MP:', e.message);
+    res.redirect('/painel');
+  }
+});
+
+// ─── POST /pagamento/webhook ──────────────────────────────────────────────────
+// Notificações automáticas do Mercado Pago
+router.post('/webhook', express.raw({ type: '*/*' }), async (req, res) => {
+  res.sendStatus(200); // Responde 200 imediatamente
+
+  try {
+    let body;
+    try {
+      body = JSON.parse(req.body.toString());
+    } catch(e) { return; }
+
+    const { type, data } = body;
+    if (!data?.id) return;
+
+    const client = getMPClient();
+    const payApi = new Payment(client);
+
+    // Pagamento aprovado
+    if (type === 'payment') {
+      const pay = await payApi.get({ id: data.id }).catch(() => null);
+      if (!pay || pay.status !== 'approved') return;
+
+      // Identificar usuário pelo external_reference ou email
+      const userId = pay.external_reference;
+      const email  = pay.payer?.email;
+
+      let u = null;
+      if (userId) {
+        u = (await pool.query('SELECT * FROM usuarios WHERE id=$1', [userId])).rows[0];
+      }
+      if (!u && email) {
+        u = (await pool.query('SELECT * FROM usuarios WHERE email=$1', [email])).rows[0];
+      }
+      if (!u) return;
+
+      const expira = new Date();
+      expira.setDate(expira.getDate() + 30);
+      const expiraStr = expira.toISOString().split('T')[0];
+
+      await pool.query(
+        'UPDATE usuarios SET plano_pago=true, acesso_ativo=true, acesso_expira=$1 WHERE id=$2',
+        [expiraStr, u.id]
+      );
+
+      await pool.query(
+        `INSERT INTO notificacoes (id, usuario_id, tipo, titulo, mensagem)
+         VALUES (gen_random_uuid(), $1,'pagamento','✅ Pagamento aprovado!','Seu acesso foi liberado por 30 dias!')`,
+        [u.id]
+      ).catch(() => {});
+    }
+
+    // Assinatura recorrente (caso use PreApproval no futuro)
+    if (type === 'subscription_preapproval' || type === 'preapproval') {
+      const preApi = new PreApproval(client);
+      const sub    = await preApi.get({ id: data.id }).catch(() => null);
+      if (!sub) return;
+
+      const u = (await pool.query(
+        'SELECT * FROM usuarios WHERE mp_subscription_id=$1', [data.id]
+      )).rows[0];
+      if (!u) return;
+
+      if (sub.status === 'authorized') {
+        const expira = new Date();
+        expira.setDate(expira.getDate() + 30);
+        await pool.query(
+          'UPDATE usuarios SET plano_pago=true, acesso_ativo=true, acesso_expira=$1 WHERE id=$2',
+          [expira.toISOString().split('T')[0], u.id]
+        );
+      }
+    }
+  } catch(e) {
+    console.error('Webhook MP erro:', e.message);
+  }
+});
+
+// ─── GET /pagamento/status ────────────────────────────────────────────────────
 router.get('/status', requireAuth, async (req, res) => {
   try {
-    const u = (await pool.query('SELECT * FROM usuarios WHERE id=$1', [req.session.userId])).rows[0];
+    const u = (await pool.query(
+      'SELECT * FROM usuarios WHERE id=$1', [req.session.userId]
+    )).rows[0];
     if (!u) return res.status(404).json({ erro: 'Usuário não encontrado.' });
 
     const hoje = new Date().toISOString().split('T')[0];
@@ -72,155 +206,19 @@ router.get('/status', requireAuth, async (req, res) => {
       status_acesso = 'expirado';
     }
 
-    res.json({
-      status_acesso,
-      trial_expira:   u.trial_expira,
-      acesso_expira:  u.acesso_expira,
-      plano_pago:     u.plano_pago,
-      acesso_ativo:   u.acesso_ativo,
-    });
-  } catch(e) {
-    res.status(500).json({ erro: e.message });
-  }
+    res.json({ status_acesso, trial_expira: u.trial_expira,
+               acesso_expira: u.acesso_expira, plano_pago: u.plano_pago });
+  } catch(e) { res.status(500).json({ erro: e.message }); }
 });
 
-// ─── POST /pagamento/webhook ────────────────────────────────────────────────
-// Webhook do Mercado Pago — atualiza status automaticamente
-router.post('/webhook', express.json(), async (req, res) => {
-  // Responde 200 imediatamente para o MP
-  res.sendStatus(200);
-
-  try {
-    const { type, data } = req.body;
-
-    // Assinatura (preapproval)
-    if (type === 'subscription_preapproval' || type === 'preapproval') {
-      const subId = data?.id;
-      if (!subId) return;
-
-      const client = getMPClient();
-      const preApproval = new PreApproval(client);
-      const sub = await preApproval.get({ id: subId });
-
-      const u = (await pool.query(
-        'SELECT * FROM usuarios WHERE mp_subscription_id=$1', [subId]
-      )).rows[0];
-      if (!u) return;
-
-      if (sub.status === 'authorized') {
-        // Calcula 30 dias de acesso a partir de hoje
-        const expira = new Date();
-        expira.setDate(expira.getDate() + 30);
-        const expiraStr = expira.toISOString().split('T')[0];
-
-        await pool.query(
-          'UPDATE usuarios SET plano_pago=true, acesso_ativo=true, acesso_expira=$1 WHERE id=$2',
-          [expiraStr, u.id]
-        );
-
-        // Notificação de sucesso
-        await pool.query(
-          `INSERT INTO notificacoes (usuario_id, tipo, titulo, mensagem) VALUES ($1,'pagamento','Pagamento aprovado!','Sua assinatura AgendaOK foi ativada com sucesso. Acesso liberado por 30 dias.')`,
-          [u.id]
-        ).catch(() => {});
-
-      } else if (['cancelled', 'paused', 'pending'].includes(sub.status)) {
-        // Não bloqueia imediatamente — só marca plano_pago=false
-        await pool.query(
-          'UPDATE usuarios SET plano_pago=false WHERE id=$1', [u.id]
-        );
-
-        if (sub.status === 'cancelled') {
-          await pool.query(
-            `INSERT INTO notificacoes (usuario_id, tipo, titulo, mensagem) VALUES ($1,'aviso','Assinatura cancelada','Sua assinatura foi cancelada. Assine novamente para continuar usando o AgendaOK.')`,
-            [u.id]
-          ).catch(() => {});
-        }
-      }
-      return;
-    }
-
-    // Pagamento avulso (fallback)
-    if (type === 'payment') {
-      const payId = data?.id;
-      if (!payId) return;
-
-      const client = getMPClient();
-      const payment = new Payment(client);
-      const pay = await payment.get({ id: payId });
-
-      if (pay.status !== 'approved') return;
-
-      // Tenta identificar o usuário pelo email
-      const email = pay.payer?.email;
-      if (!email) return;
-
-      const u = (await pool.query('SELECT * FROM usuarios WHERE email=$1', [email])).rows[0];
-      if (!u) return;
-
-      const expira = new Date();
-      expira.setDate(expira.getDate() + 30);
-      const expiraStr = expira.toISOString().split('T')[0];
-
-      await pool.query(
-        'UPDATE usuarios SET plano_pago=true, acesso_ativo=true, acesso_expira=$1 WHERE id=$2',
-        [expiraStr, u.id]
-      );
-
-      await pool.query(
-        `INSERT INTO notificacoes (usuario_id, tipo, titulo, mensagem) VALUES ($1,'pagamento','Pagamento aprovado!','Seu pagamento foi confirmado. Acesso liberado por 30 dias.')`,
-        [u.id]
-      ).catch(() => {});
-    }
-  } catch(e) {
-    console.error('Erro webhook MP:', e.message);
-  }
-});
-
-// ─── GET /pagamento/historico ───────────────────────────────────────────────
-// Busca histórico de pagamentos do usuário (via MP)
-router.get('/historico', requireAuth, async (req, res) => {
-  try {
-    const u = (await pool.query('SELECT mp_subscription_id FROM usuarios WHERE id=$1', [req.session.userId])).rows[0];
-    if (!u) return res.json({ pagamentos: [] });
-
-    if (!u.mp_subscription_id) return res.json({ pagamentos: [] });
-
-    const client = getMPClient();
-    const preApproval = new PreApproval(client);
-    const sub = await preApproval.get({ id: u.mp_subscription_id });
-
-    res.json({
-      pagamentos: [{
-        id:          sub.id,
-        status:      sub.status,
-        valor:       sub.auto_recurring?.transaction_amount,
-        moeda:       sub.auto_recurring?.currency_id,
-        criado_em:   sub.date_created,
-        atualizado:  sub.last_modified,
-        proxima_data: sub.next_payment_date,
-      }]
-    });
-  } catch(e) {
-    res.json({ pagamentos: [] });
-  }
-});
-
-// ─── POST /pagamento/cancelar ───────────────────────────────────────────────
+// ─── POST /pagamento/cancelar ─────────────────────────────────────────────────
 router.post('/cancelar', requireAuth, async (req, res) => {
   try {
-    const u = (await pool.query('SELECT mp_subscription_id FROM usuarios WHERE id=$1', [req.session.userId])).rows[0];
-    if (!u || !u.mp_subscription_id) return res.status(400).json({ erro: 'Nenhuma assinatura encontrada.' });
-
-    const client = getMPClient();
-    const preApproval = new PreApproval(client);
-    await preApproval.update({ id: u.mp_subscription_id, body: { status: 'cancelled' } });
-
-    await pool.query('UPDATE usuarios SET plano_pago=false WHERE id=$1', [u.id]);
+    await pool.query(
+      'UPDATE usuarios SET plano_pago=false WHERE id=$1', [req.session.userId]
+    );
     res.json({ sucesso: true });
-  } catch(e) {
-    res.status(500).json({ erro: e.message });
-  }
+  } catch(e) { res.status(500).json({ erro: e.message }); }
 });
 
 module.exports = router;

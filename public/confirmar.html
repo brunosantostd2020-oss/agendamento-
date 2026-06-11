@@ -16,7 +16,7 @@
  --r:6px;--sb:env(safe-area-inset-bottom,0px);--st:env(safe-area-inset-top,0px);
  }
  html{-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
- body{
+ body{overflow-x:hidden;
  font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
  background:var(--bg);color:var(--texto);
  min-height:100dvh;display:flex;flex-direction:column;
@@ -94,7 +94,6 @@
  @keyframes pop{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
  .resultado-titulo{font-size:22px;font-weight:800;color:var(--texto);letter-spacing:-0.4px;margin-bottom:8px}
  .resultado-sub{font-size:14px;color:var(--muted);font-weight:400;line-height:1.6;max-width:280px;margin:0 auto 24px}
- .btn-painel{display:inline-flex;align-items:center;gap:8px;background:var(--cor);color:#fff;border:none;border-radius:var(--r);padding:14px 24px;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;cursor:pointer;text-decoration:none;-webkit-tap-highlight-color:transparent}
 
  /* LOADING */
  .loading{flex:1;display:flex;align-items:center;justify-content:center;padding:40px}
@@ -168,7 +167,7 @@
  <div class="resultado-ico" id="res-ico"></div>
  <div class="resultado-titulo" id="res-titulo"></div>
  <div class="resultado-sub" id="res-sub"></div>
- <a href="/painel" class="btn-painel">Ir para o painel →</a>
+ <div id="res-agradecimento" style="font-size:13px;color:var(--muted);line-height:1.6;text-align:center;max-width:280px;margin:0 auto"></div>
  </div>
 </div>
 
@@ -302,22 +301,31 @@ function mostrarResultado(status, jaProcessado) {
  document.getElementById('view-main').style.display = 'none';
  document.getElementById('view-resultado').style.display = 'block';
 
- const ico = document.getElementById('res-ico');
+ const ico    = document.getElementById('res-ico');
  const titulo = document.getElementById('res-titulo');
- const sub = document.getElementById('res-sub');
+ const sub    = document.getElementById('res-sub');
+ const agr    = document.getElementById('res-agradecimento');
+ const neg    = agendamento?.negocio || '';
+ const nome   = agendamento?.nome   || '';
 
  if (status === 'confirmado') {
- ico.style.background = '#16a34a';
- ico.innerHTML = '<svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M7 17l6 6 12-12" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
- titulo.textContent = jaProcessado ? 'Já estava confirmado.' : 'Confirmado!';
- sub.textContent = jaProcessado
- ? 'Este agendamento já havia sido confirmado anteriormente.'
- : `O agendamento de ${agendamento?.nome} está confirmado. O status foi atualizado automaticamente no sistema.`;
+   ico.style.background = '#16a34a';
+   ico.innerHTML = '<svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M7 17l6 6 12-12" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+   if (jaProcessado) {
+     titulo.textContent = 'Já confirmado anteriormente!';
+     sub.textContent    = 'Este agendamento já havia sido confirmado.';
+     if (agr) agr.textContent = '';
+   } else {
+     titulo.textContent = '🎉 Confirmado com sucesso!';
+     sub.textContent    = `Obrigado, ${nome}! Seu agendamento está confirmado.`;
+     if (agr) agr.innerHTML = `Estamos te esperando em <strong>${neg}</strong>.<br/>Qualquer dúvida, entre em contato conosco.<br/><br/>Até logo! 👋`;
+   }
  } else {
- ico.style.background = '#dc2626';
- ico.innerHTML = '<svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M10 10l12 12M22 10l-12 12" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg>';
- titulo.textContent = 'Agendamento cancelado.';
- sub.textContent = 'O agendamento foi cancelado e o horário foi liberado para outros clientes.';
+   ico.style.background = '#dc2626';
+   ico.innerHTML = '<svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M10 10l12 12M22 10l-12 12" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg>';
+   titulo.textContent = 'Agendamento cancelado.';
+   sub.textContent    = 'Tudo certo! O horário foi liberado.';
+   if (agr) agr.innerHTML = `Esperamos te ver em breve em <strong>${neg}</strong>.<br/>Quando quiser reagendar, é só acessar nosso link. 😊`;
  }
 }
 
@@ -327,7 +335,7 @@ function mostrarErro(msg) {
  <div style="font-size:48px;margin-bottom:16px"></div>
  <div style="font-size:18px;font-weight:700;color:var(--texto);margin-bottom:8px">Link inválido</div>
  <div style="font-size:14px;color:var(--muted)">${msg}</div>
- <a href="/painel" style="display:inline-block;margin-top:24px;padding:12px 24px;background:var(--cor);color:#fff;border-radius:var(--r);text-decoration:none;font-size:14px;font-weight:600">Ir para o painel</a>
+
  </div>`;
 }
 

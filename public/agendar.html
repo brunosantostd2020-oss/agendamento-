@@ -22,7 +22,7 @@
  --st: env(safe-area-inset-top, 0px);
  }
  html { -webkit-tap-highlight-color: transparent; -webkit-text-size-adjust: 100%; }
- body {
+ body {overflow-x:hidden;
  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
  background: var(--bg); color: var(--texto);
  min-height: 100dvh; overflow-x: hidden;
@@ -261,7 +261,51 @@
  .hr-grade { grid-template-columns: repeat(3, 1fr); }
  .hr-btn { font-size: 13px; padding: 13px 2px; }
  }
- </style>
+ 
+/* ── SELETOR DE PROFISSIONAL ── */
+.prof-sec{margin-top:20px;border-top:1px solid var(--borda);padding-top:18px}
+.prof-lbl{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.08em;
+  text-transform:uppercase;margin-bottom:10px;display:block}
+.prof-lista{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.prof-item{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 14px;border-radius:10px;
+  border:2px solid var(--borda);background:var(--branco);
+  cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent;
+  width:100%;text-align:left;font-family:inherit}
+.prof-item:active{opacity:.8}
+.prof-item.sel{border-color:var(--cor,#0a0a0a)}
+.prof-avatar{
+  width:38px;height:38px;border-radius:9px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;font-weight:800;color:#fff}
+.prof-info{flex:1;min-width:0}
+.prof-nome{font-size:13px;font-weight:700;color:var(--texto);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prof-cargo{font-size:11px;color:var(--muted);margin-top:1px}
+.prof-check{
+  width:20px;height:20px;border-radius:50%;flex-shrink:0;
+  border:2px solid var(--borda);
+  display:flex;align-items:center;justify-content:center;transition:all .15s}
+.prof-item.sel .prof-check{background:var(--cor,#0a0a0a);border-color:var(--cor,#0a0a0a)}
+.prof-item.sel .prof-check svg{display:block}
+.prof-check svg{display:none;width:10px;height:10px}
+.prof-qualquer{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 14px;border-radius:10px;
+  border:1.5px dashed var(--borda);background:transparent;
+  cursor:pointer;transition:all .15s;
+  -webkit-tap-highlight-color:transparent;
+  font-family:inherit;width:100%;text-align:left}
+.prof-qualquer:active{opacity:.8}
+.prof-qualquer.sel{border-color:var(--cor,#0a0a0a);border-style:solid}
+.prof-qualquer .pq-ico{
+  width:38px;height:38px;border-radius:9px;background:var(--cinza,#f5f4f0);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.prof-qualquer .pq-ico svg{width:18px;height:18px;stroke:var(--muted);stroke-width:2;fill:none}
+.prof-qualquer span{font-size:13px;font-weight:600;color:var(--muted)}
+.prof-qualquer.sel span{color:var(--texto)}
+</style>
 </head>
 <body>
 
@@ -275,6 +319,7 @@
  </div>
  <div class="hdr-r">by <strong>AgendaOK</strong></div>
 </div>
+<div id="h-desc" style="display:none;background:var(--card,#fff);border-bottom:1px solid var(--borda,#e2e8f0);padding:10px 20px;font-size:13px;color:var(--muted,#64748b);line-height:1.5;text-align:center"></div>
 
 <div class="prog-bar" id="prog-bar">
  <div class="prog-track"><div class="prog-fill" id="prog"></div></div>
@@ -319,6 +364,17 @@
  <label>Selecione o serviço</label>
  <div class="srv-lista" id="srv-lista"></div>
  <div class="srv-sem" id="srv-sem" style="display:none">Nenhum serviço cadastrado. Continue para escolher o horário.</div>
+ </div>
+ <!-- Seletor de profissional — só aparece se houver equipe -->
+ <div class="prof-sec" id="prof-sec" style="display:none">
+   <label class="prof-lbl">Com qual profissional?</label>
+   <button class="prof-qualquer sel" id="prof-qualquer" onclick="selProf(null,this)">
+     <div class="pq-ico">
+       <svg viewBox="0 0 24 24" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+     </div>
+     <span>Qualquer profissional disponível</span>
+   </button>
+   <div class="prof-lista" id="prof-lista"></div>
  </div>
  </div>
 
@@ -375,15 +431,128 @@
 </div>
 
 <script>
+// ── TEXTOS POR NICHO ──────────────────────────────────────────────────
+const TEXTOS_NICHO = {
+  barbearia: {
+    servico_label:    'Selecione o serviço',
+    servico_sem:      'Nenhum serviço cadastrado.',
+    prof_label:       'Com qual barbeiro?',
+    prof_qualquer:    'Qualquer barbeiro disponível',
+    obs_placeholder:  'Alguma preferência? (ex: máquina, tesoura, barba...)',
+    resumo_servico:   'Serviço',
+    resumo_prof:      'Barbeiro',
+  },
+  salao: {
+    servico_label:    'Selecione o serviço',
+    servico_sem:      'Nenhum serviço cadastrado.',
+    prof_label:       'Com qual profissional?',
+    prof_qualquer:    'Qualquer profissional disponível',
+    obs_placeholder:  'Alguma preferência ou observação?',
+    resumo_servico:   'Serviço',
+    resumo_prof:      'Profissional',
+  },
+  clinica: {
+    servico_label:    'Selecione o procedimento',
+    servico_sem:      'Nenhum procedimento cadastrado.',
+    prof_label:       'Com qual médico?',
+    prof_qualquer:    'Qualquer médico disponível',
+    obs_placeholder:  'Tem algum sintoma, alergia ou medicação em uso?',
+    resumo_servico:   'Procedimento',
+    resumo_prof:      'Médico(a)',
+  },
+  odonto: {
+    servico_label:    'Selecione o procedimento',
+    servico_sem:      'Nenhum procedimento cadastrado.',
+    prof_label:       'Com qual dentista?',
+    prof_qualquer:    'Qualquer dentista disponível',
+    obs_placeholder:  'Tem alguma alergia, dor ou medicação em uso?',
+    resumo_servico:   'Procedimento',
+    resumo_prof:      'Dentista',
+  },
+  advocacia: {
+    servico_label:    'Área do atendimento',
+    servico_sem:      'Nenhuma área cadastrada.',
+    prof_label:       'Com qual advogado?',
+    prof_qualquer:    'Qualquer advogado disponível',
+    obs_placeholder:  'Descreva brevemente seu caso ou dúvida',
+    resumo_servico:   'Área',
+    resumo_prof:      'Advogado(a)',
+  },
+  estetica: {
+    servico_label:    'Selecione o tratamento',
+    servico_sem:      'Nenhum tratamento cadastrado.',
+    prof_label:       'Com qual esteticista?',
+    prof_qualquer:    'Qualquer esteticista disponível',
+    obs_placeholder:  'Tem alguma alergia ou sensibilidade na pele?',
+    resumo_servico:   'Tratamento',
+    resumo_prof:      'Esteticista',
+  },
+  tatuagem: {
+    servico_label:    'Tipo de serviço',
+    servico_sem:      'Nenhum serviço cadastrado.',
+    prof_label:       'Com qual tatuador?',
+    prof_qualquer:    'Qualquer tatuador disponível',
+    obs_placeholder:  'Descreva a ideia da tattoo, tamanho e local do corpo',
+    resumo_servico:   'Serviço',
+    resumo_prof:      'Tatuador(a)',
+  },
+  psicologia: {
+    servico_label:    'Tipo de consulta',
+    servico_sem:      'Nenhum tipo cadastrado.',
+    prof_label:       'Com qual psicólogo?',
+    prof_qualquer:    'Qualquer psicólogo disponível',
+    obs_placeholder:  'Como posso te ajudar? (opcional, ficará confidencial)',
+    resumo_servico:   'Consulta',
+    resumo_prof:      'Psicólogo(a)',
+  },
+  nutricao: {
+    servico_label:    'Tipo de consulta',
+    servico_sem:      'Nenhum tipo cadastrado.',
+    prof_label:       'Com qual nutricionista?',
+    prof_qualquer:    'Qualquer nutricionista disponível',
+    obs_placeholder:  'Tem alguma restrição alimentar ou objetivo específico?',
+    resumo_servico:   'Consulta',
+    resumo_prof:      'Nutricionista',
+  },
+  fisio: {
+    servico_label:    'Tipo de atendimento',
+    servico_sem:      'Nenhum tipo cadastrado.',
+    prof_label:       'Com qual fisioterapeuta?',
+    prof_qualquer:    'Qualquer fisioterapeuta disponível',
+    obs_placeholder:  'Qual região do corpo? Tem algum diagnóstico médico?',
+    resumo_servico:   'Atendimento',
+    resumo_prof:      'Fisioterapeuta',
+  },
+  personal: {
+    servico_label:    'Tipo de treino',
+    servico_sem:      'Nenhum tipo cadastrado.',
+    prof_label:       'Com qual personal?',
+    prof_qualquer:    'Qualquer personal disponível',
+    obs_placeholder:  'Qual seu objetivo? (emagrecimento, ganho de massa, condicionamento...)',
+    resumo_servico:   'Treino',
+    resumo_prof:      'Personal',
+  },
+  outro: {
+    servico_label:    'Selecione o serviço',
+    servico_sem:      'Nenhum serviço cadastrado.',
+    prof_label:       'Com qual profissional?',
+    prof_qualquer:    'Qualquer profissional disponível',
+    obs_placeholder:  'Alguma observação ou informação adicional?',
+    resumo_servico:   'Serviço',
+    resumo_prof:      'Profissional',
+  },
+};
+function textos(nicho) { return TEXTOS_NICHO[nicho] || TEXTOS_NICHO.outro; }
+
 const TEMAS={barbearia:{ico:'',cor:'#111827'},salao:{ico:'',cor:'#4a0728'},clinica:{ico:'+',cor:'#0c2340'},odonto:{ico:'',cor:'#0c3547'},advocacia:{ico:'',cor:'#1c1007'},psicologia:{ico:'',cor:'#1e0a3c'},estetica:{ico:'',cor:'#3b0764'},tatuagem:{ico:'',cor:'#030712'},nutricao:{ico:'',cor:'#052e16'},fisio:{ico:'',cor:'#0c2340'},personal:{ico:'',cor:'#1c0505'},outro:{ico:'',cor:'#0a0a0a'}};
 const MESES=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const DIAS_S=['D','S','T','Q','Q','S','S'];
 const slug=location.pathname.split('/').pop();
-const E={passo:1,data:null,horario:null,ano:new Date().getFullYear(),mes:new Date().getMonth(),diasUteis:[0,1,2,3,4,5,6],srvId:null,srvNome:'',srvPreco:null,srvDur:null,temSrv:false};
+const E={passo:1,data:null,horario:null,ano:new Date().getFullYear(),mes:new Date().getMonth(),diasUteis:[0,1,2,3,4,5,6],srvId:null,srvNome:'',srvPreco:null,srvDur:null,temSrv:false,funcId:null,funcNome:''};
 
 async function init(){
  try{
- const[rI,rS]=await Promise.all([fetch('/p/'+slug+'/info'),fetch('/servicos/publico/'+slug)]);
+ const[rI,rS,rF]=await Promise.all([fetch('/p/'+slug+'/info'),fetch('/servicos/publico/'+slug),fetch('/p/'+slug+'/equipe')]);
  if(!rI.ok){document.getElementById('h-nome').textContent='Negócio não encontrado';return;}
  const info=await rI.json();
  const srvD=rS.ok?await rS.json():{servicos:[]};
@@ -393,7 +562,32 @@ async function init(){
  aplicarCor(cor);
  document.getElementById('h-ico').textContent=tema.ico;
  document.getElementById('h-nome').textContent=info.nome_negocio;
- document.getElementById('h-sub').textContent=nicho;
+ // Mostrar descrição se existir
+ const descEl = document.getElementById('h-desc');
+ if (descEl && info.config?.descricao && info.config.descricao.trim()) {
+   descEl.textContent = info.config.descricao.trim();
+   descEl.style.display = 'block';
+ }
+ const NICHO_NOMES = {
+  barbearia:'Barbearia', salao:'Salão de Beleza', clinica:'Clínica',
+  odonto:'Odontologia', advocacia:'Advocacia', estetica:'Estética',
+  tatuagem:'Tatuagem', psicologia:'Psicologia', nutricao:'Nutrição',
+  fisio:'Fisioterapia', personal:'Personal Trainer', outro:'Agendamento Online'
+};
+document.getElementById('h-sub').textContent = NICHO_NOMES[nicho] || 'Agendamento Online';
+
+ // ── Aplicar textos por nicho ──
+ const T = textos(nicho);
+ window._T = T;
+ const lblSrv = document.querySelector('#s2 .campo > label');
+ if (lblSrv) lblSrv.textContent = T.servico_label;
+ const obsEl = document.getElementById('obs');
+ if (obsEl) obsEl.placeholder = T.obs_placeholder;
+ const lblProf = document.querySelector('.prof-lbl');
+ if (lblProf) lblProf.textContent = T.prof_label;
+ const qualquerSpan = document.querySelector('#prof-qualquer span');
+ if (qualquerSpan) qualquerSpan.textContent = T.prof_qualquer;
+
  document.getElementById('r-neg').textContent=info.nome_negocio;
  document.title=info.nome_negocio+' — Agendar';
  if(info.config?.dias_uteis && info.config.dias_uteis.trim()!==''){
@@ -401,6 +595,24 @@ async function init(){
  }
  // Se não configurado, todos os dias ficam disponíveis
  const lista=document.getElementById('srv-lista');
+ // Renderizar profissionais (só se houver equipe)
+ const funcD = rF.ok ? await rF.json() : {funcionarios:[]};
+ const funcs = funcD.funcionarios || [];
+ if (funcs.length > 0) {
+   document.getElementById('prof-sec').style.display = 'block';
+   document.getElementById('prof-lista').innerHTML = funcs.map(f => `
+     <div class="prof-item" data-id="${f.id}" data-nome="${f.nome}" onclick="selProf('${f.id}','${f.nome}',this)">
+       <div class="prof-avatar" style="background:${f.cor||'#6b6860'}">${(f.nome||'?')[0].toUpperCase()}</div>
+       <div class="prof-info">
+         <div class="prof-nome">${f.nome}</div>
+         ${f.cargo ? `<div class="prof-cargo">${f.cargo}</div>` : ''}
+       </div>
+       <div class="prof-check">
+         <svg viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2"><polyline points="2 6 5 9 10 3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+       </div>
+     </div>`).join('');
+ }
+
  if(srvD.servicos&&srvD.servicos.length){
  E.temSrv=true;
  lista.innerHTML=srvD.servicos.map(s=>`
@@ -437,6 +649,33 @@ function avancar(){
  if(E.passo===4){confirmar();return;}
  ir(E.passo+1);
 }
+function selProf(id, nome, el) {
+  E.funcId   = id || null;
+  E.funcNome = nome || '';
+  // Limpar seleção anterior
+  document.querySelectorAll('.prof-item').forEach(p => p.classList.remove('sel'));
+  document.getElementById('prof-qualquer').classList.remove('sel');
+  if (el) el.classList.add('sel');
+  else document.getElementById('prof-qualquer').classList.add('sel');
+}
+
+function selProf(id, nomeOuEl, el) {
+  // Suporta selProf(null, btnEl) e selProf(id, nome, el)
+  if (id === null && nomeOuEl && typeof nomeOuEl === 'object') {
+    // chamada do "qualquer profissional"
+    E.funcId = null; E.funcNome = '';
+    document.querySelectorAll('.prof-item').forEach(p => p.classList.remove('sel'));
+    document.querySelectorAll('.prof-qualquer').forEach(p => p.classList.remove('sel'));
+    nomeOuEl.classList.add('sel');
+    return;
+  }
+  E.funcId   = id || null;
+  E.funcNome = nomeOuEl || '';
+  document.querySelectorAll('.prof-item').forEach(p => p.classList.remove('sel'));
+  document.querySelectorAll('.prof-qualquer').forEach(p => p.classList.remove('sel'));
+  if (el) el.classList.add('sel');
+}
+
 function voltar(){if(E.passo>1)ir(E.passo-1);}
 
 function ir(n){
@@ -548,7 +787,8 @@ function renderRes(){
  const telVal=document.getElementById('telefone').value.trim();
  let html=`<div class="res-linha"><span class="res-k">Nome</span><span class="res-v">${nomeVal}</span></div>
  <div class="res-linha"><span class="res-k">WhatsApp</span><span class="res-v">${telVal}</span></div>`;
- if(E.srvNome)html+=`<div class="res-linha"><span class="res-k">Serviço</span><span class="res-v">${E.srvNome}</span></div>`;
+ if(E.srvNome)html+=`<div class="res-linha"><span class="res-k">${window._T?.resumo_servico||'Serviço'}</span><span class="res-v">${E.srvNome}</span></div>`;
+ if(E.funcNome)html+=`<div class="res-linha"><span class="res-k">${window._T?.resumo_prof||'Profissional'}</span><span class="res-v">${E.funcNome}</span></div>`;
  if(E.srvPreco)html+=`<div class="res-linha"><span class="res-k">Valor</span><span class="res-v res-preco">R$${parseFloat(E.srvPreco).toFixed(2).replace('.',',')}</span></div>`;
  if(E.srvDur)html+=`<div class="res-linha"><span class="res-k">Duração</span><span class="res-v">${E.srvDur} minutos</span></div>`;
  html+=`<div class="res-linha"><span class="res-k">Data</span><span class="res-v">${dias[dt.getDay()]}, ${dia}/${mes}/${ano}</span></div>
@@ -560,7 +800,7 @@ async function confirmar(){
  const btn=document.getElementById('btn-prox');
  btn.disabled=true;btn.textContent='Enviando...';
  try{
- const r=await fetch('/p/'+slug+'/agendar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nome:document.getElementById('nome').value.trim(),email:'',telefone:document.getElementById('telefone').value.trim(),servico:E.srvNome,servico_id:E.srvId,preco_servico:E.srvPreco,obs:g('obs'),data:E.data,horario:E.horario})});
+ const r=await fetch('/p/'+slug+'/agendar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nome:document.getElementById('nome').value.trim(),email:'',telefone:document.getElementById('telefone').value.trim(),servico:E.srvNome,servico_id:E.srvId,preco_servico:E.srvPreco,obs:g('obs'),data:E.data,horario:E.horario,funcionario_id:E.funcId||null,funcionario_nome:E.funcNome||''})});
  const d=await r.json();
  if(!r.ok)throw new Error(d.erro||'Erro');
  ir(5);

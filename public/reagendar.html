@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+<title>Reagendar — AgendaOK</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{overflow-x:hidden;font-family:'Inter',sans-serif;background:#f8faff;min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px}
+.card{background:white;border-radius:20px;padding:32px 28px;max-width:440px;width:100%;
+  box-shadow:0 4px 32px rgba(0,0,0,.08)}
+.logo{font-size:14px;font-weight:800;color:#0d9488;text-align:center;margin-bottom:24px;letter-spacing:-.3px}
+h1{font-size:20px;font-weight:800;color:#0f172a;margin-bottom:6px}
+.sub{font-size:14px;color:#64748b;margin-bottom:24px;line-height:1.5}
+.info-box{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;
+  padding:14px 16px;margin-bottom:20px}
+.info-linha{font-size:13px;color:#334155;margin-bottom:4px}
+.info-linha:last-child{margin-bottom:0}
+.info-linha strong{color:#0f172a}
+label{font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;
+  letter-spacing:.06em;display:block;margin-bottom:6px}
+.input{width:100%;border:1.5px solid #e2e8f0;border-radius:10px;
+  font-family:'Inter',sans-serif;font-size:16px;padding:12px 14px;
+  color:#0f172a;outline:none;margin-bottom:16px;background:#fff;
+  -webkit-appearance:none;transition:border-color .15s}
+.input:focus{border-color:#0d9488}
+.horarios-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px}
+.hr-btn{padding:10px 4px;border:1.5px solid #e2e8f0;border-radius:8px;
+  background:#fff;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;
+  color:#334155;cursor:pointer;text-align:center;transition:all .15s}
+.hr-btn.sel{background:#0d9488;border-color:#0d9488;color:#fff}
+.hr-btn:disabled{opacity:.4;cursor:not-allowed}
+.btn{width:100%;padding:14px;border-radius:12px;background:#0d9488;color:#fff;
+  font-family:'Inter',sans-serif;font-size:15px;font-weight:800;border:none;
+  cursor:pointer;transition:opacity .15s;margin-top:4px}
+.btn:disabled{opacity:.6}
+.erro{background:#fef2f2;border:1px solid #fecaca;border-radius:10px;
+  padding:12px 14px;font-size:13px;color:#dc2626;margin-bottom:16px;display:none}
+.erro.show{display:block}
+.sucesso{text-align:center;display:none}
+.sucesso.show{display:block}
+.ico-ok{font-size:56px;margin-bottom:16px}
+</style>
+</head>
+<body>
+<div class="card" id="card">
+  <div class="logo">AgendaOK</div>
+  <div id="loading">
+    <h1>Carregando...</h1>
+  </div>
+  <div id="form-wrap" style="display:none">
+    <h1>Reagendar atendimento</h1>
+    <p class="sub" id="sub-txt">Escolha uma nova data e horário</p>
+    <div class="info-box" id="info-atual"></div>
+    <div class="erro" id="erro"></div>
+    <label>Nova data</label>
+    <input class="input" type="date" id="nova-data" oninput="carregarHorarios()"/>
+    <label>Novo horário</label>
+    <div class="horarios-grid" id="horarios-grid">
+      <p style="color:#94a3b8;font-size:13px;grid-column:1/-1">Selecione uma data primeiro</p>
+    </div>
+    <button class="btn" id="btn-reagendar" onclick="confirmarReagendar()" disabled>
+      Confirmar novo horário
+    </button>
+  </div>
+  <div class="sucesso" id="sucesso">
+    <div class="ico-ok">🎉</div>
+    <h1 id="suc-title">Reagendado!</h1>
+    <p class="sub" id="suc-msg">Seu atendimento foi remarcado com sucesso.</p>
+  </div>
+</div>
+
+<script>
+let slug = '', token = '', novoHorario = '', novaData = '';
+
+async function init() {
+  const p = new URLSearchParams(location.search);
+  token = p.get('token') || '';
+  if (!token) { document.getElementById('loading').innerHTML = '<p style="color:#dc2626">Link inválido.</p>'; return; }
+
+  try {
+    const r = await fetch('/extras/reagendar/' + token);
+    const d = await r.json();
+    if (!r.ok || !d.agendamento) throw new Error(d.erro || 'Link inválido ou expirado.');
+
+    const ag = d.agendamento;
+    slug = ag.negocio_slug;
+
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('form-wrap').style.display = 'block';
+    document.getElementById('sub-txt').textContent = `Olá, ${ag.nome}! Escolha uma nova data e horário.`;
+
+    const dataFmt = new Date(ag.data + 'T12:00:00').toLocaleDateString('pt-BR', {weekday:'long',day:'numeric',month:'long'});
+    document.getElementById('info-atual').innerHTML = `
+      <div class="info-linha">📅 <strong>Atual:</strong> ${dataFmt} às ${ag.horario}</div>
+      ${ag.servico ? `<div class="info-linha">✂️ <strong>Serviço:</strong> ${ag.servico}</div>` : ''}
+      <div class="info-linha">📍 <strong>Local:</strong> ${ag.nome_negocio}</div>
+    `;
+
+    // Data mínima = amanhã
+    const amanha = new Date(Date.now() - 3*60*60*1000);
+    amanha.setUTCDate(amanha.getUTCDate() + 1);
+    document.getElementById('nova-data').min = amanha.toISOString().split('T')[0];
+    document.getElementById('nova-data').value = amanha.toISOString().split('T')[0];
+    carregarHorarios();
+  } catch(e) {
+    document.getElementById('loading').innerHTML = `<p style="color:#dc2626">${e.message}</p>`;
+  }
+}
+
+async function carregarHorarios() {
+  novaData = document.getElementById('nova-data').value;
+  if (!novaData) return;
+  const grid = document.getElementById('horarios-grid');
+  grid.innerHTML = '<p style="color:#94a3b8;font-size:13px;grid-column:1/-1">Carregando...</p>';
+  novoHorario = '';
+  document.getElementById('btn-reagendar').disabled = true;
+  try {
+    const r = await fetch(`/p/${slug}/horarios?data=${novaData}`);
+    const d = await r.json();
+    if (!d.horarios?.length) {
+      grid.innerHTML = '<p style="color:#94a3b8;font-size:13px;grid-column:1/-1">Sem horários disponíveis neste dia.</p>';
+      return;
+    }
+    grid.innerHTML = d.horarios.map(h =>
+      `<button class="hr-btn" onclick="selHr(this,'${h}')">${h}</button>`
+    ).join('');
+  } catch(e) {
+    grid.innerHTML = '<p style="color:#ef4444;font-size:13px;grid-column:1/-1">Erro ao carregar horários.</p>';
+  }
+}
+
+function selHr(el, h) {
+  document.querySelectorAll('.hr-btn').forEach(b => b.classList.remove('sel'));
+  el.classList.add('sel');
+  novoHorario = h;
+  document.getElementById('btn-reagendar').disabled = false;
+}
+
+async function confirmarReagendar() {
+  if (!novoHorario || !novaData) return;
+  const btn = document.getElementById('btn-reagendar');
+  btn.disabled = true;
+  btn.textContent = 'Confirmando...';
+  try {
+    const r = await fetch('/extras/reagendar/' + token, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ nova_data: novaData, novo_horario: novoHorario })
+    });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.erro || 'Erro ao reagendar.');
+    document.getElementById('form-wrap').style.display = 'none';
+    const dataFmt = new Date(novaData+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'});
+    document.getElementById('suc-msg').textContent = `Seu atendimento foi remarcado para ${dataFmt} às ${novoHorario}. Até lá!`;
+    document.getElementById('sucesso').classList.add('show');
+  } catch(e) {
+    const err = document.getElementById('erro');
+    err.textContent = e.message;
+    err.classList.add('show');
+    btn.disabled = false;
+    btn.textContent = 'Confirmar novo horário';
+  }
+}
+
+init();
+</script>
+</body>
+</html>

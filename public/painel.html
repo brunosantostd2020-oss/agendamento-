@@ -31,6 +31,7 @@
       --amarelo:#eab308;
       --r:10px;
       --sb:env(safe-area-inset-bottom,0px);
+      --st:env(safe-area-inset-top,0px);
       --sl:env(safe-area-inset-left,0px);
       --sidebar-w:200px;
     }
@@ -48,6 +49,7 @@
       border-right:1px solid var(--borda);
       display:flex;flex-direction:column;
       position:fixed;top:0;left:0;bottom:0;z-index:50;
+      padding-top:var(--st);
       padding-bottom:var(--sb);
     }
 
@@ -76,6 +78,9 @@
 
     .sb-divider{height:1px;background:var(--borda);margin:8px 10px}
 
+    .sb-sair{color:var(--muted) !important;margin-top:4px}
+    .sb-sair:hover{color:#ef4444 !important;background:rgba(239,68,68,.08) !important}
+    .sb-sair svg{stroke:currentColor}
     .sb-plan{margin:10px;padding:12px;background:var(--card2);border:1px solid var(--borda);
       border-radius:var(--r)}
     .sb-plan-label{font-size:11px;font-weight:700;color:var(--txt);margin-bottom:2px}
@@ -89,11 +94,41 @@
 
     /* ── TOPBAR ── */
     .topbar{
-      height:56px;background:var(--sidebar);border-bottom:1px solid var(--borda);
-      display:flex;align-items:center;gap:12px;padding:0 24px;
-      position:sticky;top:0;z-index:40;flex-shrink:0;
+      height:calc(56px + var(--st));
+      background:var(--sidebar);border-bottom:1px solid var(--borda);
+      display:flex;align-items:center;gap:12px;
+      padding:0 24px;
+      padding-top:var(--st);
+      position:sticky;top:0;z-index:600;flex-shrink:0;
+      overflow:visible;
     }
-    .tb-search{flex:1;max-width:400px;display:flex;align-items:center;gap:10px;
+    /* ── BUSCA GLOBAL ── */
+    .busca-dd{
+      display:none;position:absolute;top:calc(100% + 8px);left:0;right:0;
+      background:var(--card);border:1px solid var(--borda);border-radius:12px;
+      box-shadow:0 20px 60px -10px rgba(0,0,0,.6);z-index:300;
+      max-height:400px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+    .busca-dd.open{display:block}
+    .busca-section{padding:8px 0}
+    .busca-section-title{
+      font-size:10px;font-weight:700;color:var(--muted);
+      text-transform:uppercase;letter-spacing:.06em;
+      padding:4px 14px 6px}
+    .busca-item{
+      display:flex;align-items:center;gap:10px;
+      padding:10px 14px;cursor:pointer;transition:background .1s}
+    .busca-item:hover,.busca-item:active{background:var(--card2)}
+    .busca-item-ico{
+      width:32px;height:32px;border-radius:8px;
+      display:flex;align-items:center;justify-content:center;
+      font-size:14px;flex-shrink:0}
+    .busca-item-info{flex:1;min-width:0}
+    .busca-item-nome{font-size:13px;font-weight:600;color:var(--txt);
+      overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .busca-item-sub{font-size:11px;color:var(--muted);margin-top:1px}
+    .busca-vazia{padding:24px;text-align:center;font-size:13px;color:var(--muted)}
+
+    .tb-search{flex:1;max-width:400px;display:flex;align-items:center;gap:10px;position:relative;
       background:var(--card);border:1px solid var(--borda);border-radius:8px;
       padding:0 14px;height:36px}
     .tb-search input{flex:1;background:none;border:none;outline:none;font-family:inherit;
@@ -105,7 +140,9 @@
     .tb-spacer{flex:1}
     .tb-bell{position:relative;width:36px;height:36px;border-radius:8px;
       background:var(--card);border:1px solid var(--borda);
-      display:flex;align-items:center;justify-content:center;cursor:pointer}
+      display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+    .tb-right{display:flex;align-items:center;gap:10px;flex-shrink:0;position:relative}
+    .bell-wrap{position:relative;flex-shrink:0}
     .tb-bell svg{width:16px;height:16px;color:var(--muted)}
     .tb-bell-dot{position:absolute;top:6px;right:6px;width:7px;height:7px;
       border-radius:50%;background:var(--laranja);border:2px solid var(--sidebar);display:none}
@@ -113,9 +150,18 @@
     .tb-copy-link{display:flex;align-items:center;gap:7px;padding:0 14px;height:36px;
       background:var(--card);border:1px solid var(--borda);border-radius:8px;
       font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;
-      transition:all 0.15s;white-space:nowrap}
+      transition:all 0.15s;white-space:nowrap;flex-shrink:0}
     .tb-copy-link:hover{border-color:var(--verde);color:var(--verde)}
     .tb-copy-link svg{width:14px;height:14px}
+    .tb-lapis{
+      display:flex;align-items:center;justify-content:center;
+      width:36px;height:36px;border-radius:8px;border:none;
+      background:rgba(255,255,255,.08);color:var(--txt);
+      cursor:pointer;flex-shrink:0;transition:background .15s;
+      -webkit-tap-highlight-color:transparent}
+    .tb-lapis:hover{background:rgba(255,255,255,.14)}
+    .tb-lapis:active{opacity:.7}
+    .tb-lapis svg{width:16px;height:16px}
     .tb-novo{display:flex;align-items:center;gap:7px;padding:0 16px;height:36px;
       background:var(--verde);border:none;border-radius:8px;
       font-size:13px;font-weight:700;color:#000;cursor:pointer;
@@ -238,6 +284,139 @@
     .ag-tag.novo{background:rgba(59,130,246,0.15);color:var(--azul)}
     .ag-srv{font-size:11px;color:var(--muted);margin-top:1px}
     .ag-preco{font-size:13px;font-weight:700;color:var(--txt);white-space:nowrap}
+    /* ── CLIENTES ── */
+    .cli-filtros{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+    .cli-filt{padding:6px 14px;border-radius:999px;border:1px solid var(--borda);
+      background:var(--card);color:var(--muted);font-size:11px;font-weight:600;
+      cursor:pointer;font-family:inherit;transition:all .15s;white-space:nowrap}
+    .cli-filt.ativo{background:var(--verde);border-color:var(--verde);color:#000;font-weight:800}
+    .cli-busca{width:100%;border:1.5px solid var(--borda);border-radius:var(--r);
+      background:var(--card);color:var(--txt);font-family:inherit;font-size:16px;
+      padding:11px 14px;outline:none;margin-bottom:12px}
+    .cli-busca:focus{border-color:var(--verde)}
+    /* ── ONBOARDING ── */
+    .ob-overlay{
+      display:none;position:fixed;inset:0;
+      background:rgba(0,0,0,.75);z-index:500;
+      align-items:center;justify-content:center;padding:16px}
+    .ob-overlay.open{display:flex}
+    .ob-box{
+      background:var(--card);border-radius:20px;
+      width:100%;max-width:480px;
+      max-height:92dvh;overflow-y:auto;
+      -webkit-overflow-scrolling:touch;
+      animation:slideUp .3s ease}
+    .ob-header{
+      padding:28px 28px 0;text-align:center}
+    .ob-ico{font-size:52px;margin-bottom:12px;display:block}
+    .ob-titulo{font-size:20px;font-weight:800;color:var(--txt);margin-bottom:6px}
+    .ob-sub{font-size:14px;color:var(--muted);line-height:1.55}
+    .ob-steps{padding:20px 28px;display:flex;flex-direction:column;gap:14px}
+    .ob-step{
+      display:flex;align-items:flex-start;gap:14px;
+      padding:14px 16px;border-radius:12px;
+      background:var(--card2);border:1px solid var(--borda);
+      cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent}
+    .ob-step:hover{border-color:var(--verde)}
+    .ob-step.done{border-color:var(--verde);background:rgba(0,208,132,.06)}
+    .ob-step-num{
+      width:32px;height:32px;border-radius:50%;
+      background:var(--cinza,#f5f4f0);color:var(--muted);
+      font-size:13px;font-weight:800;flex-shrink:0;
+      display:flex;align-items:center;justify-content:center;
+      transition:all .15s}
+    .ob-step.done .ob-step-num{background:var(--verde);color:#000}
+    .ob-step-info{flex:1;min-width:0}
+    .ob-step-t{font-size:14px;font-weight:700;color:var(--txt);margin-bottom:3px}
+    .ob-step-d{font-size:12px;color:var(--muted);line-height:1.5}
+    .ob-step-arrow{color:var(--muted);flex-shrink:0;font-size:18px;margin-top:4px}
+    .ob-footer{padding:0 28px 28px;display:flex;flex-direction:column;gap:10px}
+    .ob-progress{
+      height:4px;background:var(--borda);border-radius:999px;
+      margin:0 28px 20px;overflow:hidden}
+    .ob-progress-fill{
+      height:100%;border-radius:999px;background:var(--verde);
+      transition:width .4s ease}
+    .ob-skip{
+      font-size:12px;color:var(--muted);text-align:center;
+      cursor:pointer;padding:8px;-webkit-tap-highlight-color:transparent}
+    .ob-skip:hover{color:var(--txt)}
+    @media(max-width:500px){
+      .ob-box{border-radius:16px 16px 0 0;max-height:95dvh;margin-top:auto}
+      .ob-overlay{align-items:flex-end;padding:0}
+    }
+
+    /* ── META MODAL ── */
+    .meta-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;align-items:flex-end;justify-content:center}
+    .meta-overlay.open{display:flex}
+    .meta-box{background:var(--card);border-radius:14px 14px 0 0;padding:24px;width:100%;max-width:400px;padding-bottom:calc(24px + var(--sb))}
+    .meta-handle{width:36px;height:3px;background:var(--borda);border-radius:999px;margin:0 auto 18px}
+
+    /* ── MODAL HISTÓRICO CLIENTE ── */
+    .hist-item{padding:12px 0;border-bottom:1px solid var(--borda);display:flex;align-items:flex-start;gap:12px}
+    .hist-item:last-child{border-bottom:none}
+    .hist-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:4px}
+    .hist-info{flex:1;min-width:0}
+    .hist-data{font-size:12px;font-weight:700;color:var(--txt)}
+    .hist-srv{font-size:12px;color:var(--muted);margin-top:2px}
+    .hist-status{font-size:10px;font-weight:700;padding:2px 7px;border-radius:999px;flex-shrink:0}
+    .hist-preco{font-size:12px;font-weight:700;color:var(--verde);flex-shrink:0}
+
+    /* ── HEATMAP PICO ── */
+    .heatmap-grid{display:grid;grid-template-columns:40px repeat(7,1fr);gap:3px;font-size:10px}
+    .hm-cell{height:22px;border-radius:3px;background:var(--card2);
+      display:flex;align-items:center;justify-content:center;
+      font-size:9px;font-weight:600;color:transparent;transition:all .2s}
+    .hm-cell:hover{color:#fff}
+    .hm-label{font-size:9px;color:var(--muted);display:flex;align-items:center;font-weight:600}
+    .hm-day{font-size:9px;color:var(--muted);text-align:center;font-weight:600;padding-bottom:4px}
+
+    .cli-card{background:var(--card);border:1px solid var(--borda);
+      border-radius:var(--r);padding:16px;margin-bottom:10px;transition:border-color .15s}
+    .cli-card.aus-critico-card{border-left:3px solid #ef4444}
+    .cli-card.aus-aviso-card{border-left:3px solid #f97316}
+    .cli-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:8px}
+    .cli-nome{font-size:15px;font-weight:700;color:var(--txt);margin-bottom:2px}
+    .cli-tel{font-size:12px;color:var(--muted)}
+    .cli-badge{display:inline-flex;align-items:center;gap:4px;
+      padding:3px 9px;border-radius:999px;font-size:10px;font-weight:700;white-space:nowrap;flex-shrink:0}
+    .aus-ok{background:rgba(0,208,132,.12);color:var(--verde)}
+    .aus-aviso{background:rgba(249,115,22,.12);color:#f97316}
+    .aus-critico{background:rgba(239,68,68,.12);color:#ef4444}
+    .cli-stats{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:10px}
+    .cli-stat{font-size:11px;color:var(--muted);line-height:1.4}
+    .cli-stat strong{display:block;font-size:14px;font-weight:700;color:var(--txt)}
+    .cli-acoes{display:flex;gap:8px}
+    .cli-wpp-btn{display:flex;align-items:center;gap:6px;padding:8px 14px;
+      background:#25D366;border:none;border-radius:7px;color:#fff;
+      font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;
+      -webkit-tap-highlight-color:transparent}
+    .cli-wpp-btn:active{opacity:.8}
+    .cli-wpp-btn svg{width:14px;height:14px}
+    .cli-srv{font-size:11px;color:var(--muted);font-style:italic;
+      overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:220px;margin-top:4px}
+    .cli-empty{text-align:center;padding:48px 20px;color:var(--muted);font-size:14px}
+    .cli-resumo{font-size:12px;color:var(--muted);margin-bottom:14px}
+
+    .ag-whats-btn{
+      background:#25D366;border:none;border-radius:7px;
+      width:30px;height:30px;display:flex;align-items:center;justify-content:center;
+      cursor:pointer;flex-shrink:0;color:#fff;transition:opacity .15s;
+      -webkit-tap-highlight-color:transparent}
+    .ag-whats-btn:active{opacity:.75}
+    .ag-del-btn{
+      background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.25);border-radius:7px;
+      width:30px;height:30px;display:flex;align-items:center;justify-content:center;
+      cursor:pointer;flex-shrink:0;color:#ef4444;transition:opacity .15s;
+      -webkit-tap-highlight-color:transparent}
+    .ag-del-btn:active{opacity:.7}
+    .ag-ok-btn{
+      background:rgba(0,208,132,.12);border:1px solid rgba(0,208,132,.3);border-radius:7px;
+      width:30px;height:30px;display:flex;align-items:center;justify-content:center;
+      cursor:pointer;flex-shrink:0;color:#00d084;transition:all .15s;
+      -webkit-tap-highlight-color:transparent}
+    .ag-ok-btn:active{opacity:.7}
+    .ag-ok-btn.concluido{background:rgba(0,208,132,.25);border-color:#00d084;cursor:default}
 
     /* ── QR / LINK CARD ── */
     .qr-card{background:var(--card);border:1px solid var(--borda);border-radius:var(--r);padding:20px}
@@ -262,10 +441,6 @@
     .qr-btn-dl:hover{border-color:var(--muted)}
 
     /* ── PROFISSIONAIS ── */
-    .prof-card{background:var(--card);border:1px solid var(--borda);border-radius:var(--r);padding:20px}
-    .prof-title{font-size:14px;font-weight:700;color:var(--txt);margin-bottom:2px}
-    .prof-sub{font-size:11px;color:var(--muted);margin-bottom:14px}
-    .prof-list{display:flex;flex-direction:column;gap:10px}
     .prof-row{display:flex;align-items:center;gap:10px}
     .prof-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;
       justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0}
@@ -311,7 +486,13 @@
     .overlay.open{display:flex}
     .modal{background:var(--card);border:1px solid var(--borda);border-radius:14px 14px 0 0;
       padding:0;width:100%;max-width:480px;padding-bottom:var(--sb);
-      animation:slideUp 0.25s ease;max-height:85dvh;overflow-y:auto}
+      animation:slideUp 0.25s ease;max-height:90dvh;overflow-y:auto;
+      display:flex;flex-direction:column}
+    .modal-body{flex:1;overflow-y:auto;padding-bottom:8px}
+    .modal-footer{flex-shrink:0;padding:12px 20px calc(12px + var(--sb));
+      border-top:1px solid var(--borda);background:var(--card);
+      display:flex;flex-wrap:wrap;gap:8px;
+      position:sticky;bottom:0}
     @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
     .modal-handle{width:36px;height:3px;background:var(--borda);border-radius:999px;
       margin:14px auto 0}
@@ -329,14 +510,17 @@
     .m-textarea{resize:none;min-height:80px;line-height:1.5}
     .m-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
     .status-pills{display:flex;flex-direction:column;gap:8px}
-    .sp{display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:8px;
-      border:1px solid var(--borda);cursor:pointer;transition:all 0.15s;
-      -webkit-tap-highlight-color:transparent}
-    .sp:active{opacity:0.7}
-    .sp.sel{border-color:var(--verde);background:var(--verde-dim)}
-    .sp-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
-    .sp-title{font-size:13px;font-weight:600;color:var(--txt);flex:1}
+    .sp{display:flex;align-items:center;gap:12px;padding:13px 14px;border-radius:10px;
+      border:1.5px solid var(--borda);cursor:pointer;transition:all .15s;
+      -webkit-tap-highlight-color:transparent;background:var(--card2)}
+    .sp:active{opacity:.75}
+    .sp.sel{border-color:var(--sp-cor,var(--verde));
+      background:color-mix(in srgb,var(--sp-cor,var(--verde)) 10%,transparent)}
+    .sp-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+    .sp-title{font-size:13px;font-weight:700;color:var(--txt);flex:1}
     .sp-desc{font-size:11px;color:var(--muted)}
+    /* Concluído — destaque maior */
+    .sp-concluido.sel .sp-title{color:#3b82f6;font-weight:800}
     .modal-footer{display:flex;gap:8px;margin-top:18px;padding-top:16px;
       border-top:1px solid var(--borda)}
     .m-btn{flex:1;padding:12px;border-radius:8px;font-family:inherit;font-size:13px;
@@ -344,6 +528,39 @@
     .m-btn-g{background:var(--verde);color:#000}.m-btn-g:hover{opacity:0.85}
     .m-btn-out{background:none;border:1px solid var(--borda);color:var(--muted)}
     .m-btn-green{background:var(--verde);color:#000}.m-btn-green:hover{opacity:0.85}
+
+    /* ── NOTIF DROPDOWN ── */
+    .bell-wrap{position:relative}
+    .notif-dd{
+      display:none;position:absolute;top:calc(100% + 10px);right:0;
+      width:320px;max-width:320px;
+      background:var(--card);border:1px solid var(--borda);
+      border-radius:14px;box-shadow:0 20px 60px -10px rgba(0,0,0,.6);
+      z-index:300;overflow:hidden;animation:fadeIn .15s ease;
+      display:none;flex-direction:column}
+    .notif-dd.open{display:flex}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+    .nd-hdr{display:flex;align-items:center;justify-content:space-between;
+      padding:14px 16px;border-bottom:1px solid var(--borda);flex-shrink:0}
+    .nd-hdr-t{font-size:13px;font-weight:700;color:var(--txt)}
+    .nd-clear{font-size:11px;color:var(--muted);cursor:pointer;
+      padding:3px 8px;border-radius:5px;transition:background .15s}
+    .nd-clear:hover{background:var(--card2)}
+    .nd-list{overflow-y:auto;flex:1;-webkit-overflow-scrolling:touch;max-height:360px}
+    .nd-item{padding:13px 16px;border-bottom:1px solid var(--borda);
+      cursor:pointer;transition:background .15s}
+    .nd-item:last-child{border-bottom:none}
+    .nd-item:active{background:var(--card2)}
+    .nd-item.nao-lida{background:rgba(0,208,132,.05);
+      border-left:3px solid var(--verde)}
+    .nd-item-top{display:flex;align-items:flex-start;justify-content:space-between;
+      gap:8px;margin-bottom:5px}
+    .nd-item-t{font-size:13px;font-weight:700;color:var(--txt);line-height:1.4}
+    .nd-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:3px}
+    .nd-item-msg{font-size:12px;color:var(--muted);line-height:1.55;
+      word-break:break-word;white-space:normal}
+    .nd-item-hora{font-size:10px;color:var(--muted2);margin-top:5px}
+    .nd-empty{padding:32px 20px;text-align:center;font-size:13px;color:var(--muted)}
 
     /* Botão WhatsApp no modal */
     .m-btn-whats{
@@ -363,7 +580,12 @@
       .stats-grid{grid-template-columns:repeat(2,1fr)}
       .two-cols{grid-template-columns:1fr}
       .two-cols-eq{grid-template-columns:1fr}
-      .topbar{padding:0 14px;height:54px;position:sticky;top:0;z-index:100;
+      .topbar{
+        height:calc(54px + var(--st));
+        padding:0 14px;
+        padding-top:var(--st);
+        align-items:center;
+        position:sticky;top:0;z-index:600;
         background:var(--bg);border-bottom:1px solid var(--borda)}
       .content{padding:14px}
       .tb-search{display:none}
@@ -378,8 +600,13 @@
       .content{padding:10px;overflow-x:hidden}
       .main{overflow-x:hidden}
 
-      /* Topbar */
-      .topbar{padding:0 10px;gap:6px}
+      /* Topbar mobile — hamburger esquerda, itens direita */
+      .topbar{padding:0 10px;padding-top:var(--st);gap:8px;height:calc(54px + var(--st));
+        align-items:center;justify-content:space-between}
+      .tb-spacer{display:none}
+      /* Grupo direito: sino + copiar + novo + avatar */
+      .tb-right{display:flex;align-items:center;gap:8px}
+      .tb-lapis{background:rgba(255,255,255,.06)}
       .tb-novo{min-width:36px;width:36px;padding:0;justify-content:center}
       .tb-copy-link{min-width:36px;width:36px;padding:0;justify-content:center}
       .tb-user{width:32px;height:32px;font-size:12px;flex-shrink:0}
@@ -420,7 +647,6 @@
       .qr-img-wrap img{width:80px;height:80px}
 
       /* Profissionais */
-      .prof-card{padding:14px}
 
       /* Gráfico */
       .chart-card{padding:14px}
@@ -438,7 +664,7 @@
       .modal{padding:20px 16px;padding-bottom:calc(20px + env(safe-area-inset-bottom,0px))}
       .modal-title{font-size:16px}
       .sp{padding:10px 12px}
-      .sp-desc{display:none} /* economiza espaço no mobile */
+      .sp-desc{font-size:10px} /* reduz tamanho no mobile mas mantém visível */
       .m-input,.m-select,.m-textarea{font-size:16px !important} /* sem zoom */
 
       /* Equipe cards */
@@ -451,8 +677,16 @@
       *{-webkit-overflow-scrolling:touch}
       input,select,textarea{font-size:16px !important}
 
-      /* Notif dropdown */
-      .notif-dd{width:calc(100vw - 20px);right:-10px}
+      /* Notif dropdown — mobile full width melhor legível */
+      .notif-dd{
+        width:calc(100vw - 20px);
+        right:50%;
+        transform:translateX(50%);
+        max-height:min(70dvh, 500px);
+        border-radius:12px}
+      .nd-list{max-height:min(50dvh, 380px)}
+      .nd-item-msg{font-size:13px;line-height:1.6}
+      .nd-item-t{font-size:14px}
     }
 
     /* Telas muito pequenas */
@@ -501,6 +735,10 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4" stroke-linecap="round"/></svg>
         Bloqueios
       </a>
+      <a class="sb-item" onclick="pg('clientes',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke-linecap="round"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a2 2 0 0 0-1.5-1.94" stroke-linecap="round"/><path d="M16 3.13a4 4 0 0 1 0 7.75" stroke-linecap="round"/></svg>
+        Clientes
+      </a>
       <a class="sb-item" onclick="pg('equipe',this)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke-linecap="round"/></svg>
         Equipe
@@ -510,12 +748,27 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
         Configurações
       </a>
+
+      <a class="sb-item sb-sair" onclick="sair()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+          <polyline points="16 17 21 12 16 7"/>
+          <line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+        Sair da conta
+      </a>
     </nav>
 
-    <div class="sb-plan">
-      <div class="sb-plan-label">Plano Pro</div>
+    <div class="sb-plan" id="sb-plan-wrap" onclick="location.href='/assinar'" style="cursor:pointer">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px">
+        <div class="sb-plan-label" id="sb-plan-label">Plano Pro</div>
+        <div style="font-size:10px;font-weight:700;color:var(--verde)" id="sb-plan-dias"></div>
+      </div>
       <div class="sb-plan-sub" id="sb-plan-sub">Ativo</div>
-      <div class="sb-plan-bar"><div class="sb-plan-fill"></div></div>
+      <div class="sb-plan-bar"><div class="sb-plan-fill" id="sb-plan-fill" style="width:100%"></div></div>
+      <div id="sb-plan-btn" style="display:none;margin-top:10px;padding:8px;background:var(--verde);border-radius:7px;text-align:center;font-size:11px;font-weight:700;color:#000">
+        Assinar agora →
+      </div>
     </div>
   </aside>
 
@@ -528,40 +781,52 @@
 
     <div class="topbar">
       <!-- Hamburger mobile -->
-      <button class="tb-menu" id="tb-menu" onclick="toggleSidebar()" style="display:none;background:none;border:none;cursor:pointer;padding:6px;color:var(--txt);flex-shrink:0;align-items:center;justify-content:center;border-radius:8px;-webkit-tap-highlight-color:transparent" aria-label="Menu">
+      <button class="tb-menu" id="tb-menu" onclick="toggleSidebar()" style="display:none;background:none;border:none;cursor:pointer;padding:8px;color:var(--txt);flex-shrink:0;align-items:center;justify-content:center;border-radius:8px;-webkit-tap-highlight-color:transparent;height:36px;width:36px" aria-label="Menu">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
       </button>
       <div class="tb-search">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35" stroke-linecap="round"/></svg>
-        <input type="text" placeholder="Buscar cliente, agendamento, serviço..."/>
+        <input type="text" id="busca-input" placeholder="Buscar cliente, agendamento, serviço..."
+          oninput="buscarGlobal(this.value)"
+          onfocus="if(this.value.length>1)buscarGlobal(this.value)"
+          autocomplete="off" autocorrect="off"/>
+        <div class="busca-dd" id="busca-dd"></div>
         <span class="tb-kbd">⌘K</span>
       </div>
       <div class="tb-spacer"></div>
 
-      <!-- SINO -->
-      <div class="bell-wrap">
-        <div class="tb-bell" onclick="toggleNotif(event)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-          <div class="tb-bell-dot" id="bell-dot"></div>
-        </div>
-        <div class="notif-dd" id="notif-dd">
-          <div class="nd-hdr">
-            <span class="nd-hdr-t">Notificações</span>
-            <span class="nd-clear" onclick="limparNotifs()">Limpar</span>
+      <!-- Grupo direito: sino + botões + avatar -->
+      <div class="tb-right">
+        <!-- SINO -->
+        <div class="bell-wrap">
+          <div class="tb-bell" onclick="toggleNotif(event)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            <div class="tb-bell-dot" id="bell-dot"></div>
           </div>
-          <div class="nd-list" id="nd-list"><div class="nd-empty">Sem notificações</div></div>
+          <div class="notif-dd" id="notif-dd">
+            <div class="nd-hdr">
+              <span class="nd-hdr-t">Notificações</span>
+              <span class="nd-clear" onclick="limparNotifs()">Limpar</span>
+            </div>
+            <div class="nd-list" id="nd-list"><div class="nd-empty">Sem notificações</div></div>
+          </div>
         </div>
-      </div>
 
-      <button class="tb-copy-link" onclick="copiarLink()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-        Copiar link
-      </button>
-      <button class="tb-novo" onclick="alert('Funcionalidade em desenvolvimento')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Novo agendamento
-      </button>
-      <div class="tb-user" id="tb-user">E</div>
+        <button class="tb-copy-link" onclick="copiarLink()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          <span>Copiar link</span>
+        </button>
+        <!-- Lápis: agendamento manual -->
+        <button class="tb-lapis" onclick="abrirManual()" title="Adicionar cliente manualmente">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </button>
+        <!-- Verde: ir para agenda -->
+        <button class="tb-novo" onclick="pg('agenda',null)" title="Ver agenda">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          <span>Novo agendamento</span>
+        </button>
+        <div class="tb-user" id="tb-user">E</div>
+      </div>
     </div>
 
     <!-- CONTENT -->
@@ -576,7 +841,7 @@
         <div class="pg-title-row">
           <div>
             <div class="pg-title">
-              Bom dia, <span id="pg-nome-usuario">—</span>
+              <span id="pg-saudacao">Bom dia,</span> <span id="pg-nome-usuario">—</span>
               <div class="pg-edit-btn">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
               </div>
@@ -622,15 +887,70 @@
           </div>
         </div>
 
-        <!-- FATURAMENTO -->
+        <!-- FATURAMENTO + META -->
         <div class="fat-card">
           <div class="fat-header">
             <div class="fat-lbl">Faturamento estimado (mês)</div>
-            <div class="fat-badge" id="fat-badge">+0%</div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <div class="fat-badge" id="fat-badge">+0%</div>
+              <button onclick="abrirMeta()" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:6px;color:rgba(255,255,255,.6);font-size:10px;font-weight:700;padding:3px 8px;cursor:pointer;font-family:inherit">🎯 Meta</button>
+            </div>
           </div>
           <div class="fat-valor" id="fat-valor">R$ 0,00</div>
           <div class="fat-sub" id="fat-sub">Baseado em atendimentos concluídos com preço</div>
           <div class="fat-bar-track"><div class="fat-bar-fill" id="fat-bar" style="width:0%"></div></div>
+          <!-- Meta mensal -->
+          <div id="meta-wrap" style="display:none;margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,.1)">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+              <span style="font-size:11px;color:rgba(255,255,255,.5);font-weight:600">🎯 META DO MÊS</span>
+              <span style="font-size:11px;font-weight:800;color:#fff" id="meta-pct">0%</span>
+            </div>
+            <div style="height:6px;background:rgba(255,255,255,.1);border-radius:999px;overflow:hidden">
+              <div id="meta-bar" style="height:100%;border-radius:999px;background:linear-gradient(90deg,#f97316,#eab308);transition:width 1s ease;width:0%"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-top:5px">
+              <span style="font-size:10px;color:rgba(255,255,255,.4)" id="meta-atual-txt">R$ 0</span>
+              <span style="font-size:10px;color:rgba(255,255,255,.4)" id="meta-valor-txt">Meta: R$ —</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- META MODAL -->
+        <div class="meta-overlay" id="meta-overlay" onclick="if(event.target===this)fecharMeta()">
+          <div class="meta-box">
+            <div class="meta-handle"></div>
+            <div style="font-size:16px;font-weight:800;color:var(--txt);margin-bottom:4px">🎯 Meta de faturamento</div>
+            <div style="font-size:12px;color:var(--muted);margin-bottom:16px">Defina quanto quer faturar este mês</div>
+            <label class="m-label">Valor da meta (R$)</label>
+            <input class="m-input" type="number" id="meta-input" placeholder="Ex: 5000" min="0" step="100" style="margin-bottom:16px;font-size:16px"/>
+            <div style="display:flex;gap:8px">
+              <button class="m-btn m-btn-out" onclick="fecharMeta()">Cancelar</button>
+              <button class="m-btn m-btn-g" onclick="salvarMeta()">Salvar meta</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- HORÁRIO DE PICO -->
+        <div style="background:var(--card);border:1px solid var(--borda);border-radius:var(--r);padding:20px;margin-bottom:14px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+            <div>
+              <div style="font-size:15px;font-weight:700;color:var(--txt)">⏰ Horários de pico</div>
+              <div style="font-size:11px;color:var(--muted)">Dias e horários mais agendados</div>
+            </div>
+            <div style="display:flex;gap:6px;align-items:center">
+              <div style="width:10px;height:10px;border-radius:2px;background:rgba(0,208,132,.15)"></div>
+              <span style="font-size:10px;color:var(--muted)">Pouco</span>
+              <div style="width:10px;height:10px;border-radius:2px;background:#00d084"></div>
+              <span style="font-size:10px;color:var(--muted)">Muito</span>
+            </div>
+          </div>
+          <div class="heatmap-grid" id="heatmap-grid">
+            <div></div>
+            <div class="hm-day">Dom</div><div class="hm-day">Seg</div>
+            <div class="hm-day">Ter</div><div class="hm-day">Qua</div>
+            <div class="hm-day">Qui</div><div class="hm-day">Sex</div>
+            <div class="hm-day">Sáb</div>
+          </div>
         </div>
 
         <!-- AGENDAMENTOS + QR -->
@@ -667,13 +987,6 @@
               <button class="qr-btn-dl" onclick="baixarQR()">Baixar QR Code</button>
             </div>
 
-            <div class="prof-card">
-              <div class="prof-title">Profissionais ativos</div>
-              <div class="prof-sub">Performance da semana</div>
-              <div class="prof-list" id="prof-list">
-                <div style="font-size:12px;color:var(--muted)">Nenhum dado disponível</div>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -748,15 +1061,21 @@
             </div>
             <div style="margin-bottom:12px">
               <label class="m-label">Período</label>
-              <select id="blq-hr" class="m-select" onchange="toggleAte()">
-                <option value="todos">Dia inteiro</option>
-                <option value="ferias">Férias (vários dias)</option>
-                <option>06:00</option><option>07:00</option><option>08:00</option>
-                <option>09:00</option><option>10:00</option><option>11:00</option>
-                <option>12:00</option><option>13:00</option><option>14:00</option>
-                <option>15:00</option><option>16:00</option><option>17:00</option>
-                <option>18:00</option><option>19:00</option><option>20:00</option>
-              </select>
+              <!-- Input livre com sugestões dos horários configurados -->
+              <div style="position:relative">
+                <input type="text" id="blq-hr" class="m-input"
+                  placeholder="Ex: 14:40 · ou 'todos' · ou 'ferias'"
+                  list="blq-hr-list" autocomplete="off"
+                  oninput="toggleAte()" style="font-size:16px"/>
+                <datalist id="blq-hr-list">
+                  <option value="todos">Dia inteiro</option>
+                  <option value="ferias">Férias (vários dias)</option>
+                  <!-- Horários reais adicionados via JS -->
+                </datalist>
+              </div>
+              <div style="font-size:11px;color:var(--muted);margin-top:5px">
+                Digite um horário livre (ex: 14:40) ou escolha da lista
+              </div>
             </div>
             <div id="blq-ate-wrap" style="display:none;margin-bottom:12px">
               <label class="m-label">Data fim</label>
@@ -788,9 +1107,24 @@
           <label class="m-label">WhatsApp do negócio</label>
           <input class="m-input" type="tel" id="cfg-tel" style="margin-bottom:14px"/>
           <label class="m-label">Cor principal</label>
-          <input class="m-input" type="color" id="cfg-cor" style="padding:6px;height:44px;margin-bottom:14px"/>
+          <input class="m-input" type="color" id="cfg-cor" style="padding:6px;height:44px;margin-bottom:14px" oninput="document.documentElement.style.setProperty('--verde', this.value)"/>
           <label class="m-label">Horários disponíveis</label>
-          <input class="m-input" id="cfg-hr" placeholder="08:00,09:00,10:00..." style="margin-bottom:20px"/>
+          <input class="m-input" id="cfg-hr" placeholder="08:00,09:00,10:00..." style="margin-bottom:14px"/>
+
+          <label>Intervalo entre atendimentos</label>
+          <select class="m-input" id="cfg-intervalo" style="margin-bottom:14px;font-size:15px">
+            <option value="0">Sem intervalo</option>
+            <option value="5">5 minutos</option>
+            <option value="10">10 minutos</option>
+            <option value="15">15 minutos (recomendado)</option>
+            <option value="20">20 minutos</option>
+            <option value="30">30 minutos</option>
+          </select>
+
+          <label>Mensagem de confirmação personalizada (WhatsApp)</label>
+          <textarea class="m-textarea" id="cfg-msg-conf"
+            placeholder="Deixe vazio para mensagem padrão. Variáveis: {nome} {data} {horario} {servico}"
+            style="margin-bottom:20px;min-height:80px"></textarea>
           <label class="m-label" style="margin-bottom:10px">Dias de atendimento</label>
           <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px" id="cfg-dias-wrap">
             <label style="display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer">
@@ -831,6 +1165,26 @@
 
 
       <!-- ── EQUIPE ── -->
+      <!-- CLIENTES -->
+      <div id="pg-clientes" style="display:none">
+        <div class="pg-breadcrumb">Clientes</div>
+        <h2 style="font-size:22px;font-weight:800;margin-bottom:4px;letter-spacing:-.4px">Meus Clientes</h2>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Histórico de visitas e clientes que precisam de atenção</p>
+        <div class="cli-filtros">
+          <button class="cli-filt ativo" onclick="filtrarClientes('todos',this)">👥 Todos</button>
+          <button class="cli-filt" onclick="filtrarClientes('recentes',this)">✅ Recentes</button>
+          <button class="cli-filt" onclick="filtrarClientes('aviso',this)">⚠️ Ausentes</button>
+          <button class="cli-filt" onclick="filtrarClientes('critico',this)">🚨 Sumidos</button>
+          <button class="cli-filt" onclick="filtrarClientes('noshow',this)">🚫 No-show</button>
+        </div>
+        <input class="cli-busca" type="search" id="cli-busca"
+          placeholder="Buscar por nome ou telefone..."
+          oninput="renderClientes()"
+          autocorrect="off" autocapitalize="none"/>
+        <div class="cli-resumo" id="cli-resumo"></div>
+        <div id="cli-lista"></div>
+      </div>
+
       <div id="pg-equipe" style="display:none">
         <div class="pg-breadcrumb">Equipe &amp; Comissões</div>
         <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:18px">
@@ -887,6 +1241,153 @@
 </div><!-- /app -->
 
 <!-- MODAL EDITAR AGENDAMENTO -->
+<!-- ONBOARDING -->
+<div class="ob-overlay" id="ob-overlay">
+  <div class="ob-box">
+
+    <!-- Header -->
+    <div class="ob-header">
+      <span class="ob-ico" id="ob-ico">🎉</span>
+      <div class="ob-titulo" id="ob-titulo">Bem-vindo ao AgendaOK!</div>
+      <p class="ob-sub" id="ob-sub">Você está a poucos passos de ter sua agenda funcionando. Vamos configurar tudo em menos de 3 minutos.</p>
+    </div>
+
+    <!-- Barra de progresso -->
+    <div class="ob-progress">
+      <div class="ob-progress-fill" id="ob-progress-fill" style="width:0%"></div>
+    </div>
+
+    <!-- Passos -->
+    <div class="ob-steps">
+
+      <div class="ob-step" id="ob-s1" onclick="obIr('config')">
+        <div class="ob-step-num" id="ob-n1">1</div>
+        <div class="ob-step-info">
+          <div class="ob-step-t">⚙️ Configure seu negócio</div>
+          <div class="ob-step-d">Adicione seus horários de atendimento, dias da semana e a cor do seu painel. Leva 1 minuto.</div>
+        </div>
+        <div class="ob-step-arrow">›</div>
+      </div>
+
+      <div class="ob-step" id="ob-s2" onclick="obIr('servicos')">
+        <div class="ob-step-num" id="ob-n2">2</div>
+        <div class="ob-step-info">
+          <div class="ob-step-t">✂️ Cadastre seus serviços</div>
+          <div class="ob-step-d">Adicione o que você oferece com nome e preço. Seus clientes vão ver isso na hora de agendar.</div>
+        </div>
+        <div class="ob-step-arrow">›</div>
+      </div>
+
+      <div class="ob-step" id="ob-s3" onclick="obCompartilhar()">
+        <div class="ob-step-num" id="ob-n3">3</div>
+        <div class="ob-step-info">
+          <div class="ob-step-t">🔗 Compartilhe seu link</div>
+          <div class="ob-step-d">Copie seu link exclusivo e mande pelo WhatsApp, cole na bio do Instagram ou imprima o QR Code.</div>
+        </div>
+        <div class="ob-step-arrow">›</div>
+      </div>
+
+      <div class="ob-step" id="ob-s4" onclick="obTestar()">
+        <div class="ob-step-num" id="ob-n4">4</div>
+        <div class="ob-step-info">
+          <div class="ob-step-t">📱 Teste o agendamento</div>
+          <div class="ob-step-d">Abra seu link como se fosse um cliente e faça um agendamento de teste para ver como funciona.</div>
+        </div>
+        <div class="ob-step-arrow">›</div>
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="ob-footer">
+      <button class="m-btn m-btn-g" onclick="obConcluir()" id="ob-btn-fim" style="display:none">
+        🚀 Começar a receber agendamentos!
+      </button>
+      <div class="ob-skip" onclick="obPular()">Pular configuração — fazer depois</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODAL HISTÓRICO CLIENTE -->
+<div class="overlay" id="m-hist" onclick="if(event.target===this)fechar('m-hist')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-body" style="padding:20px 20px 0">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+        <div id="hist-avatar" style="width:40px;height:40px;border-radius:10px;background:var(--verde);
+          display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#000;flex-shrink:0">?</div>
+        <div>
+          <div style="font-size:16px;font-weight:800;color:var(--txt)" id="hist-nome">—</div>
+          <div style="font-size:12px;color:var(--muted)" id="hist-tel">—</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:16px;margin:14px 0;padding:12px 0;border-top:1px solid var(--borda);border-bottom:1px solid var(--borda)">
+        <div style="text-align:center;flex:1">
+          <div style="font-size:20px;font-weight:800;color:var(--txt)" id="hist-total-v">0</div>
+          <div style="font-size:11px;color:var(--muted)">visitas</div>
+        </div>
+        <div style="text-align:center;flex:1">
+          <div style="font-size:20px;font-weight:800;color:var(--verde)" id="hist-fat-v">R$ 0</div>
+          <div style="font-size:11px;color:var(--muted)">total gasto</div>
+        </div>
+        <div style="text-align:center;flex:1">
+          <div style="font-size:20px;font-weight:800;color:#ef4444" id="hist-noshow-v">0</div>
+          <div style="font-size:11px;color:var(--muted)">no-shows</div>
+        </div>
+      </div>
+      <div style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">Histórico de atendimentos</div>
+      <div id="hist-lista"><div style="color:var(--muted);font-size:13px;text-align:center;padding:20px">Carregando...</div></div>
+    </div>
+    <div class="modal-footer">
+      <button class="m-btn m-btn-out" style="flex:1" onclick="fechar('m-hist')">Fechar</button>
+      <button class="m-btn" id="hist-wpp-btn" style="flex:1;background:#25D366;color:#fff;border:none">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="display:inline;vertical-align:middle;margin-right:4px"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+        WhatsApp
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL AGENDAMENTO MANUAL -->
+<div class="overlay" id="m-manual" onclick="if(event.target===this)fechar('m-manual')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-body" style="padding:20px 20px 0">
+      <div style="font-size:17px;font-weight:800;color:var(--txt);margin-bottom:4px">✏️ Novo agendamento manual</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:18px">Agende diretamente pelo painel, sem o cliente precisar do app</div>
+      <label class="m-label">Nome do cliente</label>
+      <input class="m-input" type="text" id="mn-nome" placeholder="Nome completo" autocapitalize="words" style="margin-bottom:12px;font-size:16px"/>
+      <label class="m-label">Telefone (WhatsApp)</label>
+      <input class="m-input" type="tel" id="mn-tel" placeholder="(32) 99999-9999" inputmode="tel" style="margin-bottom:12px;font-size:16px"/>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+        <div>
+          <label class="m-label">Data</label>
+          <input class="m-input" type="date" id="mn-data" style="font-size:16px"/>
+        </div>
+        <div>
+          <label class="m-label">Horário</label>
+          <input class="m-input" type="text" id="mn-hora" placeholder="Ex: 14:30" list="mn-hora-list" autocomplete="off" style="font-size:16px"/>
+          <datalist id="mn-hora-list"></datalist>
+        </div>
+      </div>
+      <label class="m-label">Serviço</label>
+      <input class="m-input" type="text" id="mn-srv" placeholder="Ex: Corte + barba" list="mn-srv-list" autocomplete="off" style="margin-bottom:12px;font-size:16px"/>
+      <datalist id="mn-srv-list"></datalist>
+      <label class="m-label">Valor (R$)</label>
+      <input class="m-input" type="number" id="mn-valor" placeholder="0,00" min="0" step="0.01" style="margin-bottom:12px;font-size:16px"/>
+      <label class="m-label">Data de nascimento (opcional)</label>
+      <input class="m-input" type="date" id="mn-nasc" style="margin-bottom:12px;font-size:16px"/>
+      <label class="m-label">Observação</label>
+      <input class="m-input" type="text" id="mn-obs" placeholder="Alguma observação?" style="margin-bottom:4px;font-size:16px"/>
+    </div>
+    <div class="modal-footer">
+      <button class="m-btn m-btn-out" onclick="fechar('m-manual')">Cancelar</button>
+      <button class="m-btn m-btn-g" onclick="salvarManual()">✓ Agendar</button>
+    </div>
+  </div>
+</div>
+
 <div class="overlay" id="m-ag" onclick="if(event.target===this)fechar('m-ag')">
   <div class="modal">
     <div class="modal-handle"></div>
@@ -911,11 +1412,30 @@
 
       <label class="m-label" style="margin-top:14px">Status</label>
       <div class="status-pills" id="status-pills"></div>
+      <!-- Campos de conclusão (aparecem só quando status = concluído) -->
+      <div id="m-ag-conclusao" style="display:none;margin-bottom:2px">
+        <div style="background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.2);border-radius:10px;padding:14px;margin-bottom:12px">
+          <div style="font-size:12px;font-weight:700;color:var(--azul);margin-bottom:10px;display:flex;align-items:center;gap:6px">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <span id="conclusao-titulo">Registrar serviço realizado</span>
+          </div>
+          <label class="m-label" id="conclusao-srv-lbl">Serviço realizado</label>
+          <input class="m-input" type="text" id="m-ag-srv-conc" placeholder="Ex: Corte + barba" style="margin-bottom:10px;font-size:16px"/>
+          <label class="m-label">Valor cobrado (R$)</label>
+          <input class="m-input" type="number" id="m-ag-preco-conc" placeholder="0,00" min="0" step="0.01" style="font-size:16px"/>
+          <div style="font-size:11px;color:var(--muted);margin-top:6px">💡 Preencha para calcular o faturamento corretamente</div>
+        </div>
+      </div>
+
       <label class="m-label">Observações</label>
       <textarea class="m-textarea" id="m-ag-obs" placeholder="Notas internas..."></textarea>
       <div class="modal-footer">
         <button class="m-btn m-btn-out" onclick="fechar('m-ag')">Fechar</button>
-        <button class="m-btn m-btn-g" onclick="salvarStatus()">Salvar</button>
+        <button class="m-btn" onclick="excluirAgendamento()" style="background:rgba(239,68,68,.1);color:#ef4444;border:1px solid rgba(239,68,68,.25);flex:0 0 auto;padding:12px 16px">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="display:inline;vertical-align:middle;margin-right:4px"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+          Excluir
+        </button>
+        <button class="m-btn m-btn-g" onclick="salvarStatus()" style="flex:1;min-width:100px">Salvar</button>
       </div>
     </div>
   </div>
@@ -970,7 +1490,28 @@ let notifAberto = false;
 // ── INIT ──
 async function init() {
   try {
-    const r = await fetch('/auth/me', {credentials:'include'});
+    // Verificar se voltou de pagamento aprovado
+    const params = new URLSearchParams(location.search);
+    if (params.get('pagamento') === 'aprovado') {
+      // Limpar o parâmetro da URL sem recarregar
+      history.replaceState({}, '', '/painel');
+      // Toast de boas-vindas após carregar
+      setTimeout(() => toast('🎉 Pagamento aprovado! Acesso liberado por 30 dias.', 'ok'), 1500);
+    }
+
+    // Timeout de 12s para evitar tela de carregamento infinita
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 12000);
+    let r;
+    try {
+      r = await fetch('/auth/me', {credentials:'include', signal: ctrl.signal});
+    } catch(fe) {
+      clearTimeout(timer);
+      // Se o servidor não responder, mostra mensagem e redireciona
+      document.body.innerHTML = '<div style="min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#0d0f14;font-family:Inter,sans-serif;color:#e8ecf0;text-align:center;padding:32px"><div style="font-size:32px;margin-bottom:16px">⚠️</div><div style="font-size:18px;font-weight:700;margin-bottom:8px">Servidor indisponível</div><div style="font-size:14px;color:#6b7a99;margin-bottom:24px">Aguarde alguns segundos e tente novamente.</div><button onclick="location.reload()" style="padding:12px 24px;border-radius:8px;background:#00d084;border:none;color:#000;font-weight:700;cursor:pointer;font-size:14px">Tentar novamente</button></div>';
+      return;
+    }
+    clearTimeout(timer);
     if (!r.ok) { location.href = '/login'; return; }
     U = await r.json();
 
@@ -990,7 +1531,15 @@ async function init() {
     document.getElementById('sb-name').textContent = U.nome_negocio;
     document.getElementById('sb-sub').textContent = (U.nicho || '').toUpperCase() + ' · PRO';
     document.getElementById('tb-user').textContent = U.nome.charAt(0).toUpperCase();
-    document.getElementById('pg-nome-usuario').textContent = U.nome.split(' ')[0];
+    // Saudação dinâmica por horário (fuso BR)
+    const horaBR = new Date(Date.now() - 3*60*60*1000).getUTCHours();
+    const saudacao = horaBR >= 5 && horaBR < 12 ? 'Bom dia,'
+                   : horaBR >= 12 && horaBR < 18 ? 'Boa tarde,'
+                   : 'Boa noite,';
+    const saudEl = document.getElementById('pg-saudacao');
+    if (saudEl) saudEl.textContent = saudacao;
+    // Mostra o nome do NEGÓCIO (não o nome pessoal do dono)
+    document.getElementById('pg-nome-usuario').textContent = U.nome_negocio || U.nome.split(' ')[0];
 
     const link = location.origin + '/agendar/' + U.slug;
     document.getElementById('lp-url').textContent = link;
@@ -1006,20 +1555,123 @@ async function init() {
     document.getElementById('hoje-data-txt').textContent = agora.toLocaleDateString('pt-BR', {weekday:'long',day:'numeric',month:'long'});
     document.getElementById('sb-hoje-badge');
 
-    // Plano
-    if (U.trial_expira && !U.plano_pago) {
-      const exp = new Date(U.trial_expira + 'T12:00:00');
-      const dias = Math.ceil((exp - new Date()) / 86400000);
-      document.getElementById('sb-plan-sub').textContent = `Renova em ${dias} dias`;
-    }
+    // ── Plano — barra dinâmica ──
+    atualizarBarraPlano(U);
 
+    // Aplicar cor do negócio nas variáveis CSS
+    const corNegocio = U.config?.cor;
+    if (corNegocio && corNegocio !== '#00d084') {
+      document.documentElement.style.setProperty('--verde', corNegocio);
+    }
     await Promise.all([carregarDash(), carregarNotifs()]);
     setInterval(carregarNotifs, 120000);
   } catch(e) { location.href = '/login'; }
 }
 
+// ── BARRA DE PLANO / DIAS RESTANTES ──
+function atualizarBarraPlano(u) {
+  const labelEl  = document.getElementById('sb-plan-label');
+  const subEl    = document.getElementById('sb-plan-sub');
+  const diasEl   = document.getElementById('sb-plan-dias');
+  const fillEl   = document.getElementById('sb-plan-fill');
+  const btnEl    = document.getElementById('sb-plan-btn');
+  if (!labelEl) return;
+
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
+
+  if (u.plano_pago && u.acesso_expira && u.acesso_expira !== '') {
+    // Usuário pago — mostra dias até vencer
+    const exp      = new Date(u.acesso_expira + 'T12:00:00');
+    const diasRest = Math.ceil((exp - hoje) / 86400000);
+    const diasTotal = 30; // padrão mensal
+    const pct      = Math.max(4, Math.min(100, (diasRest / diasTotal) * 100));
+
+    labelEl.textContent   = 'Plano Pro';
+    subEl.textContent     = diasRest > 0 ? `Vence em ${diasRest} dia${diasRest===1?'':'s'}` : 'Vencido';
+    diasEl.textContent    = diasRest > 0 ? `${diasRest}d` : '';
+    fillEl.style.width    = pct + '%';
+    fillEl.style.background = diasRest <= 3
+      ? 'linear-gradient(90deg,#ef4444,#f97316)'
+      : 'linear-gradient(90deg,var(--verde),var(--azul))';
+    btnEl.style.display = diasRest <= 3 ? 'block' : 'none';
+
+  } else if (!u.plano_pago && u.trial_expira && u.trial_expira !== '') {
+    // Trial — mostra dias restantes do trial
+    const exp        = new Date(u.trial_expira + 'T12:00:00');
+    const diasRest   = Math.ceil((exp - hoje) / 86400000);
+    const diasTotal  = 7; // trial de 7 dias
+    const pct        = Math.max(4, Math.min(100, (diasRest / diasTotal) * 100));
+
+    labelEl.textContent = 'Período gratuito';
+    diasEl.textContent  = diasRest > 0 ? `${diasRest}d restantes` : 'Expirado';
+    diasEl.style.color  = diasRest <= 2 ? '#ef4444' : 'var(--laranja)';
+
+    if (diasRest > 0) {
+      subEl.textContent = `${diasRest} dia${diasRest===1?'':'s'} de teste`;
+      fillEl.style.width = pct + '%';
+      fillEl.style.background = diasRest <= 2
+        ? 'linear-gradient(90deg,#ef4444,#f97316)'
+        : 'linear-gradient(90deg,var(--laranja),var(--amarelo))';
+      btnEl.style.display = 'block';
+      btnEl.textContent = 'Assinar R$ 69,90/mês →';
+
+      // Notificação no sino quando restam ≤1 dia
+      if (diasRest <= 1) {
+        setTimeout(() => criarNotifTrialFinal(), 2000);
+      }
+    } else {
+      subEl.textContent = 'Teste encerrado';
+      fillEl.style.width = '4%';
+      fillEl.style.background = '#ef4444';
+      btnEl.style.display = 'block';
+      btnEl.textContent = '⚠️ Assinar para continuar';
+    }
+
+  } else {
+    // Sem data — genérico
+    labelEl.textContent = 'Plano Pro';
+    subEl.textContent   = 'Ativo';
+    fillEl.style.width  = '100%';
+    btnEl.style.display = 'none';
+  }
+}
+
+// Cria notificação local quando trial está acabando
+function criarNotifTrialFinal() {
+  // Verifica se já foi mostrada nesta sessão
+  if (sessionStorage.getItem('notif_trial_fim')) return;
+  sessionStorage.setItem('notif_trial_fim', '1');
+
+  // Adiciona item na lista de notificações
+  const lista = document.getElementById('nd-list');
+  if (!lista) return;
+  const existente = lista.querySelector('.nd-item');
+
+  const item = document.createElement('div');
+  item.className = 'nd-item nao-lida';
+  item.style.cursor = 'pointer';
+  item.onclick = () => location.href = '/assinar';
+  item.innerHTML = `
+    <div class="nd-item-top">
+      <span class="nd-item-t">⚠️ Seu teste está acabando!</span>
+      <span class="nd-dot" style="background:#ef4444"></span>
+    </div>
+    <div class="nd-item-msg">Seu período grátis vence hoje. Assine agora para não perder o acesso.</div>
+    <div class="nd-item-msg" style="color:var(--verde);font-weight:600;margin-top:4px">Falar com suporte →</div>
+    <div class="nd-item-hora">Agora</div>`;
+
+  lista.insertBefore(item, lista.firstChild);
+
+  // Acende o sino
+  const dot = document.getElementById('bell-dot');
+  if (dot) dot.classList.add('show');
+
+  // Remove a mensagem "Sem notificações" se existir
+  const empty = lista.querySelector('.nd-empty');
+  if (empty) empty.remove();
+}
+
 function mostrarBloqueio(motivo) {
-  // Redireciona para a página de assinatura com motivo como parâmetro
   location.href = '/assinar?motivo=' + encodeURIComponent(motivo || 'trial_expirado');
 }
 
@@ -1052,6 +1704,8 @@ function ajustarMobile() {
   const isMobile = window.innerWidth <= 900;
   const btn = document.getElementById('tb-menu');
   if (btn) btn.style.display = isMobile ? 'flex' : 'none';
+  if (btn) btn.style.alignItems = 'center';
+  if (btn) btn.style.justifyContent = 'center';
   if (!isMobile) fecharSidebar();
 }
 window.addEventListener('resize', ajustarMobile);
@@ -1060,10 +1714,125 @@ document.addEventListener('DOMContentLoaded', ajustarMobile);
 // Fecha sidebar ao navegar no mobile
 const _pgOriginal = window._pgOriginal;
 
+// ── TEXTOS POR NICHO ─────────────────────────────────────────────────
+const PAINEL_TEXTOS = {
+  barbearia: { servico:'Serviço',        srv_real:'Serviço realizado',    prof:'Barbeiro',         obs_ag:'Observação',          obs_manual:'Alguma preferência? (corte, barba...)',   srv_manual:'Serviço' },
+  salao:     { servico:'Serviço',        srv_real:'Serviço realizado',    prof:'Profissional',      obs_ag:'Observação',          obs_manual:'Alguma observação?',                      srv_manual:'Serviço' },
+  clinica:   { servico:'Procedimento',   srv_real:'Procedimento realizado',prof:'Médico(a)',         obs_ag:'Observações clínicas', obs_manual:'Sintomas, alergias ou medicações?',      srv_manual:'Procedimento' },
+  odonto:    { servico:'Procedimento',   srv_real:'Procedimento realizado',prof:'Dentista',          obs_ag:'Observações clínicas', obs_manual:'Alergia, dor ou medicações?',            srv_manual:'Procedimento' },
+  advocacia: { servico:'Área',           srv_real:'Atendimento realizado', prof:'Advogado(a)',       obs_ag:'Observações do caso',  obs_manual:'Descreva o caso brevemente',             srv_manual:'Área' },
+  estetica:  { servico:'Tratamento',     srv_real:'Tratamento realizado',  prof:'Esteticista',      obs_ag:'Observações',         obs_manual:'Alergias ou sensibilidade na pele?',      srv_manual:'Tratamento' },
+  tatuagem:  { servico:'Tipo',           srv_real:'Tatuagem realizada',    prof:'Tatuador(a)',       obs_ag:'Descrição da arte',    obs_manual:'Ideia, tamanho e local do corpo',        srv_manual:'Tipo' },
+  psicologia:{ servico:'Tipo de consulta',srv_real:'Consulta realizada',  prof:'Psicólogo(a)',      obs_ag:'Observações',         obs_manual:'Como posso ajudar? (confidencial)',        srv_manual:'Tipo' },
+  nutricao:  { servico:'Tipo',           srv_real:'Consulta realizada',    prof:'Nutricionista',     obs_ag:'Observações',         obs_manual:'Restrições alimentares ou objetivo?',     srv_manual:'Tipo' },
+  fisio:     { servico:'Tipo',           srv_real:'Sessão realizada',      prof:'Fisioterapeuta',    obs_ag:'Observações clínicas', obs_manual:'Região do corpo e diagnóstico?',         srv_manual:'Tipo' },
+  personal:  { servico:'Tipo de treino', srv_real:'Treino realizado',      prof:'Personal',          obs_ag:'Observações',         obs_manual:'Objetivo e limitações físicas?',          srv_manual:'Treino' },
+  outro:     { servico:'Serviço',        srv_real:'Serviço realizado',     prof:'Profissional',      obs_ag:'Observação',          obs_manual:'Alguma observação?',                      srv_manual:'Serviço' },
+};
+function ptextos() { return PAINEL_TEXTOS[U?.nicho||'outro'] || PAINEL_TEXTOS['outro'] || {servico:'Serviço',srv_real:'Serviço realizado',prof:'Profissional',obs_ag:'Observação',obs_manual:'Alguma observação?',srv_manual:'Serviço'}; }
+
+// ── ONBOARDING ──────────────────────────────────────────────────────
+const OB_KEY = () => 'agendaok_ob_' + (U?.id || U?.slug || 'x');
+let _obPassos = [false,false,false,false];
+
+function obReiniciar() {
+  // Permite reabrir o guia quando quiser
+  localStorage.removeItem(OB_KEY());
+  _obPassos = [false,false,false,false];
+  document.querySelectorAll('.ob-step').forEach(s => s.classList.remove('done'));
+  document.querySelectorAll('.ob-step-num').forEach((n,i) => n.textContent = i+1);
+  document.getElementById('ob-progress-fill').style.width = '0%';
+  document.getElementById('ob-btn-fim').style.display = 'none';
+  document.getElementById('ob-overlay').classList.add('open');
+  if (window.innerWidth <= 900) fecharSidebar();
+}
+
+function obMostrar() {
+  // Só mostra se nunca completou o onboarding
+  if (localStorage.getItem(OB_KEY()) === 'done') return;
+  // Só mostra na primeira visita (conta nova, sem agendamentos)
+  document.getElementById('ob-overlay').classList.add('open');
+  obAtualizarProgresso();
+}
+
+function obAtualizarProgresso() {
+  const feitos = _obPassos.filter(Boolean).length;
+  const pct = Math.round((feitos / 4) * 100);
+  const fill = document.getElementById('ob-progress-fill');
+  if (fill) fill.style.width = pct + '%';
+  // Marcar passos concluídos
+  _obPassos.forEach((done, i) => {
+    const step = document.getElementById(`ob-s${i+1}`);
+    const num  = document.getElementById(`ob-n${i+1}`);
+    if (step && done) {
+      step.classList.add('done');
+      if (num) num.textContent = '✓';
+    }
+  });
+  // Mostrar botão de conclusão quando tudo feito
+  const btnFim = document.getElementById('ob-btn-fim');
+  if (btnFim) btnFim.style.display = feitos >= 2 ? 'block' : 'none';
+}
+
+function obIr(aba) {
+  // Marcar o passo como iniciado e navegar
+  if (aba === 'config') {
+    _obPassos[0] = true;
+    document.getElementById('ob-overlay').classList.remove('open');
+    pg('config', document.querySelector('.sb-item[onclick*="config"]'));
+  } else if (aba === 'servicos') {
+    _obPassos[1] = true;
+    document.getElementById('ob-overlay').classList.remove('open');
+    pg('servicos', document.querySelector('.sb-item[onclick*="servicos"]'));
+  }
+  obAtualizarProgresso();
+  // Reabrir após 3s se ainda não concluído
+  setTimeout(() => {
+    if (localStorage.getItem(OB_KEY()) !== 'done') {
+      document.getElementById('ob-overlay').classList.add('open');
+      obAtualizarProgresso();
+    }
+  }, 3000);
+}
+
+function obCompartilhar() {
+  _obPassos[2] = true;
+  obAtualizarProgresso();
+  // Copiar link e fechar
+  copiarLink();
+  document.getElementById('ob-s3').classList.add('done');
+  document.getElementById('ob-n3').textContent = '✓';
+}
+
+function obTestar() {
+  _obPassos[3] = true;
+  obAtualizarProgresso();
+  // Abrir link público em nova aba
+  if (U?.slug) window.open('/agendar/' + U.slug, '_blank');
+  document.getElementById('ob-s4').classList.add('done');
+  document.getElementById('ob-n4').textContent = '✓';
+}
+
+function obConcluir() {
+  localStorage.setItem(OB_KEY(), 'done');
+  document.getElementById('ob-overlay').classList.remove('open');
+  toast('🚀 Tudo pronto! Compartilhe seu link e comece a receber agendamentos.', 'ok');
+}
+
+function obPular() {
+  localStorage.setItem(OB_KEY(), 'done');
+  document.getElementById('ob-overlay').classList.remove('open');
+}
+
 // ── NAVEGAÇÃO ──
 function pg(nome, el) {
   paginaAtual = nome;
-  document.querySelectorAll('[id^="pg-"]').forEach(p => p.style.display = 'none');
+  // Ocultar apenas as seções de página (não spans/badges dentro delas)
+  const SECOES = ['dashboard','agenda','hoje','servicos','bloqueios','clientes','equipe','config'];
+  SECOES.forEach(s => {
+    const el = document.getElementById('pg-' + s);
+    if (el) el.style.display = 'none';
+  });
   const target = document.getElementById('pg-' + nome);
   if (target) target.style.display = 'block';
 
@@ -1076,6 +1845,7 @@ function pg(nome, el) {
     hoje:      carregarHojePg,
     servicos:  carregarSrvPg,
     bloqueios: carregarBloqPg,
+    clientes:  carregarClientes,
     equipe:    carregarEquipe,
     config:    carregarConfig,
   };
@@ -1124,8 +1894,17 @@ async function carregarDash() {
     // Agendamentos hoje
     renderAgHoje(dh.agendamentos || []);
     renderChart(dh.agendamentos || []);
+    renderHeatmap(dh.agendamentos || []);
+    // Mostrar onboarding apenas na primeira abertura (conta nova sem nenhum agendamento)
+    const totalAgs = parseInt(dh.stats?.total || 0);
+    if (totalAgs === 0) obMostrar();
+    // Passar faturamento real para a barra de meta
+    const _fatReal = parseFloat(
+      document.getElementById('fat-valor')?.textContent
+        ?.replace('R$','')?.replace(/\./g,'')?.replace(',','.')?.trim() || '0'
+    ) || 0;
+    atualizarBarraMeta(_fatReal);
     await carregarSrvChart();
-    renderProf(dh.agendamentos || []);
   } catch(e) {}
 }
 
@@ -1157,6 +1936,19 @@ function renderAgHoje(ags, filtro = 'todos') {
         <div class="ag-srv">${a.servico||a.servico_nome||''}${a.telefone?' · '+a.telefone:''}</div>
       </div>
       ${preco ? `<div class="ag-preco">${preco}</div>` : ''}
+      ${a.telefone ? `<button class="ag-whats-btn" title="WhatsApp: ${a.telefone}" onclick="event.stopPropagation();abrirWhatsAppRapido(${JSON.stringify({nome:a.nome,telefone:a.telefone,data:a.data,horario:a.horario,status:a.status,servico:a.servico||a.servico_nome||'',token_confirm:a.token_confirm||''})})">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+      </button>` : ''}
+      ${a.status !== 'concluido' && a.status !== 'cancelado' ? `
+      <button class="ag-ok-btn" title="Marcar como concluído" onclick="event.stopPropagation();concluirAgRapido('${a.id}')">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </button>` : `
+      <div class="ag-ok-btn concluido" title="Concluído">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>`}
+      <button class="ag-del-btn" title="Excluir agendamento" onclick="event.stopPropagation();excluirAgRapido('${a.id}')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+      </button>
     </div>`;
   }).join('');
 }
@@ -1207,6 +1999,19 @@ function renderAgRow(a, showActions = false) {
       <div class="ag-srv">${a.telefone ? a.telefone : ''}${(a.servico||a.servico_nome) ? ' · '+(a.servico||a.servico_nome) : ''}</div>
     </div>
     ${preco ? `<div class="ag-preco">${preco}</div>` : ''}
+    ${a.telefone ? `<button class="ag-whats-btn" title="WhatsApp: ${a.telefone}" onclick="event.stopPropagation();abrirWhatsAppRapido({nome:'${esc(a.nome)}',telefone:'${a.telefone}',data:'${a.data}',horario:'${a.horario}',status:'${a.status}',servico:'${esc(a.servico||a.servico_nome||'')}',token_confirm:'${a.token_confirm||''}'})" >
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+    </button>` : ''}
+    ${a.status !== 'concluido' && a.status !== 'cancelado' ? `
+    <button class="ag-ok-btn" title="Marcar como concluído" onclick="event.stopPropagation();concluirAgRapido('${a.id}')">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+    </button>` : `
+    <div class="ag-ok-btn concluido" title="Concluído">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>`}
+    <button class="ag-del-btn" title="Excluir" onclick="event.stopPropagation();excluirAgRapido('${a.id}')">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+    </button>
   </div>`;
 }
 
@@ -1230,14 +2035,21 @@ function filtrarAg(s, el) {
   carregarAgFull(s);
 }
 
-// ── GRÁFICO SEMANA ──
-function renderChart(agsHoje) {
+// ── GRÁFICO SEMANA — dados reais ──
+function renderChart(ags) {
   const el = document.getElementById('chart-bars');
+  if (!el) return;
   const hoje = new Date();
   const semana = [];
   for (let i = 6; i >= 0; i--) {
     const d = new Date(hoje); d.setDate(hoje.getDate() - i);
-    semana.push({ label: DIAS[d.getDay()], conf: Math.floor(Math.random()*8+2), pend: Math.floor(Math.random()*3) });
+    const iso = d.toISOString().split('T')[0];
+    const dosDia = (ags || []).filter(a => a.data === iso);
+    semana.push({
+      label: DIAS[d.getDay()],
+      conf:  dosDia.filter(a => a.status === 'confirmado' || a.status === 'concluido').length,
+      pend:  dosDia.filter(a => a.status === 'pendente').length,
+    });
   }
   const max = Math.max(...semana.map(d => d.conf + d.pend), 1);
   el.innerHTML = semana.map(d => {
@@ -1277,25 +2089,179 @@ async function carregarSrvChart() {
   } catch(e) {}
 }
 
-// ── PROFISSIONAIS ──
-function renderProf(ags) {
-  const el = document.getElementById('prof-list');
-  if (!ags.length) return;
-  // Simula profissionais baseado nos agendamentos
-  const nomes = ['Rafael', 'Diego', 'Matheus'];
-  const cores = ['#00d084', '#f97316', '#a855f7'];
-  el.innerHTML = nomes.map((n, i) => {
-    const cortes = Math.floor(Math.random()*20+40);
-    const fat = (Math.floor(Math.random()*30+40)*100).toLocaleString('pt-BR');
-    return `<div class="prof-row">
-      <div class="prof-av" style="background:${cores[i]};color:#000">${n.charAt(0)}</div>
-      <div class="prof-info">
-        <div class="prof-nome">${n}</div>
-        <div class="prof-meta">${cortes} cortes · ★ ${(4.7 + Math.random()*0.3).toFixed(1)}</div>
-      </div>
-      <div class="prof-fat">R$ ${fat}</div>
-    </div>`;
-  }).join('');
+
+// ── AGENDAMENTO MANUAL ──
+function abrirManual() {
+  // Pré-preencher data com hoje
+  const hoje = new Date(Date.now() - 3*60*60*1000).toISOString().split('T')[0];
+  document.getElementById('mn-data').value = hoje;
+  document.getElementById('mn-nome').value  = '';
+  document.getElementById('mn-tel').value   = '';
+  document.getElementById('mn-hora').value  = '';
+  document.getElementById('mn-srv').value   = '';
+  document.getElementById('mn-valor').value = '';
+  document.getElementById('mn-obs').value   = '';
+  if (document.getElementById('mn-nasc')) document.getElementById('mn-nasc').value = '';
+
+  // Aplicar textos por nicho no modal manual
+  const PTm = ptextos();
+  const obsManEl = document.getElementById('mn-obs');
+  if (obsManEl) obsManEl.placeholder = PTm.obs_manual;
+  const srvLblEl = document.querySelector('#m-manual .m-label:nth-of-type(5)');
+  if (srvLblEl && (srvLblEl.textContent === 'Serviço' || ['Serviço','Procedimento','Tipo de treino','Área','Tratamento','Tipo'].includes(srvLblEl.textContent)))
+    srvLblEl.textContent = PTm.servico;
+
+  // Preencher datalist de horários com os configurados
+  const horaList = document.getElementById('mn-hora-list');
+  if (horaList && U?.config?.horarios) {
+    const hrs = U.config.horarios.split(',').map(h => h.trim()).filter(Boolean);
+    horaList.innerHTML = hrs.map(h => `<option value="${h}">`).join('');
+  }
+
+  // Preencher datalist de serviços
+  const srvList = document.getElementById('mn-srv-list');
+  if (srvList && _servicos?.length) {
+    srvList.innerHTML = _servicos.map(s => `<option value="${s.nome}">`).join('');
+  }
+
+  document.getElementById('m-manual').classList.add('open');
+  setTimeout(() => document.getElementById('mn-nome').focus(), 300);
+}
+
+async function salvarManual() {
+  const nome  = document.getElementById('mn-nome').value.trim();
+  const tel   = document.getElementById('mn-tel').value.trim();
+  const data  = document.getElementById('mn-data').value;
+  const hora  = document.getElementById('mn-hora').value.trim();
+  const srv   = document.getElementById('mn-srv').value.trim();
+  const valor = document.getElementById('mn-valor').value;
+  const obs   = document.getElementById('mn-obs').value.trim();
+  const nasc  = document.getElementById('mn-nasc')?.value || '';
+
+  if (!nome) { toast('Informe o nome do cliente', 'err'); return; }
+  if (!data) { toast('Informe a data', 'err'); return; }
+  if (!hora) { toast('Informe o horário', 'err'); return; }
+
+  try {
+    const r = await fetch('/negocio/agendamentos/manual', {
+      method: 'POST', credentials: 'include',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        nome, telefone: tel||'',
+        servico: srv||'',
+        preco_servico: valor ? parseFloat(valor) : null,
+        obs: (obs + (nasc ? ' nasc:'+nasc : '')) || '',
+        data, horario: hora,
+      }),
+    });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.erro || 'Erro ao agendar');
+    fechar('m-manual');
+    toast('✓ Agendamento criado!', 'ok');
+    carregarDash();
+    if (paginaAtual === 'agenda') carregarAgFull(filtroAg);
+    if (paginaAtual === 'hoje')   carregarHojePg();
+  } catch(e) {
+    toast(e.message || 'Erro ao salvar', 'err');
+  }
+}
+
+// ── CONCLUIR RÁPIDO DA LINHA ──
+async function concluirAgRapido(id) {
+  try {
+    const r = await fetch('/negocio/agendamentos/' + id + '/status', {
+      method: 'PATCH', credentials: 'include',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ status: 'concluido', obs: '' }),
+    });
+    if (!r.ok) { const d = await r.json(); throw new Error(d.erro); }
+    toast('✓ Concluído!', 'ok');
+    carregarDash();
+    if (paginaAtual === 'agenda') carregarAgFull(filtroAg);
+    if (paginaAtual === 'hoje')   carregarHojePg();
+  } catch(e) { toast(e.message || 'Erro', 'err'); }
+}
+
+// ── EXCLUIR RÁPIDO DA LINHA ──
+async function excluirAgRapido(id) {
+  try {
+    const r = await fetch('/negocio/agendamentos/' + id, {
+      method: 'DELETE', credentials: 'include'
+    });
+    if (!r.ok) { const d = await r.json(); throw new Error(d.erro); }
+    toast('✓ Agendamento excluído', 'ok');
+    carregarDash();
+    if (paginaAtual === 'agenda') carregarAgFull(filtroAg);
+    if (paginaAtual === 'hoje')   carregarHojePg();
+  } catch(e) { toast(e.message || 'Erro ao excluir', 'err'); }
+}
+
+// ── WHATSAPP RÁPIDO (da linha, sem abrir modal) ──
+function abrirWhatsAppRapido(ag) {
+  const tel = (ag.telefone||'').replace(/\D/g,'');
+  if (!tel || tel.length < 8) { toast('Telefone não disponível', 'err'); return; }
+
+  const [ano,mes,dia] = (ag.data||'').split('-');
+  const dataFmt = ag.data ? `${dia}/${mes}/${ano}` : '';
+  const neg = U?.nome_negocio || '';
+  const srv = ag.servico || '';
+  const status = ag.status || 'pendente';
+
+  let msg = '';
+  if (status === 'confirmado') {
+    msg = `✅ *Agendamento Confirmado!*
+
+Olá, *${ag.nome}*! 👋
+
+Seu agendamento em *${neg}* está *confirmado*.
+
+📅 *Data:* ${dataFmt}
+🕐 *Horário:* ${ag.horario}
+${srv ? `✂️ *Serviço:* ${srv}
+` : ''}
+Estamos te esperando! 😊`;
+  } else if (status === 'cancelado') {
+    msg = `❌ *Agendamento Cancelado*
+
+Olá, *${ag.nome}*.
+
+Seu agendamento em *${neg}* foi cancelado.
+📅 *Data:* ${dataFmt} às ${ag.horario}
+
+Para remarcar, entre em contato. 📲`;
+  } else if (status === 'concluido') {
+    msg = `⭐ *Atendimento Concluído!*
+
+Olá, *${ag.nome}*! 😊
+
+Obrigado por escolher *${neg}*! Esperamos te ver em breve! 👋`;
+  } else {
+    msg = `⏳ *Lembrete de Agendamento*
+
+Olá, *${ag.nome}*! 👋
+
+Você tem um agendamento em *${neg}*:
+
+📅 *Data:* ${dataFmt}
+🕐 *Horário:* ${ag.horario}
+${srv ? `✂️ *Serviço:* ${srv}
+` : ''}
+Qualquer dúvida, estamos à disposição! 😊`;
+  }
+
+  // Adicionar link de confirmação quando pendente e tiver token
+  const token = ag.token_confirm || '';
+  if (token && status === 'pendente') {
+    const linkConf = window.location.origin + '/confirmar/' + token;
+    msg += `
+
+🔗 *Confirme seu agendamento clicando aqui:*
+${linkConf}`;
+  }
+
+  let numero = tel;
+  if (!numero.startsWith('55') && numero.length <= 11) numero = '55' + numero;
+  window.open(`https://wa.me/${numero}?text=${encodeURIComponent(msg)}`, '_blank');
 }
 
 // ── MODAL AGENDAMENTO ──
@@ -1319,21 +2285,73 @@ function abrirModalAg(ag) {
   document.getElementById('m-ag-t').textContent  = ag.nome;
   document.getElementById('m-ag-s').textContent  = infoTxt + (ag.telefone ? ' · ' + ag.telefone : '');
   document.getElementById('m-ag-obs').value  = ag.obs||'';
+  // Pré-preencher campos de conclusão
+  const srvConc   = document.getElementById('m-ag-srv-conc');
+  const precoConc = document.getElementById('m-ag-preco-conc');
+  if (srvConc)   srvConc.value   = ag.servico || '';
+  if (precoConc) precoConc.value = ag.preco_servico || '';
+  // Mostrar/ocultar seção de conclusão
+  const conclusao = document.getElementById('m-ag-conclusao');
+  if (conclusao) conclusao.style.display = ag.status === 'concluido' ? 'block' : 'none';
   statusSel = ag.status;
 
-  // Mostrar/ocultar botão WhatsApp
+  // Botão WhatsApp — sempre visível, texto muda conforme tem telefone ou não
   const btnW = document.getElementById('btn-whats');
   const tel  = (ag.telefone||'').replace(/\D/g,'');
-  btnW.style.display = tel.length >= 8 ? 'flex' : 'none';
+  btnW.style.display = 'flex';
+  if (tel.length >= 8) {
+    btnW.style.opacity = '1';
+    btnW.disabled = false;
+    btnW.title = 'Enviar mensagem para ' + ag.telefone;
+  } else {
+    btnW.style.opacity = '0.4';
+    btnW.disabled = false; // ainda permite clicar, mas vai avisar
+    btnW.title = 'Telefone não cadastrado neste agendamento';
+  }
 
   document.getElementById('status-pills').innerHTML = Object.entries(STATUS_INFO).map(([k,v]) => `
-    <div class="sp${ag.status===k?' sel':''}" onclick="selStatus('${k}',this)">
+    <div class="sp sp-${k}${ag.status===k?' sel':''}" style="--sp-cor:${v.cor}" onclick="selStatus('${k}',this)">
       <span class="sp-dot" style="background:${v.cor}"></span>
-      <span class="sp-title">${v.lbl}</span>
-      <span class="sp-desc">${v.desc}</span>
+      <div style="flex:1">
+        <div class="sp-title">${v.lbl}</div>
+        <div class="sp-desc">${v.desc}</div>
+      </div>
+      ${ag.status===k ? `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${v.cor}" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>` : ''}
     </div>`).join('');
 
+  // Aplicar labels por nicho no modal
+  const PT = ptextos();
+  // Label "Serviço realizado" na seção de conclusão
+  const lblSrv = document.querySelector('#m-ag-conclusao .m-label:first-of-type');
+  if (lblSrv) lblSrv.textContent = PT.srv_real;
+  // Label "Observações"
+  const lblObs = document.querySelector('#m-ag .m-label:last-of-type');
+  if (lblObs && lblObs.textContent.toLowerCase().includes('observ')) lblObs.textContent = PT.obs_ag;
+
   document.getElementById('m-ag').classList.add('open');
+}
+
+// ── EXCLUIR AGENDAMENTO ──
+async function excluirAgendamento() {
+  const id = document.getElementById('m-ag-id').value;
+  try {
+    const r = await fetch('/negocio/agendamentos/' + id, {
+      method: 'DELETE',
+      credentials: 'include',
+    });
+    if (!r.ok) {
+      const d = await r.json();
+      throw new Error(d.erro || 'Erro ao excluir');
+    }
+    fechar('m-ag');
+    toast('✓ Agendamento excluído', 'ok');
+    // Recarregar a página atual
+    if (paginaAtual === 'agenda')     carregarAgFull(filtroAg);
+    else if (paginaAtual === 'hoje')  carregarHojePg();
+    else carregarDash();
+  } catch(e) {
+    toast(e.message, 'err');
+  }
 }
 
 // ── ENVIAR WHATSAPP ──
@@ -1346,7 +2364,10 @@ function enviarWhatsApp() {
   const neg   = document.getElementById('m-ag-nome-neg').value || (U?.nome_negocio||'');
   const status= statusSel;
 
-  if (!tel) { toast('Número de WhatsApp não disponível', 'err'); return; }
+  if (!tel || tel.length < 8) {
+    toast('Este agendamento não tem telefone cadastrado', 'err');
+    return;
+  }
 
   // Formatar data
   const [ano,mes,dia] = (data||'').split('-');
@@ -1442,15 +2463,20 @@ Em breve confirmaremos seu horário. Aguarde! 🙏`;
 Qualquer dúvida estamos à disposição! 😊`;
   }
 
-  // Adicionar link de confirmação (só se pendente e tiver token)
+  // Adicionar links de confirmação e reagendamento
   const token = document.getElementById('m-ag-token').value;
-  const baseUrl = window.location.origin;
-  if (token && status === 'pendente') {
-    const linkConf = baseUrl + '/confirmar/' + token;
-    msg += `
+  if (token) {
+    const linkConf     = baseUrl + '/confirmar/' + token;
+    const linkReagendar = baseUrl + '/reagendar?token=' + token;
+    if (status === 'pendente') {
+      msg += `
 
 🔗 *Confirme seu agendamento:*
 ${linkConf}`;
+    }
+    msg += `
+🔄 *Precisa remarcar?*
+${linkReagendar}`;
   }
 
   // Formatar número (assumir Brasil se não tiver código de país)
@@ -1465,24 +2491,51 @@ function selStatus(s, el) {
   statusSel = s;
   document.querySelectorAll('.sp').forEach(p => p.classList.remove('sel'));
   el.classList.add('sel');
+  // Mostrar campos de conclusão só quando concluído
+  const conclusao = document.getElementById('m-ag-conclusao');
+  if (conclusao) {
+    conclusao.style.display = s === 'concluido' ? 'block' : 'none';
+    if (s === 'concluido') {
+      const PT2 = ptextos();
+      const tit = document.getElementById('conclusao-titulo');
+      const lbl = document.getElementById('conclusao-srv-lbl');
+      const inp = document.getElementById('m-ag-srv-conc');
+      if (tit) tit.textContent = `Registrar ${PT2.srv_real.toLowerCase()}`;
+      if (lbl) lbl.textContent = PT2.srv_real;
+      if (inp) inp.placeholder = `Ex: ${PT2.servico}...`;
+    }
+  }
 }
 
 async function salvarStatus() {
-  const id = document.getElementById('m-ag-id').value;
+  const id  = document.getElementById('m-ag-id').value;
   const obs = document.getElementById('m-ag-obs').value;
   if (!statusSel) return;
+
+  const body = { status: statusSel, obs };
+
+  // Se concluído, incluir serviço realizado e valor
+  if (statusSel === 'concluido') {
+    const srv   = document.getElementById('m-ag-srv-conc')?.value?.trim();
+    const preco = document.getElementById('m-ag-preco-conc')?.value;
+    if (srv)   body.servico_concluido = srv;
+    if (preco) body.preco_concluido   = preco;
+  }
+
   try {
-    await fetch('/negocio/agendamentos/'+id+'/status', {
+    const r = await fetch('/negocio/agendamentos/'+id+'/status', {
       method:'PATCH', credentials:'include',
       headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({status:statusSel, obs}),
+      body: JSON.stringify(body),
     });
+    if (!r.ok) { const d = await r.json(); throw new Error(d.erro); }
     fechar('m-ag');
-    toast('Status atualizado', 'ok');
+    toast('✓ Status atualizado', 'ok');
     carregarDash();
+    setTimeout(atualizarBarraMeta, 1000);
     if (paginaAtual === 'agenda') carregarAgFull(filtroAg);
-    if (paginaAtual === 'hoje') carregarHojePg();
-  } catch(e) { toast('Erro ao salvar', 'err'); }
+    if (paginaAtual === 'hoje')   carregarHojePg();
+  } catch(e) { toast(e.message || 'Erro ao salvar', 'err'); }
 }
 
 // ── SERVIÇOS ──
@@ -1553,12 +2606,21 @@ async function excluirSrv(id) {
 
 // ── BLOQUEIOS ──
 function toggleAte() {
-  document.getElementById('blq-ate-wrap').style.display =
-    document.getElementById('blq-hr').value === 'ferias' ? 'block' : 'none';
+  const v = (document.getElementById('blq-hr').value||'').trim().toLowerCase();
+  document.getElementById('blq-ate-wrap').style.display = v === 'ferias' ? 'block' : 'none';
 }
 
 async function carregarBloqPg() {
   try {
+    // Preencher datalist com horários reais da configuração
+    const dl = document.getElementById('blq-hr-list');
+    if (dl && U?.config?.horarios) {
+      const hrs = U.config.horarios.split(',').map(h => h.trim()).filter(Boolean);
+      dl.innerHTML = `<option value="todos">Dia inteiro</option>
+        <option value="ferias">Férias (vários dias)</option>
+        ${hrs.map(h => `<option value="${h}">${h}</option>`).join('')}`;
+    }
+
     const r = await fetch('/negocio/bloqueados', {credentials:'include'});
     const d = await r.json();
     const el = document.getElementById('blq-lista-pg');
@@ -1619,6 +2681,11 @@ async function carregarConfig() {
     document.getElementById('cfg-tel').value  = d.telefone || '';
     document.getElementById('cfg-cor').value  = d.cor || '#00d084';
     document.getElementById('cfg-hr').value   = d.horarios || '';
+    document.getElementById('cfg-cor').value   = d.cor || '#00d084';
+    const selInt = document.getElementById('cfg-intervalo');
+    const msgFld   = document.getElementById('cfg-msg-conf');
+    if (msgFld)   msgFld.value   = d.msg_confirmacao || '';
+    if (selInt) selInt.value = d.intervalo || '0';
     // Dias da semana — se vazio ou não definido, marca todos
     const diasSalvos = d.dias_uteis && d.dias_uteis.trim() !== ''
       ? d.dias_uteis.split(',').map(Number)
@@ -1643,18 +2710,30 @@ async function salvarConfig() {
   }
   const payload = {
     nome_negocio: document.getElementById('cfg-nome').value,
+    msg_confirmacao: document.getElementById('cfg-msg-conf')?.value || '',
     descricao:    document.getElementById('cfg-desc').value,
     telefone:     document.getElementById('cfg-tel').value,
     cor:          document.getElementById('cfg-cor').value,
     horarios:     document.getElementById('cfg-hr').value,
+    intervalo:    document.getElementById('cfg-intervalo')?.value || '0',
     dias_uteis:   diasMarcados.join(','),
   };
   try {
-    await fetch('/negocio/config', {method:'PATCH',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    const r = await fetch('/negocio/config', {
+      method:'PATCH', credentials:'include',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(payload)
+    });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.erro || 'Erro ao salvar');
     U.nome_negocio = payload.nome_negocio;
+    U.config = { ...U.config, ...payload };
     document.getElementById('sb-name').textContent = payload.nome_negocio;
-    toast('Configurações salvas', 'ok');
-  } catch(e) { toast('Erro', 'err'); }
+    document.getElementById('pg-nome-usuario').textContent = payload.nome_negocio;
+    toast('✓ Configurações salvas!', 'ok');
+  } catch(e) {
+    toast(e.message || 'Erro ao salvar configurações', 'err');
+  }
 }
 
 // ── NOTIFICAÇÕES ──
@@ -1748,6 +2827,9 @@ function baixarQR() {
 }
 
 async function sair() {
+  if (!confirm('Deseja sair da sua conta?')) return;
+  // Fechar sidebar no mobile
+  if (window.innerWidth <= 900) fecharSidebar();
   await fetch('/auth/logout', {method:'POST',credentials:'include'});
   location.href = '/';
 }
@@ -2006,8 +3088,372 @@ async function verComissao(id) {
   } catch(e) { toast(e.message || 'Erro ao carregar comissão', 'err'); }
 }
 
+// ── BUSCA GLOBAL ────────────────────────────────────────────────────
+let _buscaTimer = null;
+const STATUS_COR = {pendente:'#f97316',confirmado:'#3b82f6',concluido:'#00d084',cancelado:'#ef4444',reagendado:'#a855f7'};
+const STATUS_EMO = {pendente:'⏳',confirmado:'✅',concluido:'✓',cancelado:'✗',reagendado:'🔄'};
+
+function buscarGlobal(q) {
+  const dd = document.getElementById('busca-dd');
+  if (!q || q.length < 2) { dd.classList.remove('open'); return; }
+
+  clearTimeout(_buscaTimer);
+  _buscaTimer = setTimeout(async () => {
+    try {
+      const r = await fetch(`/negocio/buscar?q=${encodeURIComponent(q)}`, { credentials:'include' });
+      const d = await r.json();
+      const ags  = d.agendamentos || [];
+      const clis = d.clientes || [];
+
+      if (!ags.length && !clis.length) {
+        dd.innerHTML = `<div class="busca-vazia">😕 Nenhum resultado para "<strong>${q}</strong>"</div>`;
+        dd.classList.add('open');
+        return;
+      }
+
+      let html = '';
+
+      if (clis.length) {
+        html += `<div class="busca-section">
+          <div class="busca-section-title">👤 Clientes</div>
+          ${clis.map(c => `
+            <div class="busca-item" onclick="buscarVerCliente('${c.nome.replace(/'/g,"\'")}')">
+              <div class="busca-item-ico" style="background:rgba(0,208,132,.12);color:var(--verde)">
+                ${(c.nome||'?')[0].toUpperCase()}
+              </div>
+              <div class="busca-item-info">
+                <div class="busca-item-nome">${c.nome}</div>
+                <div class="busca-item-sub">${c.telefone||'Sem telefone'} · ${c.visitas} visita${c.visitas!=1?'s':''}</div>
+              </div>
+            </div>`).join('')}
+        </div>`;
+      }
+
+      if (ags.length) {
+        html += `<div class="busca-section" style="${clis.length?'border-top:1px solid var(--borda)':''}">
+          <div class="busca-section-title">📅 Agendamentos</div>
+          ${ags.map(a => `
+            <div class="busca-item" onclick="fecharBusca();abrirModalAg('${a.id}')">
+              <div class="busca-item-ico" style="background:${STATUS_COR[a.status]||'#64748b'}18;font-size:16px">
+                ${STATUS_EMO[a.status]||'•'}
+              </div>
+              <div class="busca-item-info">
+                <div class="busca-item-nome">${a.nome}</div>
+                <div class="busca-item-sub">${a.data} às ${a.horario}${a.servico?' · '+a.servico:''}</div>
+              </div>
+            </div>`).join('')}
+        </div>`;
+      }
+
+      dd.innerHTML = html;
+      dd.classList.add('open');
+    } catch(e) {}
+  }, 280); // debounce 280ms
+}
+
+function fecharBusca() {
+  document.getElementById('busca-dd')?.classList.remove('open');
+  const inp = document.getElementById('busca-input');
+  if (inp) inp.value = '';
+}
+
+function buscarVerCliente(nome) {
+  fecharBusca();
+  pg('clientes', document.querySelector('.sb-item[onclick*="clientes"]'));
+  setTimeout(() => {
+    const inp = document.getElementById('cli-busca');
+    if (inp) { inp.value = nome; renderClientes(); }
+  }, 300);
+}
+
+// Fechar busca ao clicar fora
+document.addEventListener('click', e => {
+  if (!e.target.closest('.tb-search')) fecharBusca();
+});
+
+// ── META MENSAL ────────────────────────────────────────────────────
+function _metaKey() {
+  // Usar ID do usuário se disponível, senão usar chave genérica do dispositivo
+  return 'agendaok_meta_' + (U?.id || U?.slug || 'default');
+}
+
+function abrirMeta() {
+  const meta = localStorage.getItem(_metaKey()) || '';
+  document.getElementById('meta-input').value = meta;
+  document.getElementById('meta-overlay').classList.add('open');
+  setTimeout(() => document.getElementById('meta-input').focus(), 200);
+}
+function fecharMeta() {
+  document.getElementById('meta-overlay').classList.remove('open');
+}
+function salvarMeta() {
+  const val = parseFloat(document.getElementById('meta-input').value) || 0;
+  localStorage.setItem(_metaKey(), val);
+  fecharMeta();
+  toast('🎯 Meta salva!', 'ok');
+  atualizarBarraMeta();
+}
+function atualizarBarraMeta(fatAtual) {
+  const meta = parseFloat(localStorage.getItem(_metaKey())) || 0;
+  const wrap = document.getElementById('meta-wrap');
+  if (!wrap) return;
+  if (!meta) { wrap.style.display = 'none'; return; }
+  wrap.style.display = 'block';
+  const atual = fatAtual !== undefined ? fatAtual : parseFloat((document.getElementById('fat-valor')?.textContent||'0').replace(/[^\d,]/g,'').replace(',','.')) || 0;
+  const pct   = Math.min(100, Math.round((atual / meta) * 100));
+  document.getElementById('meta-pct').textContent = pct + '%';
+  document.getElementById('meta-bar').style.width = pct + '%';
+  document.getElementById('meta-bar').style.background = pct >= 100
+    ? 'linear-gradient(90deg,#00d084,#16a34a)'
+    : pct >= 70 ? 'linear-gradient(90deg,#eab308,#f97316)'
+    : 'linear-gradient(90deg,#f97316,#ef4444)';
+  document.getElementById('meta-atual-txt').textContent = 'R$ ' + atual.toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0});
+  document.getElementById('meta-valor-txt').textContent = 'Meta: R$ ' + meta.toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0});
+}
+
+// ── HORÁRIO DE PICO ─────────────────────────────────────────────────
+async function renderHeatmap(ags) {
+  const grid = document.getElementById('heatmap-grid');
+  if (!grid || !ags?.length) return;
+
+  // Coletar todos os agendamentos do mês atual e anterior (últimos 60 dias)
+  try {
+    const r = await fetch('/negocio/agendamentos?status=todos&limit=500', { credentials:'include' });
+    const d = await r.json();
+    const todos = (d.agendamentos || ags || []);
+
+    // Mapear por dia da semana (0=Dom..6=Sáb) e hora
+    const horas = ['07','08','09','10','11','12','13','14','15','16','17','18','19','20'];
+    const matriz = {};
+    horas.forEach(h => { matriz[h] = [0,0,0,0,0,0,0]; });
+
+    todos.forEach(ag => {
+      if (!ag.data || !ag.horario) return;
+      const diaSem = new Date(ag.data+'T12:00:00').getDay();
+      const hora   = ag.horario.split(':')[0];
+      if (matriz[hora]) matriz[hora][diaSem]++;
+    });
+
+    const maxVal = Math.max(...Object.values(matriz).flat(), 1);
+    const DIAS = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+
+    // Reconstruir grid
+    grid.innerHTML = `<div></div>${DIAS.map(d=>`<div class="hm-day">${d}</div>`).join('')}`;
+
+    horas.forEach(h => {
+      grid.innerHTML += `<div class="hm-label">${h}h</div>`;
+      for (let d=0; d<7; d++) {
+        const val = matriz[h][d];
+        const pct = val / maxVal;
+        const alpha = pct < 0.1 ? 0.08 : pct < 0.3 ? 0.2 : pct < 0.6 ? 0.45 : pct < 0.85 ? 0.7 : 1;
+        const bg = val === 0
+          ? 'background:var(--card2)'
+          : `background:rgba(0,208,132,${alpha})`;
+        grid.innerHTML += `<div class="hm-cell" style="${bg}" title="${DIAS[d]} ${h}h: ${val} agendamento${val!==1?'s':''}">${val||''}</div>`;
+      }
+    });
+  } catch(e) {
+    // Silencioso se falhar
+  }
+}
+
+// ── TEMPO MÉDIO ENTRE VISITAS ────────────────────────────────────────
+function calcularTempoMedio(cliente) {
+  // Será calculado no frontend com os dados que já temos
+  const visitas = parseInt(cliente.visitas_concluidas)||0;
+  const dias    = parseInt(cliente.dias_ausente)||0;
+  if (visitas < 2) return null;
+  // Estimativa: (dias desde primeira visita) / (visitas - 1)
+  // Assumimos que o primeiro agendamento foi há (visitas * tempo_medio) dias
+  const estimativa = Math.round((dias + (visitas * 30)) / visitas);
+  return estimativa;
+}
+
+// ── CLIENTES ──────────────────────────────────────────────────────
+let _todosClientes = [];
+let _filtroClientes = 'todos';
+
+async function carregarClientes() {
+  document.getElementById('cli-lista').innerHTML = '<div class="cli-empty">Carregando...</div>';
+  try {
+    const r = await fetch('/negocio/clientes', { credentials: 'include' });
+    const d = await r.json();
+    if (!r.ok) {
+      document.getElementById('cli-lista').innerHTML =
+        `<div class="cli-empty">Erro: ${d.erro || 'Falha ao carregar'}</div>`;
+      return;
+    }
+    _todosClientes = d.clientes || [];
+    renderClientes();
+  } catch(e) {
+    document.getElementById('cli-lista').innerHTML =
+      `<div class="cli-empty">Erro de conexão: ${e.message}</div>`;
+  }
+}
+
+function filtrarClientes(filtro, el) {
+  _filtroClientes = filtro;
+  document.querySelectorAll('.cli-filt').forEach(b => b.classList.remove('ativo'));
+  if (el) el.classList.add('ativo');
+  renderClientes();
+}
+
+function renderClientes() {
+  const busca = (document.getElementById('cli-busca')?.value||'').toLowerCase();
+  const nicho = U?.nicho || 'outro';
+  const palavraVisita = {barbearia:'corte',salao:'visita',clinica:'consulta',odonto:'consulta',advocacia:'sessão',estetica:'visita',tatuagem:'sessão',psicologia:'sessão',nutricao:'consulta',fisio:'sessão',personal:'treino',outro:'visita'}[nicho]||'visita';
+
+  let lista = _todosClientes.filter(c => {
+    if (busca) {
+      if (!(c.nome||'').toLowerCase().includes(busca) && !(c.telefone||'').toLowerCase().includes(busca)) return false;
+    }
+    const dias = parseInt(c.dias_ausente)||0;
+    if (_filtroClientes==='recentes') return dias<=14;
+    if (_filtroClientes==='aviso')    return dias>14&&dias<=28;
+    if (_filtroClientes==='critico')  return dias>28;
+    if (_filtroClientes==='noshow')   return (parseInt(c.nao_apareceu)||0)+(parseInt(c.cancelamentos)||0) > 0;
+    return true;
+  });
+
+  const resumoEl = document.getElementById('cli-resumo');
+  if (resumoEl) {
+    const criticos = _todosClientes.filter(c => parseInt(c.dias_ausente)>28).length;
+    resumoEl.innerHTML = `${lista.length} cliente${lista.length!==1?'s':''} encontrado${lista.length!==1?'s':''}`
+      + (criticos>0&&_filtroClientes==='todos' ? ` · <span style="color:#ef4444;font-weight:700">🚨 ${criticos} sumido${criticos>1?'s':''}</span>` : '');
+  }
+
+  if (!lista.length) {
+    document.getElementById('cli-lista').innerHTML = '<div class="cli-empty">😕 Nenhum cliente encontrado</div>';
+    return;
+  }
+
+  document.getElementById('cli-lista').innerHTML = lista.map(c => {
+    const dias     = parseInt(c.dias_ausente)||0;
+    const visitas  = parseInt(c.visitas_concluidas)||0;
+    const totalAg  = parseInt(c.total_agendamentos)||0;
+    const noShow   = (parseInt(c.nao_apareceu)||0)+(parseInt(c.cancelamentos)||0);
+    const taxaNS   = totalAg>0 ? Math.round((noShow/totalAg)*100) : 0;
+    const gasto    = parseFloat(c.total_gasto)||0;
+    const gastFmt  = gasto>0 ? 'R$ '+gasto.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}) : '—';
+    const ultFmt   = c.ultima_visita ? new Date(c.ultima_visita+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short'}) : '—';
+    let badge, cardClass='';
+    if (dias<=0||!c.ultima_visita){ badge=`<span class="cli-badge aus-ok">✅ Ativo</span>`; }
+    else if (dias<=7)  { badge=`<span class="cli-badge aus-ok">✅ Esta semana</span>`; }
+    else if (dias<=14) { badge=`<span class="cli-badge aus-ok">✅ ${dias}d atrás</span>`; }
+    else if (dias<=28) { badge=`<span class="cli-badge aus-aviso">⚠️ ${Math.round(dias/7)} sem. ausente</span>`; cardClass='aus-aviso-card'; }
+    else               { badge=`<span class="cli-badge aus-critico">🚨 ${Math.round(dias/7)} sem. sumido!</span>`; cardClass='aus-critico-card'; }
+    // Badge de no-show
+    const corNS  = taxaNS>=50?'#ef4444':taxaNS>=25?'#f97316':'#eab308';
+    const emoNS  = taxaNS>=50?'🚫':taxaNS>=25?'⚠️':'📌';
+    const nsBadge = noShow>0 ? `<span style="display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:700;background:${corNS}18;color:${corNS};border:1px solid ${corNS}33">${emoNS} No-show: ${noShow}x · ${taxaNS}%</span>` : '';
+    const temTel = c.telefone&&c.telefone.length>=8;
+    return `<div class="cli-card ${cardClass}">
+      <div class="cli-top">
+        <div><div class="cli-nome">${c.nome}</div><div class="cli-tel">${c.telefone||'Sem telefone'}</div></div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">${badge}${nsBadge}</div>
+      </div>
+      <div class="cli-stats">
+        <div class="cli-stat"><strong>${visitas}</strong>${palavraVisita}${visitas!==1?'s':''}</div>
+        <div class="cli-stat"><strong>${ultFmt}</strong>última visita</div>
+        <div class="cli-stat"><strong>${gastFmt}</strong>total gasto</div>
+        ${noShow>0?`<div class="cli-stat"><strong style="color:${corNS}">${noShow}</strong>falta${noShow!==1?'s':''}</div>`:''}
+        ${(()=>{const tm=calcularTempoMedio(c);return tm?`<div class="cli-stat"><strong>~${tm}d</strong>entre visitas</div>`:''})()}
+      </div>
+      ${c.servicos?`<div class="cli-srv">📋 ${c.servicos}</div>`:''}
+      <div class="cli-acoes" style="margin-top:10px">
+        <button style="display:flex;align-items:center;gap:5px;padding:8px 12px;
+          border:1px solid var(--borda);border-radius:7px;background:transparent;
+          color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;flex-shrink:0"
+          onclick="abrirHistorico('${c.nome.replace(/'/g,"\'")}','${c.telefone||''}',{visitas_concluidas:${c.visitas_concluidas||0},total_gasto:${c.total_gasto||0},nao_apareceu:${c.nao_apareceu||0},cancelamentos:${c.cancelamentos||0}})">
+          📋 Histórico
+        </button>
+        ${temTel?`<button class="cli-wpp-btn" onclick="enviarMsgCliente('${c.nome.replace(/'/g,"\\'")}','${c.telefone}',${dias})">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+          ${dias>14?'Chamar de volta':'Mensagem'}
+        </button>`:`<span style="font-size:11px;color:var(--muted);font-style:italic">Sem telefone</span>`}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function abrirHistorico(nome, tel, resumo) {
+  // Preencher cabeçalho
+  document.getElementById('hist-nome').textContent = nome;
+  document.getElementById('hist-tel').textContent  = tel || 'Sem telefone';
+  document.getElementById('hist-avatar').textContent = (nome||'?')[0].toUpperCase();
+  const r = typeof resumo === 'string' ? JSON.parse(resumo.replace(/&quot;/g,'"')) : resumo;
+  const visitas = parseInt(r.visitas_concluidas)||0;
+  const gasto   = parseFloat(r.total_gasto)||0;
+  const noshow  = (parseInt(r.nao_apareceu)||0)+(parseInt(r.cancelamentos)||0);
+  document.getElementById('hist-total-v').textContent  = visitas;
+  document.getElementById('hist-fat-v').textContent    = gasto > 0 ? 'R$ '+gasto.toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0}) : 'R$ 0';
+  document.getElementById('hist-noshow-v').textContent = noshow;
+  // WhatsApp
+  const wppBtn = document.getElementById('hist-wpp-btn');
+  if (tel) {
+    wppBtn.style.display = '';
+    wppBtn.onclick = () => enviarMsgCliente(nome, tel, 0);
+  } else {
+    wppBtn.style.display = 'none';
+  }
+  // Abrir modal
+  document.getElementById('m-hist').classList.add('open');
+  // Carregar histórico
+  const lista = document.getElementById('hist-lista');
+  lista.innerHTML = '<div style="color:var(--muted);font-size:13px;text-align:center;padding:20px">Carregando...</div>';
+  try {
+    const res = await fetch(`/negocio/clientes/${encodeURIComponent(tel)}/historico`, {credentials:'include'});
+    const d   = await res.json();
+    const STATUS_COR2 = {pendente:'#f97316',confirmado:'#3b82f6',concluido:'#00d084',cancelado:'#ef4444',reagendado:'#a855f7'};
+    const STATUS_LBL  = {pendente:'Pendente',confirmado:'Confirmado',concluido:'Concluído',cancelado:'Cancelado',reagendado:'Reagendado'};
+    if (!d.historico?.length) {
+      lista.innerHTML = '<div style="color:var(--muted);font-size:13px;text-align:center;padding:20px">Nenhum histórico encontrado</div>';
+      return;
+    }
+    lista.innerHTML = d.historico.map(h => {
+      const cor  = STATUS_COR2[h.status]||'#64748b';
+      const lbl  = STATUS_LBL[h.status]||h.status;
+      const dataFmt = new Date(h.data+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'2-digit'});
+      return `<div class="hist-item">
+        <div class="hist-dot" style="background:${cor}"></div>
+        <div class="hist-info">
+          <div class="hist-data">${dataFmt} às ${h.horario}</div>
+          <div class="hist-srv">${h.servico||'Serviço não informado'}${h.obs?' · '+h.obs:''}</div>
+        </div>
+        ${h.preco_servico ? `<div class="hist-preco">R$ ${parseFloat(h.preco_servico).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}</div>` : ''}
+        <span class="hist-status" style="background:${cor}18;color:${cor}">${lbl}</span>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    lista.innerHTML = '<div style="color:#ef4444;font-size:13px;text-align:center;padding:20px">Erro ao carregar histórico</div>';
+  }
+}
+
+function enviarMsgCliente(nome, tel, dias) {
+  const neg = U?.nome_negocio||'';
+  const nicho = U?.nicho||'outro';
+  const link = window.location.origin+'/agendar/'+(U?.slug||'');
+  const frase = {barbearia:'Seu cabelo está esperando! 💈',salao:'Precisando de um up no visual? ✂️',clinica:'Sua saúde é nossa prioridade! 🏥',odonto:'Cuide do seu sorriso! 🦷',advocacia:'Estamos à sua disposição! ⚖️',estetica:'Que tal cuidar de você hoje? 💅',tatuagem:'Nova arte te esperando! 🖊️',psicologia:'Estamos aqui quando precisar! 🧠',nutricao:'Como estão seus hábitos? 🥗',fisio:'Que tal agendar sua sessão? 🦴',personal:'Bora retomar os treinos? 🏋️',outro:'Sentimos sua falta por aqui!'}[nicho]||'Sentimos sua falta!';
+  let msg;
+  if (dias>28) {
+    msg = `Olá, *${nome}*! 👋\n\nAqui é *${neg}*. Percebemos que faz um tempinho que você não nos visita e sentimos sua falta! 😊\n\n${frase}\n\nQue tal agendar um horário? Está esperando por você:\n👉 ${link}\n\nEstamos te esperando! 🙌`;
+  } else if (dias>14) {
+    msg = `Olá, *${nome}*! 👋\n\nAqui é *${neg}*. Tudo bem com você?\n\n${frase}\n\nAgende seu horário quando quiser:\n👉 ${link}\n\nQualquer dúvida é só chamar! 😊`;
+  } else {
+    msg = `Olá, *${nome}*! 👋\n\nAqui é *${neg}*. Obrigado pela sua visita! 🙏\n\n${frase}\n\nAté a próxima:\n👉 ${link}`;
+  }
+  let numero = tel.replace(/\D/g,'');
+  if (!numero.startsWith('55')&&numero.length<=11) numero='55'+numero;
+  window.open(`https://wa.me/${numero}?text=${encodeURIComponent(msg)}`,'_blank');
+}
+
 async function carregarEquipe() {
-  const mes = document.getElementById('eq-mes')?.value || new Date().toISOString().slice(0,7);
+  // Garantir que o campo mes tem valor
+  const mesInput = document.getElementById('eq-mes');
+  if (mesInput && !mesInput.value) {
+    mesInput.value = new Date().toISOString().slice(0,7);
+  }
+  const mes = mesInput?.value || new Date().toISOString().slice(0,7);
 
   try {
     const [rFunc, rResumo] = await Promise.all([

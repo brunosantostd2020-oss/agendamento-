@@ -1,5 +1,10 @@
 const express = require('express');
 const router  = express.Router();
+
+// Data de hoje no fuso de Brasília (UTC-3)
+function hojeBR() {
+  return new Date(Date.now() - 3*60*60*1000).toISOString().split('T')[0];
+}
 const { v4: uuidv4 } = require('uuid');
 const { pool } = require('../middleware/database');
 const { enviarConfirmacao } = require('../middleware/email');
@@ -29,11 +34,13 @@ router.get('/:slug/horarios', async (req, res) => {
       const diaSemana = new Date(data+'T12:00:00').getDay();
       if (!diasUteis.includes(diaSemana)) return res.json({ horarios: [], mensagem: 'Dia não disponível.' });
     }
-    const agora  = new Date();
-    const hoje   = agora.toISOString().split('T')[0];
+    const hoje   = hojeBR();
+    // Hora atual em Brasília (UTC-3) para filtrar horários já passados
+    const agoraBR   = new Date(Date.now() - 3*60*60*1000);
     if (data < hoje) return res.json({ horarios: [], mensagem: 'Data no passado.' });
 
-    const todos = (u.config.horarios||'').split(',').filter(h => h.trim());
+    const todos = (u.config.horarios||'').split(',').map(h=>h.trim()).filter(Boolean);
+    const intervalo = parseInt(u.config.intervalo) || 0;
 
     // Agendamentos que bloqueiam vaga: pendente, confirmado e reagendado
     const ocupados = (await pool.query(
@@ -60,16 +67,31 @@ router.get('/:slug/horarios', async (req, res) => {
 
     // Se for hoje, filtra horários que já passaram (com 30 min de antecedência)
     const isHoje = data === hoje;
-    const limiteMin = isHoje ? agora.getHours() * 60 + agora.getMinutes() + 30 : 0;
+    const limiteMin = isHoje ? agoraBR.getUTCHours() * 60 + agoraBR.getUTCMinutes() + 30 : 0;
 
     const result = todos.map(h => {
       const [hh, mm] = h.split(':').map(Number);
       const minHorario = hh * 60 + (mm || 0);
       const jaPAssou = isHoje && minHorario < limiteMin;
+
+      // Verificar intervalo entre atendimentos
+      let conflito = false;
+      if (intervalo > 0 && !indisponiveis.has(h) && !jaPAssou) {
+        for (const oc of ocupados) {
+          const [oh, om] = oc.split(':').map(Number);
+          if (Math.abs(minHorario - (oh * 60 + (om||0))) < intervalo) {
+            conflito = true; break;
+          }
+        }
+      }
+
       return {
-        horario: h,
-        disponivel: !indisponiveis.has(h) && !jaPAssou,
-        motivo: indisponiveis.has(h) ? 'ocupado' : jaPAssou ? 'passado' : null,
+        horario:    h,
+        disponivel: !indisponiveis.has(h) && !jaPAssou && !conflito,
+        motivo:     indisponiveis.has(h) ? 'ocupado'
+                  : jaPAssou             ? 'passado'
+                  : conflito             ? 'intervalo'
+                  : null,
       };
     });
 
@@ -78,7 +100,7 @@ router.get('/:slug/horarios', async (req, res) => {
 });
 
 router.post('/:slug/agendar', async (req, res) => {
-  const { nome, email, telefone, servico, servico_id, preco_servico, data, horario, obs } = req.body;
+  const { nome, email, telefone, servico, servico_id, preco_servico, data, horario, obs, funcionario_id, funcionario_nome } = req.body;
   if (!nome || !telefone || !data || !horario)
     return res.status(400).json({ erro: 'Preencha todos os campos obrigatórios.' });
   try {
@@ -96,11 +118,11 @@ router.post('/:slug/agendar', async (req, res) => {
     const base    = process.env.BASE_URL || '';
 
     await pool.query(
-      `INSERT INTO agendamentos (id,negocio_id,negocio_slug,nome,email,telefone,servico,servico_id,preco_servico,obs,data,horario,status,token_cancel,token_avalia,token_confirm,criado_em,atualizado_em)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,'pendente',$13,$14,$15,$16,$16)`,
+      `INSERT INTO agendamentos (id,negocio_id,negocio_slug,nome,email,telefone,servico,servico_id,preco_servico,obs,data,horario,status,token_cancel,token_avalia,token_confirm,funcionario_id,criado_em,atualizado_em)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,'pendente',$13,$14,$15,$16,$17,$17)`,
       [agId, u.id, u.slug, nome.trim(), email.trim().toLowerCase(), telefone.trim(),
        servico||'', servico_id||null, preco_servico||null, obs||'', data, horario,
-       tokenC, tokenA, tokenCF, agora]
+       tokenC, tokenA, tokenCF, funcionario_id||null, agora]
     );
 
     const [ano, mes, dia] = data.split('-');
@@ -117,6 +139,7 @@ router.post('/:slug/agendar', async (req, res) => {
         `WhatsApp: ${telefone.trim()}\n` +
         `Data: ${dataFmt}\n` +
         `Horario: ${horario}\n` +
+        (funcionario_nome ? `Profissional: ${funcionario_nome}\n` : '') +
         (servico ? `Servico: ${servico}\n` : '') +
         `\nConfirme com 1 clique:\n${linkConfirmar}`
       );
@@ -193,5 +216,21 @@ async function enviarConfirmacaoCompleta({ nomeCliente, emailCliente, nomeNegoci
 </div>`,
   });
 }
+
+// GET /p/:slug/equipe — funcionários ativos do negócio (para página pública)
+router.get('/:slug/equipe', async (req, res) => {
+  try {
+    const u = (await pool.query(
+      'SELECT id FROM usuarios WHERE slug=$1 AND ativo=true', [req.params.slug]
+    )).rows[0];
+    if (!u) return res.json({ funcionarios: [] });
+
+    const r = await pool.query(
+      'SELECT id, nome, cargo, cor FROM funcionarios WHERE negocio_id=$1 AND ativo=true ORDER BY nome ASC',
+      [u.id]
+    );
+    res.json({ funcionarios: r.rows });
+  } catch(e) { res.json({ funcionarios: [] }); }
+});
 
 module.exports = router;

@@ -1,6 +1,7 @@
 const express = require('express');
 const router  = express.Router();
 const { pool } = require('../middleware/database');
+const { v4: uuidv4 } = require('uuid');
 
 // Middleware admin master
 function requireMaster(req, res, next) {
@@ -94,8 +95,8 @@ router.patch('/clientes/:id/acesso', requireMaster, async (req, res) => {
       : `Seu acesso foi liberado por ${diasText} até ${novaExpira.split('-').reverse().join('/')}.`;
 
     await pool.query(
-      `INSERT INTO notificacoes (usuario_id, tipo, titulo, mensagem)
-       VALUES ($1, $2, $3, $4)`,
+      `INSERT INTO notificacoes (id, usuario_id, tipo, titulo, mensagem)
+       VALUES (gen_random_uuid(), $1, $2, $3, $4)`,
       [req.params.id, tipoPago, titulo, msg]
     ).catch(() => {}); // silencia erro se tabela não existir ainda
 
@@ -125,12 +126,35 @@ router.post('/clientes/:id/notificar', requireMaster, async (req, res) => {
     const u = (await pool.query('SELECT nome, email, nome_negocio FROM usuarios WHERE id=$1', [req.params.id])).rows[0];
     if (!u) return res.status(404).json({ erro: 'Usuário não encontrado.' });
     await pool.query(
-      `INSERT INTO notificacoes (usuario_id, tipo, titulo, mensagem)
-       VALUES ($1, $2, $3, $4)`,
-      [req.params.id, tipo || 'info', titulo.trim(), mensagem.trim()]
+      `INSERT INTO notificacoes (id, usuario_id, tipo, titulo, mensagem)
+       VALUES ($1, $2, $3, $4, $5)`,
+      [uuidv4(), req.params.id, tipo || 'info', titulo.trim(), mensagem.trim()]
     );
     res.json({ sucesso: true, msg: `Notificação enviada para ${u.nome_negocio}.` });
   } catch(e) { res.status(500).json({ erro: e.message }); }
+});
+
+// DELETE /admin/clientes/:id — excluir cliente e todos os dados
+router.delete('/clientes/:id', requireMaster, async (req, res) => {
+  try {
+    // Verificar se o cliente existe
+    const u = (await pool.query('SELECT id, nome_negocio FROM usuarios WHERE id=$1', [req.params.id])).rows[0];
+    if (!u) return res.status(404).json({ erro: 'Cliente não encontrado.' });
+
+    // Excluir todos os dados do cliente em cascata
+    await pool.query('DELETE FROM agendamentos       WHERE negocio_id=$1', [req.params.id]);
+    await pool.query('DELETE FROM funcionarios        WHERE negocio_id=$1', [req.params.id]);
+    await pool.query('DELETE FROM servicos            WHERE negocio_id=$1', [req.params.id]);
+    await pool.query('DELETE FROM notificacoes        WHERE usuario_id=$1', [req.params.id]);
+    await pool.query('DELETE FROM horarios_bloqueados WHERE negocio_id=$1', [req.params.id]);
+    await pool.query('DELETE FROM usuarios            WHERE id=$1',          [req.params.id]);
+
+    console.log(`[MASTER] Cliente excluído: ${u.nome_negocio} (${req.params.id})`);
+    res.json({ sucesso: true, msg: `Cliente "${u.nome_negocio}" excluído com sucesso.` });
+  } catch(e) {
+    console.error('Erro ao excluir cliente:', e.message);
+    res.status(500).json({ erro: e.message });
+  }
 });
 
 module.exports = router;

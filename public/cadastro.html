@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=cover"/>
 <meta name="theme-color" content="#0a0a0a"/>
 <title>Criar conta — AgendaOK</title>
+<script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','SEU_PIXEL_ID');fbq('track','PageView');</script>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 <style>
@@ -17,7 +18,7 @@
   --r:8px;--sb:env(safe-area-inset-bottom,0px);--st:env(safe-area-inset-top,0px);
 }
 html{-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
-body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--texto);min-height:100dvh;-webkit-font-smoothing:antialiased}
+body{overflow-x:hidden;font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--texto);min-height:100dvh;-webkit-font-smoothing:antialiased}
 
 /* HEADER */
 .hdr{border-bottom:1px solid var(--cinza2);padding:0 20px;padding-top:var(--st);
@@ -190,6 +191,12 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var
   font-size:15px;font-weight:500;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .btn-volt:active{opacity:.6}
 .link-login{text-align:center;font-size:13px;color:var(--muted);margin-top:16px}
+.pw-wrap{position:relative;display:flex;align-items:center}
+.pw-wrap input{flex:1;padding-right:44px}
+.pw-eye{position:absolute;right:12px;background:none;border:none;cursor:pointer;
+  color:#a0a09a;padding:4px;display:flex;align-items:center;justify-content:center;
+  -webkit-tap-highlight-color:transparent}
+.pw-eye svg{width:18px;height:18px}
 .link-login a{color:var(--preto);font-weight:600;text-decoration:none;
   border-bottom:1px solid var(--cinza2)}
 </style>
@@ -238,11 +245,25 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var
     <div class="linha2">
       <div class="campo">
         <label>Senha</label>
-        <input type="password" id="senha" placeholder="Mín. 6 caracteres" autocomplete="new-password" enterkeyhint="next"/>
+        <div class="pw-wrap">
+          <input type="password" id="senha" placeholder="Mín. 6 caracteres" autocomplete="new-password" enterkeyhint="next"/>
+          <button type="button" class="pw-eye" onclick="togglePw('senha','eye1')" aria-label="Mostrar senha">
+            <svg id="eye1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+              <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+        </div>
       </div>
       <div class="campo">
         <label>Confirmar</label>
-        <input type="password" id="senha2" placeholder="Repita" autocomplete="new-password" enterkeyhint="next"/>
+        <div class="pw-wrap">
+          <input type="password" id="senha2" placeholder="Repita" autocomplete="new-password" enterkeyhint="next"/>
+          <button type="button" class="pw-eye" onclick="togglePw('senha2','eye2')" aria-label="Mostrar senha">
+            <svg id="eye2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+              <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
     <div class="link-login">Já tem conta? <a href="/login">Entrar</a></div>
@@ -292,6 +313,15 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var
       </div>
     </div>
 
+    <!-- Banner 7 dias grátis -->
+    <div style="background:rgba(22,163,74,.08);border:1.5px solid rgba(22,163,74,.35);border-radius:10px;padding:14px 16px;margin-bottom:14px;display:flex;align-items:center;gap:12px">
+      <div style="font-size:22px;flex-shrink:0">🎁</div>
+      <div>
+        <div style="font-size:14px;font-weight:800;color:#16a34a;margin-bottom:2px">7 dias completamente grátis</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.45">Explore tudo sem cartão de crédito. Assine só quando quiser continuar.</div>
+      </div>
+    </div>
+
     <!-- Features -->
     <ul class="feat-lista">
       <li><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></span>Página pública de agendamento</li>
@@ -324,8 +354,8 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var
           </svg>
           Assinar agora — R$ 69,90/mês
         </button>
-        <button class="suc-btn-trial" onclick="irPainel()">
-          Começar os 7 dias grátis →
+        <button class="suc-btn-trial" onclick="irPainel()" style="border-color:var(--verde);color:var(--verde);font-weight:700;font-size:15px">
+          🎁 Usar 7 dias grátis agora
         </button>
       </div>
 
@@ -368,6 +398,16 @@ document.getElementById('nichos-grid').innerHTML = NICHOS.map(n => `
     <span class="n-nm">${n.nm}</span>
   </div>`).join('');
 
+function togglePw(fieldId, iconId) {
+  const inp = document.getElementById(fieldId);
+  const ico = document.getElementById(iconId);
+  const show = inp.type === 'password';
+  inp.type = show ? 'text' : 'password';
+  ico.innerHTML = show
+    ? '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>'
+    : '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/>';
+}
+
 function selN(id, el) {
   document.querySelectorAll('.n-opt').forEach(e => e.classList.remove('sel'));
   el.classList.add('sel');
@@ -408,7 +448,7 @@ function ir(n) {
 
   btm.style.display = 'flex';
   volt.style.display = (n > 1) ? 'block' : 'none';
-  prox.textContent = n === 3 ? 'Criar minha conta' : 'Continuar';
+  prox.textContent = n === 3 ? 'Começar 7 dias grátis' : 'Continuar';
   window.scrollTo({top:0, behavior:'smooth'});
 }
 
@@ -458,15 +498,18 @@ async function criar() {
     if (!r.ok) {
       mostrarErro('e3', d.erro || 'Erro ao criar conta. Tente novamente.');
       btn.disabled = false;
-      btn.textContent = 'Criar minha conta';
+      btn.textContent = 'Começar 7 dias grátis';
       return;
     }
     _slug = d.slug || '';
+    // Eventos de conversão
+    if (typeof fbq !== 'undefined') { fbq('track', 'CompleteRegistration'); fbq('track', 'Lead'); }
+    if (typeof gtag !== 'undefined') { gtag('event', 'sign_up', { method: 'AgendaOK' }); }
     ir(4); // vai para tela de sucesso com as opções
   } catch(e) {
     mostrarErro('e3', 'Erro de conexão. Verifique sua internet.');
     btn.disabled = false;
-    btn.textContent = 'Criar minha conta';
+    btn.textContent = 'Começar 7 dias grátis';
   }
 }
 
