@@ -4,12 +4,26 @@ const { v4: uuidv4 } = require('uuid');
 const { pool } = require('../middleware/database');
 const { requireAuth } = require('../middleware/auth');
 
+// ── FILTRO DE PERÍODO ─────────────────────────────────────────
+// Aceita ?de=YYYY-MM-DD&ate=YYYY-MM-DD (semana/quinzena/intervalo livre)
+// ou ?mes=YYYY-MM (comportamento original). startIdx = nº do primeiro placeholder.
+function filtroPeriodo(query, startIdx) {
+  const okDia = v => /^\d{4}-\d{2}-\d{2}$/.test(v || '');
+  const { mes, de, ate } = query;
+  if (okDia(de) && okDia(ate)) {
+    return { sql: `data >= $${startIdx} AND data <= $${startIdx + 1}`, params: [de, ate], label: `${de} a ${ate}` };
+  }
+  const periodo = /^\d{4}-\d{2}$/.test(mes || '') ? mes : new Date().toISOString().slice(0, 7);
+  return { sql: `data LIKE $${startIdx}`, params: [periodo + '%'], label: periodo };
+}
+
 // ── RESUMO GERAL (DEVE vir ANTES de /:id para não conflitar) ──
-// GET /funcionarios/resumo/mes?mes=2026-06
+// GET /funcionarios/resumo/mes?mes=2026-06  ou  ?de=2026-06-08&ate=2026-06-14
 router.get('/resumo/mes', requireAuth, async (req, res) => {
-  const { mes } = req.query;
-  const periodo = mes || new Date().toISOString().slice(0,7);
   try {
+    const f2 = filtroPeriodo(req.query, 2); // placeholders a partir de $2
+    const f3 = filtroPeriodo(req.query, 3); // a partir de $3 (query com funcionário)
+
     const funcs = (await pool.query(
       'SELECT * FROM funcionarios WHERE negocio_id=$1 AND ativo=true ORDER BY nome ASC',
       [req.session.userId]
@@ -18,23 +32,23 @@ router.get('/resumo/mes', requireAuth, async (req, res) => {
     const totGeralRow = (await pool.query(
       `SELECT COALESCE(SUM(preco_servico),0) AS total
        FROM agendamentos
-       WHERE negocio_id=$1 AND status='concluido' AND data LIKE $2 AND preco_servico IS NOT NULL`,
-      [req.session.userId, periodo + '%']
+       WHERE negocio_id=$1 AND status='concluido' AND ${f2.sql} AND preco_servico IS NOT NULL`,
+      [req.session.userId, ...f2.params]
     )).rows[0];
 
     const semFuncRow = (await pool.query(
       `SELECT COUNT(*) AS qtd, COALESCE(SUM(preco_servico),0) AS total
        FROM agendamentos
-       WHERE negocio_id=$1 AND status='concluido' AND data LIKE $2 AND funcionario_id IS NULL`,
-      [req.session.userId, periodo + '%']
+       WHERE negocio_id=$1 AND status='concluido' AND ${f2.sql} AND funcionario_id IS NULL`,
+      [req.session.userId, ...f2.params]
     )).rows[0];
 
     const resumos = await Promise.all(funcs.map(async f => {
       const ags = (await pool.query(
         `SELECT * FROM agendamentos
          WHERE negocio_id=$1 AND funcionario_id=$2
-         AND status='concluido' AND data LIKE $3`,
-        [req.session.userId, f.id, periodo + '%']
+         AND status='concluido' AND ${f3.sql}`,
+        [req.session.userId, f.id, ...f3.params]
       )).rows;
       const bruto       = ags.reduce((s,a) => s + parseFloat(a.preco_servico||0), 0);
       const comissao    = bruto * (parseFloat(f.comissao_pct)||0) / 100;
@@ -48,7 +62,7 @@ router.get('/resumo/mes', requireAuth, async (req, res) => {
     }));
 
     res.json({
-      periodo,
+      periodo: f2.label,
       total_estabelecimento: parseFloat(totGeralRow.total),
       total_folha:           resumos.reduce((s,r) => s + r.total_a_pagar, 0),
       total_comissoes:       resumos.reduce((s,r) => s + r.comissao_valor, 0),
@@ -100,10 +114,10 @@ router.patch('/agendamento/:agId/vincular', requireAuth, async (req, res) => {
 });
 
 // ── RELATÓRIO DE COMISSÃO (/:id/comissao — estático antes de /:id) ──
-// GET /funcionarios/:id/comissao?mes=2026-06
+// GET /funcionarios/:id/comissao?mes=2026-06  ou  ?de=...&ate=...
 router.get('/:id/comissao', requireAuth, async (req, res) => {
-  const periodo = req.query.mes || new Date().toISOString().slice(0,7);
   try {
+    const f3 = filtroPeriodo(req.query, 3);
     const func = (await pool.query(
       'SELECT * FROM funcionarios WHERE id=$1 AND negocio_id=$2',
       [req.params.id, req.session.userId]
@@ -113,8 +127,8 @@ router.get('/:id/comissao', requireAuth, async (req, res) => {
     const ags = (await pool.query(
       `SELECT * FROM agendamentos
        WHERE negocio_id=$1 AND funcionario_id=$2
-       AND status='concluido' AND data LIKE $3`,
-      [req.session.userId, req.params.id, periodo + '%']
+       AND status='concluido' AND ${f3.sql}`,
+      [req.session.userId, req.params.id, ...f3.params]
     )).rows;
 
     const totalBruto    = ags.reduce((s,a) => s + parseFloat(a.preco_servico||0), 0);
@@ -122,7 +136,7 @@ router.get('/:id/comissao', requireAuth, async (req, res) => {
     const totalAPagar   = parseFloat(func.salario_fixo||0) + comissaoValor;
 
     res.json({
-      funcionario: func, periodo,
+      funcionario: func, periodo: f3.label,
       atendimentos: ags.length, total_bruto: totalBruto,
       comissao_pct: func.comissao_pct, comissao_valor: comissaoValor,
       salario_fixo: func.salario_fixo, total_a_pagar: totalAPagar,

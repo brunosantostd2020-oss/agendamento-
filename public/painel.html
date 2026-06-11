@@ -1246,10 +1246,17 @@
           </button>
         </div>
 
-        <!-- Seletor de mês para relatório -->
+        <!-- Seletor de período para o acerto -->
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap">
-          <label style="font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em">Mês do relatório</label>
+          <label style="font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em">Período do acerto</label>
+          <select id="eq-periodo" class="m-input" style="max-width:200px;padding:8px 12px;font-size:14px" onchange="eqPeriodoChange()">
+            <option value="semana">Esta semana (seg–dom)</option>
+            <option value="7dias">Últimos 7 dias</option>
+            <option value="quinzena">Esta quinzena</option>
+            <option value="mes" selected>Mês</option>
+          </select>
           <input type="month" id="eq-mes" class="m-input" style="max-width:180px;padding:8px 12px;font-size:14px" onchange="carregarEquipe()"/>
+          <span id="eq-periodo-info" style="font-size:12px;color:var(--muted)"></span>
         </div>
 
         <!-- Cards de resumo -->
@@ -3338,9 +3345,9 @@ async function excluirFunc(id, nome) {
 }
 
 async function verComissao(id) {
-  const mes = document.getElementById('eq-mes')?.value || new Date().toISOString().slice(0,7);
+  const { q } = eqQuery();
   try {
-    const r = await fetch(`/funcionarios/${id}/comissao?mes=${mes}`, { credentials:'include' });
+    const r = await fetch(`/funcionarios/${id}/comissao?${q}`, { credentials:'include' });
     const d = await r.json();
     if (!r.ok) throw new Error(d.erro);
     const f = d.funcionario;
@@ -3755,18 +3762,53 @@ function enviarMsgCliente(nome, tel, dias) {
   window.open(`https://wa.me/${numero}?text=${encodeURIComponent(msg)}`,'_blank');
 }
 
+// Monta a query do período escolhido (semana/7 dias/quinzena/mês) no fuso BR
+function eqQuery() {
+  const sel  = document.getElementById('eq-periodo')?.value || 'mes';
+  const hoje = new Date(Date.now() - 3*60*60*1000);
+  const iso  = d => d.toISOString().split('T')[0];
+  const fmt  = s => s.split('-').reverse().slice(0,2).join('/');
+
+  let de, ate;
+  if (sel === 'semana') {
+    const dow  = hoje.getUTCDay(); // 0 = domingo
+    const seg  = new Date(hoje); seg.setUTCDate(hoje.getUTCDate() - (dow === 0 ? 6 : dow - 1));
+    const dom  = new Date(seg);  dom.setUTCDate(seg.getUTCDate() + 6);
+    de = iso(seg); ate = iso(dom);
+  } else if (sel === '7dias') {
+    const ini = new Date(hoje); ini.setUTCDate(hoje.getUTCDate() - 6);
+    de = iso(ini); ate = iso(hoje);
+  } else if (sel === 'quinzena') {
+    const y = hoje.getUTCFullYear(), m = hoje.getUTCMonth();
+    if (hoje.getUTCDate() <= 15) { de = iso(new Date(Date.UTC(y,m,1)));  ate = iso(new Date(Date.UTC(y,m,15))); }
+    else                         { de = iso(new Date(Date.UTC(y,m,16))); ate = iso(new Date(Date.UTC(y,m+1,0))); }
+  } else {
+    const mes = document.getElementById('eq-mes')?.value || new Date().toISOString().slice(0,7);
+    return { q: 'mes=' + mes, info: '' };
+  }
+  return { q: `de=${de}&ate=${ate}`, info: `${fmt(de)} até ${fmt(ate)}` };
+}
+
+function eqPeriodoChange() {
+  const sel = document.getElementById('eq-periodo').value;
+  document.getElementById('eq-mes').style.display = sel === 'mes' ? '' : 'none';
+  carregarEquipe();
+}
+
 async function carregarEquipe() {
   // Garantir que o campo mes tem valor
   const mesInput = document.getElementById('eq-mes');
   if (mesInput && !mesInput.value) {
     mesInput.value = new Date().toISOString().slice(0,7);
   }
-  const mes = mesInput?.value || new Date().toISOString().slice(0,7);
+  const { q, info } = eqQuery();
+  const infoEl = document.getElementById('eq-periodo-info');
+  if (infoEl) infoEl.textContent = info;
 
   try {
     const [rFunc, rResumo] = await Promise.all([
       fetch('/funcionarios', { credentials:'include' }),
-      fetch(`/funcionarios/resumo/mes?mes=${mes}`, { credentials:'include' }),
+      fetch(`/funcionarios/resumo/mes?${q}`, { credentials:'include' }),
     ]);
     const dFunc   = await rFunc.json();
     const dResumo = await rResumo.json();
@@ -3844,7 +3886,7 @@ async function carregarEquipe() {
         <!-- Botão ver relatório detalhado -->
         <div style="padding:0 16px 14px">
           <button onclick="verComissao('${f.id}')" style="width:100%;padding:9px;border-radius:8px;background:var(--card2);border:1px solid var(--borda);color:var(--txt);font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;-webkit-tap-highlight-color:transparent">
-            Ver relatório detalhado do mês
+            Ver relatório detalhado do período
           </button>
         </div>
       </div>`;
