@@ -1436,6 +1436,7 @@
       <button onclick="ajudaTour()" style="width:100%;margin-top:6px;padding:12px;border-radius:9px;background:none;border:1px solid var(--borda);color:var(--txt);font-family:inherit;font-size:13px;font-weight:700;cursor:pointer">
         🔄 Refazer o tour de configuração
       </button>
+      <div style="text-align:center;margin-top:10px;font-size:11px;color:var(--muted)">Ou escreva para <a href="mailto:contato@agendaok.online" style="color:var(--verde);text-decoration:none;font-weight:700">contato@agendaok.online</a></div>
     </div>
     <div class="modal-footer">
       <button class="m-btn m-btn-out" onclick="fechar('m-ajuda')">Fechar</button>
@@ -2099,7 +2100,7 @@ function renderAgRow(a, showActions = false) {
 
   return `<div class="ag-row" style="border-bottom:1px solid var(--borda)"
     onclick="abrirModalAg(${JSON.stringify({id:a.id,nome:a.nome,data:a.data,horario:a.horario,status:a.status,obs:a.obs||'',telefone:a.telefone||'',servico:a.servico||a.servico_nome||'',token_confirm:a.token_confirm||''})})">
-    <span class="ag-hora">${a.data === new Date().toISOString().split('T')[0] ? a.horario : dia+'/'+mes}</span>
+    <span class="ag-hora">${a.data === new Date(Date.now()-3*60*60*1000).toISOString().split('T')[0] ? a.horario : dia+'/'+mes+'<small style="display:block;font-size:10px;color:var(--muted);font-weight:700;letter-spacing:.02em">'+(a.horario||'')+'</small>'}</span>
     <div class="ag-dot ${dotCor[a.status]||'azul'}"></div>
     <div class="ag-info">
       <div class="ag-nome">${a.nome} ${tagHtml}</div>
