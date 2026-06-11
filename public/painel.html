@@ -1671,7 +1671,7 @@ async function init() {
       document.documentElement.style.setProperty('--verde', corNegocio);
     }
     await Promise.all([carregarDash(), carregarNotifs()]);
-    setInterval(carregarNotifs, 120000);
+    setInterval(carregarNotifs, 45000); // sino atualiza a cada 45s
   } catch(e) { location.href = '/login'; }
 }
 

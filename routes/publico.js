@@ -218,6 +218,17 @@ router.post('/:slug/agendar', async (req, res) => {
       // Salva o link para retornar ao cliente (opcional)
     }
 
+    // Sino do painel
+    pool.query(
+      `INSERT INTO notificacoes (id, usuario_id, tipo, titulo, mensagem)
+       VALUES (gen_random_uuid(), $1, 'info', $2, $3)`,
+      [u.id,
+       `📅 Novo agendamento: ${nome.trim()}`,
+       `${nome.trim()} agendou${servico ? ' ' + servico : ''} para ${dataFmt} às ${horario}.`
+         + (funcionario_nome ? ` Com ${funcionario_nome}.` : '')
+         + ` WhatsApp: ${telefone.trim()}`]
+    ).catch(e => console.error('Notif sino agendamento:', e.message));
+
     // Push no celular do dono (se ativado)
     enviarPushUsuario(u.id, {
       titulo: '📅 Novo agendamento!',
