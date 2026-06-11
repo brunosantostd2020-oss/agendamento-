@@ -276,4 +276,42 @@ async function initFeedbacks() {
   finally { client.release(); }
 }
 
-module.exports = { pool, initDb, initServicos, initColunas, initExtras, initTrial, initTokenConfirm, initPagamento, initFuncionarios, initFeedbacks };
+async function initPush() {
+  const client = await pool.connect();
+  try {
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS push_subscriptions (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        usuario_id UUID REFERENCES usuarios(id) ON DELETE CASCADE,
+        endpoint TEXT UNIQUE NOT NULL,
+        dados JSONB NOT NULL,
+        criado_em TIMESTAMPTZ DEFAULT NOW()
+      );
+      CREATE INDEX IF NOT EXISTS idx_push_usuario ON push_subscriptions(usuario_id);
+    `);
+    console.log('✅ Tabela push OK!');
+  } catch(e) { console.error('Push:', e.message); }
+  finally { client.release(); }
+}
+
+async function initIndices() {
+  const client = await pool.connect();
+  try {
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_feedbacks_usuario     ON feedbacks(usuario_id);
+      CREATE INDEX IF NOT EXISTS idx_avaliacoes_negocio    ON avaliacoes(negocio_id);
+      CREATE INDEX IF NOT EXISTS idx_agendamentos_func     ON agendamentos(funcionario_id);
+      CREATE INDEX IF NOT EXISTS idx_agendamentos_data_st  ON agendamentos(negocio_id, data, status);
+      CREATE INDEX IF NOT EXISTS idx_notificacoes_usuario  ON notificacoes(usuario_id, lida);
+      CREATE INDEX IF NOT EXISTS idx_lista_espera_negocio  ON lista_espera(negocio_id, notificado);
+      CREATE INDEX IF NOT EXISTS idx_servicos_negocio      ON servicos(negocio_id, ativo);
+      CREATE INDEX IF NOT EXISTS idx_funcionarios_negocio  ON funcionarios(negocio_id, ativo);
+      CREATE INDEX IF NOT EXISTS idx_bloqueados_negocio    ON horarios_bloqueados(negocio_id, data);
+      CREATE INDEX IF NOT EXISTS idx_agendamentos_tel      ON agendamentos(negocio_id, telefone);
+    `);
+    console.log('✅ Índices de performance OK!');
+  } catch(e) { console.error('Índices:', e.message); }
+  finally { client.release(); }
+}
+
+module.exports = { pool, initDb, initServicos, initColunas, initExtras, initTrial, initTokenConfirm, initPagamento, initFuncionarios, initFeedbacks, initIndices, initPush };

@@ -40,8 +40,8 @@
 </div>
 <div class="content">
  <div class="busca-card">
- <div class="busca-titulo"> Buscar pelo e-mail</div>
- <input type="email" id="email" placeholder="seu@email.com" inputmode="email" onkeydown="if(event.key==='Enter')buscar()"/>
+ <div class="busca-titulo">📱 Buscar pelo WhatsApp</div>
+ <input type="tel" id="tel" placeholder="(32) 99999-9999 — com DDD" inputmode="tel" onkeydown="if(event.key==='Enter')buscar()"/>
  <button class="btn" onclick="buscar()">Buscar meus agendamentos</button>
  </div>
  <div id="resultado"></div>
@@ -52,16 +52,16 @@ const slug = location.pathname.split('/').pop();
 const MESES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
 
 async function buscar() {
- const email = document.getElementById('email').value.trim();
- if (!email) { alert('Informe seu e-mail'); return; }
+ const tel = document.getElementById('tel').value.trim();
+ if (tel.replace(/\D/g,'').length < 8) { alert('Informe seu WhatsApp com DDD'); return; }
  const el = document.getElementById('resultado');
  el.innerHTML = '<div class="empty"><div class="empty-ico"></div>Buscando...</div>';
  try {
- const r = await fetch(`/extras/historico/${slug}?email=${encodeURIComponent(email)}`);
+ const r = await fetch(`/extras/historico/${slug}?tel=${encodeURIComponent(tel)}`);
  const d = await r.json();
  document.getElementById('negocio-nome').textContent = d.negocio || 'Meu Histórico';
- if (!r.ok || !d.agendamentos.length) {
- el.innerHTML = '<div class="empty"><div class="empty-ico"></div>Nenhum agendamento encontrado para este e-mail.</div>';
+ if (!r.ok || !d.agendamentos || !d.agendamentos.length) {
+ el.innerHTML = '<div class="empty"><div class="empty-ico"></div>Nenhum agendamento encontrado para este número.</div>';
  return;
  }
  el.innerHTML = `<div style="font-size:14px;font-weight:700;color:#64748b;margin-bottom:12px">${d.agendamentos.length} agendamento(s) encontrado(s)</div>` +

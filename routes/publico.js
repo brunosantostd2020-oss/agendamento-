@@ -9,6 +9,7 @@ const { v4: uuidv4 } = require('uuid');
 const { pool } = require('../middleware/database');
 const { enviarConfirmacao } = require('../middleware/email');
 const { enviarEmail } = require('../middleware/mailer');
+const { enviarPushUsuario } = require('../middleware/push');
 
 // ── Helpers de agenda (duração do serviço + equipe) ─────────────────────────
 function minutos(h) {
@@ -216,6 +217,13 @@ router.post('/:slug/agendar', async (req, res) => {
       );
       // Salva o link para retornar ao cliente (opcional)
     }
+
+    // Push no celular do dono (se ativado)
+    enviarPushUsuario(u.id, {
+      titulo: '📅 Novo agendamento!',
+      corpo: `${nome.trim()} • ${dataFmt} às ${horario}${servico ? ' · ' + servico : ''}`,
+      urgente: true,
+    }).catch(() => {});
 
     // E-mail com links de cancelar e avaliar
     enviarConfirmacaoCompleta({

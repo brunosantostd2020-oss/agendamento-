@@ -1022,7 +1022,10 @@
       <!-- AGENDA -->
       <div id="pg-agenda" style="display:none">
         <div class="pg-breadcrumb">Agenda</div>
-        <h2 style="font-size:22px;font-weight:800;margin-bottom:16px;letter-spacing:-0.4px">Todos os agendamentos</h2>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+          <h2 style="font-size:22px;font-weight:800;letter-spacing:-0.4px;margin:0">Todos os agendamentos</h2>
+          <button onclick="window.open('/negocio/exportar/agendamentos.csv','_blank')" style="padding:8px 14px;border-radius:8px;background:none;border:1px solid var(--borda);color:var(--muted);font-family:inherit;font-size:12px;font-weight:600;cursor:pointer">⬇ Exportar CSV</button>
+        </div>
         <div class="ag-filters" style="margin-bottom:14px">
           <button class="ag-filter-btn ativo" onclick="filtrarAg('',this)">Todos</button>
           <button class="ag-filter-btn" onclick="filtrarAg('pendente',this)">Pendentes</button>
@@ -1116,7 +1119,30 @@
           <label class="m-label">Cor principal</label>
           <input class="m-input" type="color" id="cfg-cor" style="padding:6px;height:44px;margin-bottom:14px" oninput="document.documentElement.style.setProperty('--verde', this.value)"/>
           <label class="m-label">Horários disponíveis</label>
-          <input class="m-input" id="cfg-hr" placeholder="08:00,09:00,10:00..." style="margin-bottom:14px"/>
+          <!-- Gerador automático de grade -->
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:8px;margin-bottom:8px;align-items:end">
+            <div>
+              <div style="font-size:11px;color:var(--muted);margin-bottom:4px">Abre às</div>
+              <input class="m-input" type="time" id="cfg-gr-ini" value="08:00" style="margin:0"/>
+            </div>
+            <div>
+              <div style="font-size:11px;color:var(--muted);margin-bottom:4px">Fecha às</div>
+              <input class="m-input" type="time" id="cfg-gr-fim" value="18:00" style="margin:0"/>
+            </div>
+            <div>
+              <div style="font-size:11px;color:var(--muted);margin-bottom:4px">A cada</div>
+              <select class="m-input" id="cfg-gr-passo" style="margin:0;font-size:14px">
+                <option value="15">15 min</option>
+                <option value="20">20 min</option>
+                <option value="30" selected>30 min</option>
+                <option value="45">45 min</option>
+                <option value="60">1 hora</option>
+              </select>
+            </div>
+            <button onclick="gerarGrade()" style="padding:11px 14px;border-radius:8px;background:none;border:1px solid var(--verde);color:var(--verde);font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">⚡ Gerar</button>
+          </div>
+          <input class="m-input" id="cfg-hr" placeholder="08:00,09:00,10:00..." style="margin-bottom:4px"/>
+          <div style="font-size:11px;color:var(--muted);margin-bottom:14px">Use o gerador acima ou edite manualmente (separado por vírgula). Dica: remova o horário do almoço da lista.</div>
 
           <label>Intervalo entre atendimentos</label>
           <select class="m-input" id="cfg-intervalo" style="margin-bottom:14px;font-size:15px">
@@ -1163,6 +1189,14 @@
               <span style="font-size:11px;font-weight:600;color:var(--muted)">Sáb</span>
             </label>
           </div>
+          <!-- Notificações push -->
+          <div style="background:rgba(0,208,132,.05);border:1px solid rgba(0,208,132,.2);border-radius:10px;padding:14px;margin-bottom:16px">
+            <div style="font-size:13px;font-weight:700;color:var(--txt);margin-bottom:4px">🔔 Notificações no aparelho</div>
+            <div style="font-size:12px;color:var(--muted);margin-bottom:10px">Receba um aviso no celular ou computador a cada novo agendamento, mesmo com o painel fechado.</div>
+            <button onclick="ativarPush()" style="padding:9px 18px;border-radius:8px;background:none;border:1px solid var(--verde);color:var(--verde);font-family:inherit;font-size:12px;font-weight:700;cursor:pointer">Ativar neste aparelho</button>
+            <span id="push-status" style="font-size:11px;color:var(--muted);margin-left:10px"></span>
+          </div>
+
           <div style="padding-top:16px;border-top:1px solid var(--borda)">
             <button onclick="salvarConfig()" style="padding:11px 24px;border-radius:8px;background:var(--verde);border:none;color:#000;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer">Salvar configurações</button>
             <button onclick="sair()" style="margin-left:10px;padding:11px 24px;border-radius:8px;background:none;border:1px solid var(--borda);color:var(--muted);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer">Sair da conta</button>
@@ -1175,7 +1209,10 @@
       <!-- CLIENTES -->
       <div id="pg-clientes" style="display:none">
         <div class="pg-breadcrumb">Clientes</div>
-        <h2 style="font-size:22px;font-weight:800;margin-bottom:4px;letter-spacing:-.4px">Meus Clientes</h2>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
+          <h2 style="font-size:22px;font-weight:800;margin-bottom:4px;letter-spacing:-.4px">Meus Clientes</h2>
+          <button onclick="window.open('/negocio/exportar/clientes.csv','_blank')" style="padding:8px 14px;border-radius:8px;background:none;border:1px solid var(--borda);color:var(--muted);font-family:inherit;font-size:12px;font-weight:600;cursor:pointer">⬇ Exportar CSV</button>
+        </div>
         <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Histórico de visitas e clientes que precisam de atenção</p>
         <div class="cli-filtros">
           <button class="cli-filt ativo" onclick="filtrarClientes('todos',this)">👥 Todos</button>
@@ -1434,6 +1471,15 @@
         </svg>
         Enviar confirmação pelo WhatsApp
       </button>
+
+      <!-- Reagendar (mover data/horário) -->
+      <label class="m-label" style="margin-top:14px">Data e horário</label>
+      <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px">
+        <input class="m-input" type="date" id="m-ag-nova-data" style="margin:0;font-size:15px"/>
+        <input class="m-input" type="text" id="m-ag-nova-hora" placeholder="14:30" list="mn-hora-list" autocomplete="off" style="margin:0;font-size:15px"/>
+        <button onclick="reagendarPainel()" style="padding:0 14px;border-radius:8px;background:none;border:1px solid var(--verde);color:var(--verde);font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">↻ Mover</button>
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin:4px 0 2px">Altere a data ou horário e clique em Mover para reagendar</div>
 
       <label class="m-label" style="margin-top:14px">Status</label>
       <div class="status-pills" id="status-pills"></div>
@@ -2359,7 +2405,45 @@ function abrirModalAg(ag) {
   const lblObs = document.querySelector('#m-ag .m-label:last-of-type');
   if (lblObs && lblObs.textContent.toLowerCase().includes('observ')) lblObs.textContent = PT.obs_ag;
 
+  // Pré-preencher campos de reagendamento
+  const novaData = document.getElementById('m-ag-nova-data');
+  const novaHora = document.getElementById('m-ag-nova-hora');
+  if (novaData) novaData.value = ag.data || '';
+  if (novaHora) novaHora.value = ag.horario || '';
+  // Sugestões de horário (reusa o datalist do agendamento manual)
+  const hl = document.getElementById('mn-hora-list');
+  if (hl && !hl.children.length && U?.config?.horarios) {
+    hl.innerHTML = U.config.horarios.split(',').map(h => `<option value="${h.trim()}">`).join('');
+  }
+
   document.getElementById('m-ag').classList.add('open');
+}
+
+// ── REAGENDAR PELO PAINEL ──
+async function reagendarPainel() {
+  const id = document.getElementById('m-ag-id').value;
+  const nd = document.getElementById('m-ag-nova-data').value;
+  const nh = document.getElementById('m-ag-nova-hora').value.trim();
+  if (!nd || !nh) { toast('Informe a nova data e horário', 'err'); return; }
+  if (!/^\d{1,2}:\d{2}$/.test(nh)) { toast('Horário inválido. Use o formato 14:30', 'err'); return; }
+  const dataAtual = document.getElementById('m-ag-data').value;
+  const horaAtual = document.getElementById('m-ag-hora').value;
+  if (nd === dataAtual && nh === horaAtual) { toast('Data e horário são os mesmos', 'err'); return; }
+  try {
+    const r = await fetch('/negocio/agendamentos/' + id + '/reagendar', {
+      method:'PATCH', credentials:'include',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ data: nd, horario: nh }),
+    });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.erro || 'Erro ao reagendar');
+    document.getElementById('m-ag-data').value = nd;
+    document.getElementById('m-ag-hora').value = nh;
+    toast('✓ Movido para ' + nd.split('-').reverse().join('/') + ' às ' + nh, 'ok');
+    if (paginaAtual === 'agenda')     carregarAgFull(filtroAg);
+    else if (paginaAtual === 'hoje')  carregarHojePg();
+    carregarDash();
+  } catch(e) { toast(e.message, 'err'); }
 }
 
 // ── EXCLUIR AGENDAMENTO ──
@@ -2863,6 +2947,76 @@ async function sair() {
   if (window.innerWidth <= 900) fecharSidebar();
   await fetch('/auth/logout', {method:'POST',credentials:'include'});
   location.href = '/';
+}
+
+// ── WEB PUSH (notificações no aparelho) ──
+function urlB64ToU8(b64) {
+  const pad  = '='.repeat((4 - b64.length % 4) % 4);
+  const base = (b64 + pad).replace(/-/g, '+').replace(/_/g, '/');
+  const raw  = atob(base);
+  return Uint8Array.from([...raw].map(c => c.charCodeAt(0)));
+}
+
+async function ativarPush() {
+  const st = document.getElementById('push-status');
+  try {
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+      toast('Este navegador não suporta notificações push', 'err'); return;
+    }
+    const rk = await fetch('/negocio/push/chave', {credentials:'include'});
+    const dk = await rk.json();
+    if (!dk.ativo || !dk.chave) {
+      toast('Notificações ainda não configuradas no servidor', 'err'); return;
+    }
+    const perm = await Notification.requestPermission();
+    if (perm !== 'granted') { toast('Permissão negada pelo navegador', 'err'); return; }
+
+    const reg = await navigator.serviceWorker.register('/sw.js');
+    await navigator.serviceWorker.ready;
+    let sub = await reg.pushManager.getSubscription();
+    if (!sub) {
+      sub = await reg.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlB64ToU8(dk.chave),
+      });
+    }
+    const r = await fetch('/negocio/push/inscrever', {
+      method:'POST', credentials:'include',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(sub),
+    });
+    if (!r.ok) throw new Error('Falha ao registrar no servidor');
+
+    if (st) st.textContent = 'Ativadas neste aparelho ✓';
+    toast('🔔 Notificações ativadas!', 'ok');
+    // Dispara um teste para o usuário ver na hora
+    fetch('/negocio/push/testar', {method:'POST', credentials:'include'}).catch(()=>{});
+  } catch(e) {
+    toast('Erro ao ativar: ' + e.message, 'err');
+  }
+}
+
+// Registra o service worker em segundo plano (cache/push)
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').catch(() => {});
+}
+
+// ── GERADOR DE GRADE DE HORÁRIOS ──
+function gerarGrade() {
+  const ini   = document.getElementById('cfg-gr-ini').value;
+  const fim   = document.getElementById('cfg-gr-fim').value;
+  const passo = parseInt(document.getElementById('cfg-gr-passo').value) || 30;
+  if (!ini || !fim) { toast('Informe abertura e fechamento', 'err'); return; }
+  const toMin = h => { const [a,b] = h.split(':').map(Number); return a*60 + (b||0); };
+  const mIni = toMin(ini), mFim = toMin(fim);
+  if (mFim <= mIni) { toast('O fechamento precisa ser depois da abertura', 'err'); return; }
+  const slots = [];
+  for (let m = mIni; m < mFim; m += passo) {
+    slots.push(String(Math.floor(m/60)).padStart(2,'0') + ':' + String(m%60).padStart(2,'0'));
+  }
+  if (slots.length > 60) { toast('Grade muito grande (' + slots.length + ' horários). Aumente o intervalo.', 'err'); return; }
+  document.getElementById('cfg-hr').value = slots.join(',');
+  toast('✓ ' + slots.length + ' horários gerados! Revise e salve.', 'ok');
 }
 
 // ── FEEDBACK ──

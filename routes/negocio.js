@@ -168,6 +168,22 @@ router.patch('/agendamentos/:id/status', requireAuth, async (req, res) => {
   } catch(e) { res.status(500).json({ erro: e.message }); }
 });
 
+// PATCH /negocio/agendamentos/:id/reagendar — dono move data/horário
+router.patch('/agendamentos/:id/reagendar', requireAuth, async (req, res) => {
+  const { data, horario } = req.body;
+  if (!data || !horario) return res.status(400).json({ erro: 'Data e horário obrigatórios.' });
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(data)) return res.status(400).json({ erro: 'Data inválida.' });
+  try {
+    const agora = new Date().toLocaleString('pt-BR');
+    const r = await pool.query(
+      'UPDATE agendamentos SET data=$1, horario=$2, atualizado_em=$3 WHERE id=$4 AND negocio_id=$5',
+      [data, horario.trim(), agora, req.params.id, req.session.userId]
+    );
+    if (r.rowCount === 0) return res.status(404).json({ erro: 'Agendamento não encontrado.' });
+    res.json({ sucesso: true });
+  } catch(e) { res.status(500).json({ erro: e.message }); }
+});
+
 // DELETE /negocio/agendamentos/:id
 router.delete('/agendamentos/:id', requireAuth, async (req, res) => {
   try {
@@ -310,6 +326,101 @@ router.delete('/bloqueados/:id', requireAuth, async (req, res) => {
   try {
     await pool.query('DELETE FROM horarios_bloqueados WHERE id=$1 AND negocio_id=$2', [req.params.id, req.session.userId]);
     res.json({ sucesso: true });
+  } catch(e) { res.status(500).json({ erro: e.message }); }
+});
+
+// ── WEB PUSH ─────────────────────────────────────────────────
+const { pushAtivo, enviarPushUsuario } = require('../middleware/push');
+
+// GET /negocio/push/chave — chave pública VAPID + status do recurso
+router.get('/push/chave', requireAuth, (req, res) => {
+  res.json({ ativo: pushAtivo(), chave: process.env.VAPID_PUBLIC_KEY || '' });
+});
+
+// POST /negocio/push/inscrever — salva a inscrição deste aparelho
+router.post('/push/inscrever', requireAuth, async (req, res) => {
+  const sub = req.body;
+  if (!sub || !sub.endpoint) return res.status(400).json({ erro: 'Inscrição inválida.' });
+  try {
+    await pool.query(
+      `INSERT INTO push_subscriptions (usuario_id, endpoint, dados)
+       VALUES ($1, $2, $3)
+       ON CONFLICT (endpoint) DO UPDATE SET usuario_id=EXCLUDED.usuario_id, dados=EXCLUDED.dados`,
+      [req.session.userId, sub.endpoint, JSON.stringify(sub)]
+    );
+    res.json({ sucesso: true });
+  } catch(e) { res.status(500).json({ erro: e.message }); }
+});
+
+// POST /negocio/push/testar — envia uma notificação de teste
+router.post('/push/testar', requireAuth, async (req, res) => {
+  await enviarPushUsuario(req.session.userId, {
+    titulo: '🔔 Notificações ativas!',
+    corpo: 'Você receberá um aviso aqui a cada novo agendamento.',
+  });
+  res.json({ sucesso: true });
+});
+
+// ── EXPORTAÇÃO CSV ───────────────────────────────────────────
+function csvCampo(v) {
+  const s = String(v ?? '');
+  return /[",;\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+}
+function csvResposta(res, nomeArquivo, linhas) {
+  // ﻿ = BOM para o Excel abrir acentos corretamente
+  const corpo = '﻿' + linhas.map(l => l.map(csvCampo).join(';')).join('\r\n');
+  res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+  res.setHeader('Content-Disposition', `attachment; filename="${nomeArquivo}"`);
+  res.send(corpo);
+}
+
+// GET /negocio/exportar/agendamentos.csv
+router.get('/exportar/agendamentos.csv', requireAuth, async (req, res) => {
+  try {
+    const r = await pool.query(
+      `SELECT a.data, a.horario, a.nome, a.telefone, a.servico, a.preco_servico, a.status, a.obs, f.nome AS funcionario
+       FROM agendamentos a
+       LEFT JOIN funcionarios f ON f.id = a.funcionario_id
+       WHERE a.negocio_id=$1
+       ORDER BY a.data DESC, a.horario DESC`,
+      [req.session.userId]
+    );
+    const linhas = [['Data','Horário','Cliente','WhatsApp','Serviço','Valor','Status','Profissional','Observações']];
+    for (const a of r.rows) {
+      linhas.push([
+        (a.data||'').split('-').reverse().join('/'), a.horario, a.nome, a.telefone,
+        a.servico, a.preco_servico ? String(a.preco_servico).replace('.', ',') : '',
+        a.status, a.funcionario || '', a.obs,
+      ]);
+    }
+    csvResposta(res, 'agendamentos.csv', linhas);
+  } catch(e) { res.status(500).json({ erro: e.message }); }
+});
+
+// GET /negocio/exportar/clientes.csv
+router.get('/exportar/clientes.csv', requireAuth, async (req, res) => {
+  try {
+    const r = await pool.query(
+      `SELECT nome, telefone,
+              COUNT(*) AS visitas,
+              COUNT(*) FILTER (WHERE status='concluido') AS concluidos,
+              COALESCE(SUM(preco_servico) FILTER (WHERE status='concluido'), 0) AS total_gasto,
+              MAX(data) AS ultima_visita
+       FROM agendamentos
+       WHERE negocio_id=$1
+       GROUP BY nome, telefone
+       ORDER BY MAX(data) DESC`,
+      [req.session.userId]
+    );
+    const linhas = [['Cliente','WhatsApp','Agendamentos','Concluídos','Total gasto (R$)','Última visita']];
+    for (const c of r.rows) {
+      linhas.push([
+        c.nome, c.telefone, c.visitas, c.concluidos,
+        String(c.total_gasto).replace('.', ','),
+        c.ultima_visita ? c.ultima_visita.split('-').reverse().join('/') : '',
+      ]);
+    }
+    csvResposta(res, 'clientes.csv', linhas);
   } catch(e) { res.status(500).json({ erro: e.message }); }
 });
 

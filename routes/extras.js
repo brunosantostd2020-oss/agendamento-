@@ -4,6 +4,7 @@ const { v4: uuidv4 } = require('uuid');
 const { pool } = require('../middleware/database');
 const { requireAuth } = require('../middleware/auth');
 const { enviarEmail } = require('../middleware/mailer');
+const { enviarPushUsuario } = require('../middleware/push');
 
 // ── CONFIRMAÇÃO PELO DONO ─────────────────────────────────────
 
@@ -69,6 +70,9 @@ router.post('/confirmar/:token', async (req, res) => {
       [a.negocio_id, acao === 'confirmado' ? 'pagamento' : 'aviso', titulo, mensagem]
     ).catch(e => console.error('Notif confirm:', e.message));
 
+    // Push no celular do dono
+    enviarPushUsuario(a.negocio_id, { titulo, corpo: mensagem }).catch(() => {});
+
     res.json({ sucesso: true, status: acao });
   } catch(e) { res.status(500).json({ erro: e.message }); }
 });
@@ -108,6 +112,13 @@ router.post('/cancelar/:token', async (req, res) => {
       `UPDATE agendamentos SET status='cancelado', atualizado_em=$1 WHERE token_cancel=$2`,
       [new Date().toLocaleString('pt-BR'), req.params.token]
     );
+
+    // Push no celular do dono
+    const [anoC, mesC, diaC] = (a.data || '').split('-');
+    enviarPushUsuario(a.negocio_id, {
+      titulo: `❌ ${a.nome || 'Cliente'} cancelou`,
+      corpo: `O agendamento de ${a.data ? `${diaC}/${mesC}/${anoC}` : ''} às ${a.horario || ''} foi cancelado.`,
+    }).catch(() => {});
 
     // Notifica lista de espera
     await notificarListaEspera(a.negocio_id, a.data, a.horario);
@@ -241,20 +252,36 @@ async function notificarListaEspera(negocioId, data, horario) {
 
 // ── HISTÓRICO DO CLIENTE ──────────────────────────────────────
 
-// GET /extras/historico/:slug?email=...
+// GET /extras/historico/:slug?tel=... (ou ?email=, legado)
 router.get('/historico/:slug', async (req, res) => {
-  const { email } = req.query;
-  if (!email) return res.status(400).json({ erro: 'E-mail obrigatório.' });
+  const { email, tel } = req.query;
+  const dig = (tel || '').replace(/\D/g, '');
+  if (!dig && !email) return res.status(400).json({ erro: 'Informe seu WhatsApp.' });
+  if (dig && dig.length < 8) return res.status(400).json({ erro: 'Número incompleto. Digite com DDD.' });
   try {
     const u = await pool.query('SELECT id, nome_negocio FROM usuarios WHERE slug=$1 AND ativo=true', [req.params.slug]);
     if (!u.rows.length) return res.status(404).json({ erro: 'Negócio não encontrado.' });
-    const r = await pool.query(
-      `SELECT id, nome, data, horario, servico, preco_servico, status, criado_em
-       FROM agendamentos
-       WHERE negocio_id=$1 AND email=$2
-       ORDER BY data DESC, horario DESC`,
-      [u.rows[0].id, email.toLowerCase().trim()]
-    );
+
+    let r;
+    if (dig) {
+      // Compara os 8 últimos dígitos — tolera DDD/+55 digitados de formas diferentes
+      r = await pool.query(
+        `SELECT id, nome, data, horario, servico, preco_servico, status, criado_em
+         FROM agendamentos
+         WHERE negocio_id=$1
+           AND regexp_replace(telefone, '\\D', '', 'g') LIKE '%' || $2
+         ORDER BY data DESC, horario DESC`,
+        [u.rows[0].id, dig.slice(-8)]
+      );
+    } else {
+      r = await pool.query(
+        `SELECT id, nome, data, horario, servico, preco_servico, status, criado_em
+         FROM agendamentos
+         WHERE negocio_id=$1 AND email=$2
+         ORDER BY data DESC, horario DESC`,
+        [u.rows[0].id, email.toLowerCase().trim()]
+      );
+    }
     res.json({ agendamentos: r.rows, negocio: u.rows[0].nome_negocio });
   } catch(e) { res.status(500).json({ erro: e.message }); }
 });
