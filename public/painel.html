@@ -1504,6 +1504,7 @@ const CORES_PROF = ['#00d084','#3b82f6','#a855f7','#f97316','#ec4899','#22d3ee']
 const CORES_SRV  = ['#00d084','#3b82f6','#a855f7','#f97316','#ec4899'];
 
 let U = null, paginaAtual = 'dashboard', filtroAg = '', filtroHoje = 'todos', srvEditId = null, statusSel = '';
+let _servicos = []; // cache dos serviços (usado no datalist do agendamento manual)
 let _funcsMap = {}; // mapa id->objeto para edição segura
 
 function abrirModalFuncById(id) {
@@ -2143,10 +2144,15 @@ function abrirManual() {
     horaList.innerHTML = hrs.map(h => `<option value="${h}">`).join('');
   }
 
-  // Preencher datalist de serviços
+  // Preencher datalist de serviços (cache imediato + busca atualizada do servidor)
   const srvList = document.getElementById('mn-srv-list');
-  if (srvList && _servicos?.length) {
-    srvList.innerHTML = _servicos.map(s => `<option value="${s.nome}">`).join('');
+  if (srvList) {
+    const preencher = () => srvList.innerHTML = _servicos.map(s => `<option value="${s.nome}">`).join('');
+    if (_servicos.length) preencher();
+    fetch('/servicos', {credentials:'include'})
+      .then(r => r.json())
+      .then(d => { _servicos = d.servicos || []; preencher(); })
+      .catch(() => {});
   }
 
   document.getElementById('m-manual').classList.add('open');

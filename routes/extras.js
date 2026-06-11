@@ -410,9 +410,8 @@ router.post('/reagendar/:token', async (req, res) => {
     // Notificação no sino do dono
     await pool.query(
       `INSERT INTO notificacoes (id, usuario_id, tipo, titulo, mensagem)
-       VALUES (gen_random_uuid(), $1,'aviso','🔄 Reagendamento: ${ag.nome}',
-       'Reagendou para ${nova_data} às ${novo_horario}')`,
-      [ag.negocio_id]
+       VALUES (gen_random_uuid(), $1, 'aviso', $2, $3)`,
+      [ag.negocio_id, `🔄 Reagendamento: ${ag.nome}`, `Reagendou para ${nova_data} às ${novo_horario}`]
     ).catch(() => {});
 
     res.json({ sucesso: true });

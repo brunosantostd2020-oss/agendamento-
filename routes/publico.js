@@ -107,7 +107,7 @@ router.post('/:slug/agendar', async (req, res) => {
     const r = await pool.query('SELECT * FROM usuarios WHERE slug=$1 AND ativo=true', [req.params.slug]);
     if (!r.rows.length) return res.status(404).json({ erro: 'Negócio não encontrado.' });
     const u = r.rows[0];
-    const existente = await pool.query(`SELECT id FROM agendamentos WHERE negocio_id=$1 AND data=$2 AND horario=$3 AND status IN ('pendente','confirmado')`, [u.id, data, horario]);
+    const existente = await pool.query(`SELECT id FROM agendamentos WHERE negocio_id=$1 AND data=$2 AND horario=$3 AND status IN ('pendente','confirmado','reagendado')`, [u.id, data, horario]);
     if (existente.rows.length) return res.status(409).json({ erro: 'Horário já reservado. Escolha outro.' });
 
     const agora   = new Date().toLocaleString('pt-BR');

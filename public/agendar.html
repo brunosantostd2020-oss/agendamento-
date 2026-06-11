@@ -601,7 +601,7 @@ document.getElementById('h-sub').textContent = NICHO_NOMES[nicho] || 'Agendament
  if (funcs.length > 0) {
    document.getElementById('prof-sec').style.display = 'block';
    document.getElementById('prof-lista').innerHTML = funcs.map(f => `
-     <div class="prof-item" data-id="${f.id}" data-nome="${f.nome}" onclick="selProf('${f.id}','${f.nome}',this)">
+     <div class="prof-item" data-id="${f.id}" data-nome="${f.nome}" onclick="selProf('${f.id}','${esc(f.nome)}',this)">
        <div class="prof-avatar" style="background:${f.cor||'#6b6860'}">${(f.nome||'?')[0].toUpperCase()}</div>
        <div class="prof-info">
          <div class="prof-nome">${f.nome}</div>
@@ -649,16 +649,6 @@ function avancar(){
  if(E.passo===4){confirmar();return;}
  ir(E.passo+1);
 }
-function selProf(id, nome, el) {
-  E.funcId   = id || null;
-  E.funcNome = nome || '';
-  // Limpar seleção anterior
-  document.querySelectorAll('.prof-item').forEach(p => p.classList.remove('sel'));
-  document.getElementById('prof-qualquer').classList.remove('sel');
-  if (el) el.classList.add('sel');
-  else document.getElementById('prof-qualquer').classList.add('sel');
-}
-
 function selProf(id, nomeOuEl, el) {
   // Suporta selProf(null, btnEl) e selProf(id, nome, el)
   if (id === null && nomeOuEl && typeof nomeOuEl === 'object') {

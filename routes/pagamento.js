@@ -79,7 +79,8 @@ router.get('/sucesso', requireAuth, async (req, res) => {
       const payApi  = new Payment(client);
       const pay     = await payApi.get({ id: payment_id }).catch(() => null);
 
-      const userId = external_reference || req.session.userId;
+      // Usa o external_reference VERIFICADO na API do MP (não o da URL, que é manipulável)
+      const userId = (pay && pay.external_reference) || req.session.userId;
 
       if (pay && pay.status === 'approved') {
         // Liberar 30 dias de acesso
