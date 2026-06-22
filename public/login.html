@@ -395,16 +395,9 @@ label{display:block;font-size:13px;font-weight:600;color:#334155;margin-bottom:7
 </div>
 
 <script>
-// Já está logado? Vai direto para o painel
-(async () => {
-  try {
-    const r = await fetch('/auth/me', { credentials: 'include' });
-    if (r.ok) {
-      const u = await r.json();
-      if (u.logado) location.replace('/painel');
-    }
-  } catch(e) {}
-})();
+// Sempre mostra a tela de login — mesmo se já houver sessão salva no navegador.
+// Assim o navegador pode sugerir o e-mail/senha salvos e o acesso só acontece
+// quando a pessoa realmente clica em "Entrar" (em vez de pular direto pro painel).
 
 // ── Recuperação de senha ──
 function toggleRecuperar(ev) {
