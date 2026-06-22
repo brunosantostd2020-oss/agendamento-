@@ -22,7 +22,7 @@ router.get('/painel', requireAuth, async (req, res) => {
     const hoje     = hojeFunc();
     const mesAtual = hoje.slice(0, 7);
 
-    const total      = +(await pool.query('SELECT COUNT(*) FROM agendamentos WHERE negocio_id=$1', [u.id])).rows[0].count;
+    const total      = +(await pool.query('SELECT COUNT(*) FROM agendamentos WHERE negocio_id=$1 AND data LIKE $2', [u.id, mesAtual + '%'])).rows[0].count;
     const pendentes  = +(await pool.query(`SELECT COUNT(*) FROM agendamentos WHERE negocio_id=$1 AND status='pendente'`, [u.id])).rows[0].count;
     const confirmados= +(await pool.query(`SELECT COUNT(*) FROM agendamentos WHERE negocio_id=$1 AND status='confirmado'`, [u.id])).rows[0].count;
     const concluidos = +(await pool.query(`SELECT COUNT(*) FROM agendamentos WHERE negocio_id=$1 AND status='concluido'`, [u.id])).rows[0].count;
@@ -35,7 +35,22 @@ router.get('/painel', requireAuth, async (req, res) => {
     );
     const faturamento = parseFloat(fatR.rows[0].total) || null;
 
-    res.json({ usuario: u, stats: { total, pendentes, confirmados, concluidos, hoje: hojeCount, faturamento } });
+    // Faturamento do mês anterior, para comparação real no dashboard
+    const dataMesAnt = new Date(hoje + 'T12:00:00');
+    dataMesAnt.setMonth(dataMesAnt.getMonth() - 1);
+    const mesAnterior = dataMesAnt.toISOString().slice(0, 7);
+    const fatAntR = await pool.query(
+      `SELECT COALESCE(SUM(preco_servico),0) as total FROM agendamentos WHERE negocio_id=$1 AND status='concluido' AND data LIKE $2 AND preco_servico IS NOT NULL`,
+      [u.id, mesAnterior + '%']
+    );
+    const faturamentoMesAnterior = parseFloat(fatAntR.rows[0].total) || 0;
+
+    const totalMesAntR = await pool.query(
+      'SELECT COUNT(*) FROM agendamentos WHERE negocio_id=$1 AND data LIKE $2', [u.id, mesAnterior + '%']
+    );
+    const totalMesAnterior = +totalMesAntR.rows[0].count;
+
+    res.json({ usuario: u, stats: { total, pendentes, confirmados, concluidos, hoje: hojeCount, faturamento, faturamentoMesAnterior, totalMesAnterior } });
   } catch(e) { res.status(500).json({ erro: e.message }); }
 });
 
@@ -62,6 +77,24 @@ router.get('/agendamentos/hoje', requireAuth, async (req, res) => {
       [req.session.userId, hoje]
     );
     res.json({ agendamentos: r.rows, data: hoje });
+  } catch(e) { res.status(500).json({ erro: e.message }); }
+});
+
+// GET /negocio/aniversariantes-hoje — clientes com "nasc:AAAA-MM-DD" nas observações
+// que fazem aniversário hoje (mesmo dado usado pelo job automático de parabéns)
+router.get('/aniversariantes-hoje', requireAuth, async (req, res) => {
+  try {
+    const hoje    = hojeFunc();
+    const mesDia  = hoje.slice(5); // MM-DD
+    const { rows } = await pool.query(`
+      SELECT DISTINCT nome, telefone
+      FROM agendamentos
+      WHERE negocio_id = $1
+        AND obs LIKE '%nasc:%'
+        AND SUBSTRING(obs FROM 'nasc:([0-9]{4}-[0-9]{2}-[0-9]{2})') IS NOT NULL
+        AND SUBSTRING(SUBSTRING(obs FROM 'nasc:([0-9]{4}-[0-9]{2}-[0-9]{2})'), 6) = $2
+    `, [req.session.userId, mesDia]);
+    res.json({ aniversariantes: rows });
   } catch(e) { res.status(500).json({ erro: e.message }); }
 });
 

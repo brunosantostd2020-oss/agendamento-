@@ -227,6 +227,20 @@
     .stat-badge.laranja{background:var(--laranja-dim);color:var(--laranja)}
     .stat-badge.azul{background:var(--azul-dim);color:var(--azul)}
     .stat-badge.roxo{background:var(--roxo-dim);color:var(--roxo)}
+    /* ── RESUMO DE ATENÇÃO ── */
+    .atencao-wrap{margin-bottom:18px;padding:14px 16px;background:var(--card);
+      border:1px solid var(--borda);border-radius:var(--r);
+      display:none;flex-wrap:wrap;gap:10px;align-items:center}
+    .atencao-lbl{font-size:11px;font-weight:700;color:var(--muted);
+      text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
+    .atencao-pill{display:inline-flex;align-items:center;gap:6px;padding:7px 13px;
+      border-radius:999px;border:1px solid var(--borda);background:none;
+      font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;
+      color:var(--txt);transition:.15s}
+    .atencao-pill:hover{border-color:var(--verde);background:var(--verde-dim)}
+    .atencao-pill.laranja{border-color:rgba(249,115,22,.35);color:var(--laranja)}
+    .atencao-pill.vermelho{border-color:rgba(239,68,68,.35);color:#ef4444}
+    .atencao-pill.roxo{border-color:rgba(139,92,246,.35);color:var(--roxo)}
     .stat-num{font-size:36px;font-weight:900;letter-spacing:-1.5px;line-height:1;
       margin-bottom:6px}
     .stat-num.verde{color:var(--verde)}
@@ -865,6 +879,12 @@
           </div>
         </div>
 
+        <!-- RESUMO DE ATENÇÃO -->
+        <div class="atencao-wrap" id="atencao-wrap">
+          <span class="atencao-lbl">⚡ Precisa de atenção:</span>
+          <div id="atencao-itens" style="display:flex;flex-wrap:wrap;gap:8px"></div>
+        </div>
+
         <!-- LINK PÚBLICO -->
         <div class="link-pub">
           <div>
@@ -980,6 +1000,9 @@
                 <button class="ag-filter-btn" onclick="filtrarHoje('pendente',this)">Pendentes</button>
               </div>
             </div>
+            <button id="btn-confirmar-lote" onclick="abrirConfirmarLote()" style="display:none;width:100%;margin-bottom:10px;padding:10px;border-radius:9px;background:#25D366;border:none;color:#fff;font-family:inherit;font-size:12.5px;font-weight:800;cursor:pointer;align-items:center;justify-content:center;gap:6px">
+              ✅ Confirmar <span id="btn-confirmar-lote-n">0</span> pendentes de hoje
+            </button>
             <div class="ag-card-sub" id="ag-hoje-sub">— horários · —</div>
             <div class="ag-list" id="ag-hoje-lista"></div>
           </div>
@@ -1426,6 +1449,30 @@
   </div>
 </div>
 
+<!-- MODAL CONFIRMAR EM LOTE -->
+<div class="overlay" id="m-lote" onclick="if(event.target===this)fecharLote()">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-body" style="padding:20px 20px 0">
+      <div style="font-size:17px;font-weight:800;color:var(--txt);margin-bottom:4px">✅ Confirmar pendentes de hoje</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:18px" id="lote-progresso">—</div>
+      <div style="background:var(--bg2,rgba(255,255,255,.03));border:1px solid var(--borda);border-radius:12px;padding:16px;margin-bottom:6px">
+        <div style="font-size:16px;font-weight:800;color:var(--txt)" id="lote-nome">—</div>
+        <div style="font-size:13px;color:var(--muted);margin-top:4px" id="lote-info">—</div>
+      </div>
+    </div>
+    <div class="modal-footer" style="flex-direction:column;gap:8px">
+      <button class="m-btn" id="lote-btn-confirmar" onclick="confirmarItemLote()" style="width:100%;background:#25D366;color:#fff;border:none;font-weight:800">
+        💬 Confirmar e enviar WhatsApp
+      </button>
+      <div style="display:flex;gap:8px;width:100%">
+        <button class="m-btn m-btn-out" style="flex:1" onclick="pularItemLote()">Pular este</button>
+        <button class="m-btn m-btn-out" style="flex:1" onclick="fecharLote()">Encerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL CENTRAL DE AJUDA -->
 <div class="overlay" id="m-ajuda" onclick="if(event.target===this)fechar('m-ajuda')">
   <div class="modal">
@@ -1587,6 +1634,8 @@ const CORES_PROF = ['#00d084','#3b82f6','#a855f7','#f97316','#ec4899','#22d3ee']
 const CORES_SRV  = ['#00d084','#3b82f6','#a855f7','#f97316','#ec4899'];
 
 let U = null, paginaAtual = 'dashboard', filtroAg = '', filtroHoje = 'todos', srvEditId = null, statusSel = '';
+let _agsHojeDash = [];
+let _loteFila = [], _loteIdx = 0;
 let _servicos = []; // cache dos serviços (usado no datalist do agendamento manual)
 let _funcsMap = {}; // mapa id->objeto para edição segura
 
@@ -1971,15 +2020,33 @@ function pg(nome, el) {
 // ── DASHBOARD ──
 async function carregarDash() {
   try {
-    const [rPainel, rHoje] = await Promise.all([
+    const [rPainel, rHoje, rClientes, rAniv] = await Promise.all([
       fetch('/negocio/painel', {credentials:'include'}),
       fetch('/negocio/agendamentos/hoje', {credentials:'include'}),
+      fetch('/negocio/clientes', {credentials:'include'}).catch(()=>null),
+      fetch('/negocio/aniversariantes-hoje', {credentials:'include'}).catch(()=>null),
     ]);
     const dp = await rPainel.json();
     const dh = await rHoje.json();
+    const dCli  = rClientes ? await rClientes.json().catch(()=>({})) : {};
+    const dAniv = rAniv     ? await rAniv.json().catch(()=>({}))     : {};
+    _agsHojeDash = dh.agendamentos || [];
 
     const s = dp.stats;
     document.getElementById('st-total').textContent = s.total || 0;
+    const totalBadgeEl = document.getElementById('st-total-badge');
+    if (totalBadgeEl) {
+      const totalAtual = parseInt(s.total) || 0;
+      const totalAnt    = parseInt(s.totalMesAnterior) || 0;
+      if (totalAnt > 0) {
+        const variacaoTotal = Math.round(((totalAtual - totalAnt) / totalAnt) * 100);
+        totalBadgeEl.textContent = (variacaoTotal >= 0 ? '+' : '') + variacaoTotal + '%';
+        totalBadgeEl.classList.toggle('verde', variacaoTotal >= 0);
+        totalBadgeEl.classList.toggle('laranja', variacaoTotal < 0);
+      } else {
+        totalBadgeEl.textContent = totalAtual > 0 ? '🆕' : '+0%';
+      }
+    }
     document.getElementById('st-pend').textContent = String(s.pendentes || 0).padStart(2,'0');
     document.getElementById('st-conf').textContent = s.confirmados || 0;
     document.getElementById('st-hoje').textContent = s.hoje || 0;
@@ -1996,12 +2063,25 @@ async function carregarDash() {
     const hojeBadge = document.getElementById('sb-hoje-badge');
     if (s.hoje > 0) { hojeBadge.style.display = 'block'; hojeBadge.textContent = s.hoje; }
 
-    // Faturamento
+    // Faturamento — comparação real com o mês anterior (antes era um exemplo fixo de +18%/78%)
     if (s.faturamento != null && s.faturamento > 0) {
       const fmt = 'R$ ' + parseFloat(s.faturamento).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
       document.getElementById('fat-valor').textContent = fmt;
-      document.getElementById('fat-badge').textContent = '+18%';
-      document.getElementById('fat-bar').style.width = '78%';
+      const atual    = parseFloat(s.faturamento) || 0;
+      const anterior = parseFloat(s.faturamentoMesAnterior) || 0;
+      const badgeEl  = document.getElementById('fat-badge');
+      const barEl    = document.getElementById('fat-bar');
+      if (anterior > 0) {
+        const variacao = Math.round(((atual - anterior) / anterior) * 100);
+        badgeEl.textContent = (variacao >= 0 ? '+' : '') + variacao + '%';
+        badgeEl.style.color = variacao >= 0 ? 'var(--verde)' : '#ef4444';
+        barEl.style.width = Math.max(4, Math.min(100, Math.round((atual / anterior) * 100))) + '%';
+      } else {
+        // Sem dado do mês anterior para comparar (ex: primeiro mês de uso)
+        badgeEl.textContent = '🆕 1º mês';
+        badgeEl.style.color = 'var(--verde)';
+        barEl.style.width = '100%';
+      }
     }
 
     // Agendamentos hoje
@@ -2018,7 +2098,118 @@ async function carregarDash() {
     ) || 0;
     atualizarBarraMeta(_fatReal);
     await carregarSrvChart();
+
+    // Botão de confirmar em lote
+    const pendentesHoje = _agsHojeDash.filter(a => a.status === 'pendente');
+    const btnLote = document.getElementById('btn-confirmar-lote');
+    if (btnLote) {
+      if (pendentesHoje.length > 0) {
+        btnLote.style.display = 'flex';
+        document.getElementById('btn-confirmar-lote-n').textContent = pendentesHoje.length;
+      } else {
+        btnLote.style.display = 'none';
+      }
+    }
+
+    // Resumo de atenção
+    const sumidos       = (dCli.clientes || []).filter(c => parseInt(c.dias_ausente) > 28);
+    const aniversariantes = dAniv.aniversariantes || [];
+    renderResumoAtencao(pendentesHoje.length, sumidos.length, aniversariantes);
   } catch(e) {}
+}
+
+// ── RESUMO DE ATENÇÃO ──
+function renderResumoAtencao(nPendentes, nSumidos, aniversariantes) {
+  const wrap = document.getElementById('atencao-wrap');
+  const itensEl = document.getElementById('atencao-itens');
+  if (!wrap || !itensEl) return;
+
+  const itens = [];
+  if (nPendentes > 0) {
+    itens.push(`<button class="atencao-pill" onclick="irParaPendentesHoje()">⏳ <span>${nPendentes}</span> pendente${nPendentes>1?'s':''} aguardando confirmação</button>`);
+  }
+  if (nSumidos > 0) {
+    itens.push(`<button class="atencao-pill vermelho" onclick="irParaClientesSumidos()">🚨 <span>${nSumidos}</span> cliente${nSumidos>1?'s':''} sumido${nSumidos>1?'s':''} há +28 dias</button>`);
+  }
+  if (aniversariantes.length > 0) {
+    const nomes = aniversariantes.map(a => a.nome).join(', ');
+    itens.push(`<span class="atencao-pill roxo" title="${esc(nomes)}" style="cursor:default">🎂 ${aniversariantes.length} aniversariante${aniversariantes.length>1?'s':''} hoje: ${esc(nomes.length>40?nomes.slice(0,40)+'…':nomes)}</span>`);
+  }
+
+  if (!itens.length) { wrap.style.display = 'none'; return; }
+  wrap.style.display = 'flex';
+  itensEl.innerHTML = itens.join('');
+}
+
+function irParaPendentesHoje() {
+  filtroAg = 'pendente';
+  pg('agenda', document.querySelector('.sb-item[onclick*="agenda"]'));
+  setTimeout(() => {
+    const btn = [...document.querySelectorAll('#pg-agenda .ag-filter-btn')].find(b => b.textContent.trim() === 'Pendentes');
+    if (btn) filtrarAg('pendente', btn);
+  }, 60);
+}
+
+function irParaClientesSumidos() {
+  pg('clientes', document.querySelector('.sb-item[onclick*="clientes"]'));
+  setTimeout(() => {
+    const btn = [...document.querySelectorAll('.cli-filt')].find(b => b.textContent.includes('Sumidos'));
+    if (btn) filtrarClientes('critico', btn);
+  }, 60);
+}
+
+// ── CONFIRMAR PENDENTES EM LOTE ──
+function abrirConfirmarLote() {
+  _loteFila = _agsHojeDash.filter(a => a.status === 'pendente');
+  _loteIdx = 0;
+  if (!_loteFila.length) { toast('Nenhum pendente para confirmar', 'ok'); return; }
+  document.getElementById('m-lote').classList.add('open');
+  renderItemLote();
+}
+
+function renderItemLote() {
+  if (_loteIdx >= _loteFila.length) {
+    document.getElementById('lote-nome').textContent = '🎉 Tudo certo!';
+    document.getElementById('lote-info').textContent = 'Todos os pendentes de hoje foram revisados.';
+    document.getElementById('lote-progresso').textContent = `${_loteFila.length} de ${_loteFila.length} concluídos`;
+    document.getElementById('lote-btn-confirmar').style.display = 'none';
+    return;
+  }
+  const ag = _loteFila[_loteIdx];
+  document.getElementById('lote-btn-confirmar').style.display = 'block';
+  document.getElementById('lote-progresso').textContent = `${_loteIdx + 1} de ${_loteFila.length} pendentes`;
+  document.getElementById('lote-nome').textContent = ag.nome || 'Cliente';
+  document.getElementById('lote-info').textContent = `${ag.horario || ''} · ${ag.servico || ag.servico_nome || 'Serviço não informado'}${ag.telefone ? '' : ' · ⚠ sem telefone cadastrado'}`;
+}
+
+async function confirmarItemLote() {
+  const ag = _loteFila[_loteIdx];
+  if (!ag) return;
+  try {
+    const r = await fetch('/negocio/agendamentos/' + ag.id + '/status', {
+      method: 'PATCH', credentials: 'include',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ status: 'confirmado', obs: ag.obs || '' }),
+    });
+    if (!r.ok) { const d = await r.json(); throw new Error(d.erro); }
+    ag.status = 'confirmado';
+    abrirWhatsAppRapido(ag);
+  } catch(e) {
+    toast(e.message || 'Erro ao confirmar', 'err');
+  }
+  _loteIdx++;
+  renderItemLote();
+}
+
+function pularItemLote() {
+  _loteIdx++;
+  renderItemLote();
+}
+
+function fecharLote() {
+  fechar('m-lote');
+  carregarDash();
+  if (paginaAtual === 'agenda') carregarAgFull(filtroAg);
 }
 
 // ── RENDER AGENDAMENTOS HOJE (Dashboard) ──
