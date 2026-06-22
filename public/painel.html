@@ -2639,8 +2639,26 @@ ${linkReagendar}`;
   let numero = tel;
   if (!numero.startsWith('55') && numero.length <= 11) numero = '55' + numero;
 
-  const url = `https://wa.me/${numero}?text=${encodeURIComponent(msg)}`;
-  window.open(url, '_blank');
+  abrirWhatsAppDireto(numero, msg);
+}
+
+// Abre o WhatsApp tentando ir direto pro aplicativo (sem passar pela tela de
+// "continuar no navegador"). Se o app não responder em ~900ms (não instalado
+// no computador/celular), cai para o link normal do WhatsApp Web.
+function abrirWhatsAppDireto(numero, msg) {
+  const texto  = encodeURIComponent(msg);
+  const urlApp = `whatsapp://send?phone=${numero}&text=${texto}`;
+  const urlWeb = `https://wa.me/${numero}?text=${texto}`;
+  let saiuDaAba = false;
+  const marcarSaida = () => { saiuDaAba = true; };
+  window.addEventListener('blur', marcarSaida, { once: true });
+  document.addEventListener('visibilitychange', marcarSaida, { once: true });
+  window.location.href = urlApp;
+  setTimeout(() => {
+    window.removeEventListener('blur', marcarSaida);
+    document.removeEventListener('visibilitychange', marcarSaida);
+    if (!saiuDaAba) window.open(urlWeb, '_blank');
+  }, 900);
 }
 
 function selStatus(s, el) {
