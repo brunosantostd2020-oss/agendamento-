@@ -1895,9 +1895,13 @@ function obIr(aba) {
     pg('servicos', document.querySelector('.sb-item[onclick*="servicos"]'));
   }
   obAtualizarProgresso();
-  // Reabrir após 3s se ainda não concluído
+  // Reabrir após 3s SOMENTE se o usuário saiu da página sem nem chegar a ela
+  // (evita cobrir o formulário de serviço/config enquanto a pessoa está digitando)
+  const paginaDestino = aba;
   setTimeout(() => {
-    if (localStorage.getItem(OB_KEY()) !== 'done') {
+    const aindaNaPaginaDestino = paginaAtual === paginaDestino;
+    const algumModalAberto = document.querySelector('.overlay.open');
+    if (localStorage.getItem(OB_KEY()) !== 'done' && !aindaNaPaginaDestino && !algumModalAberto) {
       document.getElementById('ob-overlay').classList.add('open');
       obAtualizarProgresso();
     }
