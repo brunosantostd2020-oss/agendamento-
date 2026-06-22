@@ -120,12 +120,13 @@ async function carregarHorarios() {
   try {
     const r = await fetch(`/p/${slug}/horarios?data=${novaData}`);
     const d = await r.json();
-    if (!d.horarios?.length) {
+    const livres = (d.horarios || []).filter(h => h.disponivel);
+    if (!livres.length) {
       grid.innerHTML = '<p style="color:#94a3b8;font-size:13px;grid-column:1/-1">Sem horários disponíveis neste dia.</p>';
       return;
     }
-    grid.innerHTML = d.horarios.map(h =>
-      `<button class="hr-btn" onclick="selHr(this,'${h}')">${h}</button>`
+    grid.innerHTML = livres.map(h =>
+      `<button class="hr-btn" onclick="selHr(this,'${h.horario}')">${h.horario}</button>`
     ).join('');
   } catch(e) {
     grid.innerHTML = '<p style="color:#ef4444;font-size:13px;grid-column:1/-1">Erro ao carregar horários.</p>';
