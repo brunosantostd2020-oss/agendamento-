@@ -291,7 +291,7 @@ router.patch('/config', requireAuth, async (req, res) => {
     const u   = r.rows[0];
     const cfg = { ...u.config };
 
-    const campos = ['horarios','dias_uteis','telefone','descricao','cor','email_negocio','email_senha'];
+    const campos = ['horarios','dias_uteis','telefone','descricao','cor','email_negocio','email_senha','endereco','instagram','intervalo','msg_confirmacao'];
     campos.forEach(c => { if (req.body[c] !== undefined) cfg[c] = req.body[c]; });
 
     const nomeNegocio = req.body.nome_negocio || u.nome_negocio;

@@ -2,6 +2,10 @@
 <html lang="pt-BR" data-theme="dark">
 <head>
   <meta charset="UTF-8"/>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
+<link rel="apple-touch-icon" href="/apple-touch-icon.png"/>
+<link rel="manifest" href="/manifest.json"/>
+<meta name="theme-color" content="#0d9488"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
   <meta name="mobile-web-app-capable" content="yes"/>
   <title>Painel — AgendaOK</title>
@@ -1147,6 +1151,10 @@
           <textarea class="m-textarea" id="cfg-desc" style="margin-bottom:14px"></textarea>
           <label class="m-label">WhatsApp do negócio</label>
           <input class="m-input" type="tel" id="cfg-tel" style="margin-bottom:14px"/>
+          <label class="m-label">Endereço <span style="font-weight:400;color:var(--muted)">(aparece na sua página com link pro Google Maps)</span></label>
+          <input class="m-input" type="text" id="cfg-endereco" placeholder="Rua Exemplo, 123 — Centro, Cataguases/MG" style="margin-bottom:14px"/>
+          <label class="m-label">Instagram <span style="font-weight:400;color:var(--muted)">(opcional)</span></label>
+          <input class="m-input" type="text" id="cfg-instagram" placeholder="@seunegocio" style="margin-bottom:14px"/>
           <label class="m-label">Cor principal</label>
           <input class="m-input" type="color" id="cfg-cor" style="padding:6px;height:44px;margin-bottom:14px" oninput="document.documentElement.style.setProperty('--verde', this.value)"/>
           <label class="m-label">Horários disponíveis</label>
@@ -3044,6 +3052,8 @@ async function carregarConfig() {
     document.getElementById('cfg-nome').value = U?.nome_negocio || '';
     document.getElementById('cfg-desc').value = d.descricao || '';
     document.getElementById('cfg-tel').value  = d.telefone || '';
+    const cfgEnd = document.getElementById('cfg-endereco');  if (cfgEnd)  cfgEnd.value  = d.endereco || '';
+    const cfgIg  = document.getElementById('cfg-instagram'); if (cfgIg)   cfgIg.value   = d.instagram || '';
     document.getElementById('cfg-cor').value  = d.cor || '#00d084';
     document.getElementById('cfg-hr').value   = d.horarios || '';
     document.getElementById('cfg-cor').value   = d.cor || '#00d084';
@@ -3078,6 +3088,8 @@ async function salvarConfig() {
     msg_confirmacao: document.getElementById('cfg-msg-conf')?.value || '',
     descricao:    document.getElementById('cfg-desc').value,
     telefone:     document.getElementById('cfg-tel').value,
+    endereco:     document.getElementById('cfg-endereco')?.value || '',
+    instagram:    document.getElementById('cfg-instagram')?.value || '',
     cor:          document.getElementById('cfg-cor').value,
     horarios:     document.getElementById('cfg-hr').value,
     intervalo:    document.getElementById('cfg-intervalo')?.value || '0',

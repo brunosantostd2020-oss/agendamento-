@@ -2,12 +2,24 @@
 <html lang="pt-BR">
 <head>
  <meta charset="UTF-8"/>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
+<link rel="apple-touch-icon" href="/apple-touch-icon.png"/>
+<link rel="manifest" href="/manifest.json"/>
+<meta name="theme-color" content="#0d9488"/>
  <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
  <meta name="mobile-web-app-capable" content="yes"/>
  <meta name="apple-mobile-web-app-capable" content="yes"/>
  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
  <meta name="theme-color" content="#0a0a0a" id="theme-color"/>
- <title>Agendamento</title>
+ <title>__OG_TITLE__</title>
+ <meta name="description" content="__OG_DESC__"/>
+ <meta property="og:title" content="__OG_TITLE__"/>
+ <meta property="og:description" content="__OG_DESC__"/>
+ <meta property="og:image" content="__OG_IMAGE__"/>
+ <meta property="og:url" content="__OG_URL__"/>
+ <meta property="og:type" content="website"/>
+ <meta property="og:site_name" content="AgendaOK"/>
+ <meta name="twitter:card" content="summary_large_image"/>
  <link rel="preconnect" href="https://fonts.googleapis.com"/>
  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
  <style>
@@ -320,6 +332,7 @@
  <div class="hdr-r">by <strong>AgendaOK</strong></div>
 </div>
 <div id="h-desc" style="display:none;background:var(--card,#fff);border-bottom:1px solid var(--borda,#e2e8f0);padding:10px 20px;font-size:13px;color:var(--muted,#64748b);line-height:1.5;text-align:center"></div>
+<div id="h-contato" style="display:none;background:var(--card,#fff);border-bottom:1px solid var(--borda,#e2e8f0);padding:10px 16px;text-align:center;line-height:2.2"></div>
 
 <div class="prog-bar" id="prog-bar">
  <div class="prog-track"><div class="prog-fill" id="prog"></div></div>
@@ -568,6 +581,34 @@ async function init(){
    descEl.textContent = info.config.descricao.trim();
    descEl.style.display = 'block';
  }
+ // Contato do negócio: WhatsApp, endereço (Google Maps) e Instagram
+ (function(){
+   const box = document.getElementById('h-contato');
+   if (!box) return;
+   const chips = [];
+   const chip = (href, icone, texto) => {
+     const a = document.createElement('a');
+     a.href = href; a.target = '_blank'; a.rel = 'noopener';
+     a.style.cssText = 'display:inline-flex;align-items:center;gap:5px;margin:2px 4px;padding:6px 12px;border:1px solid var(--borda,#e2e8f0);border-radius:999px;font-size:12px;font-weight:600;text-decoration:none;color:var(--ink,#334155);background:var(--bg,#f8fafc);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap';
+     a.textContent = icone + ' ' + texto;
+     return a;
+   };
+   const tel = (info.config?.telefone || '').replace(/\D/g,'');
+   if (tel.length >= 10) {
+     const num = tel.length <= 11 ? '55' + tel : tel;
+     chips.push(chip('https://wa.me/' + num, '💬', 'WhatsApp'));
+   }
+   const end = (info.config?.endereco || '').trim();
+   if (end) {
+     chips.push(chip('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(end), '📍', end.length > 34 ? end.slice(0,32) + '…' : end));
+   }
+   let insta = (info.config?.instagram || '').trim();
+   if (insta) {
+     const handle = insta.replace(/^https?:\/\/(www\.)?instagram\.com\//i,'').replace(/^@/,'').replace(/\/.*$/,'');
+     if (handle) chips.push(chip('https://instagram.com/' + handle, '📷', '@' + handle));
+   }
+   if (chips.length) { chips.forEach(c => box.appendChild(c)); box.style.display = 'block'; }
+ })();
  const NICHO_NOMES = {
   barbearia:'Barbearia', salao:'Salão de Beleza', clinica:'Clínica',
   odonto:'Odontologia', advocacia:'Advocacia', estetica:'Estética',

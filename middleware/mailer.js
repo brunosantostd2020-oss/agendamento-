@@ -9,20 +9,28 @@
 
 const nodemailer = require('nodemailer');
 
-async function enviarEmail({ fromName = 'AgendaOK', to, subject, html, gmailUser, gmailPass }) {
+// attachments (opcional): [{ filename: 'arquivo.gz', content: Buffer }]
+async function enviarEmail({ fromName = 'AgendaOK', to, subject, html, gmailUser, gmailPass, attachments }) {
   if (!to) return false;
 
   // 1) Resend (recomendado)
   if (process.env.RESEND_API_KEY) {
     const from = `${fromName} <${process.env.EMAIL_FROM || 'onboarding@resend.dev'}>`;
     try {
+      const payload = { from, to: [to], subject, html };
+      if (attachments?.length) {
+        payload.attachments = attachments.map(a => ({
+          filename: a.filename,
+          content: Buffer.isBuffer(a.content) ? a.content.toString('base64') : a.content,
+        }));
+      }
       const r = await fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ from, to: [to], subject, html }),
+        body: JSON.stringify(payload),
       });
       if (!r.ok) {
         const txt = await r.text().catch(() => '');
@@ -45,7 +53,7 @@ async function enviarEmail({ fromName = 'AgendaOK', to, subject, html, gmailUser
   }
   try {
     const t = nodemailer.createTransport({ service: 'gmail', auth: { user, pass } });
-    await t.sendMail({ from: `"${fromName}" <${user}>`, to, subject, html });
+    await t.sendMail({ from: `"${fromName}" <${user}>`, to, subject, html, attachments: attachments || [] });
     console.log(`✅ E-mail (Gmail) → ${to}`);
     return true;
   } catch(e) {

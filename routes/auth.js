@@ -1,6 +1,7 @@
 const express = require('express');
 const router  = express.Router();
 const bcrypt  = require('bcryptjs');
+const crypto  = require('crypto');
 const { v4: uuidv4 } = require('uuid');
 const { pool } = require('../middleware/database');
 const { enviarBoasVindas, enviarInstrucoesPagamento } = require('../middleware/email');
@@ -207,8 +208,10 @@ router.post('/recuperar', rateLimit({ windowMs: 10 * 60_000, max: 4, msg: 'Muita
     const u = (await pool.query('SELECT id, nome FROM usuarios WHERE email=$1', [email])).rows[0];
     if (u) {
       const token  = uuidv4().replace(/-/g, '') + uuidv4().replace(/-/g, '');
+      // Salva apenas o HASH do token — se o banco vazar, o token não serve pra nada
+      const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
       const expira = new Date(Date.now() + 60 * 60 * 1000).toISOString(); // 1 hora
-      await pool.query('UPDATE usuarios SET reset_token=$1, reset_expira=$2 WHERE id=$3', [token, expira, u.id]);
+      await pool.query('UPDATE usuarios SET reset_token=$1, reset_expira=$2 WHERE id=$3', [tokenHash, expira, u.id]);
 
       const link = (process.env.BASE_URL || '') + '/redefinir/' + token;
       enviarEmail({
@@ -240,8 +243,10 @@ router.post('/redefinir', rateLimit({ windowMs: 60_000, max: 6 }), async (req, r
   if (!token) return res.status(400).json({ erro: 'Link inválido.' });
   if (!senha || senha.length < 6) return res.status(400).json({ erro: 'A senha deve ter pelo menos 6 caracteres.' });
   try {
+    // Compara pelo hash — compatível com o novo formato salvo em /recuperar
+    const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
     const u = (await pool.query(
-      "SELECT id, reset_expira FROM usuarios WHERE reset_token=$1 AND reset_token != ''", [token]
+      "SELECT id, reset_expira FROM usuarios WHERE reset_token=$1 AND reset_token != ''", [tokenHash]
     )).rows[0];
     if (!u || !u.reset_expira || new Date(u.reset_expira) < new Date()) {
       return res.status(400).json({ erro: 'Link inválido ou expirado. Solicite um novo na tela de login.' });

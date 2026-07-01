@@ -72,7 +72,7 @@ router.get('/:slug/info', async (req, res) => {
 
     res.json({ nome_negocio: u.nome_negocio, nicho: u.nicho, foto_url: u.foto_url||'',
       avaliacao,
-      config: { horarios: u.config.horarios, dias_uteis: u.config.dias_uteis, telefone: u.config.telefone, descricao: u.config.descricao, cor: u.config.cor } });
+      config: { horarios: u.config.horarios, dias_uteis: u.config.dias_uteis, telefone: u.config.telefone, descricao: u.config.descricao, cor: u.config.cor, endereco: u.config.endereco||'', instagram: u.config.instagram||'' } });
   } catch(e) { res.status(500).json({ erro: e.message }); }
 });
 

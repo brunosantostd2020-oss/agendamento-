@@ -29,6 +29,13 @@ router.post('/logout', (req, res) => {
   res.json({ sucesso: true });
 });
 
+// POST /admin/backup-agora — dispara o backup do banco manualmente (só master)
+router.post('/backup-agora', requireMaster, async (req, res) => {
+  const { rodarBackupBanco } = require('../jobs/backupBanco');
+  res.json({ sucesso: true, msg: 'Backup iniciado — chega no e-mail em instantes.' });
+  rodarBackupBanco().catch(e => console.error('Backup manual:', e.message));
+});
+
 // GET /admin/status
 router.get('/status', (req, res) => {
   res.json({ logado: !!(req.session && req.session.isMaster) });

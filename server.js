@@ -66,7 +66,38 @@ app.get('/login',            (_, res) => res.sendFile(path.join(__dirname, 'publ
 app.get('/painel',           (_, res) => res.sendFile(path.join(__dirname, 'public', 'painel.html')));
 app.get('/assinar',          (_, res) => res.sendFile(path.join(__dirname, 'public', 'assinar.html')));
 // Sucesso MP é tratado pela rota /pagamento/sucesso no router
-app.get('/agendar/:slug',    (_, res) => res.sendFile(path.join(__dirname, 'public', 'agendar.html')));
+// ── /agendar/:slug com meta tags dinâmicas ──────────────────────────────────
+// Injeta nome/descrição do negócio no <head> pra o link ficar bonito no WhatsApp
+const fs = require('fs');
+const agendarHtmlCache = fs.readFileSync(path.join(__dirname, 'public', 'agendar.html'), 'utf8');
+const escHtml = s => String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+
+app.get('/agendar/:slug', async (req, res) => {
+  const base = (process.env.BASE_URL || 'https://agendaok.online').replace(/\/$/, '');
+  let titulo = 'Agendamento Online — AgendaOK';
+  let desc   = 'Escolha o serviço e o horário pelo celular — leva menos de 1 minuto.';
+  let imagem = base + '/og-image.png';
+
+  try {
+    const r = await pool.query(
+      'SELECT nome_negocio, config, foto_url FROM usuarios WHERE slug=$1 AND ativo=true', [req.params.slug]
+    );
+    const u = r.rows[0];
+    if (u) {
+      titulo = `${u.nome_negocio} — Agende seu horário online`;
+      const d = (u.config?.descricao || '').trim();
+      if (d) desc = d.length > 150 ? d.slice(0, 147) + '...' : d;
+      if (u.foto_url && /^https?:\/\//.test(u.foto_url)) imagem = u.foto_url;
+    }
+  } catch(e) { /* usa os padrões — nunca quebra a página por causa da meta */ }
+
+  const html = agendarHtmlCache
+    .replace(/__OG_TITLE__/g, escHtml(titulo))
+    .replace(/__OG_DESC__/g,  escHtml(desc))
+    .replace(/__OG_IMAGE__/g, escHtml(imagem))
+    .replace(/__OG_URL__/g,   escHtml(`${base}/agendar/${req.params.slug}`));
+  res.type('html').send(html);
+});
 app.get('/cancelar/:token',  (_, res) => res.sendFile(path.join(__dirname, 'public', 'cancelar.html')));
 app.get('/avaliar/:token',   (_, res) => res.sendFile(path.join(__dirname, 'public', 'avaliar.html')));
 app.get('/confirmar/:token', (_, res) => res.sendFile(path.join(__dirname, 'public', 'confirmar.html')));
@@ -74,6 +105,8 @@ app.get('/historico/:slug',  (_, res) => res.sendFile(path.join(__dirname, 'publ
 app.get('/master',           (_, res) => res.sendFile(path.join(__dirname, 'public', 'master.html')));
 app.get('/reagendar',        (_, res) => res.sendFile(path.join(__dirname, 'public', 'reagendar.html')));
 app.get('/redefinir/:token', (_, res) => res.sendFile(path.join(__dirname, 'public', 'redefinir.html')));
+app.get('/termos',           (_, res) => res.sendFile(path.join(__dirname, 'public', 'termos.html')));
+app.get('/privacidade',      (_, res) => res.sendFile(path.join(__dirname, 'public', 'privacidade.html')));
 app.get('*',                 (_, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
 
 // ── Inicializar banco e subir servidor ──────────────────────────────────────
@@ -113,6 +146,28 @@ async function runInits() {
 }
 
 runInits().catch(e => console.error('Erro nas migrations:', e.message));
+
+// ── Erros não tratados: loga sem derrubar o servidor ────────────────────────
+process.on('unhandledRejection', (reason) => {
+  console.error('⚠️  Promise rejeitada sem tratamento:', reason?.message || reason);
+});
+process.on('uncaughtException', (err) => {
+  console.error('🔥 Exceção não capturada:', err?.stack || err);
+  // Não derruba o processo — o Railway reiniciaria e derrubaria sessões/jobs.
+  // Se começar a aparecer muito no log, é sinal de bug pra investigar.
+});
+
+// ── Desligamento gracioso (Railway envia SIGTERM no redeploy) ──────────────
+process.on('SIGTERM', () => {
+  console.log('🛑 SIGTERM recebido — encerrando com segurança...');
+  server.close(() => {
+    pool.end()
+      .then(() => { console.log('✅ Conexões encerradas.'); process.exit(0); })
+      .catch(() => process.exit(0));
+  });
+  // Se algo travar, força saída em 10s
+  setTimeout(() => process.exit(0), 10000).unref();
+});
 
 // ── Job diário: aviso de vencimento (roda às 9h horário de Brasília) ──
 const { rodarAvisoVencimento } = require('./jobs/avisoVencimento');
@@ -164,5 +219,20 @@ setTimeout(() => {
   setTimeout(() => {
     rodarAniversarios();
     setInterval(rodarAniversarios, 24 * 60 * 60 * 1000);
+  }, alvo - agora);
+})();
+
+// ── Backup semanal do banco: domingos às 4h BR (7h UTC) ─────────────────────
+const { rodarBackupBanco } = require('./jobs/backupBanco');
+(function agendarBackup() {
+  const agora = new Date();
+  const alvo  = new Date(agora);
+  alvo.setUTCHours(7, 0, 0, 0);
+  // Avança até o próximo domingo às 7h UTC
+  while (alvo <= agora || alvo.getUTCDay() !== 0) alvo.setUTCDate(alvo.getUTCDate() + 1);
+  console.log(`💾 Backup semanal agendado para ${alvo.toISOString()}`);
+  setTimeout(() => {
+    rodarBackupBanco();
+    setInterval(rodarBackupBanco, 7 * 24 * 60 * 60 * 1000);
   }, alvo - agora);
 })();
