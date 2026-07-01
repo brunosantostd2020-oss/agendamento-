@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+Disallow: /painel
+Disallow: /master
+Disallow: /admin
+Disallow: /assinar
+Disallow: /redefinir
+Disallow: /confirmar
+Disallow: /cancelar
+Disallow: /avaliar
+
+Sitemap: https://agendaok.online/sitemap.xml

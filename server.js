@@ -142,6 +142,8 @@ async function runInits() {
   await safe(initFeedbacks,    'initFeedbacks');
   await safe(initIndices,      'initIndices');
   await safe(initPush,         'initPush');
+  const { initDemo } = require('./middleware/demo');
+  await safe(initDemo,         'initDemo');
   console.log('✅ Todas as migrations concluídas');
 }
 
@@ -234,5 +236,28 @@ const { rodarBackupBanco } = require('./jobs/backupBanco');
   setTimeout(() => {
     rodarBackupBanco();
     setInterval(rodarBackupBanco, 7 * 24 * 60 * 60 * 1000);
+  }, alvo - agora);
+})();
+
+// ── Jobs diários às 11h UTC (8h BR): relatório mensal (dia 1º), clientes
+//    sumidos (segundas) e limpeza da conta demo. Cada job decide internamente
+//    se hoje é o seu dia de rodar. ─────────────────────────────────────────────
+const { rodarRelatorioMensal } = require('./jobs/relatorioMensal');
+const { rodarClientesSumidos } = require('./jobs/clientesSumidos');
+const { limparDemo }           = require('./middleware/demo');
+
+(function agendarDiarios() {
+  const agora = new Date();
+  const alvo  = new Date(agora);
+  alvo.setUTCHours(11, 10, 0, 0); // 11:10 UTC pra não colidir com o job de aniversário (11:00)
+  if (agora >= alvo) alvo.setUTCDate(alvo.getUTCDate() + 1);
+  const rodada = () => {
+    rodarRelatorioMensal().catch(e => console.error('Relatório mensal:', e.message));
+    rodarClientesSumidos().catch(e => console.error('Clientes sumidos:', e.message));
+    limparDemo();
+  };
+  setTimeout(() => {
+    rodada();
+    setInterval(rodada, 24 * 60 * 60 * 1000);
   }, alvo - agora);
 })();
