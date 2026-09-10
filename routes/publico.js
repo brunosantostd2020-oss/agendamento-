@@ -178,6 +178,9 @@ router.post('/:slug/agendar', async (req, res) => {
       buscarOcupacoes(u.id, data),
       contarProfissionais(u.id),
     ]);
+    if (numProfs > 0 && !funcionario_id) {
+      return res.status(400).json({ erro: 'Selecione um profissional para continuar.' });
+    }
     if (temConflito({ ini: minutos(horario), dur: durNova, funcionarioId: funcionario_id || null, ocupacoes, numProfs })) {
       return res.status(409).json({ erro: 'Horário já reservado. Escolha outro.' });
     }

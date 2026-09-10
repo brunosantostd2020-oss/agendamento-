@@ -378,15 +378,9 @@
  <div class="srv-lista" id="srv-lista"></div>
  <div class="srv-sem" id="srv-sem" style="display:none">Nenhum serviço cadastrado. Continue para escolher o horário.</div>
  </div>
- <!-- Seletor de profissional — só aparece se houver equipe -->
+ <!-- Seletor de profissional — só aparece se houver equipe. Escolha obrigatória. -->
  <div class="prof-sec" id="prof-sec" style="display:none">
    <label class="prof-lbl">Com qual profissional?</label>
-   <button class="prof-qualquer sel" id="prof-qualquer" onclick="selProf(null,this)">
-     <div class="pq-ico">
-       <svg viewBox="0 0 24 24" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-     </div>
-     <span>Qualquer profissional disponível</span>
-   </button>
    <div class="prof-lista" id="prof-lista"></div>
  </div>
  </div>
@@ -561,7 +555,7 @@ const TEMAS={barbearia:{ico:'',cor:'#111827'},salao:{ico:'',cor:'#4a0728'},clini
 const MESES=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const DIAS_S=['D','S','T','Q','Q','S','S'];
 const slug=location.pathname.split('/').pop();
-const E={passo:1,data:null,horario:null,ano:new Date().getFullYear(),mes:new Date().getMonth(),diasUteis:[0,1,2,3,4,5,6],srvId:null,srvNome:'',srvPreco:null,srvDur:null,temSrv:false,funcId:null,funcNome:''};
+const E={passo:1,data:null,horario:null,ano:new Date().getFullYear(),mes:new Date().getMonth(),diasUteis:[0,1,2,3,4,5,6],srvId:null,srvNome:'',srvPreco:null,srvDur:null,temSrv:false,funcId:null,funcNome:'',temFuncs:false};
 
 async function init(){
  try{
@@ -654,6 +648,7 @@ document.getElementById('h-sub').textContent = NICHO_NOMES[nicho] || 'Agendament
  const funcD = rF.ok ? await rF.json() : {funcionarios:[]};
  const funcs = funcD.funcionarios || [];
  if (funcs.length > 0) {
+   E.temFuncs = true;
    document.getElementById('prof-sec').style.display = 'block';
    document.getElementById('prof-lista').innerHTML = funcs.map(f => `
      <div class="prof-item" data-id="${f.id}" data-nome="${f.nome}" onclick="selProf('${f.id}','${esc(f.nome)}',this)">
@@ -702,6 +697,7 @@ function selSrv(id,nome,preco,dur,el){
 function avancar(){
  if(E.passo===1&&!v1())return;
  if(E.passo===2&&E.temSrv&&!E.srvId){toast('Selecione um serviço','err');return;}
+ if(E.passo===2&&E.temFuncs&&!E.funcId){toast('Selecione um profissional','err');return;}
  if(E.passo===3&&!v3())return;
  if(E.passo===4){confirmar();return;}
  ir(E.passo+1);
