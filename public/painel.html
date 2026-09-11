@@ -1155,6 +1155,11 @@
           <input class="m-input" type="text" id="cfg-endereco" placeholder="Rua Exemplo, 123 — Centro, Cataguases/MG" style="margin-bottom:14px"/>
           <label class="m-label">Instagram <span style="font-weight:400;color:var(--muted)">(opcional)</span></label>
           <input class="m-input" type="text" id="cfg-instagram" placeholder="@seunegocio" style="margin-bottom:14px"/>
+          <div style="font-size:13px;font-weight:700;color:var(--txt);margin:20px 0 16px;padding-bottom:16px;padding-top:16px;border-top:1px solid var(--borda);border-bottom:1px solid var(--borda)">Pagamento via Pix</div>
+          <label class="m-label">Chave Pix <span style="font-weight:400;color:var(--muted)">(CPF, celular, e-mail ou chave aleatória — deixe em branco pra não oferecer Pix)</span></label>
+          <input class="m-input" type="text" id="cfg-pix-chave" placeholder="Ex: 00000000000 ou seuemail@exemplo.com" style="margin-bottom:14px"/>
+          <label class="m-label">Nome do favorecido <span style="font-weight:400;color:var(--muted)">(mostrado pro cliente conferir antes de pagar)</span></label>
+          <input class="m-input" type="text" id="cfg-pix-nome" placeholder="Seu nome ou nome do negócio" style="margin-bottom:14px"/>
           <label class="m-label">Cor principal</label>
           <input class="m-input" type="color" id="cfg-cor" style="padding:6px;height:44px;margin-bottom:14px" oninput="document.documentElement.style.setProperty('--verde', this.value)"/>
           <label class="m-label">Horários disponíveis</label>
@@ -2244,15 +2249,17 @@ function renderAgHoje(ags, filtro = 'todos') {
       : a.status === 'pendente'
       ? '<span class="ag-tag pend">Pendente</span>'
       : '';
-    return `<div class="ag-row" onclick="abrirModalAg(${JSON.stringify({id:a.id,nome:a.nome,data:a.data,horario:a.horario,status:a.status,obs:a.obs||'',telefone:a.telefone||'',servico:a.servico||a.servico_nome||'',token_confirm:a.token_confirm||''})})">
+    const pagTag = a.forma_pagamento === 'pix' ? '<span class="ag-tag" style="background:#0369a115;color:#0369a1">Paga no Pix</span>'
+                 : a.forma_pagamento === 'local' ? '<span class="ag-tag" style="background:#71717a15;color:#71717a">Paga na hora</span>' : '';
+    return `<div class="ag-row" onclick="abrirModalAg(${JSON.stringify({id:a.id,nome:a.nome,data:a.data,horario:a.horario,status:a.status,obs:a.obs||'',telefone:a.telefone||'',servico:a.servico||a.servico_nome||'',token_confirm:a.token_confirm||'',forma_pagamento:a.forma_pagamento||''})})">
       <span class="ag-hora">${a.horario}</span>
       <div class="ag-dot ${dotCor[a.status]||'azul'}"></div>
       <div class="ag-info">
-        <div class="ag-nome">${a.nome} ${tag}</div>
+        <div class="ag-nome">${a.nome} ${tag}${pagTag}</div>
         <div class="ag-srv">${a.servico||a.servico_nome||''}${a.telefone?' · '+a.telefone:''}</div>
       </div>
       ${preco ? `<div class="ag-preco">${preco}</div>` : ''}
-      ${a.telefone ? `<button class="ag-whats-btn" title="WhatsApp: ${a.telefone}" onclick="event.stopPropagation();abrirWhatsAppRapido(${JSON.stringify({nome:a.nome,telefone:a.telefone,data:a.data,horario:a.horario,status:a.status,servico:a.servico||a.servico_nome||'',token_confirm:a.token_confirm||''})})">
+      ${a.telefone ? `<button class="ag-whats-btn" title="WhatsApp: ${a.telefone}" onclick="event.stopPropagation();abrirWhatsAppRapido(${JSON.stringify({nome:a.nome,telefone:a.telefone,data:a.data,horario:a.horario,status:a.status,servico:a.servico||a.servico_nome||'',token_confirm:a.token_confirm||'',forma_pagamento:a.forma_pagamento||''})})">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
       </button>` : ''}
       ${a.status !== 'concluido' && a.status !== 'cancelado' ? `
@@ -2305,13 +2312,15 @@ function renderAgRow(a, showActions = false) {
     cancelado:'<span class="ag-tag" style="background:rgba(239,68,68,0.12);color:var(--vermelho)">Cancelado</span>',
     concluido:'<span class="ag-tag azul" style="background:var(--azul-dim);color:var(--azul)">Concluído</span>',
   }[a.status] || '';
+  const pagTag = a.forma_pagamento === 'pix' ? '<span class="ag-tag" style="background:#0369a115;color:#0369a1">Paga no Pix</span>'
+               : a.forma_pagamento === 'local' ? '<span class="ag-tag" style="background:#71717a15;color:#71717a">Paga na hora</span>' : '';
 
   return `<div class="ag-row" style="border-bottom:1px solid var(--borda)"
-    onclick="abrirModalAg(${JSON.stringify({id:a.id,nome:a.nome,data:a.data,horario:a.horario,status:a.status,obs:a.obs||'',telefone:a.telefone||'',servico:a.servico||a.servico_nome||'',token_confirm:a.token_confirm||''})})">
+    onclick="abrirModalAg(${JSON.stringify({id:a.id,nome:a.nome,data:a.data,horario:a.horario,status:a.status,obs:a.obs||'',telefone:a.telefone||'',servico:a.servico||a.servico_nome||'',token_confirm:a.token_confirm||'',forma_pagamento:a.forma_pagamento||''})})">
     <span class="ag-hora">${a.data === new Date(Date.now()-3*60*60*1000).toISOString().split('T')[0] ? a.horario : dia+'/'+mes+'<small style="display:block;font-size:10px;color:var(--muted);font-weight:700;letter-spacing:.02em">'+(a.horario||'')+'</small>'}</span>
     <div class="ag-dot ${dotCor[a.status]||'azul'}"></div>
     <div class="ag-info">
-      <div class="ag-nome">${a.nome} ${tagHtml}</div>
+      <div class="ag-nome">${a.nome} ${tagHtml}${pagTag}</div>
       <div class="ag-srv">${a.telefone ? a.telefone : ''}${(a.servico||a.servico_nome) ? ' · '+(a.servico||a.servico_nome) : ''}</div>
     </div>
     ${preco ? `<div class="ag-preco">${preco}</div>` : ''}
@@ -2633,8 +2642,9 @@ function abrirModalAg(ag) {
   document.getElementById('m-ag-srv').value  = ag.servico||'';
   document.getElementById('m-ag-nome-neg').value = U?.nome_negocio||'';
   document.getElementById('m-ag-token').value = ag.token_confirm||'';
+  const pagTxt = ag.forma_pagamento === 'pix' ? 'Pagamento: Pix' : ag.forma_pagamento === 'local' ? 'Pagamento: na hora' : '';
   document.getElementById('m-ag-t').textContent  = ag.nome;
-  document.getElementById('m-ag-s').textContent  = infoTxt + (ag.telefone ? ' · ' + ag.telefone : '');
+  document.getElementById('m-ag-s').textContent  = infoTxt + (ag.telefone ? ' · ' + ag.telefone : '') + (pagTxt ? ' · ' + pagTxt : '');
   document.getElementById('m-ag-obs').value  = ag.obs||'';
   // Pré-preencher campos de conclusão
   const srvConc   = document.getElementById('m-ag-srv-conc');
@@ -3088,6 +3098,8 @@ async function carregarConfig() {
     document.getElementById('cfg-tel').value  = d.telefone || '';
     const cfgEnd = document.getElementById('cfg-endereco');  if (cfgEnd)  cfgEnd.value  = d.endereco || '';
     const cfgIg  = document.getElementById('cfg-instagram'); if (cfgIg)   cfgIg.value   = d.instagram || '';
+    const cfgPixC = document.getElementById('cfg-pix-chave'); if (cfgPixC) cfgPixC.value = d.pix_chave || '';
+    const cfgPixN = document.getElementById('cfg-pix-nome');  if (cfgPixN) cfgPixN.value = d.pix_nome  || '';
     document.getElementById('cfg-cor').value  = d.cor || '#00d084';
     document.getElementById('cfg-hr').value   = d.horarios || '';
     document.getElementById('cfg-cor').value   = d.cor || '#00d084';
@@ -3124,6 +3136,8 @@ async function salvarConfig() {
     telefone:     document.getElementById('cfg-tel').value,
     endereco:     document.getElementById('cfg-endereco')?.value || '',
     instagram:    document.getElementById('cfg-instagram')?.value || '',
+    pix_chave:    document.getElementById('cfg-pix-chave')?.value || '',
+    pix_nome:     document.getElementById('cfg-pix-nome')?.value || '',
     cor:          document.getElementById('cfg-cor').value,
     horarios:     document.getElementById('cfg-hr').value,
     intervalo:    document.getElementById('cfg-intervalo')?.value || '0',

@@ -433,11 +433,20 @@ router.post('/reagendar/:token', async (req, res) => {
     );
 
     // Notificação no sino do dono
+    const tituloReag   = `🔄 Reagendamento: ${ag.nome}`;
+    const mensagemReag = `Reagendou para ${nova_data} às ${novo_horario}`;
     await pool.query(
       `INSERT INTO notificacoes (id, usuario_id, tipo, titulo, mensagem)
        VALUES (gen_random_uuid(), $1, 'aviso', $2, $3)`,
-      [ag.negocio_id, `🔄 Reagendamento: ${ag.nome}`, `Reagendou para ${nova_data} às ${novo_horario}`]
+      [ag.negocio_id, tituloReag, mensagemReag]
     ).catch(() => {});
+
+    // Push no celular do dono (vibra/notifica mesmo com o painel fechado)
+    enviarPushUsuario(ag.negocio_id, {
+      titulo: tituloReag,
+      corpo: mensagemReag,
+      urgente: true,
+    }).catch(() => {});
 
     res.json({ sucesso: true });
   } catch(e) { res.status(500).json({ erro: e.message }); }

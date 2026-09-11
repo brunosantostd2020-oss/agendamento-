@@ -5,7 +5,7 @@ const pgSession = require('connect-pg-simple')(session);
 const cors      = require('cors');
 const path      = require('path');
 const { pool, initDb, initServicos, initColunas, initExtras, initTrial,
-        initTokenConfirm, initPagamento, initFuncionarios, initFeedbacks, initIndices, initPush } = require('./middleware/database');
+        initTokenConfirm, initPagamento, initFuncionarios, initFeedbacks, initIndices, initPush, initPagamentoLocal } = require('./middleware/database');
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
@@ -142,6 +142,7 @@ async function runInits() {
   await safe(initFeedbacks,    'initFeedbacks');
   await safe(initIndices,      'initIndices');
   await safe(initPush,         'initPush');
+  await safe(initPagamentoLocal, 'initPagamentoLocal');
   const { initDemo } = require('./middleware/demo');
   await safe(initDemo,         'initDemo');
   console.log('✅ Todas as migrations concluídas');

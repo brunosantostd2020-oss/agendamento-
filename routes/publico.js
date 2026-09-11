@@ -26,7 +26,8 @@ router.get('/:slug/info', async (req, res) => {
 
     res.json({ nome_negocio: u.nome_negocio, nicho: u.nicho, foto_url: u.foto_url||'',
       avaliacao,
-      config: { horarios: u.config.horarios, dias_uteis: u.config.dias_uteis, telefone: u.config.telefone, descricao: u.config.descricao, cor: u.config.cor, endereco: u.config.endereco||'', instagram: u.config.instagram||'' } });
+      config: { horarios: u.config.horarios, dias_uteis: u.config.dias_uteis, telefone: u.config.telefone, descricao: u.config.descricao, cor: u.config.cor, endereco: u.config.endereco||'', instagram: u.config.instagram||'',
+        pix_chave: u.config.pix_chave||'', pix_nome: u.config.pix_nome||'' } });
   } catch(e) { res.status(500).json({ erro: e.message }); }
 });
 
@@ -113,9 +114,11 @@ router.get('/:slug/horarios', async (req, res) => {
 });
 
 router.post('/:slug/agendar', async (req, res) => {
-  const { nome, email, telefone, servico, servico_id, preco_servico, data, horario, obs, funcionario_id, funcionario_nome } = req.body;
+  const { nome, email, telefone, servico, servico_id, preco_servico, data, horario, obs, funcionario_id, funcionario_nome, forma_pagamento } = req.body;
   if (!nome || !telefone || !data || !horario)
     return res.status(400).json({ erro: 'Preencha todos os campos obrigatórios.' });
+  // Forma de pagamento é opcional; só aceita valores conhecidos (evita lixo no banco)
+  const formaPag = ['pix','local'].includes(forma_pagamento) ? forma_pagamento : '';
   try {
     const r = await pool.query('SELECT * FROM usuarios WHERE slug=$1 AND ativo=true', [req.params.slug]);
     if (!r.rows.length) return res.status(404).json({ erro: 'Negócio não encontrado.' });
@@ -147,11 +150,11 @@ router.post('/:slug/agendar', async (req, res) => {
     const base    = process.env.BASE_URL || '';
 
     await pool.query(
-      `INSERT INTO agendamentos (id,negocio_id,negocio_slug,nome,email,telefone,servico,servico_id,preco_servico,obs,data,horario,status,token_cancel,token_avalia,token_confirm,funcionario_id,criado_em,atualizado_em)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,'pendente',$13,$14,$15,$16,$17,$17)`,
+      `INSERT INTO agendamentos (id,negocio_id,negocio_slug,nome,email,telefone,servico,servico_id,preco_servico,obs,data,horario,status,token_cancel,token_avalia,token_confirm,funcionario_id,forma_pagamento,criado_em,atualizado_em)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,'pendente',$13,$14,$15,$16,$17,$18,$18)`,
       [agId, u.id, u.slug, nome.trim(), email.trim().toLowerCase(), telefone.trim(),
        servico||'', servico_id||null, preco_servico||null, obs||'', data, horario,
-       tokenC, tokenA, tokenCF, funcionario_id||null, agora]
+       tokenC, tokenA, tokenCF, funcionario_id||null, formaPag, agora]
     );
 
     const [ano, mes, dia] = data.split('-');
@@ -176,6 +179,7 @@ router.post('/:slug/agendar', async (req, res) => {
     }
 
     // Sino do painel
+    const pagTxt = formaPag === 'pix' ? ' Pagamento: Pix.' : formaPag === 'local' ? ' Pagamento: na hora.' : '';
     pool.query(
       `INSERT INTO notificacoes (id, usuario_id, tipo, titulo, mensagem)
        VALUES (gen_random_uuid(), $1, 'info', $2, $3)`,
@@ -183,13 +187,15 @@ router.post('/:slug/agendar', async (req, res) => {
        `📅 Novo agendamento: ${nome.trim()}`,
        `${nome.trim()} agendou${servico ? ' ' + servico : ''} para ${dataFmt} às ${horario}.`
          + (funcionario_nome ? ` Com ${funcionario_nome}.` : '')
-         + ` WhatsApp: ${telefone.trim()}`]
+         + ` WhatsApp: ${telefone.trim()}.`
+         + pagTxt]
     ).catch(e => console.error('Notif sino agendamento:', e.message));
 
     // Push no celular do dono (se ativado)
     enviarPushUsuario(u.id, {
       titulo: '📅 Novo agendamento!',
-      corpo: `${nome.trim()} • ${dataFmt} às ${horario}${servico ? ' · ' + servico : ''}`,
+      corpo: `${nome.trim()} • ${dataFmt} às ${horario}${servico ? ' · ' + servico : ''}`
+        + (formaPag === 'pix' ? ' · Pix' : formaPag === 'local' ? ' · Na hora' : ''),
       urgente: true,
     }).catch(() => {});
 

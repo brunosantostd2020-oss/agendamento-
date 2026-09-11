@@ -317,4 +317,15 @@ async function initIndices() {
   finally { client.release(); }
 }
 
-module.exports = { pool, initDb, initServicos, initColunas, initExtras, initTrial, initTokenConfirm, initPagamento, initFuncionarios, initFeedbacks, initIndices, initPush };
+async function initPagamentoLocal() {
+  const client = await pool.connect();
+  try {
+    await client.query(`
+      ALTER TABLE agendamentos ADD COLUMN IF NOT EXISTS forma_pagamento TEXT DEFAULT '';
+    `);
+    console.log('✅ Coluna forma_pagamento OK!');
+  } catch(e) { console.error('PagamentoLocal:', e.message); }
+  finally { client.release(); }
+}
+
+module.exports = { pool, initDb, initServicos, initColunas, initExtras, initTrial, initTokenConfirm, initPagamento, initFuncionarios, initFeedbacks, initIndices, initPush, initPagamentoLocal };

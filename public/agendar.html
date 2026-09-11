@@ -141,6 +141,7 @@
  min-height: 64px;
  }
  .srv-opt.sel { border-color: var(--cor); background: var(--cor); }
+ .pag-opt.sel { border-color: var(--cor); background: var(--cor); color: #fff; }
  .srv-nome { font-size: 15px; font-weight: 600; color: var(--texto); margin-bottom: 3px; letter-spacing: -0.1px; }
  .srv-opt.sel .srv-nome { color: #fff; }
  .srv-det { font-size: 12px; color: var(--muted); font-weight: 400; }
@@ -415,6 +416,21 @@
  </div>
  <div class="res-body" id="res-body"></div>
  </div>
+ <div id="pag-sec" style="display:none;margin-top:16px">
+ <div style="font-size:13px;font-weight:700;color:var(--ink,#334155);margin-bottom:8px">Como você prefere pagar?</div>
+ <div style="display:flex;gap:10px">
+ <div class="pag-opt" id="pag-opt-local" onclick="selFormaPag('local')" style="flex:1;border:1.5px solid var(--borda,#e2e8f0);border-radius:12px;padding:14px 10px;text-align:center;cursor:pointer;font-size:13px;font-weight:600;color:var(--ink,#334155)">Pagar na hora</div>
+ <div class="pag-opt" id="pag-opt-pix" onclick="selFormaPag('pix')" style="flex:1;border:1.5px solid var(--borda,#e2e8f0);border-radius:12px;padding:14px 10px;text-align:center;cursor:pointer;font-size:13px;font-weight:600;color:var(--ink,#334155)">Pagar no Pix</div>
+ </div>
+ <div id="pix-box" style="display:none;margin-top:12px;background:var(--bg,#f8fafc);border:1px solid var(--borda,#e2e8f0);border-radius:12px;padding:14px">
+ <div style="font-size:12px;color:var(--muted,#64748b);margin-bottom:4px" id="pix-favorecido"></div>
+ <div style="display:flex;align-items:center;gap:8px">
+ <div id="pix-chave-txt" style="flex:1;font-size:14px;font-weight:700;color:var(--ink,#334155);word-break:break-all;background:#fff;border:1px solid var(--borda,#e2e8f0);border-radius:8px;padding:10px 12px"></div>
+ <button type="button" onclick="copiarPix()" style="flex-shrink:0;background:var(--cor);color:#fff;border:none;border-radius:8px;padding:10px 14px;font-size:12px;font-weight:700;cursor:pointer">Copiar</button>
+ </div>
+ <div style="font-size:11px;color:var(--muted,#64748b);margin-top:8px">Copie a chave e pague pelo app do seu banco. Leve o comprovante no dia do atendimento.</div>
+ </div>
+ </div>
  <div class="aviso">Ao confirmar, você concorda em receber contato pelo telefone informado. Em breve entraremos em contato para confirmar o agendamento.</div>
  </div>
 
@@ -557,7 +573,7 @@ const TEMAS={barbearia:{ico:'',cor:'#111827'},salao:{ico:'',cor:'#4a0728'},clini
 const MESES=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const DIAS_S=['D','S','T','Q','Q','S','S'];
 const slug=location.pathname.split('/').pop();
-const E={passo:1,data:null,horario:null,ano:new Date().getFullYear(),mes:new Date().getMonth(),diasUteis:[0,1,2,3,4,5,6],srvId:null,srvNome:'',srvPreco:null,srvDur:null,temSrv:false,funcId:null,funcNome:'',temFuncs:false,funcsList:null};
+const E={passo:1,data:null,horario:null,ano:new Date().getFullYear(),mes:new Date().getMonth(),diasUteis:[0,1,2,3,4,5,6],srvId:null,srvNome:'',srvPreco:null,srvDur:null,temSrv:false,funcId:null,funcNome:'',temFuncs:false,funcsList:null,pixChave:'',pixNome:'',formaPag:null};
 
 async function init(){
  try{
@@ -644,6 +660,8 @@ document.getElementById('h-sub').textContent = NICHO_NOMES[nicho] || 'Agendament
  if(info.config?.dias_uteis && info.config.dias_uteis.trim()!==''){
  E.diasUteis=info.config.dias_uteis.split(',').map(Number);
  }
+ E.pixChave=(info.config?.pix_chave||'').trim();
+ E.pixNome=(info.config?.pix_nome||'').trim();
  // Se não configurado, todos os dias ficam disponíveis
  const lista=document.getElementById('srv-lista');
  // Renderizar profissionais (só se houver equipe)
@@ -704,6 +722,7 @@ function avancar(){
  if(E.passo===2&&E.temSrv&&!E.srvId){toast('Selecione um serviço','err');return;}
  if(E.passo===2&&E.temFuncs&&!E.funcId){toast('Selecione um profissional','err');return;}
  if(E.passo===3&&!v3())return;
+ if(E.passo===4&&E.pixChave&&!E.formaPag){toast('Escolha a forma de pagamento','err');return;}
  if(E.passo===4){confirmar();return;}
  ir(E.passo+1);
 }
@@ -883,13 +902,36 @@ function renderRes(){
  html+=`<div class="res-linha"><span class="res-k">Data</span><span class="res-v">${dias[dt.getDay()]}, ${dia}/${mes}/${ano}</span></div>
  <div class="res-linha"><span class="res-k">Horário</span><span class="res-v">${E.horario}</span></div>`;
  document.getElementById('res-body').innerHTML=html;
+
+ // Seção de forma de pagamento — só aparece se o negócio configurou uma chave Pix
+ const pagSec=document.getElementById('pag-sec');
+ if(E.pixChave){
+   pagSec.style.display='block';
+   document.getElementById('pix-favorecido').textContent=E.pixNome?('Favorecido: '+E.pixNome):'';
+   document.getElementById('pix-chave-txt').textContent=E.pixChave;
+ } else {
+   pagSec.style.display='none';
+   E.formaPag=null;
+ }
+}
+
+function selFormaPag(tipo){
+ E.formaPag=tipo;
+ document.getElementById('pag-opt-local').classList.toggle('sel',tipo==='local');
+ document.getElementById('pag-opt-pix').classList.toggle('sel',tipo==='pix');
+ document.getElementById('pix-box').style.display=(tipo==='pix')?'block':'none';
+}
+
+function copiarPix(){
+ if(!E.pixChave)return;
+ navigator.clipboard.writeText(E.pixChave).then(()=>toast('Chave Pix copiada!','ok')).catch(()=>toast('Não foi possível copiar. Copie manualmente.','err'));
 }
 
 async function confirmar(){
  const btn=document.getElementById('btn-prox');
  btn.disabled=true;btn.textContent='Enviando...';
  try{
- const r=await fetch('/p/'+slug+'/agendar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nome:document.getElementById('nome').value.trim(),email:'',telefone:document.getElementById('telefone').value.trim(),servico:E.srvNome,servico_id:E.srvId,preco_servico:E.srvPreco,obs:g('obs'),data:E.data,horario:E.horario,funcionario_id:E.funcId||null,funcionario_nome:E.funcNome||''})});
+ const r=await fetch('/p/'+slug+'/agendar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nome:document.getElementById('nome').value.trim(),email:'',telefone:document.getElementById('telefone').value.trim(),servico:E.srvNome,servico_id:E.srvId,preco_servico:E.srvPreco,obs:g('obs'),data:E.data,horario:E.horario,funcionario_id:E.funcId||null,funcionario_nome:E.funcNome||'',forma_pagamento:E.formaPag||''})});
  const d=await r.json();
  if(!r.ok)throw new Error(d.erro||'Erro');
  ir(5);
@@ -899,6 +941,10 @@ async function confirmar(){
 function novo(){
  E.data=null;E.horario=null;E.mes=new Date().getMonth();E.ano=new Date().getFullYear();
  E.srvId=null;E.srvNome='';E.srvPreco=null;E.srvDur=null;
+ E.formaPag=null;
+ const pixBox=document.getElementById('pix-box'); if(pixBox)pixBox.style.display='none';
+ document.getElementById('pag-opt-local')?.classList.remove('sel');
+ document.getElementById('pag-opt-pix')?.classList.remove('sel');
  ['nome','telefone','obs'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
  document.querySelectorAll('.srv-opt').forEach(e=>e.classList.remove('sel'));
  document.getElementById('hr-sec').style.display='none';
