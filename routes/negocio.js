@@ -12,6 +12,7 @@ const { v4: uuidv4 } = require('uuid');
 const { pool } = require('../middleware/database');
 const { requireAuth } = require('../middleware/auth');
 const nodemailer = require('nodemailer');
+const { minutos, buscarOcupacoes, contarProfissionais, temConflito } = require('../middleware/agenda');
 
 // GET /negocio/painel
 router.get('/painel', requireAuth, async (req, res) => {
@@ -143,13 +144,31 @@ router.get('/clientes', requireAuth, async (req, res) => {
 
 // POST /negocio/agendamentos/manual — agendamento manual pelo dono (sem exigir telefone)
 router.post('/agendamentos/manual', requireAuth, async (req, res) => {
-  const { nome, telefone, data, horario, servico, preco_servico, obs } = req.body;
+  const { nome, telefone, data, horario, servico, servico_id, preco_servico, obs, funcionario_id } = req.body;
   if (!nome || !data || !horario)
     return res.status(400).json({ erro: 'Nome, data e horário são obrigatórios.' });
   try {
     const uid = req.session.userId;
     const u   = (await pool.query('SELECT * FROM usuarios WHERE id=$1', [uid])).rows[0];
     if (!u) return res.status(404).json({ erro: 'Usuário não encontrado.' });
+
+    // Duração do serviço (se vinculado), para o cálculo de conflito de horário
+    let dur = 0;
+    if (servico_id) {
+      const s = (await pool.query('SELECT duracao FROM servicos WHERE id=$1 AND negocio_id=$2', [servico_id, uid])).rows[0];
+      if (s) dur = parseInt(s.duracao) || 0;
+    }
+
+    const [ocupacoes, numProfs] = await Promise.all([
+      buscarOcupacoes(uid, data),
+      contarProfissionais(uid),
+    ]);
+    if (numProfs > 0 && !funcionario_id) {
+      return res.status(400).json({ erro: 'Selecione o profissional para este agendamento.' });
+    }
+    if (temConflito({ ini: minutos(horario), dur, funcionarioId: funcionario_id || null, ocupacoes, numProfs })) {
+      return res.status(409).json({ erro: 'Esse horário já está ocupado. Escolha outro.' });
+    }
 
     const { v4: uuidv4 } = require('uuid');
     const agId   = uuidv4();
@@ -160,12 +179,12 @@ router.post('/agendamentos/manual', requireAuth, async (req, res) => {
 
     await pool.query(
       `INSERT INTO agendamentos
-        (id,negocio_id,negocio_slug,nome,email,telefone,servico,preco_servico,obs,
-         data,horario,status,token_cancel,token_avalia,token_confirm,criado_em,atualizado_em)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,'confirmado',$12,$13,$14,$15,$15)`,
+        (id,negocio_id,negocio_slug,nome,email,telefone,servico,servico_id,preco_servico,obs,
+         data,horario,status,token_cancel,token_avalia,token_confirm,funcionario_id,criado_em,atualizado_em)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,'confirmado',$13,$14,$15,$16,$17,$17)`,
       [agId, uid, u.slug, nome.trim(), '', telefone||'',
-       servico||'', preco_servico ? parseFloat(preco_servico) : null,
-       obs||'', data, horario, tokenC, tokenA, tokenCF, agora]
+       servico||'', servico_id||null, preco_servico ? parseFloat(preco_servico) : null,
+       obs||'', data, horario, tokenC, tokenA, tokenCF, funcionario_id||null, agora]
     );
 
     res.json({ sucesso: true, id: agId });

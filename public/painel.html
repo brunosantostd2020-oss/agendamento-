@@ -1528,6 +1528,10 @@
       <label class="m-label">Serviço</label>
       <input class="m-input" type="text" id="mn-srv" placeholder="Ex: Corte + barba" list="mn-srv-list" autocomplete="off" style="margin-bottom:12px;font-size:16px"/>
       <datalist id="mn-srv-list"></datalist>
+      <div id="mn-prof-wrap" style="display:none;margin-bottom:12px">
+        <label class="m-label" id="mn-prof-label">Profissional</label>
+        <select class="m-input" id="mn-prof" style="font-size:16px"></select>
+      </div>
       <label class="m-label">Valor (R$)</label>
       <input class="m-input" type="number" id="mn-valor" placeholder="0,00" min="0" step="0.01" style="margin-bottom:12px;font-size:16px"/>
       <label class="m-label">Data de nascimento (opcional)</label>
@@ -2441,6 +2445,26 @@ function abrirManual() {
       .catch(() => {});
   }
 
+  // Profissional (só aparece se o negócio tem equipe cadastrada)
+  const profWrap = document.getElementById('mn-prof-wrap');
+  const profSel  = document.getElementById('mn-prof');
+  const profLbl  = document.getElementById('mn-prof-label');
+  if (profWrap && profSel) {
+    profLbl.textContent = PTm.prof;
+    profWrap.style.display = 'none';
+    profSel.innerHTML = '';
+    fetch('/funcionarios', {credentials:'include'})
+      .then(r => r.json())
+      .then(d => {
+        const ativos = (d.funcionarios || []).filter(f => f.ativo);
+        if (!ativos.length) return;
+        profSel.innerHTML = '<option value="">Selecione...</option>' +
+          ativos.map(f => `<option value="${f.id}">${f.nome}</option>`).join('');
+        profWrap.style.display = 'block';
+      })
+      .catch(() => {});
+  }
+
   document.getElementById('m-manual').classList.add('open');
   setTimeout(() => document.getElementById('mn-nome').focus(), 300);
 }
@@ -2454,10 +2478,18 @@ async function salvarManual() {
   const valor = document.getElementById('mn-valor').value;
   const obs   = document.getElementById('mn-obs').value.trim();
   const nasc  = document.getElementById('mn-nasc')?.value || '';
+  const profWrap = document.getElementById('mn-prof-wrap');
+  const funcionarioId = (profWrap && profWrap.style.display !== 'none') ? document.getElementById('mn-prof').value : '';
 
   if (!nome) { toast('Informe o nome do cliente', 'err'); return; }
   if (!data) { toast('Informe a data', 'err'); return; }
   if (!hora) { toast('Informe o horário', 'err'); return; }
+  if (profWrap && profWrap.style.display !== 'none' && !funcionarioId) {
+    toast('Selecione o profissional', 'err'); return;
+  }
+
+  // Tenta casar o nome digitado do serviço com o cadastro, pra levar o ID e a duração certa
+  const srvMatch = srv ? _servicos.find(s => s.nome.toLowerCase() === srv.toLowerCase()) : null;
 
   try {
     const r = await fetch('/negocio/agendamentos/manual', {
@@ -2466,9 +2498,11 @@ async function salvarManual() {
       body: JSON.stringify({
         nome, telefone: tel||'',
         servico: srv||'',
+        servico_id: srvMatch ? srvMatch.id : null,
         preco_servico: valor ? parseFloat(valor) : null,
         obs: (obs + (nasc ? ' nasc:'+nasc : '')) || '',
         data, horario: hora,
+        funcionario_id: funcionarioId || null,
       }),
     });
     const d = await r.json();
