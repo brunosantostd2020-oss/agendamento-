@@ -557,11 +557,7 @@ const TEMAS={barbearia:{ico:'',cor:'#111827'},salao:{ico:'',cor:'#4a0728'},clini
 const MESES=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const DIAS_S=['D','S','T','Q','Q','S','S'];
 const slug=location.pathname.split('/').pop();
-<<<<<<< HEAD
 const E={passo:1,data:null,horario:null,ano:new Date().getFullYear(),mes:new Date().getMonth(),diasUteis:[0,1,2,3,4,5,6],srvId:null,srvNome:'',srvPreco:null,srvDur:null,temSrv:false,funcId:null,funcNome:'',temFuncs:false,funcsList:null};
-=======
-const E={passo:1,data:null,horario:null,ano:new Date().getFullYear(),mes:new Date().getMonth(),diasUteis:[0,1,2,3,4,5,6],srvId:null,srvNome:'',srvPreco:null,srvDur:null,temSrv:false,funcId:null,funcNome:'',temFuncs:false};
->>>>>>> 37772b8d6e5cb074300628fab61f5a7f6221ba42
 
 async function init(){
  try{
@@ -655,10 +651,7 @@ document.getElementById('h-sub').textContent = NICHO_NOMES[nicho] || 'Agendament
  const funcs = funcD.funcionarios || [];
  if (funcs.length > 0) {
    E.temFuncs = true;
-<<<<<<< HEAD
    E.funcsList = funcs;
-=======
->>>>>>> 37772b8d6e5cb074300628fab61f5a7f6221ba42
    document.getElementById('prof-sec').style.display = 'block';
    document.getElementById('prof-lista').innerHTML = funcs.map(f => `
      <div class="prof-item" data-id="${f.id}" data-nome="${f.nome}" onclick="selProf('${f.id}','${esc(f.nome)}',this)">
