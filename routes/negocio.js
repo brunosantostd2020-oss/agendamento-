@@ -59,11 +59,11 @@ router.get('/painel', requireAuth, async (req, res) => {
 router.get('/agendamentos', requireAuth, async (req, res) => {
   try {
     const { status } = req.query;
-    let sql = 'SELECT * FROM agendamentos WHERE negocio_id=$1';
+    let sql = 'SELECT a.*, f.nome AS funcionario_nome FROM agendamentos a LEFT JOIN funcionarios f ON f.id = a.funcionario_id WHERE a.negocio_id=$1';
     const params = [req.session.userId];
-    if (status && status !== 'todos') { sql += ' AND status=$2'; params.push(status); }
+    if (status && status !== 'todos') { sql += ' AND a.status=$2'; params.push(status); }
     // Limitar a 500 por performance se não houver filtro
-    sql += ' ORDER BY data DESC, horario ASC LIMIT 500';
+    sql += ' ORDER BY a.data DESC, a.horario ASC LIMIT 500';
     const r = await pool.query(sql, params);
     res.json({ agendamentos: r.rows });
   } catch(e) { res.status(500).json({ erro: e.message }); }
@@ -74,7 +74,7 @@ router.get('/agendamentos/hoje', requireAuth, async (req, res) => {
   try {
     const hoje = hojeFunc();
     const r = await pool.query(
-      'SELECT * FROM agendamentos WHERE negocio_id=$1 AND data=$2 ORDER BY horario ASC',
+      'SELECT a.*, f.nome AS funcionario_nome FROM agendamentos a LEFT JOIN funcionarios f ON f.id = a.funcionario_id WHERE a.negocio_id=$1 AND a.data=$2 ORDER BY a.horario ASC',
       [req.session.userId, hoje]
     );
     res.json({ agendamentos: r.rows, data: hoje });

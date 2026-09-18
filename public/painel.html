@@ -2315,13 +2315,14 @@ function renderAgRow(a, showActions = false) {
   const pagTag = a.forma_pagamento === 'pix' ? '<span class="ag-tag" style="background:#0369a115;color:#0369a1">Paga no Pix</span>'
                : a.forma_pagamento === 'local' ? '<span class="ag-tag" style="background:#71717a15;color:#71717a">Paga na hora</span>' : '';
 
+  const funcNome = a.funcionario_nome || '';
   return `<div class="ag-row" style="border-bottom:1px solid var(--borda)"
-    onclick="abrirModalAg(${JSON.stringify({id:a.id,nome:a.nome,data:a.data,horario:a.horario,status:a.status,obs:a.obs||'',telefone:a.telefone||'',servico:a.servico||a.servico_nome||'',token_confirm:a.token_confirm||'',forma_pagamento:a.forma_pagamento||''})})">
+    onclick="abrirModalAg(${JSON.stringify({id:a.id,nome:a.nome,data:a.data,horario:a.horario,status:a.status,obs:a.obs||'',telefone:a.telefone||'',servico:a.servico||a.servico_nome||'',token_confirm:a.token_confirm||'',forma_pagamento:a.forma_pagamento||'',funcionario_nome:funcNome})})">
     <span class="ag-hora">${a.data === new Date(Date.now()-3*60*60*1000).toISOString().split('T')[0] ? a.horario : dia+'/'+mes+'<small style="display:block;font-size:10px;color:var(--muted);font-weight:700;letter-spacing:.02em">'+(a.horario||'')+'</small>'}</span>
     <div class="ag-dot ${dotCor[a.status]||'azul'}"></div>
     <div class="ag-info">
       <div class="ag-nome">${a.nome} ${tagHtml}${pagTag}</div>
-      <div class="ag-srv">${a.telefone ? a.telefone : ''}${(a.servico||a.servico_nome) ? ' · '+(a.servico||a.servico_nome) : ''}</div>
+      <div class="ag-srv">${a.telefone ? a.telefone : ''}${(a.servico||a.servico_nome) ? ' · '+(a.servico||a.servico_nome) : ''}${funcNome ? ' · <strong>'+funcNome+'</strong>' : ''}</div>
     </div>
     ${preco ? `<div class="ag-preco">${preco}</div>` : ''}
     ${a.telefone ? `<button class="ag-whats-btn" title="WhatsApp: ${a.telefone}" onclick="event.stopPropagation();abrirWhatsAppRapido({nome:'${esc(a.nome)}',telefone:'${a.telefone}',data:'${a.data}',horario:'${a.horario}',status:'${a.status}',servico:'${esc(a.servico||a.servico_nome||'')}',token_confirm:'${a.token_confirm||''}'})" >
@@ -2644,7 +2645,7 @@ function abrirModalAg(ag) {
   document.getElementById('m-ag-token').value = ag.token_confirm||'';
   const pagTxt = ag.forma_pagamento === 'pix' ? 'Pagamento: Pix' : ag.forma_pagamento === 'local' ? 'Pagamento: na hora' : '';
   document.getElementById('m-ag-t').textContent  = ag.nome;
-  document.getElementById('m-ag-s').textContent  = infoTxt + (ag.telefone ? ' · ' + ag.telefone : '') + (pagTxt ? ' · ' + pagTxt : '');
+  document.getElementById('m-ag-s').textContent  = infoTxt + (ag.telefone ? ' · ' + ag.telefone : '') + (ag.funcionario_nome ? ' · ' + ag.funcionario_nome : '') + (pagTxt ? ' · ' + pagTxt : '');
   document.getElementById('m-ag-obs').value  = ag.obs||'';
   // Pré-preencher campos de conclusão
   const srvConc   = document.getElementById('m-ag-srv-conc');
